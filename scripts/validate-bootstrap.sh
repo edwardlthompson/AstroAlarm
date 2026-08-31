@@ -148,6 +148,7 @@ fi
 
 # Writes first (must stay sequential)
 run_check bash scripts/sync-exemplar-config.sh
+run_check bash scripts/check-cursor-hooks.sh
 
 # Independent read-only checks — use local CPU (BOOTSTRAP_CHECK_JOBS overrides)
 if ! python3 scripts/lib/run_checks_parallel.py \
@@ -157,7 +158,6 @@ if ! python3 scripts/lib/run_checks_parallel.py \
   check-changelog-unreleased.sh \
   check-repo-hygiene.sh \
   check-batch-commands.sh \
-  check-cursor-hooks.sh \
   check-build-plan-parallel.sh \
   check-template-version-sync.sh \
   validate-template-index.sh \
