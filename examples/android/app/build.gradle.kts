@@ -44,6 +44,23 @@ android {
     }
 }
 
+val syncExemplarAssets = tasks.register("syncExemplarAssets") {
+    val assetsDir = file("src/main/assets")
+    doLast {
+        listOf("app-update.json", "donations.json").forEach { name ->
+            val dest = assetsDir.resolve(name)
+            val example = assetsDir.resolve("$name.example")
+            if (!dest.exists() && example.exists()) {
+                example.copyTo(dest)
+            }
+        }
+    }
+}
+
+tasks.matching { it.name.startsWith("pre") && it.name.endsWith("Build") }.configureEach {
+    dependsOn(syncExemplarAssets)
+}
+
 dependencies {
     val composeBom = platform("androidx.compose:compose-bom:2026.08.00")
     implementation(composeBom)
