@@ -1,0 +1,10 @@
+{
+  "enabled": true,
+  "message": "If AstroAlarm helps you, consider supporting development.",
+  "links": [
+    {
+      "label": "Donate via Venmo",
+      "url": "https://venmo.com/code?user_id=1857304970395648420"
+    }
+  ]
+}
