@@ -2,6 +2,36 @@
 
 > Archive of finished BUILD_PLAN items.
 
+## Sprint 2 — settings exemplar (2026-08-31)
+
+- ✅ [AGENT] Copy `docs/features/_template.md` → `docs/features/{name}.md`; refine acceptance criteria
+- ✅ [AGENT] Scaffold feature container (public API boundary only)
+- ✅ [AGENT] Unit tests for feature pure logic (skip if Parallel agent completed)
+- ✅ [AGENT] Wire view/adapter; composition root (`appBootstrap.ts` / `GoldenPathApp.kt`) ≤10 lines
+- ✅ [HUMAN] Optional product smoke after `[AUTO]` gate pass
+
+## Sprint 1 — Golden Path Foundation (2026-08-31)
+
+- ✅ [AGENT] Lock shared Golden Path schema/types/API for active stack (About + navigation surface only)
+- ✅ [HUMAN] Fill stack-local config: web `examples/web/public/app-update.json` + `donations.json`; Android `assets/` mirrors; or root `.app-update.json` / `donations.json` (init runs `scripts/sync-stack-config.py`)
+- ✅ [HUMAN] Approve ADR-0001 and BUILD_PLAN Sprint 1 for your stack
+
+## Sprint 0 — Template Customization (2026-08-31)
+
+- ✅ [AGENT] Run `scripts/init-project.sh` or `scripts/init-project.ps1` (`--stack <name>`; `--non-interactive` with `--project-name` + `--purpose` for scripted init)
+- ✅ [AGENT] Fill `branding/product.json` (set `mode: product`), replace logos if needed, run `sync-design-tokens.py` + `generate-project-readme.py`
+- ✅ [AGENT] Run `scripts/setup-github-repo.sh` (requires `gh` auth with admin)
+- ✅ [AUTO] Sprint 0 sign-off (all green on `main`):
+  - `validate-bootstrap.sh --quick`
+  - `feature-gate.sh --stack <active>`
+  - `check-github-ci.sh --wait 300` (required: **CI**, **Security Scan**, **CodeQL**; **CI** must include **Template Upgrade Simulation (Windows)**, **Repo Hygiene**, **Feature Gate**)
+  - `check-license-compliance.sh` (after `npm ci` / `uv sync`)
+- ✅ [HUMAN] Click **Use this template** on GitHub to create your project repo
+- ✅ [HUMAN] Choose **distribution tier** (FOSS default vs Commercial) via `init-project.sh --distribution-tier`
+- ✅ [HUMAN] Fill placeholders in `docs/INITIALIZATION_PROMPT.md` (platform, purpose)
+- ✅ [HUMAN] Pick Cursor mode per `[docs/CURSOR_MODES.md](docs/CURSOR_MODES.md)` (Ask to explore, Plan for architecture)
+- ✅ [HUMAN] Bookmark `[docs/help/BATCH_COMMANDS.md](docs/help/BATCH_COMMANDS.md)` — type `/` in Agent chat (`/bootstrap` for Sprint 0)
+
 ## v1.0.0 First stable template (2026-08-28)
 
 - ✅ [AUTO] Merge Release Please PR #82 — [v1.0.0](https://github.com/edwardlthompson/agent-project-bootstrap/releases/tag/v1.0.0) published @ `3dae768`
