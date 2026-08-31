@@ -45,6 +45,7 @@ fun AstroClockScreen(
     val context = LocalContext.current
     val displayPrefs = remember { AstroDisplayPreferences(context) }
     val showZodiac by displayPrefs.showZodiac2D.collectAsState()
+    val showEventTimes by displayPrefs.showEventTimes2D.collectAsState()
     val earth = remember { EarthTexture.get(context) }
     var now by remember { mutableStateOf(Instant.now()) }
 
@@ -69,11 +70,15 @@ fun AstroClockScreen(
         horizontalAlignment = Alignment.CenterHorizontally,
         verticalArrangement = Arrangement.spacedBy(8.dp)
     ) {
-        ZodiacToggleRow(
-            title = stringResource(R.string.astro_toggle_show_zodiac),
-            description = stringResource(R.string.astro_toggle_show_zodiac_desc),
-            checked = showZodiac,
-            onCheckedChange = { displayPrefs.setShowZodiac2D(it) }
+        ClockOverlayToggles(
+            showZodiac = showZodiac,
+            onShowZodiacChange = { displayPrefs.setShowZodiac2D(it) },
+            showEventTimes = showEventTimes,
+            onShowEventTimesChange = { displayPrefs.setShowEventTimes2D(it) },
+            zodiacTitle = stringResource(R.string.astro_toggle_show_zodiac),
+            zodiacDescription = stringResource(R.string.astro_toggle_show_zodiac_desc),
+            eventTimesTitle = stringResource(R.string.astro_toggle_show_event_times),
+            eventTimesDescription = stringResource(R.string.astro_toggle_show_event_times_desc),
         )
 
         BoxWithConstraints(
@@ -82,8 +87,10 @@ fun AstroClockScreen(
         ) {
             val side = minOf(maxWidth, maxHeight)
             val sizePx = ClockRenderSize.fromMinDp(side.value.toInt().coerceAtLeast(80))
-            val diskBitmap = remember(place, alarms, now.epochSecond / 10, sizePx, showZodiac, earth) {
-                AstroDiskRenderer.renderDisk(place, alarms, now, sizePx, showZodiac, earth)
+            val diskBitmap = remember(place, alarms, now.epochSecond / 10, sizePx, showZodiac, showEventTimes, earth) {
+                AstroDiskRenderer.renderDisk(
+                    place, alarms, now, sizePx, showZodiac, earth, showEventTimes,
+                )
             }
             Image(
                 bitmap = diskBitmap.asImageBitmap(),

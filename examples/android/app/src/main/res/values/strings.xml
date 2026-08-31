@@ -128,6 +128,8 @@
     <string name="astro_toggle_show_zodiac_desc">Shows the 12 celestial zodiac constellations around the 24h dial</string>
     <string name="astro_toggle_show_zodiac_3d">Display Zodiac Constellation Ring</string>
     <string name="astro_toggle_show_zodiac_3d_desc">Shows the 3D celestial zodiac transit ring in space</string>
+    <string name="astro_toggle_show_event_times">Show event times</string>
+    <string name="astro_toggle_show_event_times_desc">Alarm, sunrise, and sunset times on the 24h dial</string>
     <string name="astro_solar_noon">Solar Noon</string>
     <string name="astro_solar_midnight">Solar Midnight</string>
     <string name="astro_zodiac_overhead_noon">Midday Overhead Zodiac</string>

@@ -128,6 +128,8 @@
     <string name="astro_toggle_show_zodiac_desc">Muestra las 12 constelaciones del zodiaco alrededor de la esfera de 24h</string>
     <string name="astro_toggle_show_zodiac_3d">Mostrar anillo de constelaciones 3D</string>
     <string name="astro_toggle_show_zodiac_3d_desc">Muestra el anillo celeste del zodiaco 3D en el espacio</string>
+    <string name="astro_toggle_show_event_times">Mostrar horas de eventos</string>
+    <string name="astro_toggle_show_event_times_desc">Horas de alarmas, amanecer y atardecer en la esfera de 24h</string>
     <string name="astro_solar_noon">Mediodía solar</string>
     <string name="astro_solar_midnight">Medianoche solar</string>
     <string name="astro_zodiac_overhead_noon">Zodíaco cenital al mediodía</string>

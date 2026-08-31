@@ -128,6 +128,8 @@
     <string name="astro_toggle_show_zodiac_desc">Affiche les 12 constellations du zodiaque autour du cadran 24h</string>
     <string name="astro_toggle_show_zodiac_3d">Afficher l\'anneau des constellations 3D</string>
     <string name="astro_toggle_show_zodiac_3d_desc">Affiche l\'anneau céleste du zodiaque 3D dans l\'espace</string>
+    <string name="astro_toggle_show_event_times">Afficher les heures d\'événements</string>
+    <string name="astro_toggle_show_event_times_desc">Heures des alarmes, lever et coucher du soleil sur le cadran 24h</string>
     <string name="astro_solar_noon">Midi solaire</string>
     <string name="astro_solar_midnight">Minuit solaire</string>
     <string name="astro_zodiac_overhead_noon">Zodiaque au zénith à midi</string>

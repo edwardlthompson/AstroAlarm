@@ -8,6 +8,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Added
+
+* **android:** add a 2D clock toggle that hides alarm, sunrise, and sunset times
+
 ## [1.2.0](https://github.com/edwardlthompson/AstroAlarm/compare/v1.1.0...v1.2.0) (2026-08-31)
 
 

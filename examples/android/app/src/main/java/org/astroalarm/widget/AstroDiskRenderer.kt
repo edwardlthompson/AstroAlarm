@@ -1,8 +1,6 @@
 package org.astroalarm.widget
 
 import android.graphics.*
-import org.astroalarm.astro.alarm.AstroNextFire
-import org.astroalarm.astro.model.AlarmTarget
 import org.astroalarm.astro.model.AstroAlarm
 import org.astroalarm.astro.model.SolarEventType
 import org.astroalarm.astro.moon.LunarCalculator
@@ -23,6 +21,7 @@ object AstroDiskRenderer {
         size: Int = 300,
         showZodiac: Boolean = true,
         earth: Bitmap? = null,
+        showEventTimes: Boolean = true,
     ): Bitmap {
         val bitmap = Bitmap.createBitmap(size, size, Bitmap.Config.ARGB_8888)
         val canvas = Canvas(bitmap)
@@ -58,6 +57,7 @@ object AstroDiskRenderer {
 
         val aRise = ang(rise); val aSet = ang(set); val aNoon = ang(noon); val aMid = ang(mid) ?: ((aSet ?: 0f) + 90f)
         val dividers = mutableListOf<Pair<Float, Boolean>>()
+        val eventTimes = DiskEventTimeLayers.fromToggle(showEventTimes)
 
         if (aRise != null && aSet != null) {
             val aDawn = ang(dawnA) ?: (aRise - 30f); val aDusk = ang(duskA) ?: (aSet + 30f)
@@ -88,7 +88,7 @@ object AstroDiskRenderer {
         val tSize = (size * 0.052f).coerceIn(13f, 26f)
         val bodyEmojiSize = (size * 0.078f).coerceIn(18f, 38f)
 
-        if (rise != null && set != null && aRise != null && aSet != null) {
+        if (eventTimes.sunriseSunsetBadges && rise != null && set != null && aRise != null && aSet != null) {
             AstroDiskOverlays.drawTransitionBadge(canvas, center, radius, aRise, ZonedDateTime.ofInstant(rise, zone).format(timeFmt), tSize)
             AstroDiskOverlays.drawTransitionBadge(canvas, center, radius, aSet, ZonedDateTime.ofInstant(set, zone).format(timeFmt), tSize)
         }
@@ -122,22 +122,11 @@ object AstroDiskRenderer {
             AstroDiskOverlays.drawZodiacRing(canvas, center, dist, emojiSize, sunLon, aNoonDeg)
         }
 
-        val dotPaint = Paint(Paint.ANTI_ALIAS_FLAG).apply { color = Color.RED; style = Paint.Style.FILL }
-        val upcomingItems = mutableListOf<Pair<Instant, String>>()
-        alarms.filter { it.enabled }.forEach { alarm ->
-            AstroNextFire.nextInstant(alarm, place, now)?.let { next ->
-                if (next.isAfter(now) && !next.isAfter(horizon)) {
-                    val z = ZonedDateTime.ofInstant(next, zone)
-                    val rad = (((z.hour * 60 + z.minute) / 1440f * 360f - nowAngle - 90f)) * (Math.PI / 180.0)
-                    canvas.drawCircle(center + radius * cos(rad).toFloat(), center + radius * sin(rad).toFloat(), (size * 0.026f).coerceIn(5f, 12f), dotPaint)
-                    val icon = when (val t = alarm.target) {
-                        is AlarmTarget.Solar -> "☀️ "; is AlarmTarget.Lunar -> "🌙 "; is AlarmTarget.Zodiac -> t.sign.symbol + " "; is AlarmTarget.CustomClock -> "⏰ "
-                    }
-                    upcomingItems.add(next to (icon + z.format(timeFmt)))
-                }
-            }
+        if (eventTimes.alarmMarkers) {
+            AstroDiskAlarmOverlay.draw(
+                canvas, alarms, place, now, horizon, zone, center, radius, size, nowAngle, timeFmt,
+            )
         }
-        AstroDiskOverlays.drawCallouts(canvas, center, radius, size, upcomingItems.sortedBy { it.first.toEpochMilli() }.distinctBy { it.second }.map { it.second })
 
         val handPaint = Paint(Paint.ANTI_ALIAS_FLAG).apply { color = Color.RED; strokeWidth = (size * 0.012f).coerceIn(2.5f, 5f); style = Paint.Style.FILL_AND_STROKE }
         canvas.drawLine(center, center, center, center - radius + 10f, handPaint)
