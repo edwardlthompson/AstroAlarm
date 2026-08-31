@@ -6,6 +6,8 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [Unreleased]
+
 ## [1.2.0](https://github.com/edwardlthompson/AstroAlarm/compare/v1.1.0...v1.2.0) (2026-08-31)
 
 
@@ -20,8 +22,6 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 * **android:** keep unsigned CI APKs reproducible and repair settings UI tests ([de176ae](https://github.com/edwardlthompson/AstroAlarm/commit/de176aed2530bf84127709fe8a5821dd19090cce))
 * **ci:** run cursor-hooks smoke before parallel REUSE lint ([6b7bdf4](https://github.com/edwardlthompson/AstroAlarm/commit/6b7bdf43047f953fb75f95a53181e787da844dc7))
 * **ci:** satisfy actionlint SC2129 and assert settings Back clears the nav bar ([47c1504](https://github.com/edwardlthompson/AstroAlarm/commit/47c15040bba7a569d7ed6b71788ecc65be61a66c))
-
-## [Unreleased]
 
 ## [1.1.0](https://github.com/edwardlthompson/AstroAlarm/compare/v1.0.0...v1.1.0) (2026-08-31)
 
