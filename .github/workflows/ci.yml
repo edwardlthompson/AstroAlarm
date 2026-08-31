@@ -135,6 +135,7 @@ jobs:
     steps:
       - uses: actions/checkout@v7
       - uses: actions/setup-node@v7
+        if: hashFiles('examples/web/package-lock.json', 'examples/node/package-lock.json') != ''
         with:
           node-version: "22"
           cache: npm
@@ -226,6 +227,8 @@ jobs:
 
   web:
     name: Web - Lint, Test, Build
+    needs: stack-presence
+    if: needs.stack-presence.outputs.web == 'true'
     runs-on: ubuntu-latest
     defaults:
       run:
@@ -301,6 +304,8 @@ jobs:
 
   node:
     name: Node - Lint, Test
+    needs: stack-presence
+    if: needs.stack-presence.outputs.node == 'true'
     runs-on: ubuntu-latest
     defaults:
       run:
