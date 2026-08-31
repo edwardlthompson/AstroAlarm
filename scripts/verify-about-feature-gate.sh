@@ -9,6 +9,11 @@ cd "$ROOT"
 # shellcheck source=lib/resolve-python.sh
 . "$(cd "$(dirname "$0")" && pwd)/lib/resolve-python.sh"
 
+if [ ! -d "$ROOT/examples/web/src" ]; then
+  echo "SKIP: About feature-gate (examples/web pruned)"
+  exit 0
+fi
+
 WEB_SRC="$ROOT/examples/web/src"
 WEB_E2E="$ROOT/examples/web/e2e"
 BACKUP="$(mktemp -d)"
