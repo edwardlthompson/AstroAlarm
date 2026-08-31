@@ -45,10 +45,6 @@ fun AboutScreen(
             .padding(SpacingMd),
         verticalArrangement = Arrangement.spacedBy(SpacingMd),
     ) {
-        Text(
-            text = stringResource(R.string.about_title),
-            style = MaterialTheme.typography.headlineSmall,
-        )
         Text(text = stringResource(R.string.about_version, version))
         Text(text = stringResource(R.string.about_format, installedFormat))
         Text(text = updateStatus)

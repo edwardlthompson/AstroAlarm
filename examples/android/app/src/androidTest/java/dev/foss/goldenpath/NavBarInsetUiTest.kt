@@ -5,6 +5,7 @@ import androidx.compose.ui.test.junit4.createAndroidComposeRule
 import androidx.compose.ui.test.onNodeWithContentDescription
 import androidx.compose.ui.test.onNodeWithText
 import androidx.compose.ui.test.performClick
+import androidx.compose.ui.test.performScrollTo
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
 import androidx.test.platform.app.InstrumentationRegistry
@@ -34,14 +35,16 @@ class NavBarInsetUiTest {
         assertTrue(context.readNavigationMode() == NavigationMode.ThreeButton)
 
         composeTestRule.onNodeWithContentDescription("Settings").performClick()
-        composeTestRule.onNodeWithText("Close settings").assertIsDisplayed()
+        composeTestRule.onNodeWithText("About AstroAlarm & Support")
+            .performScrollTo()
+            .assertIsDisplayed()
 
         val decorView = context.window.decorView
         val navInset = ViewCompat.getRootWindowInsets(decorView)
             ?.getInsets(WindowInsetsCompat.Type.navigationBars())
             ?.bottom ?: 0
         val screenHeight = decorView.height
-        val buttonBottom = composeTestRule.onNodeWithText("Close settings")
+        val buttonBottom = composeTestRule.onNodeWithText("About AstroAlarm & Support")
             .fetchSemanticsNode()
             .boundsInRoot
             .bottom
@@ -58,14 +61,16 @@ class NavBarInsetUiTest {
         setNavigationMode(2)
 
         composeTestRule.onNodeWithContentDescription("Settings").performClick()
-        composeTestRule.onNodeWithText("Close settings").assertIsDisplayed()
+        composeTestRule.onNodeWithText("About AstroAlarm & Support")
+            .performScrollTo()
+            .assertIsDisplayed()
 
         val decorView = composeTestRule.activity.window.decorView
         val navInset = ViewCompat.getRootWindowInsets(decorView)
             ?.getInsets(WindowInsetsCompat.Type.navigationBars())
             ?.bottom ?: 0
         val screenHeight = decorView.height
-        val buttonBottom = composeTestRule.onNodeWithText("Close settings")
+        val buttonBottom = composeTestRule.onNodeWithText("About AstroAlarm & Support")
             .fetchSemanticsNode()
             .boundsInRoot
             .bottom

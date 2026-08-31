@@ -214,32 +214,48 @@ jobs:
       - name: Accept Android SDK licenses
         run: yes | sdkmanager --licenses
 
-      - name: Optional upload keystore
+      - name: Resolve release keystore
         env:
           ANDROID_KEYSTORE_BASE64: ${{ secrets.ANDROID_KEYSTORE_BASE64 }}
+          ANDROID_KEYSTORE_PASSWORD: ${{ secrets.ANDROID_KEYSTORE_PASSWORD }}
+          ANDROID_KEY_ALIAS: ${{ secrets.ANDROID_KEY_ALIAS }}
+          ANDROID_KEY_PASSWORD: ${{ secrets.ANDROID_KEY_PASSWORD }}
         run: |
+          set -euo pipefail
           if [ -n "${ANDROID_KEYSTORE_BASE64:-}" ]; then
             echo "$ANDROID_KEYSTORE_BASE64" | base64 -d > "$RUNNER_TEMP/astroalarm.jks"
             echo "ANDROID_KEYSTORE_FILE=$RUNNER_TEMP/astroalarm.jks" >> "$GITHUB_ENV"
+            echo "ANDROID_KEYSTORE_PASSWORD=${ANDROID_KEYSTORE_PASSWORD}" >> "$GITHUB_ENV"
+            echo "ANDROID_KEY_ALIAS=${ANDROID_KEY_ALIAS:-upload}" >> "$GITHUB_ENV"
+            echo "ANDROID_KEY_PASSWORD=${ANDROID_KEY_PASSWORD}" >> "$GITHUB_ENV"
+            echo "Using repository upload keystore."
           else
-            echo "No ANDROID_KEYSTORE_BASE64 secret; Gradle will sign the release APK with the debug key."
+            keytool -genkeypair -noprompt \
+              -keystore "$RUNNER_TEMP/astroalarm-foss.jks" \
+              -storepass android \
+              -alias upload \
+              -keypass android \
+              -dname "CN=AstroAlarm FOSS, O=AstroAlarm" \
+              -keyalg RSA -keysize 2048 -validity 10000
+            echo "ANDROID_KEYSTORE_FILE=$RUNNER_TEMP/astroalarm-foss.jks" >> "$GITHUB_ENV"
+            echo "ANDROID_KEYSTORE_PASSWORD=android" >> "$GITHUB_ENV"
+            echo "ANDROID_KEY_ALIAS=upload" >> "$GITHUB_ENV"
+            echo "ANDROID_KEY_PASSWORD=android" >> "$GITHUB_ENV"
+            echo "No ANDROID_KEYSTORE_BASE64 secret; signing with a job-local FOSS key."
           fi
 
       - name: assembleRelease
         working-directory: examples/android
         env:
           SOURCE_DATE_EPOCH: "1700000000"
-          ANDROID_KEYSTORE_PASSWORD: ${{ secrets.ANDROID_KEYSTORE_PASSWORD }}
-          ANDROID_KEY_ALIAS: ${{ secrets.ANDROID_KEY_ALIAS }}
-          ANDROID_KEY_PASSWORD: ${{ secrets.ANDROID_KEY_PASSWORD }}
         run: chmod +x gradlew && ./gradlew assembleRelease --no-daemon
 
       - name: Upload FOSS APK and mark release stable
         env:
           GH_TOKEN: ${{ github.token }}
+          TAG: ${{ github.event.release.tag_name || inputs.tag }}
         run: |
           set -euo pipefail
-          TAG="${{ github.event.release.tag_name || inputs.tag }}"
           VERSION="${TAG#v}"
           APK="$(find examples/android/app/build/outputs/apk/release -name '*.apk' | head -1)"
           if [ -z "$APK" ]; then

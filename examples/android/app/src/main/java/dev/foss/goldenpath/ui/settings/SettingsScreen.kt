@@ -106,12 +106,6 @@ fun SettingsScreen(
             .padding(SpacingMd),
         verticalArrangement = Arrangement.spacedBy(16.dp),
     ) {
-        Text(
-            text = stringResource(R.string.settings_title),
-            style = MaterialTheme.typography.headlineSmall,
-            fontWeight = FontWeight.Bold
-        )
-
         LocationCard(
             place = place,
             searchQuery = searchQuery,

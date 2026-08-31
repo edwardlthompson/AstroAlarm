@@ -5,6 +5,7 @@ import androidx.compose.ui.test.junit4.createAndroidComposeRule
 import androidx.compose.ui.test.onNodeWithContentDescription
 import androidx.compose.ui.test.onNodeWithText
 import androidx.compose.ui.test.performClick
+import androidx.compose.ui.test.performScrollTo
 import org.junit.Rule
 import org.junit.Test
 
@@ -16,9 +17,9 @@ class GoldenPathUiTest {
     fun opensSettingsPanelWithThemeAndUpdateControls() {
         composeTestRule.onNodeWithContentDescription("Settings").performClick()
         composeTestRule.onNodeWithText("Settings").assertIsDisplayed()
-        composeTestRule.onNodeWithText("Theme").assertIsDisplayed()
-        composeTestRule.onNodeWithText("Dark theme").performClick()
-        composeTestRule.onNodeWithText("Close settings").performClick()
+        composeTestRule.onNodeWithText("Theme").performScrollTo().assertIsDisplayed()
+        composeTestRule.onNodeWithText("Dark theme").performScrollTo().performClick()
+        composeTestRule.onNodeWithContentDescription("Back").performClick()
     }
 
     @Test
