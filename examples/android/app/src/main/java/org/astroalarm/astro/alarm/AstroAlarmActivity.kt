@@ -142,7 +142,6 @@ class AstroAlarmActivity : ComponentActivity(), TextToSpeech.OnInitListener {
 
     override fun onDestroy() {
         stopAlarmOutput()
-        AlarmNotificationChannel.cancel(this)
         super.onDestroy()
     }
 }

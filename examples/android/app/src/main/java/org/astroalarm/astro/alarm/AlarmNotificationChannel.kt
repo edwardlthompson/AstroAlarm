@@ -6,8 +6,6 @@ import android.app.NotificationManager
 import android.app.PendingIntent
 import android.content.Context
 import android.media.AudioAttributes
-import android.media.AudioManager
-import android.media.RingtoneManager
 import android.os.Build
 import androidx.core.app.NotificationCompat
 import dev.foss.goldenpath.R
@@ -30,8 +28,6 @@ object AlarmNotificationChannel {
     fun ensure(context: Context) {
         if (Build.VERSION.SDK_INT < Build.VERSION_CODES.O) return
         val nm = context.getSystemService(Context.NOTIFICATION_SERVICE) as? NotificationManager ?: return
-        val alarmUri = RingtoneManager.getDefaultUri(RingtoneManager.TYPE_ALARM)
-            ?: RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION)
         val channel = NotificationChannel(
             ID,
             context.getString(R.string.astro_channel_name),
@@ -40,17 +36,16 @@ object AlarmNotificationChannel {
             description = context.getString(R.string.astro_channel_desc)
             setBypassDnd(true)
             lockscreenVisibility = Notification.VISIBILITY_PUBLIC
-            enableVibration(true)
+            enableVibration(false)
             enableLights(true)
-            setSound(alarmUri, alarmAudioAttributes())
+            // Lock-screen activity owns tone/vibration so per-alarm mute and custom URIs work.
+            setSound(null, alarmAudioAttributes())
         }
         nm.createNotificationChannel(channel)
         nm.deleteNotificationChannel(LEGACY_ID)
     }
 
     fun buildRinging(context: Context, fullScreen: PendingIntent): Notification {
-        val alarmUri = RingtoneManager.getDefaultUri(RingtoneManager.TYPE_ALARM)
-            ?: RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION)
         return NotificationCompat.Builder(context, ID)
             .setSmallIcon(R.drawable.ic_brand_mark)
             .setContentTitle(context.getString(R.string.astro_alarm_ringing))
@@ -60,7 +55,6 @@ object AlarmNotificationChannel {
             .setVisibility(NotificationCompat.VISIBILITY_PUBLIC)
             .setOngoing(true)
             .setAutoCancel(false)
-            .setSound(alarmUri, AudioManager.STREAM_ALARM)
             .setContentIntent(fullScreen)
             .setFullScreenIntent(fullScreen, true)
             .build()
