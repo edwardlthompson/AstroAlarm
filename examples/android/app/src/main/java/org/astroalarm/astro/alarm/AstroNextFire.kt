@@ -9,9 +9,13 @@ import java.time.*
 
 object AstroNextFire {
 
-    fun nextInstant(alarm: AstroAlarm, place: AstroPlace?, now: Instant = Instant.now()): Instant? {
+    fun nextInstant(
+        alarm: AstroAlarm,
+        place: AstroPlace?,
+        now: Instant = Instant.now(),
+        zone: ZoneId = place?.zone ?: ZoneId.systemDefault(),
+    ): Instant? {
         if (!alarm.enabled) return null
-        val zone = place?.zone ?: ZoneId.systemDefault()
         val nowZdt = ZonedDateTime.ofInstant(now, zone)
 
         return when (val target = alarm.target) {

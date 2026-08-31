@@ -26,7 +26,7 @@ class AstroNextFireTest {
             daysOfWeek = emptySet() // Once
         )
 
-        val next = AstroNextFire.nextInstant(alarm, place = null, now = now)
+        val next = AstroNextFire.nextInstant(alarm, place = null, now = now, zone = zone)
         assertNotNull(next)
         val nextZdt = ZonedDateTime.ofInstant(next, zone)
         assertEquals(7, nextZdt.hour)
@@ -46,7 +46,7 @@ class AstroNextFireTest {
             daysOfWeek = emptySet()
         )
 
-        val next = AstroNextFire.nextInstant(alarm, place = null, now = now)
+        val next = AstroNextFire.nextInstant(alarm, place = null, now = now, zone = zone)
         assertNotNull(next)
         val nextZdt = ZonedDateTime.ofInstant(next, zone)
         assertEquals(7, nextZdt.hour)
@@ -67,7 +67,7 @@ class AstroNextFireTest {
             daysOfWeek = setOf(DayOfWeek.MONDAY, DayOfWeek.TUESDAY, DayOfWeek.WEDNESDAY, DayOfWeek.THURSDAY, DayOfWeek.FRIDAY)
         )
 
-        val next = AstroNextFire.nextInstant(alarm, place = null, now = now)
+        val next = AstroNextFire.nextInstant(alarm, place = null, now = now, zone = zone)
         assertNotNull(next)
         val nextZdt = ZonedDateTime.ofInstant(next, zone)
         assertEquals(DayOfWeek.MONDAY, nextZdt.dayOfWeek)
