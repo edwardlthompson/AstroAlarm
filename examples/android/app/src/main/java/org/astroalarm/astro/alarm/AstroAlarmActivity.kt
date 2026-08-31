@@ -1,6 +1,5 @@
 package org.astroalarm.astro.alarm
 
-import android.app.KeyguardManager
 import android.content.Context
 import android.media.AudioAttributes
 import android.media.Ringtone
@@ -54,10 +53,12 @@ class AstroAlarmActivity : ComponentActivity(), TextToSpeech.OnInitListener {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O_MR1) {
             setShowWhenLocked(true)
             setTurnScreenOn(true)
-            (getSystemService(Context.KEYGUARD_SERVICE) as? KeyguardManager)?.requestDismissKeyguard(this, null)
         } else {
             @Suppress("DEPRECATION")
-            window.addFlags(WindowManager.LayoutParams.FLAG_SHOW_WHEN_LOCKED or WindowManager.LayoutParams.FLAG_DISMISS_KEYGUARD or WindowManager.LayoutParams.FLAG_TURN_SCREEN_ON)
+            window.addFlags(
+                WindowManager.LayoutParams.FLAG_SHOW_WHEN_LOCKED or
+                    WindowManager.LayoutParams.FLAG_TURN_SCREEN_ON,
+            )
         }
         window.addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON)
     }
@@ -122,12 +123,14 @@ class AstroAlarmActivity : ComponentActivity(), TextToSpeech.OnInitListener {
 
     private fun onSnoozeClicked() {
         stopAlarmOutput()
+        AlarmNotificationChannel.cancel(this)
         AstroAlarmScheduler.rescheduleAll(this)
         finish()
     }
 
     private fun onStopClicked() {
         stopAlarmOutput()
+        AlarmNotificationChannel.cancel(this)
         activeAlarm?.let { alarm ->
             val store = AstroAlarmStore(this)
             val updated = if (alarm.isOnce) alarm.copy(enabled = false, lastFiredEpochMs = System.currentTimeMillis()) else alarm.copy(lastFiredEpochMs = System.currentTimeMillis())
@@ -139,6 +142,7 @@ class AstroAlarmActivity : ComponentActivity(), TextToSpeech.OnInitListener {
 
     override fun onDestroy() {
         stopAlarmOutput()
+        AlarmNotificationChannel.cancel(this)
         super.onDestroy()
     }
 }

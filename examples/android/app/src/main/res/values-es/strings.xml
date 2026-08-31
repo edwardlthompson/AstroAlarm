@@ -171,8 +171,8 @@
     <string name="astro_custom_alarm_title">Alarma</string>
     <string name="astro_alarm_ringing">Alarma sonando</string>
     <string name="astro_alarm_tap_to_open">Toca para abrir alarma</string>
-    <string name="astro_channel_name">Alarmas AstroAlarm</string>
-    <string name="astro_channel_desc">Alarmas de pantalla completa para sol, luna y reloj</string>
+    <string name="astro_channel_name">Alarma</string>
+    <string name="astro_channel_desc">Alarmas a pantalla completa que puedes apagar sin desbloquear</string>
     <string name="astro_action_snooze">Posponer (%d min)</string>
     <string name="astro_action_stop">Detener</string>
     <string name="astro_widget_desc">Reloj astronómico rotativo día/noche</string>
