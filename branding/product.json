@@ -1,0 +1,41 @@
+{
+  "mode": "product",
+  "name": "AstroAlarm",
+  "short_name": "AstroAlarm",
+  "tagline": "Wake with the sun, the moon, and your own clock.",
+  "pitch": "AstroAlarm is a FOSS Android astronomical alarm clock. It calculates sunrise, sunset, twilight, golden hour, moonrise, moon phases, solstices, and equinoxes on the device with NOAA and Meeus algorithms — no cloud, no Play Services, no trackers.\n\nSet alarms for a solar or lunar event, offset them before or after, or pick a custom time on tactile hour and minute wheels. When the alarm rings it can speak the event, vibrate, and require a math puzzle before you can stop it.\n\nA rotating day/night home widget shows the solar disk and the next alarm. Location comes from an offline city list or the system location provider. MIT licensed. GitHub Releases only.",
+  "features": [
+    "On-device NOAA solar and Meeus lunar ephemeris — no network required for calculations",
+    "Eighteen solar events and eleven lunar events, plus custom clock alarms",
+    "Lockscreen snooze and stop with an optional math unlock challenge",
+    "Material You wheels for time and event offsets, with Spanish and French translations",
+    "Rotating 24-hour day/night home widget with next-alarm preview",
+    "100% FOSS: no Google Play Services, Firebase, or proprietary telemetry"
+  ],
+  "quick_start": [
+    "Install the APK from GitHub Releases (not listed on Play Store).",
+    "Set a city from the offline list or tap Locate so sun and moon events can fire.",
+    "Add a solar, lunar, or custom clock alarm. Choose tone, TTS, vibrate, math unlock, and snooze.",
+    "Optional: add the astronomical clock widget to the home screen."
+  ],
+  "install": "Users: install the APK from GitHub Releases. Developers: JDK 17 and Android SDK (compile/target 37, min 26). Clone the repo, open `examples/android/`, and run `./gradlew assembleDebug` (or `gradlew.bat` on Windows). No Play Services.",
+  "usage": "Open AstroAlarm, set a location, then add alarms under Solar, Lunar, or Custom Clock. Exact alarms use AlarmManager.setAlarmClock and survive reboot. Contributors work from `BUILD_PLAN.md` and `docs/START_HERE.md`.",
+  "urls": {
+    "docs": "docs/START_HERE.md",
+    "contributing": "CONTRIBUTING.md",
+    "security": "SECURITY.md",
+    "license": "LICENSE",
+    "design": "docs/DESIGN_GUIDE.md",
+    "branding": "branding/BRANDING.md",
+    "github_repo": "edwardlthompson/AstroAlarm"
+  },
+  "badge": {
+    "primary": "C9A227",
+    "secondary": "1A2744",
+    "license": "2ea043",
+    "foss": "656d76"
+  },
+  "stacks": [
+    "android"
+  ]
+}

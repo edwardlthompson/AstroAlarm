@@ -1,0 +1,21 @@
+cff-version: 1.2.0
+title: AstroAlarm
+message: If you use this software, please cite it using these metadata.
+type: software
+authors:
+  - name: Edward L. Thompson
+repository-code: https://github.com/edwardlthompson/AstroAlarm
+url: https://github.com/edwardlthompson/AstroAlarm
+abstract: >-
+  FOSS Android astronomical alarm clock with on-device NOAA/Meeus
+  ephemeris, custom clock wheels, lockscreen math unlock, and a
+  rotating day/night widget.
+keywords:
+  - foss
+  - android
+  - astronomy
+  - alarm
+  - fdroid
+license: MIT
+version: 1.0.0
+date-released: 2026-08-30
