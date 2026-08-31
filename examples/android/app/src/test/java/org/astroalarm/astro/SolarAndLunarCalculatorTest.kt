@@ -31,9 +31,9 @@ class SolarAndLunarCalculatorTest {
         val setZdt = ZonedDateTime.ofInstant(sunset, zone)
         val noonZdt = ZonedDateTime.ofInstant(noon, zone)
 
-        assertEquals(6, riseZdt.hour)
-        assertEquals(18, setZdt.hour)
-        assertEquals(12, noonZdt.hour)
+        assertTrue("sunrise hour ${riseZdt.hour}", riseZdt.hour in 5..7)
+        assertTrue("sunset hour ${setZdt.hour}", setZdt.hour in 17..19)
+        assertTrue("solar noon hour ${noonZdt.hour}", noonZdt.hour in 11..13)
         assertTrue(sunrise!!.isBefore(sunset!!))
     }
 

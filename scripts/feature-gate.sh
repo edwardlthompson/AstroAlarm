@@ -206,14 +206,14 @@ run_cmd() {
     if [ "$rc" -eq 124 ]; then
       fail_gate "$stage" "timeout after ${secs}s (FEATURE_GATE_TIMEOUT / FEATURE_GATE_TIMEOUT_${stage%%-*})"
     fi
-    fail_gate "$stage" "$(tail -n 40 "$logfile")"
+    fail_gate "$stage" "$(tail -n 80 "$logfile")"
   fi
   if "$@" >"$logfile" 2>&1; then
     GATES_PASSED+=("$stage")
     rm -f "$logfile"
     return 0
   fi
-  fail_gate "$stage" "$(tail -n 40 "$logfile")"
+  fail_gate "$stage" "$(tail -n 80 "$logfile")"
 }
 
 run_in_dir() {
