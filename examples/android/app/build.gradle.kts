@@ -45,8 +45,10 @@ android {
         release {
             isMinifyEnabled = false
             val rel = signingConfigs.getByName("release")
-            if (rel.storeFile != null && rel.storeFile!!.exists()) {
-                signingConfig = rel
+            signingConfig = if (rel.storeFile != null && rel.storeFile!!.exists()) {
+                rel
+            } else {
+                signingConfigs.getByName("debug")
             }
         }
     }
