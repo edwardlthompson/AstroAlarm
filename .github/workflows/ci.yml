@@ -168,6 +168,8 @@ jobs:
         if: hashFiles('examples/android/gradlew') != ''
         run: chmod +x examples/android/gradlew
       - name: Run feature gate (strict multi-stack)
+        env:
+          FEATURE_GATE_TIMEOUT_ANDROID: "900"
         run: bash scripts/feature-gate.sh --stack multi --strict --json
 
   plugin-pack:

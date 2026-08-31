@@ -44,7 +44,7 @@ def format_human(stage: str, log_tail: str = "") -> str:
     ]
     tail = (log_tail or "").strip()
     if tail:
-        lines.append(f"Log: {tail[:400]}")
+        lines.append(f"Log: {tail[-2000:]}")
     return "\n".join(lines)
 
 

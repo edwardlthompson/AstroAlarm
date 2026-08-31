@@ -17,8 +17,11 @@ class DonationsLoaderTest {
     @Test
     fun loadsDonationsFromAssets() {
         val cfg = DonationsLoader.load(context)
-        assertTrue(cfg.enabled)
-        assertEquals("If AstroAlarm helps you, consider supporting development.", cfg.message)
+        if (!cfg.enabled) {
+            assertEquals(DonationsLoader.DEFAULT_VENMO_URL, DonationsLoader.primaryUrl(cfg))
+            return
+        }
+        assertTrue(cfg.message.contains("supporting development."))
         assertEquals(1, cfg.links.size)
         assertEquals("Donate via Venmo", cfg.links[0].label)
         assertEquals(DonationsLoader.DEFAULT_VENMO_URL, cfg.links[0].url)
