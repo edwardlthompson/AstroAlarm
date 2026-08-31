@@ -14,6 +14,8 @@ import dev.foss.goldenpath.R
 import org.astroalarm.astro.model.AlarmTarget
 import org.astroalarm.astro.model.LunarEventType
 import org.astroalarm.astro.model.SolarEventType
+import org.astroalarm.astro.zodiac.ZodiacPoint
+import org.astroalarm.astro.zodiac.ZodiacSign
 import kotlin.math.abs
 
 @OptIn(ExperimentalLayoutApi::class)
@@ -44,6 +46,15 @@ fun TargetTypeSelector(
                 }
             },
             label = { Text(stringResource(R.string.astro_tab_moon)) }
+        )
+        FilterChip(
+            selected = currentTarget is AlarmTarget.Zodiac,
+            onClick = {
+                if (currentTarget !is AlarmTarget.Zodiac) {
+                    onTargetChange(AlarmTarget.Zodiac(ZodiacSign.Aries, ZodiacPoint.Beginning, 0))
+                }
+            },
+            label = { Text(stringResource(R.string.astro_tab_zodiac)) }
         )
         FilterChip(
             selected = currentTarget is AlarmTarget.CustomClock,

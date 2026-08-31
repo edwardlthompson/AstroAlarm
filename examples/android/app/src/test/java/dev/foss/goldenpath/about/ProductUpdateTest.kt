@@ -29,7 +29,7 @@ class ProductUpdateTest {
 
     @Test
     fun donateNudgeOnlyAfterVersionChange() {
-        assertFalse(ProductUpdate.shouldNudgeDonate(null, "1.10.7"))
+        assertTrue(ProductUpdate.shouldNudgeDonate(null, "1.10.7"))
         assertFalse(ProductUpdate.shouldNudgeDonate("1.10.7", "1.10.7"))
         assertTrue(ProductUpdate.shouldNudgeDonate("1.10.7", "1.10.8"))
     }

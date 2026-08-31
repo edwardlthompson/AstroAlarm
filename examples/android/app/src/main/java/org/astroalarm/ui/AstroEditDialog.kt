@@ -26,6 +26,7 @@ import androidx.compose.ui.window.DialogProperties
 import dev.foss.goldenpath.R
 import org.astroalarm.astro.model.AlarmTarget
 import org.astroalarm.astro.model.AstroAlarm
+import org.astroalarm.astro.place.AstroPlace
 import java.util.Locale
 import java.util.UUID
 
@@ -33,11 +34,19 @@ import java.util.UUID
 fun AstroEditDialog(
     initialAlarm: AstroAlarm?,
     defaultTarget: AlarmTarget,
+    place: AstroPlace?,
     onDismiss: () -> Unit,
     onSave: (AstroAlarm) -> Unit
 ) {
     val context = LocalContext.current
-    var target by remember { mutableStateOf(initialAlarm?.target ?: defaultTarget) }
+    val hasLocation = place != null && place.isValid
+    val resolvedDefaultTarget = if (!hasLocation && defaultTarget is AlarmTarget.Solar) {
+        AlarmTarget.CustomClock(7, 0)
+    } else {
+        defaultTarget
+    }
+
+    var target by remember { mutableStateOf(initialAlarm?.target ?: resolvedDefaultTarget) }
     var label by remember { mutableStateOf(initialAlarm?.label ?: "") }
     var selectedDays by remember { mutableStateOf(initialAlarm?.daysOfWeek ?: emptySet()) }
     var toneEnabled by remember { mutableStateOf(initialAlarm?.toneEnabled ?: true) }
@@ -48,18 +57,11 @@ fun AstroEditDialog(
     var snoozeMinutes by remember { mutableStateOf(initialAlarm?.snoozeMinutes ?: 10) }
 
     val toneTitle = remember(toneUri) {
-        if (toneUri == null) {
-            context.getString(R.string.astro_sound_default)
-        } else {
-            runCatching {
-                RingtoneManager.getRingtone(context, Uri.parse(toneUri))?.getTitle(context)
-            }.getOrNull() ?: context.getString(R.string.astro_sound_default)
-        }
+        if (toneUri == null) context.getString(R.string.astro_sound_default)
+        else runCatching { RingtoneManager.getRingtone(context, Uri.parse(toneUri))?.getTitle(context) }.getOrNull() ?: context.getString(R.string.astro_sound_default)
     }
 
-    val ringtonePickerLauncher = rememberLauncherForActivityResult(
-        contract = ActivityResultContracts.StartActivityForResult()
-    ) { result ->
+    val ringtonePickerLauncher = rememberLauncherForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
         if (result.resultCode == Activity.RESULT_OK) {
             val uri: Uri? = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
                 result.data?.getParcelableExtra(RingtoneManager.EXTRA_RINGTONE_PICKED_URI, Uri::class.java)
@@ -71,31 +73,23 @@ fun AstroEditDialog(
         }
     }
 
-    Dialog(
-        onDismissRequest = onDismiss,
-        properties = DialogProperties(usePlatformDefaultWidth = false)
-    ) {
+    val isAstroTarget = target is AlarmTarget.Solar || target is AlarmTarget.Lunar
+    val canSave = !isAstroTarget || hasLocation
+
+    Dialog(onDismissRequest = onDismiss, properties = DialogProperties(usePlatformDefaultWidth = false)) {
         Card(
-            modifier = Modifier
-                .fillMaxWidth(0.95f)
-                .fillMaxHeight(0.92f),
+            modifier = Modifier.fillMaxWidth(0.95f).fillMaxHeight(0.92f),
             shape = RoundedCornerShape(24.dp),
             colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surface)
         ) {
-            Column(
-                modifier = Modifier
-                    .fillMaxSize()
-                    .padding(20.dp)
-            ) {
+            Column(modifier = Modifier.fillMaxSize().padding(20.dp)) {
                 Row(
                     modifier = Modifier.fillMaxWidth(),
                     horizontalArrangement = Arrangement.SpaceBetween,
                     verticalAlignment = Alignment.CenterVertically
                 ) {
                     Text(
-                        text = stringResource(
-                            if (initialAlarm != null) R.string.astro_dialog_edit_title else R.string.astro_dialog_add_title
-                        ),
+                        text = stringResource(if (initialAlarm != null) R.string.astro_dialog_edit_title else R.string.astro_dialog_add_title),
                         style = MaterialTheme.typography.headlineSmall,
                         fontWeight = FontWeight.Bold
                     )
@@ -107,59 +101,21 @@ fun AstroEditDialog(
                 HorizontalDivider(modifier = Modifier.padding(vertical = 12.dp))
 
                 Column(
-                    modifier = Modifier
-                        .weight(1f)
-                        .verticalScroll(rememberScrollState()),
+                    modifier = Modifier.weight(1f).verticalScroll(rememberScrollState()),
                     verticalArrangement = Arrangement.spacedBy(16.dp)
                 ) {
-                    TargetTypeSelector(
-                        currentTarget = target,
-                        onTargetChange = { newTarget ->
-                            target = newTarget
-                        }
-                    )
+                    TargetTypeSelector(currentTarget = target, onTargetChange = { target = it })
 
-                    when (val currentTarget = target) {
-                        is AlarmTarget.Solar -> {
-                            SolarEventPicker(
-                                selectedEvent = currentTarget.event,
-                                onSelectEvent = { newEvent ->
-                                    target = currentTarget.copy(event = newEvent)
-                                }
-                            )
-                            OffsetSelector(
-                                offsetMinutes = currentTarget.offsetMinutes,
-                                eventName = AstroEventLabels.solarLabel(currentTarget.event),
-                                onOffsetChange = { newOffset ->
-                                    target = currentTarget.copy(offsetMinutes = newOffset)
-                                }
-                            )
-                        }
-                        is AlarmTarget.Lunar -> {
-                            LunarEventPicker(
-                                selectedEvent = currentTarget.event,
-                                onSelectEvent = { newEvent ->
-                                    target = currentTarget.copy(event = newEvent)
-                                }
-                            )
-                            OffsetSelector(
-                                offsetMinutes = currentTarget.offsetMinutes,
-                                eventName = AstroEventLabels.lunarLabel(currentTarget.event),
-                                onOffsetChange = { newOffset ->
-                                    target = currentTarget.copy(offsetMinutes = newOffset)
-                                }
-                            )
-                        }
-                        is AlarmTarget.CustomClock -> {
-                            ClockTimePicker(
-                                hour = currentTarget.hour,
-                                minute = currentTarget.minute,
-                                onTimeChange = { newH, newM ->
-                                    target = AlarmTarget.CustomClock(newH, newM)
-                                }
-                            )
+                    if (isAstroTarget && !hasLocation) {
+                        Card(colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.errorContainer), shape = RoundedCornerShape(10.dp)) {
+                            Column(modifier = Modifier.padding(12.dp)) {
+                                Text(stringResource(R.string.astro_location_required_title), fontWeight = FontWeight.Bold, color = MaterialTheme.colorScheme.onErrorContainer)
+                                Text(stringResource(R.string.astro_location_required_desc), style = MaterialTheme.typography.bodySmall, color = MaterialTheme.colorScheme.onErrorContainer)
+                            }
                         }
                     }
+
+                    AstroEditTargetSection(target = target, onTargetChange = { target = it })
 
                     OutlinedTextField(
                         value = label,
@@ -171,16 +127,14 @@ fun AstroEditDialog(
                                     is AlarmTarget.CustomClock -> String.format(Locale.getDefault(), "%02d:%02d", t.hour, t.minute)
                                     is AlarmTarget.Solar -> AstroEventLabels.offsetSummary(t.offsetMinutes, AstroEventLabels.solarLabel(t.event))
                                     is AlarmTarget.Lunar -> AstroEventLabels.offsetSummary(t.offsetMinutes, AstroEventLabels.lunarLabel(t.event))
+                                    is AlarmTarget.Zodiac -> AstroEventLabels.offsetSummary(t.offsetMinutes, AstroEventLabels.zodiacLabel(t.sign, t.point))
                                 }
                             )
                         },
                         modifier = Modifier.fillMaxWidth()
                     )
 
-                    RepeatDaysSection(
-                        selectedDays = selectedDays,
-                        onDaysChange = { selectedDays = it }
-                    )
+                    RepeatDaysSection(target = target, selectedDays = selectedDays, onDaysChange = { selectedDays = it })
 
                     AudioSettingsSection(
                         toneEnabled = toneEnabled,
@@ -188,17 +142,11 @@ fun AstroEditDialog(
                         toneTitle = toneTitle,
                         onChooseTone = {
                             val intent = Intent(RingtoneManager.ACTION_RINGTONE_PICKER).apply {
-                                putExtra(
-                                    RingtoneManager.EXTRA_RINGTONE_TYPE,
-                                    RingtoneManager.TYPE_ALARM or RingtoneManager.TYPE_RINGTONE or RingtoneManager.TYPE_NOTIFICATION
-                                )
+                                putExtra(RingtoneManager.EXTRA_RINGTONE_TYPE, RingtoneManager.TYPE_ALARM or RingtoneManager.TYPE_RINGTONE or RingtoneManager.TYPE_NOTIFICATION)
                                 putExtra(RingtoneManager.EXTRA_RINGTONE_TITLE, context.getString(R.string.astro_alarm_sound))
                                 putExtra(RingtoneManager.EXTRA_RINGTONE_SHOW_DEFAULT, true)
                                 putExtra(RingtoneManager.EXTRA_RINGTONE_SHOW_SILENT, false)
-                                putExtra(
-                                    RingtoneManager.EXTRA_RINGTONE_EXISTING_URI,
-                                    toneUri?.let { Uri.parse(it) } ?: RingtoneManager.getDefaultUri(RingtoneManager.TYPE_ALARM)
-                                )
+                                putExtra(RingtoneManager.EXTRA_RINGTONE_EXISTING_URI, toneUri?.let { Uri.parse(it) } ?: RingtoneManager.getDefaultUri(RingtoneManager.TYPE_ALARM))
                             }
                             ringtonePickerLauncher.launch(intent)
                         },
@@ -215,22 +163,20 @@ fun AstroEditDialog(
 
                 HorizontalDivider(modifier = Modifier.padding(vertical = 12.dp))
 
-                Row(
-                    modifier = Modifier.fillMaxWidth(),
-                    horizontalArrangement = Arrangement.End,
-                    verticalAlignment = Alignment.CenterVertically
-                ) {
+                Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.End, verticalAlignment = Alignment.CenterVertically) {
                     TextButton(onClick = onDismiss) {
                         Text(stringResource(R.string.astro_action_cancel))
                     }
                     Spacer(modifier = Modifier.width(12.dp))
                     Button(
+                        enabled = canSave,
                         onClick = {
                             val finalLabel = label.ifBlank {
                                 when (val t = target) {
                                     is AlarmTarget.CustomClock -> String.format(Locale.getDefault(), "%02d:%02d", t.hour, t.minute)
                                     is AlarmTarget.Solar -> AstroEventLabels.offsetSummary(t.offsetMinutes, AstroEventLabels.solarLabel(t.event))
                                     is AlarmTarget.Lunar -> AstroEventLabels.offsetSummary(t.offsetMinutes, AstroEventLabels.lunarLabel(t.event))
+                                    is AlarmTarget.Zodiac -> AstroEventLabels.offsetSummary(t.offsetMinutes, AstroEventLabels.zodiacLabel(t.sign, t.point))
                                 }
                             }
                             val result = AstroAlarm(

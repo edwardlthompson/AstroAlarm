@@ -43,6 +43,7 @@ fun GoldenPathApp(
     val pendingRestart by appUpdatePreferences.pendingRestart.collectAsStateWithLifecycle(initialValue = false)
     var showAbout by remember { mutableStateOf(false) }
     var showSettings by remember { mutableStateOf(false) }
+    var openedAboutFromSettings by remember { mutableStateOf(false) }
     val feedbackPrefs = remember { FeedbackPrefs(context) }
     var saveCrashes by remember { mutableStateOf(feedbackPrefs.saveCrashes()) }
     var showFeedback by remember { mutableStateOf<String?>(if (PendingCrashStore(context).read() != null) "bug" else null) }
@@ -89,9 +90,28 @@ fun GoldenPathApp(
                 launchPrompt = launchPrompt,
                 onThemeToggle = { scope.launch { themePreferences.setThemeMode(themeMode.next()) } },
                 onThemeModeSelect = { mode -> scope.launch { themePreferences.setThemeMode(mode) } },
-                onAboutOpen = { showAbout = !showAbout; if (showAbout) showSettings = false },
-                onAboutClose = { showAbout = false },
-                onSettingsOpen = { showSettings = !showSettings; if (showSettings) showAbout = false },
+                onAboutOpen = {
+                    openedAboutFromSettings = false
+                    showAbout = !showAbout
+                    if (showAbout) showSettings = false
+                },
+                onAboutClose = {
+                    showAbout = false
+                    if (openedAboutFromSettings) {
+                        openedAboutFromSettings = false
+                        showSettings = true
+                    }
+                },
+                onAboutOpenFromSettings = {
+                    openedAboutFromSettings = true
+                    showAbout = true
+                    showSettings = false
+                },
+                onSettingsOpen = {
+                    openedAboutFromSettings = false
+                    showSettings = !showSettings
+                    if (showSettings) showAbout = false
+                },
                 onSettingsClose = { showSettings = false },
                 onSaveCrashes = { on -> feedbackPrefs.setSaveCrashes(on); saveCrashes = on },
                 onReportBug = { showAbout = false; showFeedback = "bug" },
@@ -108,7 +128,17 @@ fun GoldenPathApp(
                     launchPrompt = null
                     if (prompt != null) {
                         launchPrefs.markChecked(System.currentTimeMillis(), prompt.version)
-                        if (install) openUrl(prompt.url)
+                        if (install) {
+                            scope.launch {
+                                val updatesDir = java.io.File(context.cacheDir, "updates")
+                                val apkFile = java.io.File(updatesDir, "update.apk")
+                                if (prompt.url.contains(".apk") && dev.foss.goldenpath.about.ApkDownloadHelper.download(prompt.url, apkFile)) {
+                                    dev.foss.goldenpath.about.UpdateApplier.launchApkInstall(context, apkFile)
+                                } else {
+                                    openUrl(prompt.url)
+                                }
+                            }
+                        }
                     }
                 },
                 onApplyUpdate = {},

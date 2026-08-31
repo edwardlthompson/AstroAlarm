@@ -1,8 +1,11 @@
 package dev.foss.goldenpath.ui
 
+import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.rememberScrollState
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material.icons.filled.Info
 import androidx.compose.material.icons.filled.Settings
 import androidx.compose.material3.ExperimentalMaterial3Api
@@ -10,12 +13,12 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.Text
-import androidx.compose.material3.TextButton
 import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.platform.LocalUriHandler
 import androidx.compose.ui.res.stringResource
 import dev.foss.goldenpath.R
 import dev.foss.goldenpath.about.AppUpdates
@@ -53,6 +56,7 @@ fun GoldenPathScreen(
     onThemeModeSelect: (ThemeMode) -> Unit,
     onAboutOpen: () -> Unit,
     onAboutClose: () -> Unit,
+    onAboutOpenFromSettings: () -> Unit = onAboutOpen,
     onSettingsOpen: () -> Unit,
     onSettingsClose: () -> Unit,
     onSaveCrashes: (Boolean) -> Unit,
@@ -64,28 +68,63 @@ fun GoldenPathScreen(
     onUpdatePrompt: (Boolean) -> Unit,
     onApplyUpdate: () -> Unit,
 ) {
+    val isSubScreen = showSettings || showAbout || showFeedback != null
+    val settingsScrollState = rememberScrollState()
+
+    BackHandler(enabled = isSubScreen) {
+        when {
+            showFeedback != null -> onFeedbackClose()
+            showAbout -> onAboutClose()
+            showSettings -> onSettingsClose()
+        }
+    }
+
     GoldenPathScaffold(
         snackbarHostState = snackbarHostState,
         topBar = {
             TopAppBar(
-                title = { Text(stringResource(R.string.app_title)) },
-                actions = {
-                    if (donations.enabled && donations.links.isNotEmpty()) {
-                        TextButton(onClick = onDonate) {
-                            Text(stringResource(R.string.about_donate))
+                title = {
+                    Text(
+                        when {
+                            showFeedback != null -> stringResource(
+                                if (showFeedback == "feature") R.string.feedback_feature_title else R.string.feedback_bug_title
+                            )
+                            showAbout -> stringResource(R.string.about_title)
+                            showSettings -> stringResource(R.string.settings_title)
+                            else -> stringResource(R.string.app_title)
+                        }
+                    )
+                },
+                navigationIcon = {
+                    if (isSubScreen) {
+                        IconButton(onClick = {
+                            when {
+                                showFeedback != null -> onFeedbackClose()
+                                showAbout -> onAboutClose()
+                                showSettings -> onSettingsClose()
+                            }
+                        }) {
+                            Icon(
+                                imageVector = Icons.AutoMirrored.Filled.ArrowBack,
+                                contentDescription = stringResource(R.string.about_nav_back),
+                            )
                         }
                     }
-                    IconButton(onClick = onSettingsOpen) {
-                        Icon(
-                            imageVector = Icons.Filled.Settings,
-                            contentDescription = stringResource(R.string.settings_open),
-                        )
-                    }
-                    IconButton(onClick = onAboutOpen) {
-                        Icon(
-                            imageVector = Icons.Filled.Info,
-                            contentDescription = stringResource(R.string.about_open),
-                        )
+                },
+                actions = {
+                    if (!isSubScreen) {
+                        IconButton(onClick = onSettingsOpen) {
+                            Icon(
+                                imageVector = Icons.Filled.Settings,
+                                contentDescription = stringResource(R.string.settings_open),
+                            )
+                        }
+                        IconButton(onClick = onAboutOpen) {
+                            Icon(
+                                imageVector = Icons.Filled.Info,
+                                contentDescription = stringResource(R.string.about_open),
+                            )
+                        }
                     }
                     ThemeToggle(themeMode = themeMode, onToggle = onThemeToggle)
                 },
@@ -109,16 +148,24 @@ fun GoldenPathScreen(
                     .fillMaxSize()
                     .padding(innerPadding),
             )
-            showSettings -> SettingsScreen(
-                themeMode = themeMode,
-                onThemeModeSelect = onThemeModeSelect,
-                saveCrashes = saveCrashes,
-                onSaveCrashes = onSaveCrashes,
-                onBack = onSettingsClose,
-                modifier = Modifier
-                    .fillMaxSize()
-                    .padding(innerPadding),
-            )
+            showSettings -> {
+                val context = LocalContext.current
+                val uriHandler = LocalUriHandler.current
+                val placeStore = remember { AstroPlaceStore(context) }
+                SettingsScreen(
+                    themeMode = themeMode,
+                    onThemeModeSelect = onThemeModeSelect,
+                    saveCrashes = saveCrashes,
+                    onSaveCrashes = onSaveCrashes,
+                    placeStore = placeStore,
+                    onOpenAbout = onAboutOpenFromSettings,
+                    onOpenUrl = { url -> uriHandler.openUri(url) },
+                    scrollState = settingsScrollState,
+                    modifier = Modifier
+                        .fillMaxSize()
+                        .padding(innerPadding),
+                )
+            }
             showAbout -> AboutScreen(
                 version = appVersion,
                 installedFormat = installedFormat,

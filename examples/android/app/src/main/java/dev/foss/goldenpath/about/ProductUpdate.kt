@@ -29,9 +29,9 @@ object ProductUpdate {
         if (src.isEmpty() || stem.isEmpty()) return null
         val quoted = Regex.escape(if (apk) stem.lowercase() else stem)
         val pattern = if (apk) {
-            "$quoted-(\\d+\\.\\d+\\.\\d+)-foss\\.apk"
+            "^$quoted-(\\d+\\.\\d+\\.\\d+)(?:-foss)?\\.apk$"
         } else {
-            "$quoted-(\\d+\\.\\d+\\.\\d+)"
+            "^$quoted-(\\d+\\.\\d+\\.\\d+)"
         }
         return Regex(pattern, RegexOption.IGNORE_CASE).find(src)?.groupValues?.get(1)
     }
@@ -46,7 +46,7 @@ object ProductUpdate {
 
     fun shouldNudgeDonate(lastSeenVersion: String?, currentVersion: String): Boolean {
         if (currentVersion.isBlank()) return false
-        if (lastSeenVersion.isNullOrBlank()) return false
+        if (lastSeenVersion.isNullOrBlank()) return true
         return lastSeenVersion.trim() != currentVersion.trim()
     }
 

@@ -11,6 +11,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import dev.foss.goldenpath.R
+import org.astroalarm.astro.model.AlarmTarget
 import java.time.DayOfWeek
 import java.time.format.TextStyle
 import java.util.Locale
@@ -18,9 +19,12 @@ import java.util.Locale
 @OptIn(ExperimentalLayoutApi::class)
 @Composable
 fun RepeatDaysSection(
+    target: AlarmTarget,
     selectedDays: Set<DayOfWeek>,
     onDaysChange: (Set<DayOfWeek>) -> Unit
 ) {
+    val isSeasonal = (target is AlarmTarget.Solar && AstroEventLabels.isSeasonal(target.event)) || target is AlarmTarget.Zodiac
+
     Card(
         modifier = Modifier.fillMaxWidth(),
         shape = RoundedCornerShape(12.dp),
@@ -36,70 +40,80 @@ fun RepeatDaysSection(
                 fontWeight = FontWeight.Bold
             )
 
-            FlowRow(
-                modifier = Modifier.fillMaxWidth(),
-                horizontalArrangement = Arrangement.spacedBy(6.dp),
-                verticalArrangement = Arrangement.spacedBy(6.dp)
-            ) {
-                FilterChip(
-                    selected = selectedDays.isEmpty(),
-                    onClick = { onDaysChange(emptySet()) },
-                    label = { Text(stringResource(R.string.astro_repeat_once), fontSize = 12.sp) }
+            if (isSeasonal) {
+                Text(
+                    text = stringResource(R.string.astro_repeat_yearly_desc),
+                    style = MaterialTheme.typography.bodyMedium,
+                    color = MaterialTheme.colorScheme.onSurfaceVariant
                 )
-                FilterChip(
-                    selected = selectedDays.size == 7,
-                    onClick = { onDaysChange(DayOfWeek.values().toSet()) },
-                    label = { Text(stringResource(R.string.astro_repeat_daily), fontSize = 12.sp) }
-                )
-                FilterChip(
-                    selected = selectedDays == setOf(
-                        DayOfWeek.MONDAY,
-                        DayOfWeek.TUESDAY,
-                        DayOfWeek.WEDNESDAY,
-                        DayOfWeek.THURSDAY,
-                        DayOfWeek.FRIDAY
-                    ),
-                    onClick = {
-                        onDaysChange(
-                            setOf(
-                                DayOfWeek.MONDAY,
-                                DayOfWeek.TUESDAY,
-                                DayOfWeek.WEDNESDAY,
-                                DayOfWeek.THURSDAY,
-                                DayOfWeek.FRIDAY
-                            )
+            } else {
+                FlowRow(
+                    modifier = Modifier.fillMaxWidth(),
+                    horizontalArrangement = Arrangement.spacedBy(6.dp),
+                    verticalArrangement = Arrangement.spacedBy(6.dp)
+                ) {
+                    if (target is AlarmTarget.CustomClock) {
+                        FilterChip(
+                            selected = selectedDays.isEmpty(),
+                            onClick = { onDaysChange(emptySet()) },
+                            label = { Text(stringResource(R.string.astro_repeat_once), fontSize = 12.sp) }
                         )
-                    },
-                    label = { Text(stringResource(R.string.astro_repeat_weekdays), fontSize = 12.sp) }
-                )
-                FilterChip(
-                    selected = selectedDays == setOf(DayOfWeek.SATURDAY, DayOfWeek.SUNDAY),
-                    onClick = {
-                        onDaysChange(setOf(DayOfWeek.SATURDAY, DayOfWeek.SUNDAY))
-                    },
-                    label = { Text(stringResource(R.string.astro_repeat_weekends), fontSize = 12.sp) }
-                )
-            }
-
-            FlowRow(
-                modifier = Modifier.fillMaxWidth(),
-                horizontalArrangement = Arrangement.spacedBy(6.dp),
-                verticalArrangement = Arrangement.spacedBy(6.dp)
-            ) {
-                DayOfWeek.values().forEach { d ->
-                    val isSelected = selectedDays.contains(d)
+                    }
                     FilterChip(
-                        selected = isSelected,
-                        onClick = {
-                            onDaysChange(if (isSelected) selectedDays - d else selectedDays + d)
-                        },
-                        label = {
-                            Text(
-                                text = d.getDisplayName(TextStyle.SHORT, Locale.getDefault()),
-                                fontSize = 12.sp
-                            )
-                        }
+                        selected = if (target is AlarmTarget.CustomClock) selectedDays.size == 7 else selectedDays.isEmpty() || selectedDays.size == 7,
+                        onClick = { onDaysChange(DayOfWeek.values().toSet()) },
+                        label = { Text(stringResource(R.string.astro_repeat_daily), fontSize = 12.sp) }
                     )
+                    FilterChip(
+                        selected = selectedDays == setOf(
+                            DayOfWeek.MONDAY,
+                            DayOfWeek.TUESDAY,
+                            DayOfWeek.WEDNESDAY,
+                            DayOfWeek.THURSDAY,
+                            DayOfWeek.FRIDAY
+                        ),
+                        onClick = {
+                            onDaysChange(
+                                setOf(
+                                    DayOfWeek.MONDAY,
+                                    DayOfWeek.TUESDAY,
+                                    DayOfWeek.WEDNESDAY,
+                                    DayOfWeek.THURSDAY,
+                                    DayOfWeek.FRIDAY
+                                )
+                            )
+                        },
+                        label = { Text(stringResource(R.string.astro_repeat_weekdays), fontSize = 12.sp) }
+                    )
+                    FilterChip(
+                        selected = selectedDays == setOf(DayOfWeek.SATURDAY, DayOfWeek.SUNDAY),
+                        onClick = {
+                            onDaysChange(setOf(DayOfWeek.SATURDAY, DayOfWeek.SUNDAY))
+                        },
+                        label = { Text(stringResource(R.string.astro_repeat_weekends), fontSize = 12.sp) }
+                    )
+                }
+
+                FlowRow(
+                    modifier = Modifier.fillMaxWidth(),
+                    horizontalArrangement = Arrangement.spacedBy(6.dp),
+                    verticalArrangement = Arrangement.spacedBy(6.dp)
+                ) {
+                    DayOfWeek.values().forEach { d ->
+                        val isSelected = selectedDays.contains(d)
+                        FilterChip(
+                            selected = isSelected,
+                            onClick = {
+                                onDaysChange(if (isSelected) selectedDays - d else selectedDays + d)
+                            },
+                            label = {
+                                Text(
+                                    text = d.getDisplayName(TextStyle.SHORT, Locale.getDefault()),
+                                    fontSize = 12.sp
+                                )
+                            }
+                        )
+                    }
                 }
             }
         }

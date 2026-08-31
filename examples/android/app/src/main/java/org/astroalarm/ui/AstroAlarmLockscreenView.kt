@@ -8,6 +8,7 @@ import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.ImeAction
@@ -18,9 +19,10 @@ import androidx.compose.ui.unit.sp
 import androidx.compose.ui.window.Dialog
 import dev.foss.goldenpath.R
 import org.astroalarm.astro.model.AstroAlarm
+import org.astroalarm.math.MathPreferences
+import org.astroalarm.math.MathProblemGenerator
 import java.time.LocalTime
 import java.time.format.DateTimeFormatter
-import kotlin.random.Random
 
 @Composable
 fun AstroAlarmLockscreenView(
@@ -130,14 +132,32 @@ private fun MathChallengeDialog(
     onDismiss: () -> Unit,
     onSolved: () -> Unit
 ) {
-    var num1 by remember { mutableStateOf(Random.nextInt(12, 50)) }
-    var num2 by remember { mutableStateOf(Random.nextInt(11, 40)) }
-    var isAddition by remember { mutableStateOf(Random.nextBoolean()) }
+    val context = LocalContext.current
+    val mathPrefs = remember { MathPreferences(context) }
+    val difficulty = mathPrefs.getDifficulty()
+    val totalProblems = mathPrefs.getProblemCount()
+
+    var currentProblemIndex by remember { mutableIntStateOf(1) }
+    var currentProblem by remember { mutableStateOf(MathProblemGenerator.generate(difficulty)) }
     var userAnswer by remember { mutableStateOf("") }
     var isError by remember { mutableStateOf(false) }
 
-    val correctAnswer = if (isAddition) num1 + num2 else num1 - num2
-    val operator = if (isAddition) "+" else "-"
+    fun checkAndAdvance() {
+        if (userAnswer.trim().toIntOrNull() == currentProblem.answer) {
+            if (currentProblemIndex >= totalProblems) {
+                onSolved()
+            } else {
+                currentProblemIndex += 1
+                currentProblem = MathProblemGenerator.generate(difficulty)
+                userAnswer = ""
+                isError = false
+            }
+        } else {
+            isError = true
+            userAnswer = ""
+            currentProblem = MathProblemGenerator.generate(difficulty)
+        }
+    }
 
     Dialog(onDismissRequest = onDismiss) {
         Card(
@@ -154,14 +174,25 @@ private fun MathChallengeDialog(
                 horizontalAlignment = Alignment.CenterHorizontally,
                 verticalArrangement = Arrangement.spacedBy(16.dp)
             ) {
-                Text(
-                    text = stringResource(R.string.astro_math_dialog_title),
-                    style = MaterialTheme.typography.titleLarge,
-                    fontWeight = FontWeight.Bold
-                )
+                Row(
+                    modifier = Modifier.fillMaxWidth(),
+                    horizontalArrangement = Arrangement.SpaceBetween,
+                    verticalAlignment = Alignment.CenterVertically
+                ) {
+                    Text(
+                        text = stringResource(R.string.astro_math_dialog_title),
+                        style = MaterialTheme.typography.titleLarge,
+                        fontWeight = FontWeight.Bold
+                    )
+                    if (totalProblems > 1) {
+                        Badge {
+                            Text(stringResource(R.string.astro_math_progress, currentProblemIndex, totalProblems))
+                        }
+                    }
+                }
 
                 Text(
-                    text = "$num1 $operator $num2 = ?",
+                    text = "${currentProblem.expression} = ?",
                     fontSize = 32.sp,
                     fontWeight = FontWeight.ExtraBold,
                     color = MaterialTheme.colorScheme.primary
@@ -179,19 +210,7 @@ private fun MathChallengeDialog(
                         keyboardType = KeyboardType.Number,
                         imeAction = ImeAction.Done
                     ),
-                    keyboardActions = KeyboardActions(
-                        onDone = {
-                            if (userAnswer.trim().toIntOrNull() == correctAnswer) {
-                                onSolved()
-                            } else {
-                                isError = true
-                                userAnswer = ""
-                                num1 = Random.nextInt(15, 60)
-                                num2 = Random.nextInt(12, 45)
-                                isAddition = Random.nextBoolean()
-                            }
-                        }
-                    ),
+                    keyboardActions = KeyboardActions(onDone = { checkAndAdvance() }),
                     singleLine = true,
                     modifier = Modifier.fillMaxWidth()
                 )
@@ -213,19 +232,7 @@ private fun MathChallengeDialog(
                         Text(stringResource(R.string.astro_action_cancel))
                     }
                     Spacer(modifier = Modifier.width(8.dp))
-                    Button(
-                        onClick = {
-                            if (userAnswer.trim().toIntOrNull() == correctAnswer) {
-                                onSolved()
-                            } else {
-                                isError = true
-                                userAnswer = ""
-                                num1 = Random.nextInt(15, 60)
-                                num2 = Random.nextInt(12, 45)
-                                isAddition = Random.nextBoolean()
-                            }
-                        }
-                    ) {
+                    Button(onClick = { checkAndAdvance() }) {
                         Text(stringResource(R.string.astro_math_submit))
                     }
                 }

@@ -141,19 +141,21 @@ fun LocationCard(
 }
 
 @Composable
-fun SectionHeader(title: String, onAdd: () -> Unit) {
+fun SectionHeader(title: String, onAdd: (() -> Unit)? = null) {
     Row(
         modifier = Modifier.fillMaxWidth(),
         horizontalArrangement = Arrangement.SpaceBetween,
         verticalAlignment = Alignment.CenterVertically
     ) {
         Text(text = title, fontSize = 18.sp, fontWeight = FontWeight.Bold)
-        Button(
-            onClick = onAdd,
-            shape = RoundedCornerShape(20.dp),
-            contentPadding = PaddingValues(horizontal = 14.dp, vertical = 6.dp)
-        ) {
-            Text(stringResource(R.string.astro_action_add))
+        if (onAdd != null) {
+            Button(
+                onClick = onAdd,
+                shape = RoundedCornerShape(20.dp),
+                contentPadding = PaddingValues(horizontal = 14.dp, vertical = 6.dp)
+            ) {
+                Text(stringResource(R.string.astro_action_add))
+            }
         }
     }
 }

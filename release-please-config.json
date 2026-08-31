@@ -8,6 +8,10 @@
         ".template-version",
         "TEMPLATE_INDEX.json",
         {
+          "type": "generic",
+          "path": "examples/android/app/build.gradle.kts"
+        },
+        {
           "type": "yaml",
           "path": "CITATION.cff",
           "jsonpath": "$.version"

@@ -6,6 +6,8 @@ import org.astroalarm.astro.model.AlarmTarget
 import org.astroalarm.astro.model.AstroAlarm
 import org.astroalarm.astro.model.LunarEventType
 import org.astroalarm.astro.model.SolarEventType
+import org.astroalarm.astro.zodiac.ZodiacPoint
+import org.astroalarm.astro.zodiac.ZodiacSign
 import java.time.DayOfWeek
 import java.util.UUID
 
@@ -42,6 +44,12 @@ object AstroAlarmJson {
             is AlarmTarget.Lunar -> {
                 targetObj.put("kind", "lunar")
                 targetObj.put("event", target.event.name)
+                targetObj.put("offset", target.offsetMinutes)
+            }
+            is AlarmTarget.Zodiac -> {
+                targetObj.put("kind", "zodiac")
+                targetObj.put("sign", target.sign.name)
+                targetObj.put("point", target.point.name)
                 targetObj.put("offset", target.offsetMinutes)
             }
         }
@@ -87,6 +95,13 @@ object AstroAlarmJson {
                 val evName = targetObj.optString("event")
                 val ev = runCatching { LunarEventType.valueOf(evName) }.getOrDefault(LunarEventType.Moonrise)
                 AlarmTarget.Lunar(ev, targetObj.optInt("offset", 0))
+            }
+            "zodiac" -> {
+                val signName = targetObj.optString("sign")
+                val pointName = targetObj.optString("point")
+                val sign = runCatching { ZodiacSign.valueOf(signName) }.getOrDefault(ZodiacSign.Aries)
+                val point = runCatching { ZodiacPoint.valueOf(pointName) }.getOrDefault(ZodiacPoint.Beginning)
+                AlarmTarget.Zodiac(sign, point, targetObj.optInt("offset", 0))
             }
             else -> return null
         }

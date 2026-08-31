@@ -2,6 +2,8 @@ package org.astroalarm.ui
 
 import org.astroalarm.astro.model.LunarEventType
 import org.astroalarm.astro.model.SolarEventType
+import org.astroalarm.astro.zodiac.ZodiacPoint
+import org.astroalarm.astro.zodiac.ZodiacSign
 
 object AstroEventLabels {
 
@@ -73,6 +75,27 @@ object AstroEventLabels {
         LunarEventType.WaningGibbous -> "Waning moon shrinking from full"
         LunarEventType.LastQuarter -> "Half moon illuminated 50% (shrinking)"
         LunarEventType.WaningCrescent -> "Silver crescent before new moon"
+    }
+
+    fun zodiacLabel(sign: ZodiacSign, point: ZodiacPoint): String {
+        return "${sign.symbol} ${sign.englishName} ${point.englishName}"
+    }
+
+    fun zodiacDescription(sign: ZodiacSign, point: ZodiacPoint): String {
+        val deg = (sign.startLongitudeDeg + point.degreeOffset) % 360.0
+        return when (point) {
+            ZodiacPoint.Beginning -> "Sun enters ${sign.englishName} at ${deg.toInt()}° ecliptic longitude"
+            ZodiacPoint.Middle -> "Sun reaches midpoint of ${sign.englishName} (15° in sign / ${deg.toInt()}° ecliptic)"
+            ZodiacPoint.End -> "Sun leaves ${sign.englishName} at 30° / transition cusp"
+        }
+    }
+
+    fun isSeasonal(event: SolarEventType): Boolean = when (event) {
+        SolarEventType.MarchEquinox,
+        SolarEventType.SeptemberEquinox,
+        SolarEventType.JuneSolstice,
+        SolarEventType.DecemberSolstice -> true
+        else -> false
     }
 
     fun offsetSummary(offsetMinutes: Int, eventName: String): String = when {

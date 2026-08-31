@@ -74,6 +74,32 @@
                 android:name="android.appwidget.provider"
                 android:resource="@xml/astro_widget_info" />
         </receiver>
+        <receiver
+            android:name="org.astroalarm.widget.AstroUpcomingWidgetProvider"
+            android:exported="true">
+            <intent-filter>
+                <action android:name="android.appwidget.action.APPWIDGET_UPDATE" />
+                <action android:name="android.intent.action.TIME_TICK" />
+                <action android:name="android.intent.action.TIMEZONE_CHANGED" />
+                <action android:name="android.intent.action.TIME_SET" />
+            </intent-filter>
+            <meta-data
+                android:name="android.appwidget.provider"
+                android:resource="@xml/astro_upcoming_widget_info" />
+        </receiver>
+        <receiver
+            android:name="org.astroalarm.widget.Astro3DClockWidgetProvider"
+            android:exported="true">
+            <intent-filter>
+                <action android:name="android.appwidget.action.APPWIDGET_UPDATE" />
+                <action android:name="android.intent.action.TIME_TICK" />
+                <action android:name="android.intent.action.TIMEZONE_CHANGED" />
+                <action android:name="android.intent.action.TIME_SET" />
+            </intent-filter>
+            <meta-data
+                android:name="android.appwidget.provider"
+                android:resource="@xml/astro_3d_widget_info" />
+        </receiver>
     </application>
 
 </manifest>

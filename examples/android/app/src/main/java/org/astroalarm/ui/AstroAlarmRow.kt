@@ -42,9 +42,10 @@ fun AstroAlarmRow(
                     horizontalArrangement = Arrangement.spacedBy(10.dp),
                     verticalAlignment = Alignment.CenterVertically
                 ) {
-                    val icon = when (alarm.target) {
+                    val icon = when (val t = alarm.target) {
                         is AlarmTarget.Solar -> "☀️"
                         is AlarmTarget.Lunar -> "🌙"
+                        is AlarmTarget.Zodiac -> t.sign.symbol
                         is AlarmTarget.CustomClock -> "⏰"
                     }
                     Text(text = icon, fontSize = 24.sp)
@@ -75,7 +76,7 @@ fun AstroAlarmRow(
             }
 
             Spacer(modifier = Modifier.height(10.dp))
-            DaysChipRow(selectedDays = alarm.daysOfWeek)
+            DaysChipRow(target = alarm.target, selectedDays = alarm.daysOfWeek)
 
             Spacer(modifier = Modifier.height(10.dp))
             Row(
@@ -113,10 +114,15 @@ fun AstroAlarmRow(
 }
 
 @Composable
-fun DaysChipRow(selectedDays: Set<DayOfWeek>) {
+fun DaysChipRow(target: AlarmTarget, selectedDays: Set<DayOfWeek>) {
+    val isSeasonal = (target is AlarmTarget.Solar && AstroEventLabels.isSeasonal(target.event)) || target is AlarmTarget.Zodiac
     Row(horizontalArrangement = Arrangement.spacedBy(4.dp)) {
-        if (selectedDays.isEmpty()) {
+        if (isSeasonal) {
+            BadgeText(stringResource(R.string.astro_repeat_yearly))
+        } else if (target is AlarmTarget.CustomClock && selectedDays.isEmpty()) {
             BadgeText(stringResource(R.string.astro_repeat_once))
+        } else if (selectedDays.isEmpty() || selectedDays.size == 7) {
+            BadgeText(stringResource(R.string.astro_repeat_daily))
         } else {
             DayOfWeek.values().forEach { d ->
                 val isSelected = selectedDays.contains(d)

@@ -103,4 +103,47 @@ class AstroNextFireTest {
         val next = AstroNextFire.nextInstant(alarm, place = null, now = now)
         assertNull(next)
     }
+
+    @Test
+    fun testPastEquinoxRollsToNextYear() {
+        // Today is Aug 30, 2026 (March 2026 equinox has passed)
+        val date = LocalDate.of(2026, 8, 30)
+        val now = ZonedDateTime.of(date, LocalTime.of(12, 0), zone).toInstant()
+
+        val alarm = AstroAlarm(
+            id = "6",
+            label = "Spring Equinox",
+            target = AlarmTarget.Solar(SolarEventType.MarchEquinox)
+        )
+
+        val next = AstroNextFire.nextInstant(alarm, place = samplePlace, now = now, zone = zone)
+        assertNotNull(next)
+        assertTrue(next!!.isAfter(now))
+        val nextZdt = ZonedDateTime.ofInstant(next, zone)
+        assertEquals(2027, nextZdt.year)
+        assertEquals(Month.MARCH, nextZdt.month)
+        assertEquals(20, nextZdt.dayOfMonth)
+        assertFalse("Solar alarms should not be once", alarm.isOnce)
+    }
+
+    @Test
+    fun testFutureSolsticeInCurrentYear() {
+        // Today is Aug 30, 2026 (December 2026 solstice is upcoming)
+        val date = LocalDate.of(2026, 8, 30)
+        val now = ZonedDateTime.of(date, LocalTime.of(12, 0), zone).toInstant()
+
+        val alarm = AstroAlarm(
+            id = "7",
+            label = "Winter Solstice",
+            target = AlarmTarget.Solar(SolarEventType.DecemberSolstice)
+        )
+
+        val next = AstroNextFire.nextInstant(alarm, place = samplePlace, now = now, zone = zone)
+        assertNotNull(next)
+        assertTrue(next!!.isAfter(now))
+        val nextZdt = ZonedDateTime.ofInstant(next, zone)
+        assertEquals(2026, nextZdt.year)
+        assertEquals(Month.DECEMBER, nextZdt.month)
+        assertEquals(21, nextZdt.dayOfMonth)
+    }
 }

@@ -5,6 +5,9 @@ import android.app.PendingIntent
 import android.content.Context
 import android.content.Intent
 import org.astroalarm.astro.place.AstroPlaceStore
+import org.astroalarm.widget.Astro3DClockWidgetProvider
+import org.astroalarm.widget.AstroClockWidgetProvider
+import org.astroalarm.widget.AstroUpcomingWidgetProvider
 import java.time.Instant
 
 object AstroAlarmScheduler {
@@ -18,6 +21,12 @@ object AstroAlarmScheduler {
         val place = placeStore.get()
         val alarms = alarmStore.getAll().filter { it.enabled }
         val now = Instant.now()
+
+        runCatching {
+            AstroClockWidgetProvider.updateAll(context)
+            AstroUpcomingWidgetProvider.updateAll(context)
+            Astro3DClockWidgetProvider.updateAll(context)
+        }
 
         val nextPairs = alarms.mapNotNull { alarm ->
             val instant = AstroNextFire.nextInstant(alarm, place, now) ?: return@mapNotNull null
@@ -62,6 +71,11 @@ object AstroAlarmScheduler {
         val operation = PendingIntent.getBroadcast(context, REQUEST_CODE_ALARM, fireIntent, flags)
         if (operation != null) {
             am.cancel(operation)
+        }
+        runCatching {
+            AstroClockWidgetProvider.updateAll(context)
+            AstroUpcomingWidgetProvider.updateAll(context)
+            Astro3DClockWidgetProvider.updateAll(context)
         }
     }
 }

@@ -79,14 +79,8 @@ fun AboutScreen(
         Button(onClick = onReportBug) {
             Text(stringResource(R.string.feedback_bug_title))
         }
-        Button(onClick = onRequestFeature) {
+        Button(onClick = onRequestFeature, modifier = Modifier.bottomInsetPadding()) {
             Text(stringResource(R.string.feedback_feature_title))
-        }
-        Button(
-            onClick = onBack,
-            modifier = Modifier.bottomInsetPadding(),
-        ) {
-            Text(stringResource(R.string.about_close))
         }
     }
 }

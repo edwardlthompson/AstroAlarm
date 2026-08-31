@@ -1,36 +1,35 @@
 package org.astroalarm.ui
 
-import android.Manifest
+import android.appwidget.AppWidgetManager
+import android.content.ComponentName
+import android.os.Build
 import android.widget.Toast
-import androidx.activity.compose.rememberLauncherForActivityResult
-import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.pager.HorizontalPager
+import androidx.compose.foundation.pager.rememberPagerState
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
+import androidx.compose.material.icons.filled.AddCircle
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import dev.foss.goldenpath.R
-import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
-import kotlinx.coroutines.withContext
 import org.astroalarm.astro.alarm.AstroAlarmScheduler
 import org.astroalarm.astro.alarm.AstroAlarmStore
-import org.astroalarm.astro.alarm.AstroNextFire
 import org.astroalarm.astro.model.AlarmTarget
 import org.astroalarm.astro.model.AstroAlarm
-import org.astroalarm.astro.model.LunarEventType
 import org.astroalarm.astro.model.SolarEventType
-import org.astroalarm.astro.place.AstroPlace
-import org.astroalarm.astro.place.AstroPlaceFinder
 import org.astroalarm.astro.place.AstroPlaceStore
+import org.astroalarm.astro.settings.AstroDisplayPreferences
+import org.astroalarm.widget.AstroUpcomingWidgetProvider
 
 @Composable
 fun AstroScreen(
@@ -39,199 +38,176 @@ fun AstroScreen(
     modifier: Modifier = Modifier
 ) {
     val context = LocalContext.current
-    val scope = rememberCoroutineScope()
+    val displayPrefs = remember { AstroDisplayPreferences(context) }
+    val viewMode by displayPrefs.alarmViewMode.collectAsState()
+    val coroutineScope = rememberCoroutineScope()
     val place by placeStore.place.collectAsState()
     val alarms by alarmStore.alarms.collectAsState()
 
-    var searchQuery by remember { mutableStateOf("") }
-    var citySuggestions by remember { mutableStateOf<List<AstroPlace>>(emptyList()) }
     var editingAlarm by remember { mutableStateOf<AstroAlarm?>(null) }
     var showAddDialogWithTarget by remember { mutableStateOf<AlarmTarget?>(null) }
-    var isLocating by remember { mutableStateOf(false) }
 
-    fun triggerLocate() {
-        scope.launch {
-            isLocating = true
-            val loc = withContext(Dispatchers.IO) {
-                AstroPlaceFinder.resolveLocation(context)
-            }
-            isLocating = false
-            if (loc != null) {
-                placeStore.set(loc)
-                AstroAlarmScheduler.rescheduleAll(context)
-                Toast.makeText(context, context.getString(R.string.astro_toast_location_updated, loc.cityName), Toast.LENGTH_SHORT).show()
-            } else {
-                Toast.makeText(context, context.getString(R.string.astro_toast_location_failed), Toast.LENGTH_LONG).show()
-            }
-        }
-    }
+    val pagerState = rememberPagerState(pageCount = { 3 })
 
-    val permissionLauncher = rememberLauncherForActivityResult(
-        contract = ActivityResultContracts.RequestMultiplePermissions()
-    ) { perms ->
-        val granted = perms[Manifest.permission.ACCESS_FINE_LOCATION] == true ||
-            perms[Manifest.permission.ACCESS_COARSE_LOCATION] == true
-        if (granted) {
-            triggerLocate()
-        } else {
-            Toast.makeText(context, context.getString(R.string.astro_toast_location_permission), Toast.LENGTH_LONG).show()
-        }
-    }
-
-    LaunchedEffect(searchQuery) {
-        if (searchQuery.trim().length >= 2) {
-            citySuggestions = withContext(Dispatchers.IO) {
-                AstroPlaceFinder.searchCities(context, searchQuery)
-            }
-        } else {
-            citySuggestions = emptyList()
-        }
+    val hasLocation = place != null && place!!.isValid
+    val defaultTarget = if (hasLocation) {
+        AlarmTarget.Solar(SolarEventType.Sunrise, 0)
+    } else {
+        AlarmTarget.CustomClock(7, 0)
     }
 
     Scaffold(
         modifier = modifier.fillMaxSize(),
+        contentWindowInsets = WindowInsets(0, 0, 0, 0),
         floatingActionButton = {
-            FloatingActionButton(
-                onClick = { showAddDialogWithTarget = AlarmTarget.Solar(SolarEventType.Sunrise, 0) },
-                containerColor = MaterialTheme.colorScheme.primary,
-                contentColor = MaterialTheme.colorScheme.onPrimary
-            ) {
-                Icon(Icons.Default.Add, contentDescription = stringResource(R.string.astro_cd_add_alarm))
+            if (pagerState.currentPage == 0) {
+                FloatingActionButton(
+                    onClick = { showAddDialogWithTarget = defaultTarget },
+                    containerColor = MaterialTheme.colorScheme.primary,
+                    contentColor = MaterialTheme.colorScheme.onPrimary
+                ) {
+                    Icon(Icons.Default.Add, contentDescription = stringResource(R.string.astro_cd_add_alarm))
+                }
             }
         }
     ) { innerPadding ->
-        LazyColumn(
+        Column(
             modifier = Modifier
                 .fillMaxSize()
                 .padding(innerPadding)
-                .padding(horizontal = 16.dp),
-            verticalArrangement = Arrangement.spacedBy(16.dp)
         ) {
-            item {
-                Spacer(modifier = Modifier.height(8.dp))
-                Text(
-                    text = stringResource(R.string.astro_screen_title),
-                    fontSize = 24.sp,
-                    fontWeight = FontWeight.Bold
+            PrimaryTabRow(
+                selectedTabIndex = pagerState.currentPage,
+                modifier = Modifier.fillMaxWidth()
+            ) {
+                Tab(
+                    selected = pagerState.currentPage == 0,
+                    onClick = { coroutineScope.launch { pagerState.animateScrollToPage(0) } },
+                    text = { Text(stringResource(R.string.astro_tab_alarms), fontSize = 13.sp) }
+                )
+                Tab(
+                    selected = pagerState.currentPage == 1,
+                    onClick = { coroutineScope.launch { pagerState.animateScrollToPage(1) } },
+                    text = { Text(stringResource(R.string.astro_tab_clock_wheel), fontSize = 13.sp) }
+                )
+                Tab(
+                    selected = pagerState.currentPage == 2,
+                    onClick = { coroutineScope.launch { pagerState.animateScrollToPage(2) } },
+                    text = { Text(stringResource(R.string.astro_tab_3d_clock), fontSize = 13.sp) }
                 )
             }
 
-            item {
-                LocationCard(
-                    place = place,
-                    searchQuery = searchQuery,
-                    onSearchQueryChange = { searchQuery = it },
-                    suggestions = citySuggestions,
-                    isLocating = isLocating,
-                    onSelectCity = { selected ->
-                        placeStore.set(selected)
-                        searchQuery = ""
-                        citySuggestions = emptyList()
-                        AstroAlarmScheduler.rescheduleAll(context)
-                    },
-                    onUseGps = {
-                        if (AstroPlaceFinder.hasLocationPermission(context)) {
-                            triggerLocate()
-                        } else {
-                            permissionLauncher.launch(
-                                arrayOf(
-                                    Manifest.permission.ACCESS_FINE_LOCATION,
-                                    Manifest.permission.ACCESS_COARSE_LOCATION
-                                )
-                            )
+            HorizontalPager(
+                state = pagerState,
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .weight(1f)
+            ) { page ->
+                when (page) {
+                    0 -> {
+                        Column(
+                            modifier = Modifier
+                                .fillMaxSize()
+                                .padding(horizontal = 16.dp)
+                        ) {
+                            Row(
+                                modifier = Modifier
+                                    .fillMaxWidth()
+                                    .padding(top = 4.dp, bottom = 2.dp),
+                                horizontalArrangement = Arrangement.SpaceBetween,
+                                verticalAlignment = Alignment.CenterVertically
+                            ) {
+                                Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
+                                    FilterChip(
+                                        selected = viewMode == AlarmViewMode.NextDue,
+                                        onClick = { displayPrefs.setAlarmViewMode(AlarmViewMode.NextDue) },
+                                        label = { Text(stringResource(R.string.astro_sort_next_due)) }
+                                    )
+                                    FilterChip(
+                                        selected = viewMode == AlarmViewMode.Grouped,
+                                        onClick = { displayPrefs.setAlarmViewMode(AlarmViewMode.Grouped) },
+                                        label = { Text(stringResource(R.string.astro_sort_grouped)) }
+                                    )
+                                }
+                                TextButton(
+                                    onClick = { coroutineScope.launch { pagerState.animateScrollToPage(1) } },
+                                    contentPadding = PaddingValues(horizontal = 4.dp, vertical = 2.dp)
+                                ) {
+                                    Text(stringResource(R.string.astro_swipe_hint), fontSize = 11.sp)
+                                }
+                            }
+
+                            LazyColumn(
+                                modifier = Modifier
+                                    .fillMaxWidth()
+                                    .weight(1f),
+                                verticalArrangement = Arrangement.spacedBy(10.dp)
+                            ) {
+                                if (alarms.isEmpty()) {
+                                    item {
+                                        EmptySectionNote(stringResource(R.string.astro_empty_all))
+                                    }
+                                } else if (viewMode == AlarmViewMode.NextDue) {
+                                    renderNextDueAlarms(
+                                        alarms = alarms,
+                                        place = place,
+                                        onToggle = { alarm, enabled ->
+                                            alarmStore.toggle(alarm.id, enabled)
+                                            AstroAlarmScheduler.rescheduleAll(context)
+                                        },
+                                        onEdit = { editingAlarm = it },
+                                        onDelete = {
+                                            alarmStore.delete(it.id)
+                                            AstroAlarmScheduler.rescheduleAll(context)
+                                        }
+                                    )
+                                } else {
+                                    renderGroupedAlarms(
+                                        alarms = alarms,
+                                        place = place,
+                                        onToggle = { alarm, enabled ->
+                                            alarmStore.toggle(alarm.id, enabled)
+                                            AstroAlarmScheduler.rescheduleAll(context)
+                                        },
+                                        onEdit = { editingAlarm = it },
+                                        onDelete = {
+                                            alarmStore.delete(it.id)
+                                            AstroAlarmScheduler.rescheduleAll(context)
+                                        }
+                                    )
+                                }
+
+                                item {
+                                    Button(
+                                        onClick = {
+                                            val appWidgetManager = context.getSystemService(AppWidgetManager::class.java)
+                                            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O && appWidgetManager != null && appWidgetManager.isRequestPinAppWidgetSupported) {
+                                                val provider = ComponentName(context, AstroUpcomingWidgetProvider::class.java)
+                                                appWidgetManager.requestPinAppWidget(provider, null, null)
+                                                Toast.makeText(context, context.getString(R.string.astro_widget_pinned_success), Toast.LENGTH_SHORT).show()
+                                            } else {
+                                                Toast.makeText(context, context.getString(R.string.astro_widget_pin_manual_guide), Toast.LENGTH_LONG).show()
+                                            }
+                                        },
+                                        modifier = Modifier
+                                            .fillMaxWidth()
+                                            .padding(vertical = 8.dp),
+                                        shape = RoundedCornerShape(12.dp)
+                                    ) {
+                                        Icon(Icons.Default.AddCircle, contentDescription = null)
+                                        Spacer(modifier = Modifier.width(8.dp))
+                                        Text(stringResource(R.string.astro_add_upcoming_widget_btn))
+                                    }
+                                }
+
+                                item { Spacer(modifier = Modifier.height(72.dp)) }
+                            }
                         }
                     }
-                )
-            }
-
-            item {
-                SectionHeader(
-                    title = "☀️ " + stringResource(R.string.astro_section_solar),
-                    onAdd = { showAddDialogWithTarget = AlarmTarget.Solar(SolarEventType.Sunrise, 0) }
-                )
-            }
-            val solarAlarms = alarms.filter { it.target is AlarmTarget.Solar }
-            if (solarAlarms.isEmpty()) {
-                item { EmptySectionNote(stringResource(R.string.astro_empty_solar)) }
-            } else {
-                items(solarAlarms, key = { it.id }) { alarm ->
-                    val nextInstant = AstroNextFire.nextInstant(alarm, place)
-                    val formatted = nextInstant?.let { formatInstant(it, place) }
-                    AstroAlarmRow(
-                        alarm = alarm,
-                        nextFireFormatted = formatted,
-                        onToggle = { enabled ->
-                            alarmStore.toggle(alarm.id, enabled)
-                            AstroAlarmScheduler.rescheduleAll(context)
-                        },
-                        onEdit = { editingAlarm = alarm },
-                        onDelete = {
-                            alarmStore.delete(alarm.id)
-                            AstroAlarmScheduler.rescheduleAll(context)
-                        }
-                    )
+                    1 -> AstroClockScreen(place = place, alarms = alarms, modifier = Modifier.fillMaxSize())
+                    else -> Astro3DClockScreen(place = place, alarms = alarms, modifier = Modifier.fillMaxSize())
                 }
             }
-
-            item {
-                SectionHeader(
-                    title = "🌙 " + stringResource(R.string.astro_section_lunar),
-                    onAdd = { showAddDialogWithTarget = AlarmTarget.Lunar(LunarEventType.FullMoon, 0) }
-                )
-            }
-            val lunarAlarms = alarms.filter { it.target is AlarmTarget.Lunar }
-            if (lunarAlarms.isEmpty()) {
-                item { EmptySectionNote(stringResource(R.string.astro_empty_lunar)) }
-            } else {
-                items(lunarAlarms, key = { it.id }) { alarm ->
-                    val nextInstant = AstroNextFire.nextInstant(alarm, place)
-                    val formatted = nextInstant?.let { formatInstant(it, place) }
-                    AstroAlarmRow(
-                        alarm = alarm,
-                        nextFireFormatted = formatted,
-                        onToggle = { enabled ->
-                            alarmStore.toggle(alarm.id, enabled)
-                            AstroAlarmScheduler.rescheduleAll(context)
-                        },
-                        onEdit = { editingAlarm = alarm },
-                        onDelete = {
-                            alarmStore.delete(alarm.id)
-                            AstroAlarmScheduler.rescheduleAll(context)
-                        }
-                    )
-                }
-            }
-
-            item {
-                SectionHeader(
-                    title = "⏰ " + stringResource(R.string.astro_section_clock),
-                    onAdd = { showAddDialogWithTarget = AlarmTarget.CustomClock(7, 0) }
-                )
-            }
-            val clockAlarms = alarms.filter { it.target is AlarmTarget.CustomClock }
-            if (clockAlarms.isEmpty()) {
-                item { EmptySectionNote(stringResource(R.string.astro_empty_clock)) }
-            } else {
-                items(clockAlarms, key = { it.id }) { alarm ->
-                    val nextInstant = AstroNextFire.nextInstant(alarm, place)
-                    val formatted = nextInstant?.let { formatInstant(it, place) }
-                    AstroAlarmRow(
-                        alarm = alarm,
-                        nextFireFormatted = formatted,
-                        onToggle = { enabled ->
-                            alarmStore.toggle(alarm.id, enabled)
-                            AstroAlarmScheduler.rescheduleAll(context)
-                        },
-                        onEdit = { editingAlarm = alarm },
-                        onDelete = {
-                            alarmStore.delete(alarm.id)
-                            AstroAlarmScheduler.rescheduleAll(context)
-                        }
-                    )
-                }
-            }
-
-            item { Spacer(modifier = Modifier.height(72.dp)) }
         }
     }
 
@@ -239,6 +215,7 @@ fun AstroScreen(
         AstroEditDialog(
             initialAlarm = null,
             defaultTarget = showAddDialogWithTarget!!,
+            place = place,
             onDismiss = { showAddDialogWithTarget = null },
             onSave = { newAlarm ->
                 alarmStore.save(newAlarm)
@@ -252,6 +229,7 @@ fun AstroScreen(
         AstroEditDialog(
             initialAlarm = editingAlarm,
             defaultTarget = editingAlarm!!.target,
+            place = place,
             onDismiss = { editingAlarm = null },
             onSave = { updated ->
                 alarmStore.save(updated)

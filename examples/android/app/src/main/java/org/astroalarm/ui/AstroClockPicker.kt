@@ -9,9 +9,11 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import dev.foss.goldenpath.R
 import java.util.Locale
 
+@OptIn(ExperimentalLayoutApi::class)
 @Composable
 fun ClockTimePicker(
     hour: Int,
@@ -28,7 +30,7 @@ fun ClockTimePicker(
                 .fillMaxWidth()
                 .padding(16.dp),
             horizontalAlignment = Alignment.CenterHorizontally,
-            verticalArrangement = Arrangement.spacedBy(12.dp)
+            verticalArrangement = Arrangement.spacedBy(10.dp)
         ) {
             Text(
                 text = String.format(Locale.getDefault(), "%02d:%02d", hour, minute),
@@ -53,7 +55,7 @@ fun ClockTimePicker(
                     text = ":",
                     style = MaterialTheme.typography.headlineLarge,
                     fontWeight = FontWeight.Bold,
-                    modifier = Modifier.padding(horizontal = 12.dp)
+                    modifier = Modifier.padding(horizontal = 8.dp)
                 )
 
                 AstroNumberWheel(
@@ -62,6 +64,21 @@ fun ClockTimePicker(
                     label = stringResource(R.string.astro_time_minute),
                     onValueChange = { newMinute -> onTimeChange(hour, newMinute) }
                 )
+            }
+
+            FlowRow(
+                modifier = Modifier.fillMaxWidth(),
+                horizontalArrangement = Arrangement.spacedBy(6.dp, Alignment.CenterHorizontally),
+                verticalArrangement = Arrangement.spacedBy(6.dp)
+            ) {
+                listOf(6 to 0, 7 to 0, 8 to 0, 12 to 0, 18 to 0, 22 to 0).forEach { (h, m) ->
+                    val isSelected = hour == h && minute == m
+                    FilterChip(
+                        selected = isSelected,
+                        onClick = { onTimeChange(h, m) },
+                        label = { Text(String.format(Locale.getDefault(), "%02d:%02d", h, m), fontSize = 12.sp) }
+                    )
+                }
             }
         }
     }

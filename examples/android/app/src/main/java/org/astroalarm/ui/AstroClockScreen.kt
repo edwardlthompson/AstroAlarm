@@ -1,0 +1,125 @@
+package org.astroalarm.ui
+
+import android.appwidget.AppWidgetManager
+import android.content.ComponentName
+import android.os.Build
+import android.widget.Toast
+import androidx.compose.foundation.Image
+import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.AddCircle
+import androidx.compose.material3.*
+import androidx.compose.runtime.*
+import androidx.compose.ui.Alignment
+import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.asImageBitmap
+import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
+import dev.foss.goldenpath.R
+import kotlinx.coroutines.delay
+import org.astroalarm.astro.model.AstroAlarm
+import org.astroalarm.astro.model.SolarEventType
+import org.astroalarm.astro.place.AstroPlace
+import org.astroalarm.astro.settings.AstroDisplayPreferences
+import org.astroalarm.astro.sun.SolarCalculator
+import org.astroalarm.astro.zodiac.ZodiacCalculator
+import org.astroalarm.widget.AstroClockWidgetProvider
+import org.astroalarm.widget.AstroDiskRenderer
+import org.astroalarm.widget.ClockRenderSize
+import org.astroalarm.widget.EarthTexture
+import java.time.Instant
+import java.time.ZonedDateTime
+import java.time.format.DateTimeFormatter
+import java.util.Locale
+
+@Composable
+fun AstroClockScreen(
+    place: AstroPlace?,
+    alarms: List<AstroAlarm>,
+    modifier: Modifier = Modifier
+) {
+    val context = LocalContext.current
+    val displayPrefs = remember { AstroDisplayPreferences(context) }
+    val showZodiac by displayPrefs.showZodiac2D.collectAsState()
+    val earth = remember { EarthTexture.get(context) }
+    var now by remember { mutableStateOf(Instant.now()) }
+
+    LaunchedEffect(Unit) {
+        while (true) {
+            delay(1000L)
+            now = Instant.now()
+        }
+    }
+
+    val zone = place?.zone ?: java.time.ZoneId.systemDefault()
+    val nowZdt = ZonedDateTime.ofInstant(now, zone)
+    val date = nowZdt.toLocalDate()
+    val fmt = DateTimeFormatter.ofPattern("HH:mm", Locale.getDefault())
+    val solarNoon = place?.let { SolarCalculator.calculate(SolarEventType.SolarNoon, date, it.latitude, it.longitude, it.zone) }
+    val solarMidnight = place?.let { SolarCalculator.calculate(SolarEventType.SolarMidnight, date, it.latitude, it.longitude, it.zone) }
+    val middayZodiac = ZodiacCalculator.overheadMiddayZodiac(solarNoon ?: now)
+    val midnightZodiac = ZodiacCalculator.overheadMidnightZodiac(solarMidnight ?: now)
+
+    Column(
+        modifier = modifier.fillMaxSize().padding(horizontal = 16.dp, vertical = 6.dp),
+        horizontalAlignment = Alignment.CenterHorizontally,
+        verticalArrangement = Arrangement.spacedBy(8.dp)
+    ) {
+        ZodiacToggleRow(
+            title = stringResource(R.string.astro_toggle_show_zodiac),
+            description = stringResource(R.string.astro_toggle_show_zodiac_desc),
+            checked = showZodiac,
+            onCheckedChange = { displayPrefs.setShowZodiac2D(it) }
+        )
+
+        BoxWithConstraints(
+            modifier = Modifier.fillMaxWidth().weight(1f),
+            contentAlignment = Alignment.Center
+        ) {
+            val side = minOf(maxWidth, maxHeight)
+            val sizePx = ClockRenderSize.fromMinDp(side.value.toInt().coerceAtLeast(80))
+            val diskBitmap = remember(place, alarms, now.epochSecond / 10, sizePx, showZodiac, earth) {
+                AstroDiskRenderer.renderDisk(place, alarms, now, sizePx, showZodiac, earth)
+            }
+            Image(
+                bitmap = diskBitmap.asImageBitmap(),
+                contentDescription = stringResource(R.string.astro_widget_desc),
+                modifier = Modifier.size(side)
+            )
+        }
+
+        Text(
+            text = "☀️ ${solarNoon?.let { ZonedDateTime.ofInstant(it, zone).format(fmt) } ?: "--:--"}   " +
+                "${middayZodiac.symbol} ${middayZodiac.englishName}   " +
+                "🌙 ${solarMidnight?.let { ZonedDateTime.ofInstant(it, zone).format(fmt) } ?: "--:--"}   " +
+                "${midnightZodiac.symbol} ${midnightZodiac.englishName}",
+            fontSize = 13.sp,
+            fontWeight = FontWeight.Medium,
+            maxLines = 2
+        )
+
+        Button(
+            onClick = { pinClockWidget(context) },
+            modifier = Modifier.fillMaxWidth(),
+            shape = RoundedCornerShape(12.dp)
+        ) {
+            Icon(Icons.Default.AddCircle, contentDescription = null)
+            Spacer(modifier = Modifier.width(8.dp))
+            Text(stringResource(R.string.astro_add_widget_btn))
+        }
+    }
+}
+
+private fun pinClockWidget(context: android.content.Context) {
+    val mgr = context.getSystemService(AppWidgetManager::class.java)
+    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O && mgr != null && mgr.isRequestPinAppWidgetSupported) {
+        mgr.requestPinAppWidget(ComponentName(context, AstroClockWidgetProvider::class.java), null, null)
+        Toast.makeText(context, context.getString(R.string.astro_widget_pinned_success), Toast.LENGTH_SHORT).show()
+    } else {
+        Toast.makeText(context, context.getString(R.string.astro_widget_pin_manual_guide), Toast.LENGTH_LONG).show()
+    }
+}

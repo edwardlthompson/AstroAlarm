@@ -18,6 +18,7 @@ import androidx.activity.compose.setContent
 import dev.foss.goldenpath.R
 import org.astroalarm.astro.model.AlarmTarget
 import org.astroalarm.astro.model.AstroAlarm
+import org.astroalarm.tts.TtsPreferences
 import org.astroalarm.ui.AstroAlarmLockscreenView
 import java.time.LocalTime
 import java.util.Locale
@@ -94,7 +95,17 @@ class AstroAlarmActivity : ComponentActivity(), TextToSpeech.OnInitListener {
 
     override fun onInit(status: Int) {
         if (status == TextToSpeech.SUCCESS) {
-            tts?.language = Locale.getDefault()
+            val ttsPrefs = TtsPreferences(applicationContext).getVoice()
+            tts?.setPitch(ttsPrefs.pitch)
+            if (ttsPrefs.languageTag.isNotBlank()) {
+                tts?.language = Locale.forLanguageTag(ttsPrefs.languageTag)
+            } else {
+                tts?.language = Locale.getDefault()
+            }
+            if (ttsPrefs.voiceName.isNotBlank()) {
+                val match = tts?.voices?.firstOrNull { it.name == ttsPrefs.voiceName }
+                if (match != null) tts?.voice = match
+            }
             val text = activeAlarm?.label ?: getString(R.string.astro_custom_alarm_title)
             tts?.speak(text, TextToSpeech.QUEUE_FLUSH, null, "astro_alarm_shout")
         }

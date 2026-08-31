@@ -2,9 +2,11 @@ package org.astroalarm.astro.alarm
 
 import org.astroalarm.astro.model.AlarmTarget
 import org.astroalarm.astro.model.AstroAlarm
+import org.astroalarm.astro.model.SolarEventType
 import org.astroalarm.astro.moon.LunarCalculator
 import org.astroalarm.astro.place.AstroPlace
 import org.astroalarm.astro.sun.SolarCalculator
+import org.astroalarm.astro.zodiac.ZodiacCalculator
 import java.time.*
 
 object AstroNextFire {
@@ -22,6 +24,7 @@ object AstroNextFire {
             is AlarmTarget.CustomClock -> nextCustomClock(alarm, target, nowZdt)
             is AlarmTarget.Solar -> nextSolar(alarm, target, place, nowZdt, now)
             is AlarmTarget.Lunar -> nextLunar(alarm, target, place, nowZdt, now)
+            is AlarmTarget.Zodiac -> nextZodiac(alarm, target, now)
         }
     }
 
@@ -55,6 +58,39 @@ object AstroNextFire {
     ): Instant? {
         if (place == null || !place.isValid) return null
         val today = nowZdt.toLocalDate()
+        val isSeasonal = target.event in setOf(
+            SolarEventType.MarchEquinox,
+            SolarEventType.JuneSolstice,
+            SolarEventType.SeptemberEquinox,
+            SolarEventType.DecemberSolstice
+        )
+        if (isSeasonal) {
+            val thisYear = today.year
+            for (year in thisYear..(thisYear + 3)) {
+                val month = when (target.event) {
+                    SolarEventType.MarchEquinox -> 3
+                    SolarEventType.JuneSolstice -> 6
+                    SolarEventType.SeptemberEquinox -> 9
+                    SolarEventType.DecemberSolstice -> 12
+                    else -> 1
+                }
+                val day = when (target.event) {
+                    SolarEventType.MarchEquinox -> 20
+                    SolarEventType.JuneSolstice -> 21
+                    SolarEventType.SeptemberEquinox -> 22
+                    SolarEventType.DecemberSolstice -> 21
+                    else -> 1
+                }
+                val date = LocalDate.of(year, month, day)
+                val base = SolarCalculator.calculate(target.event, date, place.latitude, place.longitude, place.zone)
+                    ?: continue
+                val fireInstant = base.plusSeconds(target.offsetMinutes * 60L)
+                if (fireInstant.isAfter(now)) {
+                    return fireInstant
+                }
+            }
+            return null
+        }
         for (i in 0..14) {
             val date = today.plusDays(i.toLong())
             if (alarm.daysOfWeek.isNotEmpty() && !alarm.daysOfWeek.contains(date.dayOfWeek)) {
@@ -79,7 +115,7 @@ object AstroNextFire {
     ): Instant? {
         if (place == null || !place.isValid) return null
         val today = nowZdt.toLocalDate()
-        for (i in 0..31) {
+        for (i in 0..35) {
             val date = today.plusDays(i.toLong())
             if (alarm.daysOfWeek.isNotEmpty() && !alarm.daysOfWeek.contains(date.dayOfWeek)) {
                 continue
@@ -92,5 +128,20 @@ object AstroNextFire {
             }
         }
         return null
+    }
+
+    private fun nextZodiac(
+        alarm: AstroAlarm,
+        target: AlarmTarget.Zodiac,
+        now: Instant
+    ): Instant {
+        val base = ZodiacCalculator.nextInstant(target.sign, target.point, now)
+        val fireInstant = base.plusSeconds(target.offsetMinutes * 60L)
+        return if (fireInstant.isAfter(now)) {
+            fireInstant
+        } else {
+            val nextBase = ZodiacCalculator.nextInstant(target.sign, target.point, now.plusSeconds(86400L * 2))
+            nextBase.plusSeconds(target.offsetMinutes * 60L)
+        }
     }
 }

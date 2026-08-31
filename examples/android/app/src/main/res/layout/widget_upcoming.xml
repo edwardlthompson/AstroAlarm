@@ -1,0 +1,73 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/widget_upcoming_root"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:background="@drawable/bg_widget_upcoming"
+    android:padding="12dp">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:gravity="center_vertical"
+        android:paddingBottom="6dp">
+
+        <TextView
+            android:id="@+id/widget_upcoming_title"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:text="@string/astro_widget_upcoming_name"
+            android:textColor="#FFD54F"
+            android:textStyle="bold"
+            android:textSize="14sp" />
+
+        <TextView
+            android:id="@+id/widget_upcoming_count"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textColor="#B0BEC5"
+            android:textSize="12sp" />
+    </LinearLayout>
+
+    <TextView
+        android:id="@+id/widget_upcoming_line1"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:textColor="#FFFFFF"
+        android:textSize="13sp"
+        android:textStyle="bold"
+        android:paddingVertical="2dp"
+        android:visibility="gone" />
+
+    <TextView
+        android:id="@+id/widget_upcoming_line2"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:textColor="#E0E0E0"
+        android:textSize="13sp"
+        android:paddingVertical="2dp"
+        android:visibility="gone" />
+
+    <TextView
+        android:id="@+id/widget_upcoming_line3"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:textColor="#CFD8DC"
+        android:textSize="13sp"
+        android:paddingVertical="2dp"
+        android:visibility="gone" />
+
+    <TextView
+        android:id="@+id/widget_upcoming_empty"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1"
+        android:gravity="center"
+        android:text="@string/astro_widget_upcoming_empty"
+        android:textColor="#90A4AE"
+        android:textSize="13sp"
+        android:visibility="visible" />
+</LinearLayout>

@@ -1,11 +1,15 @@
 package org.astroalarm.ui
 
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.gestures.snapping.rememberSnapFlingBehavior
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.KeyboardArrowDown
+import androidx.compose.material.icons.filled.KeyboardArrowUp
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
@@ -16,6 +20,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.flow.filter
+import kotlinx.coroutines.launch
 import java.util.Locale
 
 @Composable
@@ -26,6 +31,7 @@ fun AstroNumberWheel(
     format: (Int) -> String = { String.format(Locale.getDefault(), "%02d", it) },
     onValueChange: (Int) -> Unit
 ) {
+    val scope = rememberCoroutineScope()
     val itemHeight = 44.dp
     val initialIndex = (range.indexOf(value).takeIf { it >= 0 } ?: 0)
     val listState = rememberLazyListState(initialFirstVisibleItemIndex = initialIndex)
@@ -43,13 +49,17 @@ fun AstroNumberWheel(
             .distinctUntilChanged()
             .filter { !listState.isScrollInProgress && it in range.indices }
             .collect { index ->
-                onValueChange(range[index])
+                if (range[index] != value) {
+                    onValueChange(range[index])
+                }
             }
     }
 
+    val currentIndex = range.indexOf(value).coerceAtLeast(0)
+
     Column(
         horizontalAlignment = Alignment.CenterHorizontally,
-        modifier = Modifier.width(90.dp)
+        modifier = Modifier.width(96.dp)
     ) {
         Text(
             text = label,
@@ -57,7 +67,16 @@ fun AstroNumberWheel(
             color = MaterialTheme.colorScheme.primary,
             fontWeight = FontWeight.SemiBold
         )
-        Spacer(modifier = Modifier.height(4.dp))
+        IconButton(
+            onClick = {
+                val nextIdx = (currentIndex - 1 + range.size) % range.size
+                onValueChange(range[nextIdx])
+                scope.launch { listState.animateScrollToItem(nextIdx) }
+            },
+            modifier = Modifier.size(32.dp)
+        ) {
+            Icon(Icons.Default.KeyboardArrowUp, contentDescription = "Decrease $label", tint = MaterialTheme.colorScheme.primary)
+        }
         Box(
             modifier = Modifier
                 .height(itemHeight * 3)
@@ -71,9 +90,8 @@ fun AstroNumberWheel(
                     .fillMaxWidth()
                     .height(itemHeight)
                     .clip(RoundedCornerShape(8.dp))
-                    .background(MaterialTheme.colorScheme.primaryContainer.copy(alpha = 0.4f))
+                    .background(MaterialTheme.colorScheme.primaryContainer.copy(alpha = 0.45f))
             )
-
             LazyColumn(
                 state = listState,
                 flingBehavior = flingBehavior,
@@ -87,7 +105,11 @@ fun AstroNumberWheel(
                     Box(
                         modifier = Modifier
                             .height(itemHeight)
-                            .fillMaxWidth(),
+                            .fillMaxWidth()
+                            .clickable {
+                                onValueChange(num)
+                                scope.launch { listState.animateScrollToItem(index) }
+                            },
                         contentAlignment = Alignment.Center
                     ) {
                         Text(
@@ -100,6 +122,16 @@ fun AstroNumberWheel(
                     }
                 }
             }
+        }
+        IconButton(
+            onClick = {
+                val nextIdx = (currentIndex + 1) % range.size
+                onValueChange(range[nextIdx])
+                scope.launch { listState.animateScrollToItem(nextIdx) }
+            },
+            modifier = Modifier.size(32.dp)
+        ) {
+            Icon(Icons.Default.KeyboardArrowDown, contentDescription = "Increase $label", tint = MaterialTheme.colorScheme.primary)
         }
     }
 }

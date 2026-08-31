@@ -1,7 +1,8 @@
 package org.astroalarm.astro.model
 
+import org.astroalarm.astro.zodiac.ZodiacPoint
+import org.astroalarm.astro.zodiac.ZodiacSign
 import java.time.DayOfWeek
-import java.time.Instant
 
 enum class SolarEventType {
     Sunrise,
@@ -42,6 +43,7 @@ sealed interface AlarmTarget {
     data class CustomClock(val hour: Int, val minute: Int) : AlarmTarget
     data class Solar(val event: SolarEventType, val offsetMinutes: Int = 0) : AlarmTarget
     data class Lunar(val event: LunarEventType, val offsetMinutes: Int = 0) : AlarmTarget
+    data class Zodiac(val sign: ZodiacSign, val point: ZodiacPoint, val offsetMinutes: Int = 0) : AlarmTarget
 }
 
 data class AstroAlarm(
@@ -58,5 +60,5 @@ data class AstroAlarm(
     val mathUnlockEnabled: Boolean = false,
     val lastFiredEpochMs: Long = 0L
 ) {
-    val isOnce: Boolean get() = daysOfWeek.isEmpty()
+    val isOnce: Boolean get() = target is AlarmTarget.CustomClock && daysOfWeek.isEmpty()
 }

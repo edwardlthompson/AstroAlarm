@@ -36,7 +36,7 @@ done
 if [ ! -f "$GRADLE" ]; then
   fail "missing $GRADLE"
 else
-  VERSION_CODE="$(grep -E 'versionCode\s*=' "$GRADLE" | head -1 | sed -E 's/.*=\s*([0-9]+).*/\1/')"
+  VERSION_CODE="$(grep -E 'versionCode\s*=\s*[0-9]+' "$GRADLE" | head -1 | sed -E 's/.*=\s*([0-9]+).*/\1/')"
   if [ -z "${VERSION_CODE:-}" ]; then
     fail "could not parse versionCode from build.gradle.kts"
   elif [ ! -s "$META/changelogs/${VERSION_CODE}.txt" ]; then

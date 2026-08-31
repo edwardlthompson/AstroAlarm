@@ -192,3 +192,62 @@ jobs:
           [ -f sbom-rust.cyclonedx.json ] && FILES+=(sbom-rust.cyclonedx.json)
           [ -f sbom-go.cyclonedx.json ] && FILES+=(sbom-go.cyclonedx.json)
           gh release upload "$TAG" "${FILES[@]}" --clobber
+
+  android-apk:
+    if: github.event_name == 'release' || (github.event_name == 'workflow_dispatch' && inputs.tag != '')
+    name: Android signed FOSS APK
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    steps:
+      - uses: actions/checkout@v7
+        with:
+          ref: ${{ github.event.release.tag_name || inputs.tag }}
+
+      - uses: actions/setup-java@v5
+        with:
+          distribution: temurin
+          java-version: "17"
+
+      - uses: android-actions/setup-android@v4
+
+      - name: Accept Android SDK licenses
+        run: yes | sdkmanager --licenses
+
+      - name: Optional upload keystore
+        env:
+          ANDROID_KEYSTORE_BASE64: ${{ secrets.ANDROID_KEYSTORE_BASE64 }}
+        run: |
+          if [ -n "${ANDROID_KEYSTORE_BASE64:-}" ]; then
+            echo "$ANDROID_KEYSTORE_BASE64" | base64 -d > "$RUNNER_TEMP/astroalarm.jks"
+            echo "ANDROID_KEYSTORE_FILE=$RUNNER_TEMP/astroalarm.jks" >> "$GITHUB_ENV"
+          else
+            echo "No ANDROID_KEYSTORE_BASE64 secret; Gradle will sign the release APK with the debug key."
+          fi
+
+      - name: assembleRelease
+        working-directory: examples/android
+        env:
+          SOURCE_DATE_EPOCH: "1700000000"
+          ANDROID_KEYSTORE_PASSWORD: ${{ secrets.ANDROID_KEYSTORE_PASSWORD }}
+          ANDROID_KEY_ALIAS: ${{ secrets.ANDROID_KEY_ALIAS }}
+          ANDROID_KEY_PASSWORD: ${{ secrets.ANDROID_KEY_PASSWORD }}
+        run: chmod +x gradlew && ./gradlew assembleRelease --no-daemon
+
+      - name: Upload FOSS APK and mark release stable
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          set -euo pipefail
+          TAG="${{ github.event.release.tag_name || inputs.tag }}"
+          VERSION="${TAG#v}"
+          APK="$(find examples/android/app/build/outputs/apk/release -name '*.apk' | head -1)"
+          if [ -z "$APK" ]; then
+            echo "FAIL: no release APK"
+            exit 1
+          fi
+          OUT="astroalarm-${VERSION}-foss.apk"
+          cp "$APK" "$OUT"
+          gh release edit "$TAG" --prerelease=false --draft=false
+          gh release upload "$TAG" "$OUT" --clobber
+          echo "Uploaded $OUT to $TAG"

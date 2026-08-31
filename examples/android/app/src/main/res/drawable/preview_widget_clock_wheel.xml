@@ -1,0 +1,50 @@
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    android:width="200dp"
+    android:height="200dp"
+    android:viewportWidth="200"
+    android:viewportHeight="200">
+    <!-- Space background -->
+    <path
+        android:fillColor="#0D121D"
+        android:pathData="M16,0 L184,0 A16,16 0 0 1 200,16 L200,184 A16,16 0 0 1 184,200 L16,200 A16,16 0 0 1 0,184 L0,16 A16,16 0 0 1 16,0 Z" />
+    <!-- Clock wheel outer disk -->
+    <path
+        android:fillColor="#151E2E"
+        android:strokeColor="#78909C"
+        android:strokeWidth="3"
+        android:pathData="M100,100 m-80,0 a80,80 0 1,0 160,0 a80,80 0 1,0 -160,0" />
+    <!-- Day sky arc -->
+    <path
+        android:fillColor="#D8E8F8"
+        android:pathData="M100,100 L20,100 A80,80 0 0,1 180,100 Z" />
+    <!-- Golden hour morning & evening -->
+    <path
+        android:fillColor="#FFA726"
+        android:pathData="M100,100 L20,100 A80,80 0 0,1 36,54 Z" />
+    <path
+        android:fillColor="#FFA726"
+        android:pathData="M100,100 L164,54 A80,80 0 0,1 180,100 Z" />
+    <!-- Solar noon apex -->
+    <path
+        android:fillColor="#FFFFFF"
+        android:pathData="M100,100 L90,21 A80,80 0 0,1 110,21 Z" />
+    <!-- Center 3D Earth Globe -->
+    <path
+        android:fillColor="#1976D2"
+        android:strokeColor="#64B5F6"
+        android:strokeWidth="1.5"
+        android:pathData="M100,100 m-22,0 a22,22 0 1,0 44,0 a22,22 0 1,0 -44,0" />
+    <path
+        android:fillColor="#388E3C"
+        android:pathData="M95,86 Q108,82 112,94 Q106,108 92,104 Q86,94 95,86 Z" />
+    <!-- Center observer pin -->
+    <path
+        android:fillColor="#FFD54F"
+        android:pathData="M100,100 m-3,0 a3,3 0 1,0 6,0 a3,3 0 1,0 -6,0" />
+    <!-- Clock hand -->
+    <path
+        android:strokeColor="#EF5350"
+        android:strokeWidth="3.5"
+        android:strokeLineCap="round"
+        android:pathData="M100,100 L100,32" />
+</vector>
