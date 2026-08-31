@@ -224,10 +224,12 @@ jobs:
           set -euo pipefail
           if [ -n "${ANDROID_KEYSTORE_BASE64:-}" ]; then
             echo "$ANDROID_KEYSTORE_BASE64" | base64 -d > "$RUNNER_TEMP/astroalarm.jks"
-            echo "ANDROID_KEYSTORE_FILE=$RUNNER_TEMP/astroalarm.jks" >> "$GITHUB_ENV"
-            echo "ANDROID_KEYSTORE_PASSWORD=${ANDROID_KEYSTORE_PASSWORD}" >> "$GITHUB_ENV"
-            echo "ANDROID_KEY_ALIAS=${ANDROID_KEY_ALIAS:-upload}" >> "$GITHUB_ENV"
-            echo "ANDROID_KEY_PASSWORD=${ANDROID_KEY_PASSWORD}" >> "$GITHUB_ENV"
+            {
+              echo "ANDROID_KEYSTORE_FILE=$RUNNER_TEMP/astroalarm.jks"
+              echo "ANDROID_KEYSTORE_PASSWORD=${ANDROID_KEYSTORE_PASSWORD}"
+              echo "ANDROID_KEY_ALIAS=${ANDROID_KEY_ALIAS:-upload}"
+              echo "ANDROID_KEY_PASSWORD=${ANDROID_KEY_PASSWORD}"
+            } >> "$GITHUB_ENV"
             echo "Using repository upload keystore."
           else
             keytool -genkeypair -noprompt \
@@ -237,10 +239,12 @@ jobs:
               -keypass android \
               -dname "CN=AstroAlarm FOSS, O=AstroAlarm" \
               -keyalg RSA -keysize 2048 -validity 10000
-            echo "ANDROID_KEYSTORE_FILE=$RUNNER_TEMP/astroalarm-foss.jks" >> "$GITHUB_ENV"
-            echo "ANDROID_KEYSTORE_PASSWORD=android" >> "$GITHUB_ENV"
-            echo "ANDROID_KEY_ALIAS=upload" >> "$GITHUB_ENV"
-            echo "ANDROID_KEY_PASSWORD=android" >> "$GITHUB_ENV"
+            {
+              echo "ANDROID_KEYSTORE_FILE=$RUNNER_TEMP/astroalarm-foss.jks"
+              echo "ANDROID_KEYSTORE_PASSWORD=android"
+              echo "ANDROID_KEY_ALIAS=upload"
+              echo "ANDROID_KEY_PASSWORD=android"
+            } >> "$GITHUB_ENV"
             echo "No ANDROID_KEYSTORE_BASE64 secret; signing with a job-local FOSS key."
           fi
 
