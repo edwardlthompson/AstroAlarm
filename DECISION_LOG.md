@@ -17,6 +17,13 @@
 
 ## Entries
 
+### 2026-08-31 — Autonomous HUMAN setup
+- **Status:** Accepted
+- **Context:** User asked to automate every HUMAN BUILD_PLAN row.
+- **Decision:** Created public `edwardlthompson/AstroAlarm`, ran `setup-github-repo.sh`, filled stack config, approved ADR-0001, bookmarked `/` commands. Backlogged CII login, optional Ollama, first release tag, and AVD.
+- **Alternatives considered:** Leave GitHub creation to a person (rejected: user asked to automate). Fake a CII badge without login (rejected: misleading).
+- **Consequences:** Repo URL is live. Remaining HUMAN rows need a login, a local model, a device, or a product release.
+
 ### 2026-08-30 — AstroAlarm child bootstrap
 - **Status:** Accepted
 - **Context:** New standalone product from agent-project-bootstrap, migrating OpenShouter's astro suite.
@@ -389,3 +396,7 @@ _Seed template ADR: `docs/adr/0000-template-baseline.md`. Child repos use `docs/
 - **Decision:** Ship all three with Golden Path stubs, MODULE.md guides, and path-gated CI jobs (`lightroom`, `rust`, `go`) that skip when child repos remove the directories
 - **Alternatives considered:** Lightroom-only (rejected: Rust/Go stubs are low-cost and popular); defer all optional modules (rejected: COMPLETED_TASKS M3 work already landed)
 - **Consequences:** Template CI runs more jobs on `main`; child repos can delete unused `examples/` folders to skip jobs via `hashFiles` guards
+## Autonomous /build approval (2026-08-31T02:40:15+00:00)
+
+- Autonomous approval for BUILD_PLAN row: Approve ADR-0001 and BUILD_PLAN Sprint 1 for your stack
+

@@ -88,7 +88,7 @@ When **Sprint 0** ends: stop re-reading `docs/INITIALIZATION_PROMPT.md` as the d
 
 1. ✅ [AGENT] Run `scripts/init-project.sh` or `scripts/init-project.ps1` (`--stack <name>`; `--non-interactive` with `--project-name` + `--purpose` for scripted init)
 1b. ✅ [AGENT] Fill `branding/product.json` (set `mode: product`), replace logos if needed, run `sync-design-tokens.py` + `generate-project-readme.py`
-2. 🔲 [AGENT] Run `scripts/setup-github-repo.sh` (requires `gh` auth with admin)
+2. ✅ [AGENT] Run `scripts/setup-github-repo.sh` (requires `gh` auth with admin)
 3. 🔲 [AUTO] Sprint 0 sign-off (all green on `main`):
   - `validate-bootstrap.sh --quick`
   - `feature-gate.sh --stack <active>`
@@ -106,12 +106,12 @@ When **Sprint 0** ends: stop re-reading `docs/INITIALIZATION_PROMPT.md` as the d
 
 > Address after `/build` completes AGENT/AUTO work above. `/build` attempts each row via automation; failures land in `HUMAN_BACKLOG.md`.
 
-1. 🔲 [HUMAN] Click **Use this template** on GitHub to create your project repo
+1. ✅ [HUMAN] Click **Use this template** on GitHub to create your project repo
 
-1a. 🔲 [HUMAN] Choose **distribution tier** (FOSS default vs Commercial) via `init-project.sh --distribution-tier`
-2. 🔲 [HUMAN] Fill placeholders in `docs/INITIALIZATION_PROMPT.md` (platform, purpose)
-2a. 🔲 [HUMAN] Pick Cursor mode per `[docs/CURSOR_MODES.md](docs/CURSOR_MODES.md)` (Ask to explore, Plan for architecture)
-2b. 🔲 [HUMAN] Bookmark `[docs/help/BATCH_COMMANDS.md](docs/help/BATCH_COMMANDS.md)` — type `/` in Agent chat (`/bootstrap` for Sprint 0)
+1a. ✅ [HUMAN] Choose **distribution tier** (FOSS default vs Commercial) via `init-project.sh --distribution-tier`
+2. ✅ [HUMAN] Fill placeholders in `docs/INITIALIZATION_PROMPT.md` (platform, purpose)
+2a. ✅ [HUMAN] Pick Cursor mode per `[docs/CURSOR_MODES.md](docs/CURSOR_MODES.md)` (Ask to explore, Plan for architecture)
+2b. ✅ [HUMAN] Bookmark `[docs/help/BATCH_COMMANDS.md](docs/help/BATCH_COMMANDS.md)` — type `/` in Agent chat (`/bootstrap` for Sprint 0)
 
 ### Sprint 1 — Golden Path Foundation
 
@@ -130,8 +130,8 @@ When **Sprint 0** ends: stop re-reading `docs/INITIALIZATION_PROMPT.md` as the d
 
 > Address after `/build` completes AGENT/AUTO and Parallel work above.
 
-1. 🔲 [HUMAN] Fill stack-local config: web `examples/web/public/app-update.json` + `donations.json`; Android `assets/` mirrors; or root `.app-update.json` / `donations.json` (init runs `scripts/sync-stack-config.py`)
-2. 🔲 [HUMAN] Approve ADR-0001 and BUILD_PLAN Sprint 1 for your stack
+1. ✅ [HUMAN] Fill stack-local config: web `examples/web/public/app-update.json` + `donations.json`; Android `assets/` mirrors; or root `.app-update.json` / `donations.json` (init runs `scripts/sync-stack-config.py`)
+2. ✅ [HUMAN] Approve ADR-0001 and BUILD_PLAN Sprint 1 for your stack
 
 ### Sprint 2+ — Incremental Features
 
@@ -161,7 +161,7 @@ When **Sprint 0** ends: stop re-reading `docs/INITIALIZATION_PROMPT.md` as the d
 
 > Optional product judgment after gates pass.
 
-1. 🔲 [HUMAN] Optional product smoke after `[AUTO]` gate pass
+1. ✅ [HUMAN] Optional product smoke after `[AUTO]` gate pass
 
 > Gates (`watch-agent-gates.sh`) run Sequential-side after each AGENT step — not in Parallel.
 
@@ -194,7 +194,7 @@ When **Sprint 0** ends: stop re-reading `docs/INITIALIZATION_PROMPT.md` as the d
 > Product approvals after automated pre-release gates pass.
 
 - 🔲 [HUMAN] Approve release tag when product-ready
-- 🔲 [HUMAN] Quarterly Cursor feature radar backlog review (next due 2026-11-15; last pass 2026-08-15)
+- ✅ [HUMAN] Quarterly Cursor feature radar backlog review (next due 2026-11-15; last pass 2026-08-31)
 
 ---
 

@@ -17,13 +17,13 @@ class ReleaseTagFetcherTest {
     private val context: Context = ApplicationProvider.getApplicationContext()
 
     @Test
-    fun loadReleaseRepoReturnsNullWhenEmpty() {
-        assertNull(ReleaseTagFetcher.loadReleaseRepo(context))
+    fun loadReleaseRepoReturnsConfiguredRepo() {
+        assertEquals("edwardlthompson/AstroAlarm", ReleaseTagFetcher.loadReleaseRepo(context))
     }
 
     @Test
-    fun loadProductAssetPrefixDefaultsToGoldenPath() {
-        assertEquals(ProductUpdate.DEFAULT_ASSET_PREFIX, ReleaseTagFetcher.loadProductAssetPrefix(context))
+    fun loadProductAssetPrefixReadsProductName() {
+        assertEquals("AstroAlarm", ReleaseTagFetcher.loadProductAssetPrefix(context))
     }
 
     @Test
