@@ -6,6 +6,28 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.1.0](https://github.com/edwardlthompson/AstroAlarm/compare/v1.0.0...v1.1.0) (2026-08-31)
+
+
+### Added
+
+* bootstrap AstroAlarm as a FOSS Android astronomical alarm app ([811fdc5](https://github.com/edwardlthompson/AstroAlarm/commit/811fdc58e085e3f49d5b6494eb1c264d9d2f4bf9))
+* **local:** integrate loopback Ollama into workspace and gates ([7b8f168](https://github.com/edwardlthompson/AstroAlarm/commit/7b8f1687d6ad2dbcde4b62c2a2b6412853981764))
+
+
+### Fixed
+
+* **ci:** pin codeql-action to v3 instead of invalid bundle tag ([0642e99](https://github.com/edwardlthompson/AstroAlarm/commit/0642e99ef90a0514dc065698156a0f90eca14136))
+* **ci:** use source-root instead of paths in CodeQL init action ([a2eca45](https://github.com/edwardlthompson/AstroAlarm/commit/a2eca4591359b67bc3fb0fb6cb3180d1bf644432))
+* copy example Android assets before unit tests ([632fd5d](https://github.com/edwardlthompson/AstroAlarm/commit/632fd5da865d4cba722ae53e5f9186db2522711a))
+* evaluate custom-clock alarms in an explicit zone ([825fb6d](https://github.com/edwardlthompson/AstroAlarm/commit/825fb6d71e590bcd4f8bebb78b222a09167a7015))
+* give Feature Gate Android tests real assets and a fresh Gradle run ([2465ae3](https://github.com/edwardlthompson/AstroAlarm/commit/2465ae39c08331e6a1a318991724f0ffa9a87a6f))
+* ship Android About fixtures as unit-test assets ([985c17f](https://github.com/edwardlthompson/AstroAlarm/commit/985c17f8e8c8411ee185306bc6c3c2ce4a7604b4))
+* skip pruned web and node jobs in CI ([dd76e81](https://github.com/edwardlthompson/AstroAlarm/commit/dd76e811d154eab10ae663937e81ffddb33312b6))
+* skip web About feature-gate after Android prune ([8e0d803](https://github.com/edwardlthompson/AstroAlarm/commit/8e0d80378e57730e70b57f1c2c5057e6e10a542f))
+* tolerate missing About assets in unit tests ([21da1be](https://github.com/edwardlthompson/AstroAlarm/commit/21da1becc1a82bc1d35d3876e6c12a643978dd11))
+* track unit-test donations.json fixture ([95c9d07](https://github.com/edwardlthompson/AstroAlarm/commit/95c9d079b36c66b6e7b656e2b67d328b13da07a2))
+
 ## [Unreleased]
 
 ## [1.0.0](https://github.com/edwardlthompson/agent-project-bootstrap/compare/v0.25.0...v1.0.0) (2026-08-28)
