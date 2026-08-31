@@ -17,6 +17,13 @@
 
 ## Entries
 
+### 2026-08-31 — v1.2.0 production APK on GitHub Releases
+- **Status:** Accepted
+- **Context:** User asked to shrink 2D alarm callouts and `/ship` a signed, out-of-beta 1.x release.
+- **Decision:** Cut v1.2.0 via Release Please. `assembleRelease` stays unsigned in CI (reproducible hashes). The Release workflow signs with `ANDROID_KEYSTORE_BASE64` when set, otherwise a job-local RSA key so the APK is installable. Mark the GitHub Release as stable (`prerelease=false`).
+- **Alternatives considered:** Always sign CI APKs with the debug keystore (rejected: hashes drifted). Leave GitHub Releases as prerelease (rejected: user asked to leave beta).
+- **Consequences:** Sideload from `astroalarm-1.2.0-foss.apk`. Without repo secrets the signing cert changes every Release job. Add upload-keystore secrets before Play/F-Droid.
+
 ### 2026-08-31 — Local Ollama in the agent workflow
 - **Status:** Accepted
 - **Context:** Ollama is installed and answering on 127.0.0.1:11434. The M43 HUMAN leftover asked to point Cursor Models at that endpoint.

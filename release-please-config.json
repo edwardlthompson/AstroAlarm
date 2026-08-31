@@ -12,6 +12,18 @@
           "path": "examples/android/app/build.gradle.kts"
         },
         {
+          "type": "generic",
+          "path": "README.md"
+        },
+        {
+          "type": "generic",
+          "path": "branding/templates/README.product.md"
+        },
+        {
+          "type": "generic",
+          "path": "branding/generated/README.preview.md"
+        },
+        {
           "type": "yaml",
           "path": "CITATION.cff",
           "jsonpath": "$.version"
