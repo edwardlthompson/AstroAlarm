@@ -7,9 +7,8 @@ authors:
 repository-code: https://github.com/edwardlthompson/AstroAlarm
 url: https://github.com/edwardlthompson/AstroAlarm
 abstract: >-
-  FOSS Android astronomical alarm clock with on-device NOAA/Meeus
-  ephemeris, custom clock wheels, lockscreen math unlock, and a
-  rotating day/night widget.
+  FOSS Android astronomical alarm clock with on-device NOAA/Meeus ephemeris,
+  custom clock wheels, lockscreen math unlock, and a rotating day/night widget.
 keywords:
   - foss
   - android
@@ -17,5 +16,5 @@ keywords:
   - alarm
   - fdroid
 license: MIT
-version: 1.0.0
-date-released: 2026-08-30
+version: 1.1.0
+date-released: 2026-08-31
