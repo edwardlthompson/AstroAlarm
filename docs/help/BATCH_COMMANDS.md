@@ -40,7 +40,7 @@ Grouped by life moment (not every command — use `/` menu for the full list).
 
 **Publishing:** `/update-deps` (local bumps) · `/prerelease` (autofix + optional Codex + `--local` gate) · `/push` (commit + push + release) · `/regress` (after release) · `/codex-review` (third-party review alone)
 
-**Local hardware:** `/best-of-n` (worktree model race) · `/emulator` (optional AOSP GPU tests; skips without SDK)
+**Local hardware:** `/best-of-n` (worktree model race) · `/emulator` (optional AOSP GPU tests; skips without SDK) · Ollama: `just local-compute` / `just ensure-local-model` (`docs/LOCAL_MODELS.md`)
 
 **Maintenance:** `/triage` · `/update-deps` · `/dependabot` (GitHub leftover) · `/audit` (full repo review) · `/upgrade` (child: template gap plan only; this template: upgrade sim)
 

@@ -6,7 +6,7 @@ import shutil
 from pathlib import Path
 
 from human_task_core import AttemptResult, run_cmd
-from local_resources import ollama_up
+from ollama_local import fetch_tags
 
 SCORECARD_NEEDLES = ("securityscorecards.dev", "api.securityscorecards.dev")
 CII_NEEDLES = ("bestpractices.dev", "bestpractices.coreinfrastructure.org")
@@ -32,11 +32,20 @@ def automate_cii_badge(root: Path, _cfg: dict) -> AttemptResult:
 
 
 def automate_ollama(root: Path, _cfg: dict) -> AttemptResult:
-    if ollama_up():
-        return AttemptResult(0, "ollama", "Ollama answered on 127.0.0.1:11434", False)
+    names = fetch_tags()
     docs = root / "docs" / "LOCAL_MODELS.md"
     hint = "docs/LOCAL_MODELS.md" if docs.is_file() else "install Ollama locally"
-    return AttemptResult(1, "ollama", f"Ollama not running; optional install: {hint}", True)
+    if names is None:
+        return AttemptResult(1, "ollama", f"Ollama not running; optional install: {hint}", True)
+    if not names:
+        return AttemptResult(
+            1,
+            "ollama",
+            "Ollama is up but no model is pulled; run ensure-local-model",
+            True,
+        )
+    listed = ", ".join(names)
+    return AttemptResult(0, "ollama", f"Ollama answered on 127.0.0.1:11434 with {listed}", False)
 
 
 def automate_crash_proxy_off(root: Path, _cfg: dict) -> AttemptResult:

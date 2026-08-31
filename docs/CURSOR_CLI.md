@@ -13,7 +13,7 @@ Terminal / headless Cursor Agent for local or CI use. **Meaningful runs need a `
 
 Follow [Cursor CLI overview](https://cursor.com/docs/cli/overview.md) and [headless](https://cursor.com/docs/cli/headless.md). Set `CURSOR_API_KEY` in the environment — never commit it.
 
-Prefer restricted autonomy: edit only when needed; deny `git push` (project [`.cursor/permissions.json`](../.cursor/permissions.json) + hooks).
+Prefer restricted autonomy: edit only when needed; deny `git push` (project [`.cursor/permissions.json`](../.cursor/permissions.json) + hooks). Local Ollama (`docs/LOCAL_MODELS.md`) is for IDE Chat/inline, not a substitute for `CURSOR_API_KEY` on this CLI.
 
 ## GitHub Actions (opt-in)
 

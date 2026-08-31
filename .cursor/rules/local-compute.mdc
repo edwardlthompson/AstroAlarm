@@ -42,4 +42,4 @@ When the session runs on **This Computer** (local IDE / local CLI), maximize the
 
 ## GPU
 
-Template gates do not use CUDA. Optional: Ollama on 127.0.0.1 (`docs/LOCAL_MODELS.md`) and `/emulator` `-gpu host`. Cursor Agent/Tab may still use cloud models. No keys in git.
+Template gates do not use CUDA. Optional: Ollama on 127.0.0.1 (`docs/LOCAL_MODELS.md`) and `/emulator` `-gpu host`. Probe with `check-local-compute`; pull a coder with `ensure-local-model`. Cursor Agent/Tab may still use cloud models. No keys in git. Do not set a global OpenAI base-URL override.

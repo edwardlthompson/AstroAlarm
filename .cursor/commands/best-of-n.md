@@ -17,7 +17,7 @@ Set **N** = `min(3, slots)` from that output. If `ram_gb` is under 16, use **N =
 
 Use Cursor’s `/best-of-n` (or the models picker) with N worktrees. Setup scripts: `.cursor/worktrees.json` (`setup-worktree-unix.sh` / `setup-worktree-windows.ps1`). They copy `*.env.example` only.
 
-Models come from the **Cursor picker** (cloud or the user’s local Ollama override). See `docs/LOCAL_MODELS.md` — do not invent API keys.
+Models come from the **Cursor picker**. If `check-local-compute` prints `coder=NAME`, pick that local Ollama model for at least one racer. See `docs/LOCAL_MODELS.md` — do not invent API keys, do not start a second Ollama, and do not override the global OpenAI base URL.
 
 ## 3. Apply the winner
 

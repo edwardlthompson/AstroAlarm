@@ -17,11 +17,11 @@ from local_resources import (  # noqa: E402
     InvalidJobs,
     cpu_count,
     env_jobs,
-    ollama_up,
     ram_gb_or_none,
     recommended_check_jobs,
     recommended_stack_slots,
 )
+from ollama_local import coder_models, fetch_tags, recommended_coder  # noqa: E402
 
 
 def _adb() -> str | None:
@@ -75,11 +75,19 @@ def main() -> int:
     except InvalidJobs as exc:
         print(f"FAIL: {exc}", file=sys.stderr)
         return 2
-    ollama = "up" if ollama_up() else "down"
+    tags = fetch_tags()
+    ollama = "up" if tags is not None else "down"
     sdk = _sdk() or "none"
     adb = "yes" if _adb() else "no"
     print(f"cpus={cpu} ram_gb={ram if ram is not None else 'unknown'} jobs={jobs} slots={slots}")
     print(f"ollama={ollama} emulator_gpu=unknown sdk={sdk} adb={adb} kvm={_kvm()}")
+    if tags is None:
+        print("models=none")
+    elif not tags:
+        print("models=none (run ensure-local-model)")
+    else:
+        extra = f" coder={recommended_coder(tags)}" if coder_models(tags) else " coder=missing"
+        print(f"models={','.join(tags)}{extra}")
     mcp = ROOT / ".cursor" / "mcp.json"
     print(f"mcp.json={'yes' if mcp.is_file() else 'no (copy mcp.foss.example optional)'}")
     if ram is not None and ram < 16 and ollama == "up":

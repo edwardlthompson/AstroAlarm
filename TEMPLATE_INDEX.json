@@ -2056,6 +2056,20 @@
       "owner": "maintainer"
     },
     {
+      "path": "scripts/ensure-local-model.sh",
+      "purpose": "Pull a RAM-fit Ollama coder when the loopback server is up",
+      "read_when": "milestone_boundary",
+      "update_when": "milestone_boundary",
+      "owner": "maintainer"
+    },
+    {
+      "path": "scripts/lib/ollama_local.py",
+      "purpose": "Parse Ollama /api/tags and pick the default coder name",
+      "read_when": "milestone_boundary",
+      "update_when": "milestone_boundary",
+      "owner": "maintainer"
+    },
+    {
       "path": "scripts/release-please-dry.sh",
       "purpose": "Preview next Release Please version without publishing",
       "read_when": "milestone_boundary",

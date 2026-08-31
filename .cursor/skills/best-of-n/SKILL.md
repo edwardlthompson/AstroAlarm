@@ -8,4 +8,4 @@ disable-model-invocation: false
 
 See also: `.cursor/commands/best-of-n.md`, `.cursor/worktrees.json`, `docs/LOCAL_MODELS.md`
 
-Cap N by `check-local-compute` slots (max 3; 2 if RAM < 16G). One Ollama server only. Never `git push`.
+Cap N by `check-local-compute` slots (max 3; 2 if RAM < 16G). One Ollama server only. If `coder=` is set, pick that model for at least one racer. Never `git push`.

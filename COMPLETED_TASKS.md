@@ -2,6 +2,10 @@
 
 > Archive of finished BUILD_PLAN items.
 
+## M43 leftover — local Ollama (2026-08-31)
+
+- ✅ [HUMAN] Optional: install Ollama and point Cursor Models at `http://127.0.0.1:11434/v1` (`docs/LOCAL_MODELS.md`)
+
 ## Sprint 2 — settings exemplar (2026-08-31)
 
 - ✅ [AGENT] Copy `docs/features/_template.md` → `docs/features/{name}.md`; refine acceptance criteria

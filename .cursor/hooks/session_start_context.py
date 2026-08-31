@@ -27,12 +27,18 @@ def main() -> None:
     ollama = "down"
     try:
         sys.path.insert(0, str(ROOT / "scripts" / "lib"))
-        from local_resources import ollama_up, ram_gb_or_none, recommended_check_jobs
+        from local_resources import ram_gb_or_none, recommended_check_jobs
+        from ollama_local import coder_models, fetch_tags, recommended_coder
 
         gb = ram_gb_or_none()
         ram = str(gb) if gb is not None else "?"
         jobs = str(recommended_check_jobs())
-        ollama = "up" if ollama_up() else "down"
+        tags = fetch_tags()
+        ollama = "up" if tags is not None else "down"
+        if tags and coder_models(tags):
+            ollama = f"{ollama}/{recommended_coder(tags)}"
+        elif tags:
+            ollama = f"{ollama}/{tags[0]}"
     except Exception:
         pass
     parts.append(

@@ -44,6 +44,7 @@ FOSS Android astronomical alarm clock: on-device NOAA/Meeus ephemeris, solar/lun
 
 ## Session Retrospectives
 
+| 2026-08-31 | Local Ollama workflow | Loopback Ollama is up; default coder is `qwen2.5-coder:7b`; `/coach` `/best-of-n` `/gates` probe tags | Do not set a global OpenAI base-URL override; Agent/Tab may stay cloud; dummy GUI string never in git |
 | 2026-08-30 | AstroAlarm init | Bootstrapped from agent-project-bootstrap; migrated OpenShouter astro suite; `test assembleRelease` green; `validate-bootstrap --quick` green | HUMAN: create GitHub repo, enable Dependabot/branch protection; do not commit `local.properties` |
 | 2026-08-28 | v1.0.0 /ship | Cloud agent #81 reviewed+merged; RP #82 cut first stable; Unreleased empty; SBOM+OpenVEX on the tag | Do not merge RP while upgrade-sim still fails on pruned stacks; `Release-As: 1.0.0` beats 0.26.0 |
 | 2026-08-28 | /cleanup HUMAN leftovers | Archived 5 script-closed HUMAN rows; CII, Ollama, Android SDK stay 🔲 | Recurring weekly AUTO stays 🔲 |

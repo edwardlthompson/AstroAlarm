@@ -14,7 +14,7 @@ python3 scripts/agent-run.py render-gates-status
 
 ```
 
-`check-local-compute` is INFO (exit 0 unless misconfig). Emulator `--if-device` SKIPs when no adb device — it will not download system images.
+`check-local-compute` is INFO (exit 0 unless misconfig). If it prints `coder=missing`, run `python3 scripts/agent-run.py ensure-local-model` (optional; `/gates` must not fail for Ollama). Emulator `--if-device` SKIPs when no adb device — it will not download system images.
 
 Report pass/fail per script. Fix failures in scope before marking BUILD_PLAN items complete. After the scripts, follow `.cursor/skills/canvas-bootstrap-status/SKILL.md` and render the gate table (Canvas first).
 

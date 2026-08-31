@@ -17,6 +17,13 @@
 
 ## Entries
 
+### 2026-08-31 — Local Ollama in the agent workflow
+- **Status:** Accepted
+- **Context:** Ollama is installed and answering on 127.0.0.1:11434. The M43 HUMAN leftover asked to point Cursor Models at that endpoint.
+- **Decision:** Pull a RAM-fit coder (`qwen2.5-coder:7b`), expose tags on `check-local-compute` / session-start, add `ensure-local-model`, and teach `/coach` `/best-of-n` `/gates` to prefer that coder in the picker. Close the HUMAN leftover. Do not write a global OpenAI base-URL override.
+- **Alternatives considered:** Override Cursor’s OpenAI base URL in user `settings.json` (rejected: hijacks Agent/cloud Chat). Require Ollama on `/ship` (already rejected).
+- **Consequences:** Chat/inline can use the pulled coder after one Models GUI add. Agent/Tab may stay on Cursor cloud models. Dummy GUI string stays out of git.
+
 ### 2026-08-31 — Autonomous HUMAN setup
 - **Status:** Accepted
 - **Context:** User asked to automate every HUMAN BUILD_PLAN row.
@@ -399,4 +406,3 @@ _Seed template ADR: `docs/adr/0000-template-baseline.md`. Child repos use `docs/
 ## Autonomous /build approval (2026-08-31T02:40:15+00:00)
 
 - Autonomous approval for BUILD_PLAN row: Approve ADR-0001 and BUILD_PLAN Sprint 1 for your stack
-

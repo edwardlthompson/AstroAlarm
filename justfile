@@ -29,5 +29,8 @@ release-please-dry:
 local-compute:
     python3 scripts/agent-run.py check-local-compute
 
+ensure-local-model:
+    python3 scripts/agent-run.py ensure-local-model
+
 android-instrumented:
     python3 scripts/agent-run.py run-android-emulator-local
