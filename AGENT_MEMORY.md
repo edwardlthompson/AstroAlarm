@@ -92,5 +92,5 @@ FOSS Android astronomical alarm clock: on-device NOAA/Meeus ephemeris, solar/lun
 ## Template Provenance
 
 - **Source template:** `edwardlthompson/agent-project-bootstrap` (self-maintained)
-- **Template version:** `1.0.0` (see `.template-version`)
+- **Template version:** `1.1.0` (see `.template-version`)
 - **Last update check:** See `.template-update.json`
