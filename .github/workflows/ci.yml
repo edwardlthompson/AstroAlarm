@@ -150,6 +150,8 @@ jobs:
           distribution: temurin
           java-version: "21"
           cache: gradle
+      - uses: android-actions/setup-android@v4
+        if: hashFiles('examples/android/gradlew') != ''
       - name: Install web dependencies
         if: hashFiles('examples/web/package-lock.json') != ''
         working-directory: examples/web

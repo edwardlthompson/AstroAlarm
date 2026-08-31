@@ -64,6 +64,7 @@ examples/web/public/app-update.json
 examples/web/public/donations.json
 examples/android/app/src/main/assets/app-update.json
 examples/android/app/src/main/assets/donations.json
+!examples/android/app/src/test/assets/donations.json
 !examples/android/app/src/test/resources/assets/donations.json
 
 # Rust / Go

@@ -322,12 +322,13 @@ if should_run android && [ -f examples/android/gradlew ]; then
     else
       skip_or_block "Skipping android gate (JAVA_HOME not set)"
     fi
-  elif ! android_sdk_ready; then
-    skip_or_block "Skipping android gate (no ANDROID_HOME / sdk.dir)"
   else
+    if ! android_sdk_ready; then
+      log "Android SDK missing; running Robolectric unit tests with Java only"
+    fi
     gradle_extra="$("$PY" "$ROOT/scripts/lib/gradle_offline.py" --args --root "$ROOT" 2>/dev/null || true)"
     # shellcheck disable=SC2086
-    run_in_dir examples/android android-test ./gradlew $gradle_extra test --parallel
+    run_in_dir examples/android android-test ./gradlew $gradle_extra test --parallel --rerun-tasks
   fi
 fi
 
