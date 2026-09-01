@@ -171,3 +171,12 @@
 | **Cause** | Node 25+ enables a global Web Storage stub without `--localstorage-file`; jsdom skips installing real Storage and the stub shadows it |
 | **Fix** | Vitest `setupFiles: ["src/test/setup-localStorage.ts"]` installs in-memory Storage when `getItem` is missing |
 | **Prevention** | Keep the setup file; do not rely on Node’s experimental `localStorage` in browser-unit tests |
+
+### KB-021 — Onboarding gate hides Golden Path Settings/About in connected tests
+
+| Field | Detail |
+|-------|--------|
+| **Symptom** | `connectedDebugAndroidTest` fails: no node with content description Settings/About |
+| **Cause** | `OnboardingGate` shows the first-launch checklist before `GoldenPathScreen`, so instrumented smoke never sees the nav icons |
+| **Fix** | `OnboardingChecker.skipUiGate()` is true when `ActivityThread.getInstrumentation()` is non-null |
+| **Prevention** | Any full-screen first-run overlay must skip under instrumentation or mark complete in a test rule that runs before Activity launch |

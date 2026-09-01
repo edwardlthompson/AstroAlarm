@@ -17,6 +17,13 @@
 
 ## Entries
 
+### 2026-09-01 — v1.3.0 scientific sun/moon engine
+- **Status:** Accepted
+- **Context:** The 3D moon was a synodic cartoon; southern noon was pinned south; NOAA solar used date-only JD. User asked for one accurate on-device engine, then `/cleanup` `/ship` and sideload.
+- **Decision:** Pin Apache-2.0 `commons-suncalc` 3.11 for sun and moon positions and event times. Keep NOAA `SolarMath` only for tropical longitude. Empty Unreleased before push. Admin-merge Release Please #9 to **v1.3.0**. Skip onboarding under ActivityThread instrumentation so Golden Path connected tests can see Settings/About. Sideload with the PC upload keystore (GitHub Release job-local key still differs unless secrets are set). Codex skipped (no key/CLI). Did not retarget CodeQL to `vcodeql-bundle-*`.
+- **Alternatives considered:** Vendor GPLv3 Sky Map (rejected: license). Apply upd-cli CodeQL bundle tags (rejected: already fixed as invalid). Kotlin 2.3.30+ (blocked for CodeQL).
+- **Consequences:** Alarm Instants shift vs 1.2.0 cartoons. 3D stays a transit clock. `versionCode` still 10100. Next `/ship` must keep Unreleased first+empty.
+
 ### 2026-08-31 — v1.2.0 production APK on GitHub Releases
 - **Status:** Accepted
 - **Context:** User asked to shrink 2D alarm callouts and `/ship` a signed, out-of-beta 1.x release.
