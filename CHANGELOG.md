@@ -8,6 +8,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Added
+
+* **android:** optional 24 Solar Terms year view (2D wheel, 3D ring, widget)
+
 ## [1.3.1](https://github.com/edwardlthompson/AstroAlarm/compare/v1.3.0...v1.3.1) (2026-09-01)
 
 

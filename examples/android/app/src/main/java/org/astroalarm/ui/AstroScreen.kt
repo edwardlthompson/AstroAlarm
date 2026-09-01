@@ -30,6 +30,7 @@ import org.astroalarm.astro.model.SolarEventType
 import org.astroalarm.astro.place.AstroPlaceStore
 import org.astroalarm.astro.settings.AstroDisplayPreferences
 import org.astroalarm.widget.AstroUpcomingWidgetProvider
+import org.astroalarm.ui.solarterm.SolarTermScreen
 
 @Composable
 fun AstroScreen(
@@ -40,6 +41,7 @@ fun AstroScreen(
     val context = LocalContext.current
     val displayPrefs = remember { AstroDisplayPreferences(context) }
     val viewMode by displayPrefs.alarmViewMode.collectAsState()
+    val showSolarTerms by displayPrefs.showSolarTermsYear.collectAsState()
     val coroutineScope = rememberCoroutineScope()
     val place by placeStore.place.collectAsState()
     val alarms by alarmStore.alarms.collectAsState()
@@ -47,7 +49,10 @@ fun AstroScreen(
     var editingAlarm by remember { mutableStateOf<AstroAlarm?>(null) }
     var showAddDialogWithTarget by remember { mutableStateOf<AlarmTarget?>(null) }
 
-    val pagerState = rememberPagerState(pageCount = { 3 })
+    val pagerState = rememberPagerState(pageCount = { if (showSolarTerms) 4 else 3 })
+    LaunchedEffect(showSolarTerms) {
+        if (!showSolarTerms && pagerState.currentPage > 2) pagerState.scrollToPage(2)
+    }
 
     val hasLocation = place != null && place!!.isValid
     val defaultTarget = if (hasLocation) {
@@ -95,6 +100,13 @@ fun AstroScreen(
                     onClick = { coroutineScope.launch { pagerState.animateScrollToPage(2) } },
                     text = { Text(stringResource(R.string.astro_tab_3d_clock), fontSize = 13.sp) }
                 )
+                if (showSolarTerms) {
+                    Tab(
+                        selected = pagerState.currentPage == 3,
+                        onClick = { coroutineScope.launch { pagerState.animateScrollToPage(3) } },
+                        text = { Text(stringResource(R.string.solar_term_tab_year), fontSize = 13.sp) }
+                    )
+                }
             }
 
             HorizontalPager(
@@ -205,7 +217,8 @@ fun AstroScreen(
                         }
                     }
                     1 -> AstroClockScreen(place = place, alarms = alarms, modifier = Modifier.fillMaxSize())
-                    else -> Astro3DClockScreen(place = place, alarms = alarms, modifier = Modifier.fillMaxSize())
+                    2 -> Astro3DClockScreen(place = place, alarms = alarms, modifier = Modifier.fillMaxSize())
+                    else -> SolarTermScreen(place = place, modifier = Modifier.fillMaxSize())
                 }
             }
         }

@@ -17,6 +17,13 @@
 
 ## Entries
 
+### 2026-09-01 — 24 Solar Terms year view
+- **Status:** Accepted
+- **Context:** Request for an additive jieqi year overlay (2D + 3D + widget) without changing daily clocks.
+- **Decision:** Self-contained `org.astroalarm.solarterm` module plus Year tab gated by a default-off setting. Reuse NOAA `SolarSeasons.apparentLon` with typical-month root finding (not `SolarSeasons.instant`, which maps 315° to December). Cache current and next tropical years. Southern “local seasons” remaps English names and colors only.
+- **Alternatives considered:** Swiss Ephemeris / Skyfield (rejected: extra native deps; NOAA already drives seasons/zodiac). Overlaying jieqi on the daily 2D/3D clocks (rejected: user asked to leave daily features alone).
+- **Consequences:** Times match the in-app NOAA model (seconds of that model). Enable Year View in Settings to see the fourth tab.
+
 ### 2026-09-01 — v1.3.1 lockscreen TTS repeat
 - **Status:** Accepted
 - **Context:** Lockscreen TTS spoke the alarm label once. User asked for repeats with a 2s gap until dismiss, `/ship`, and sideload on OP12/OP13.
@@ -27,7 +34,7 @@
 ### 2026-09-01 — Close AUTO/ADB leftovers after v1.3.0
 - **Status:** Accepted
 - **Context:** User asked to finish remaining AUTO/ADB BUILD_PLAN rows and automate HUMAN work.
-- **Decision:** Run weekly/monthly/pre-release AUTO on `main` (triage, license+SBOM, local pre-release, CI green). Ack `v1.3.0` as the release-tag HUMAN row. Sideload OP13 in-place (`firstInstallTime` unchanged) and launch both phones. Windows HUMAN/ADB handlers now resolve `gh.exe`, `gradlew.bat`, and `adb.exe` so `/build` can close those rows. Leave CII open: bestpractices.dev returns no project; do not fake a badge. Leave Dependabot #1 (failed check) and #4 (GitHub Actions majors) unmerged.
+- **Decision:** Run weekly/monthly/pre-release AUTO on `main` (triage, license+SBOM, local pre-release, CI green). Ack `v1.3.0` as the release-tag HUMAN row. Sideload OP13 in-place (`firstInstallTime` unchanged) and launch both phones. Windows HUMAN/ADB handlers now resolve `gh.exe`, `gradlew.bat`, and `adb.exe` so `/build` can close those rows. Leave CII open: bestpractices.dev returns no project; do not fake a badge. Leave Dependabot #1 and #4 unmerged.
 - **Alternatives considered:** `connectedDebugAndroidTest` on daily-driver phones (rejected: would overlay the 1.3.0 upload-key install). Create AVD without cmdline-tools (impossible). POST to CII without their OAuth (rejected).
 - **Consequences:** Playbook 🔲 templates stay. Next HUMAN is CII login at https://www.bestpractices.dev/en/projects/new
 

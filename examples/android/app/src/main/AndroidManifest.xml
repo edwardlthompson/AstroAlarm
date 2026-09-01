@@ -108,6 +108,20 @@
                 android:name="android.appwidget.provider"
                 android:resource="@xml/astro_3d_widget_info" />
         </receiver>
+        <receiver
+            android:name="org.astroalarm.widget.SolarTermWidgetProvider"
+            android:label="@string/solar_term_widget_name"
+            android:exported="true">
+            <intent-filter>
+                <action android:name="android.appwidget.action.APPWIDGET_UPDATE" />
+                <action android:name="android.intent.action.TIME_TICK" />
+                <action android:name="android.intent.action.TIMEZONE_CHANGED" />
+                <action android:name="android.intent.action.TIME_SET" />
+            </intent-filter>
+            <meta-data
+                android:name="android.appwidget.provider"
+                android:resource="@xml/astro_solarterm_widget_info" />
+        </receiver>
     </application>
 
 </manifest>

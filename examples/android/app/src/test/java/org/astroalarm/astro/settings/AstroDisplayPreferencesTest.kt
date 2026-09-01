@@ -49,4 +49,19 @@ class AstroDisplayPreferencesTest {
         assertTrue(reader.isShowMonthTicks2D())
         assertTrue(reader.showMonthTicks2D.first())
     }
+
+    @Test
+    fun solarTermsYearDefaultOffAndPersist() = runBlocking {
+        val prefs = AstroDisplayPreferences(context)
+        assertFalse(prefs.isShowSolarTermsYear())
+        assertFalse(prefs.isSolarTermTraditional())
+        assertFalse(prefs.isSolarTermLocalSeasons())
+        prefs.setShowSolarTermsYear(true)
+        prefs.setSolarTermTraditional(true)
+        prefs.setSolarTermLocalSeasons(true)
+        val reader = AstroDisplayPreferences(context)
+        assertTrue(reader.isShowSolarTermsYear())
+        assertTrue(reader.isSolarTermTraditional())
+        assertTrue(reader.isSolarTermLocalSeasons())
+    }
 }

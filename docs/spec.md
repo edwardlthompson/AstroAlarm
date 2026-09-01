@@ -17,6 +17,7 @@
 | FR-2 | As a user I add solar, lunar, or custom clock alarms | 18 solar events, 11 lunar events, custom hour/minute; JSON store + exact `AlarmManager` |
 | FR-3 | As a user I stop a ringing alarm from the lockscreen | Snooze and Stop; math dialog when `mathUnlockEnabled` |
 | FR-4 | As a user I see the next alarm on the home screen | Rotating day/night widget bitmap + countdown preview |
+| FR-5 | As a user I can open an optional 24 Solar Terms year view | Settings toggle (default off); 2D wheel + 3D ring + widget; local times from `AstroPlace.zone` |
 ## Non-Functional Constraints
 
 - MIT FOSS. No Google Play Services, Firebase, or proprietary telemetry
