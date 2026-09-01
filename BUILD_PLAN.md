@@ -55,13 +55,13 @@ grep '\[AUTO\]' BUILD_PLAN.md
 
 **Autonomous `/build`:** Runs all `[AGENT]`/`[AUTO]` and Parallel work first, then attempts the grouped **Human & device (after automation)** section via `scripts/attempt-build-plan-row.sh`. Success marks ✅; failure appends `HUMAN_BACKLOG.md` and continues — never halts on human labels. Humans review the grouped section (and backlog) after automation finishes. Status: `bash scripts/build-sprint-status.sh --json`.
 
-> **Template maintainer:** M46 AGENT/AUTO archived. HUMAN leftovers that still need a person: CII, Android SDK. Last ship **v1.0.0**. **Child repos:** copy the playbook.
+> **Template maintainer:** M46 AGENT/AUTO archived. HUMAN leftover that still needs a person: CII. Last ship **v1.3.0**. **Child repos:** copy the playbook.
 
 ---
 
 ## Template Maintainer — Active Board
 
-> **v1.0.0** published @ `3dae768`. **M46** AGENT/AUTO archived in COMPLETED_TASKS.md @ `6229822`. Closed HUMAN leftovers archived in COMPLETED_TASKS.md @ `c61d249`. Still open: CII login, Android SDK licenses. **M43 Ollama** archived in COMPLETED_TASKS.md. **M45** and **M44** archived in COMPLETED_TASKS.md. **v0.25.0** archived in COMPLETED_TASKS.md @ `7670444`. **v0.24.0** archived in COMPLETED_TASKS.md @ `c0f0dee`.
+> **v1.3.0** published. **M46** AGENT/AUTO archived. CII login still needs a person. Android SDK leftover closed 2026-09-01. **M43 Ollama** archived in COMPLETED_TASKS.md.
 
 ### M46 leftovers (human only)
 
@@ -69,7 +69,7 @@ grep '\[AUTO\]' BUILD_PLAN.md
 
 ### M43 leftovers (human/device)
 
-1. 🔲 [ADB] Optional: Android SDK licenses + first AVD (`/emulator` or `just android-instrumented`)
+> **Android SDK licenses + devices** archived in COMPLETED_TASKS.md (2026-09-01).
 
 ---
 
@@ -146,26 +146,26 @@ When **Sprint 0** ends: stop re-reading `docs/INITIALIZATION_PROMPT.md` as the d
 ### Weekly
 
 - ✅ [AUTO] `cursor-feature-radar.sh` (non-blocking; artifact in weekly-health-check)
-- 🔲 [AUTO] `check-security-triage.sh --wait-ci 300` (Dependabot + CI + Scorecard)
-- 🔲 [AGENT] `/update-deps` locally; triage leftover Dependabot PRs and Scorecard SARIF
-- 🔲 [AUTO] CI matrix + Repo Hygiene + Feature Gate green on `main`
+- ✅ [AUTO] `check-security-triage.sh --wait-ci 300` (Dependabot + CI + Scorecard; 2026-09-01)
+- ✅ [AGENT] `/update-deps` locally; triage leftover Dependabot PRs and Scorecard SARIF
+- ✅ [AUTO] CI matrix + Repo Hygiene + Feature Gate green on `main`
 
 ### Monthly
 
-- 🔲 [AUTO] `simulate-template-upgrade.sh` (also in `weekly-health-check.yml`)
-- 🔲 [AUTO] `check-license-compliance.sh` + SBOM on latest release
-- 🔲 [AGENT] Review Dependabot auto-merge PRs (KB-007)
+- ✅ [AUTO] `simulate-template-upgrade.sh` (also in `weekly-health-check.yml`)
+- ✅ [AUTO] `check-license-compliance.sh` + SBOM on latest release
+- ✅ [AGENT] Review Dependabot auto-merge PRs (KB-007)
 
 ### Pre-release (every version)
 
-- 🔲 [AUTO] `pre-release-gate.sh --local` before push; full `pre-release-gate.sh` + `run-maintainer-gates.sh` after (`verify-branch-protection.sh`)
-- 🔲 [AUTO] Release Please PR merged; CHANGELOG + manifest bumped
+- ✅ [AUTO] `pre-release-gate.sh --local` before push; full `pre-release-gate.sh` + `run-maintainer-gates.sh` after (`verify-branch-protection.sh`)
+- ✅ [AUTO] Release Please PR merged; CHANGELOG + manifest bumped
 
 ### Human (after automation)
 
 > Product approvals after automated pre-release gates pass.
 
-- 🔲 [HUMAN] Approve release tag when product-ready
+- ✅ [HUMAN] Approve release tag when product-ready (`v1.3.0` 2026-09-01)
 - ✅ [HUMAN] Quarterly Cursor feature radar backlog review (next due 2026-11-15; last pass 2026-08-31)
 
 ---
@@ -174,6 +174,7 @@ When **Sprint 0** ends: stop re-reading `docs/INITIALIZATION_PROMPT.md` as the d
 
 | Sprint                                                            | Status   | Archive                          |
 | ----------------------------------------------------------------- | -------- | -------------------------------- |
+| M43 leftover — Android SDK + devices                              | Complete | `COMPLETED_TASKS.md`             |
 | clock-3d-moon-sky                                                 | Complete | `COMPLETED_TASKS.md`             |
 | Sprint 2 — settings exemplar                                      | Complete | `COMPLETED_TASKS.md` @ `825fb6d` |
 | Sprint 1 — Golden Path Foundation                                 | Complete | `COMPLETED_TASKS.md` @ `825fb6d` |

@@ -9,29 +9,49 @@ from pathlib import Path
 from human_task_core import AttemptResult, run_cmd
 
 
-def adb_authorized(root: Path) -> bool:
-    adb = os.environ.get("ADB", "adb")
-    if os.name == "nt" and not shutil.which(adb):
-        win = os.environ.get("LOCALAPPDATA", "")
-        if win:
-            candidate = Path(win) / "Android/Sdk/platform-tools/adb.exe"
-            if candidate.is_file():
-                adb = str(candidate)
+def _adb_bin() -> str:
+    env = os.environ.get("ADB", "")
+    if env and Path(env).is_file():
+        return env
+    found = shutil.which("adb")
+    if found:
+        return found
+    win = os.environ.get("LOCALAPPDATA", "")
+    candidate = Path(win) / "Android/Sdk/platform-tools/adb.exe"
+    if candidate.is_file():
+        return str(candidate)
+    return env or "adb"
+
+
+def first_serial() -> str | None:
+    adb = _adb_bin()
     try:
-        out = subprocess.run(
-            [adb, "devices"],
-            capture_output=True,
-            text=True,
-            check=False,
-        )
+        out = subprocess.run([adb, "devices"], capture_output=True, text=True, check=False)
     except FileNotFoundError:
-        return False
+        return None
     if out.returncode != 0:
-        return False
+        return None
     for line in out.stdout.splitlines()[1:]:
-        if line.strip().endswith("device"):
-            return True
-    return False
+        parts = line.split()
+        if len(parts) >= 2 and parts[1] == "device":
+            return parts[0]
+    return None
+
+
+def adb_authorized(root: Path) -> bool:
+    return first_serial() is not None
+
+
+def _gradle_cmd(root: Path, *args: str) -> tuple[int, str] | None:
+    cwd = root / "examples/android"
+    bat = cwd / "gradlew.bat"
+    unix = cwd / "gradlew"
+    if os.name == "nt" and bat.is_file():
+        return run_cmd(root, [str(bat), *args], cwd=cwd)
+    if unix.is_file():
+        return run_cmd(root, ["bash", str(unix), *args], cwd=cwd)
+    return None
+
 
 def automate_adb_instrumented(root: Path, _cfg: dict) -> AttemptResult:
     if adb_authorized(root):
@@ -41,19 +61,13 @@ def automate_adb_instrumented(root: Path, _cfg: dict) -> AttemptResult:
             if code == 0:
                 return AttemptResult(0, "verify-android-insets", "ADB instrumented tests passed", False)
             return AttemptResult(1, "verify-android-insets", tail or f"exit {code}", True)
-        gradle = root / "examples/android/gradlew"
-        if gradle.is_file():
-            code, tail = run_cmd(
-                root,
-                ["bash", str(gradle), "connectedDebugAndroidTest"],
-                cwd=root / "examples/android",
-            )
+        ran = _gradle_cmd(root, "connectedDebugAndroidTest")
+        if ran:
+            code, tail = ran
             if code == 0:
                 return AttemptResult(0, "connectedDebugAndroidTest", "connectedDebugAndroidTest passed", False)
             return AttemptResult(1, "connectedDebugAndroidTest", tail or f"exit {code}", True)
-    gradle = root / "examples/android/gradlew"
-    if gradle.is_file():
-        run_cmd(root, ["bash", str(gradle), "test"], cwd=root / "examples/android")
+    _gradle_cmd(root, "test")
     return AttemptResult(
         1,
         "adb-unavailable",
@@ -75,17 +89,14 @@ def automate_fdroid_dry_run(root: Path, _cfg: dict) -> AttemptResult:
 
 
 def automate_android_sdk_smoke(root: Path, _cfg: dict) -> AttemptResult:
-    gradle = root / "examples/android/gradlew"
-    if gradle.is_file():
-        code, tail = run_cmd(root, ["bash", str(gradle), "test"], cwd=root / "examples/android")
-        if code != 0:
-            return AttemptResult(1, "gradle-test", tail or f"exit {code}", True)
-    if adb_authorized(root):
-        adb = os.environ.get("ADB", "adb")
-        code, _ = run_cmd(root, [adb, "shell", "getprop", "ro.build.version.sdk"])
+    ran = _gradle_cmd(root, "testDebugUnitTest")
+    if ran and ran[0] != 0:
+        return AttemptResult(1, "gradle-test", ran[1] or f"exit {ran[0]}", True)
+    serial = first_serial()
+    if serial:
+        code, _ = run_cmd(root, [_adb_bin(), "-s", serial, "shell", "getprop", "ro.build.version.sdk"])
         if code == 0:
             return AttemptResult(0, "adb-getprop", "Gradle tests + adb getprop smoke", False)
-    if gradle.is_file():
+    if (root / "examples/android").is_dir():
         return AttemptResult(1, "adb-unavailable", "no_authorized_device after unit tests", True)
     return AttemptResult(1, "android-sdk", "No Android example tree", True)
-

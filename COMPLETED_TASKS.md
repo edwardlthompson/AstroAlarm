@@ -2,6 +2,10 @@
 
 > Archive of finished BUILD_PLAN items.
 
+## M43 leftover — Android SDK + devices (2026-09-01)
+
+- ✅ [ADB] Optional: Android SDK licenses + first AVD (`/emulator` or `just android-instrumented`)
+
 ## clock-3d-moon-sky (2026-09-01)
 
 - ✅ [AGENT] Copy `docs/features/_template.md` → `docs/features/clock-3d-moon-sky.md`; refine acceptance criteria

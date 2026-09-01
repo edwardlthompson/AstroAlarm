@@ -4,6 +4,4 @@
 
 | Deferred | Sprint | Owner | Task | Reason |
 |----------|--------|-------|------|--------|
-| 2026-08-31 | M46 leftovers | HUMAN | P2: CII Best Practices checklist (login + public badge) | CII checklist needs a human login and public badge |
-| 2026-08-31 | Ongoing | HUMAN | Approve release tag when product-ready | No release; human product approval required |
-| 2026-08-31 | M43 leftovers | ADB | Optional: Android SDK licenses + first AVD | no_authorized_device; unit tests already green |
+| 2026-09-01 | M46 leftovers | HUMAN | P2: CII Best Practices checklist (login + public badge) | bestpractices.dev has no project for this repo (`[]`); GitHub OAuth on that site is required; do not fake a badge |

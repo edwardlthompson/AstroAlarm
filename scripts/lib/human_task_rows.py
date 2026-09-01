@@ -79,9 +79,10 @@ def automate_product_smoke(root: Path, cfg: dict) -> AttemptResult:
 
 
 def automate_release_tag(root: Path, _cfg: dict) -> AttemptResult:
-    code, out = run_cmd(root, ["gh", "release", "list", "--limit", "1"])
+    code, out = run_cmd(root, ["gh", "release", "list", "--json", "tagName", "--limit", "1"])
+    blob = out.strip()
     if code != 0:
         return AttemptResult(1, "release-tag", "gh release list failed; product judgment required", True)
-    if out.strip():
+    if "tagName" in blob:
         return AttemptResult(0, "release-tag", "Release exists; autonomous ack only", False)
     return AttemptResult(1, "release-tag", "No release; human product approval required", True)

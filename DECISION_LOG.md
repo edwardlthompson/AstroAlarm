@@ -17,6 +17,13 @@
 
 ## Entries
 
+### 2026-09-01 — Close AUTO/ADB leftovers after v1.3.0
+- **Status:** Accepted
+- **Context:** User asked to finish remaining AUTO/ADB BUILD_PLAN rows and automate HUMAN work.
+- **Decision:** Run weekly/monthly/pre-release AUTO on `main` (triage, license+SBOM, local pre-release, CI green). Ack `v1.3.0` as the release-tag HUMAN row. Sideload OP13 in-place (`firstInstallTime` unchanged) and launch both phones. Windows HUMAN/ADB handlers now resolve `gh.exe`, `gradlew.bat`, and `adb.exe` so `/build` can close those rows. Leave CII open: bestpractices.dev returns no project; do not fake a badge. Leave Dependabot #1 (failed check) and #4 (GitHub Actions majors) unmerged.
+- **Alternatives considered:** `connectedDebugAndroidTest` on daily-driver phones (rejected: would overlay the 1.3.0 upload-key install). Create AVD without cmdline-tools (impossible). POST to CII without their OAuth (rejected).
+- **Consequences:** Playbook 🔲 templates stay. Next HUMAN is CII login at https://www.bestpractices.dev/en/projects/new
+
 ### 2026-09-01 — v1.3.0 scientific sun/moon engine
 - **Status:** Accepted
 - **Context:** The 3D moon was a synodic cartoon; southern noon was pinned south; NOAA solar used date-only JD. User asked for one accurate on-device engine, then `/cleanup` `/ship` and sideload.

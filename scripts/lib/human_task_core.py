@@ -3,6 +3,7 @@ from __future__ import annotations
 
 import json
 import os
+import shutil
 import subprocess
 from dataclasses import dataclass
 from datetime import datetime, timezone
@@ -79,16 +80,22 @@ def git_has_remote(root: Path) -> bool:
 
 def run_cmd(root: Path, cmd: list[str], *, cwd: Path | None = None) -> tuple[int, str]:
     env = os.environ.copy()
+    env.setdefault("GH_PAGER", "cat")
     if os.name == "nt":
         extras = [
             Path(os.environ.get("ProgramFiles", r"C:\Program Files")) / "GitHub CLI",
             Path(os.environ.get("ProgramFiles", r"C:\Program Files")) / "nodejs",
             Path(os.environ.get("ProgramFiles", r"C:\Program Files")) / "Git" / "bin",
             Path(os.environ.get("LOCALAPPDATA", "")) / "Programs" / "GitHub CLI",
+            Path(os.environ.get("LOCALAPPDATA", "")) / "Android" / "Sdk" / "platform-tools",
         ]
         prefix = os.pathsep.join(str(p) for p in extras if p.is_dir())
         if prefix:
             env["PATH"] = prefix + os.pathsep + env.get("PATH", "")
+        if cmd and cmd[0] == "gh":
+            gh = shutil.which("gh", path=env.get("PATH", ""))
+            if gh:
+                cmd = [gh, *cmd[1:]]
     try:
         proc = subprocess.run(
             cmd, cwd=cwd or root, capture_output=True, text=True, check=False, env=env
