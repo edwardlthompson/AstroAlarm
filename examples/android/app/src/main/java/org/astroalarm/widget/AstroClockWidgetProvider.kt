@@ -55,7 +55,6 @@ class AstroClockWidgetProvider : AppWidgetProvider() {
             val bitmap = AstroDiskRenderer.renderDisk(
                 place, alarms, now, sizePx,
                 showZodiac = showZodiac,
-                earth = EarthTexture.get(context),
             )
 
             val views = RemoteViews(context.packageName, R.layout.widget_astro).apply {

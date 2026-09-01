@@ -22,7 +22,6 @@ object AstroDiskRenderer {
         now: Instant = Instant.now(),
         size: Int = 300,
         showZodiac: Boolean = true,
-        earth: Bitmap? = null,
     ): Bitmap {
         val bitmap = Bitmap.createBitmap(size, size, Bitmap.Config.ARGB_8888)
         val canvas = Canvas(bitmap)
@@ -141,8 +140,7 @@ object AstroDiskRenderer {
 
         val handPaint = Paint(Paint.ANTI_ALIAS_FLAG).apply { color = Color.RED; strokeWidth = (size * 0.012f).coerceIn(2.5f, 5f); style = Paint.Style.FILL_AND_STROKE }
         canvas.drawLine(center, center, center, center - radius + 10f, handPaint)
-
-        EarthGlobeRenderer.drawGlobe(canvas, center, center, (radius * 0.19f).coerceIn(14f, 56f), place?.latitude ?: 40.0, place?.longitude ?: -74.0, earth, true)
+        AstroDiskOverlays.drawCenterHub(canvas, center, size)
         return bitmap
     }
 }

@@ -73,4 +73,12 @@ object AstroDiskOverlays {
             textY += lineHeight
         }
     }
+
+    fun drawCenterHub(canvas: Canvas, center: Float, size: Int) {
+        val hub = Paint(Paint.ANTI_ALIAS_FLAG).apply {
+            color = DiskCenterHub.COLOR
+            style = Paint.Style.FILL
+        }
+        canvas.drawCircle(center, center, DiskCenterHub.radius(size), hub)
+    }
 }
