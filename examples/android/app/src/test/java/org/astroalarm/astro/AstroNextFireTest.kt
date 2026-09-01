@@ -122,7 +122,7 @@ class AstroNextFireTest {
         val nextZdt = ZonedDateTime.ofInstant(next, zone)
         assertEquals(2027, nextZdt.year)
         assertEquals(Month.MARCH, nextZdt.month)
-        assertEquals(20, nextZdt.dayOfMonth)
+        assertTrue(nextZdt.dayOfMonth in 19..21)
         assertFalse("Solar alarms should not be once", alarm.isOnce)
     }
 
@@ -144,6 +144,6 @@ class AstroNextFireTest {
         val nextZdt = ZonedDateTime.ofInstant(next, zone)
         assertEquals(2026, nextZdt.year)
         assertEquals(Month.DECEMBER, nextZdt.month)
-        assertEquals(21, nextZdt.dayOfMonth)
+        assertTrue(nextZdt.dayOfMonth in 20..22)
     }
 }

@@ -10,11 +10,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [1.2.0](https://github.com/edwardlthompson/AstroAlarm/compare/v1.1.0...v1.2.0) (2026-08-31)
 
-
 ### Added
 
 * **android:** ship 1.x clocks, NASA globe, and signed FOSS APKs ([9eb224f](https://github.com/edwardlthompson/AstroAlarm/commit/9eb224f85603b1f3a0b7a7382f008246ad0e2af8))
-
 
 ### Fixed
 
@@ -25,12 +23,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [1.1.0](https://github.com/edwardlthompson/AstroAlarm/compare/v1.0.0...v1.1.0) (2026-08-31)
 
-
 ### Added
 
 * bootstrap AstroAlarm as a FOSS Android astronomical alarm app ([811fdc5](https://github.com/edwardlthompson/AstroAlarm/commit/811fdc58e085e3f49d5b6494eb1c264d9d2f4bf9))
 * **local:** integrate loopback Ollama into workspace and gates ([7b8f168](https://github.com/edwardlthompson/AstroAlarm/commit/7b8f1687d6ad2dbcde4b62c2a2b6412853981764))
-
 
 ### Fixed
 

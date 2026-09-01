@@ -33,6 +33,7 @@ import org.astroalarm.math.MathPreferences
 import org.astroalarm.tts.TtsPreferences
 import org.astroalarm.ui.LocationCard
 import org.astroalarm.ui.math.MathSettingsSection
+import org.astroalarm.ui.onboard.OnboardingScreen
 import org.astroalarm.ui.tts.TtsVoicePicker
 
 @OptIn(ExperimentalLayoutApi::class)
@@ -55,6 +56,7 @@ fun SettingsScreen(
     var searchQuery by remember { mutableStateOf("") }
     var citySuggestions by remember { mutableStateOf<List<AstroPlace>>(emptyList()) }
     var isLocating by remember { mutableStateOf(false) }
+    var showOnboarding by remember { mutableStateOf(false) }
 
     val ttsPrefs = remember { TtsPreferences(context) }
     val voice by ttsPrefs.voice.collectAsState()
@@ -97,6 +99,11 @@ fun SettingsScreen(
         } else {
             citySuggestions = emptyList()
         }
+    }
+
+    if (showOnboarding) {
+        OnboardingScreen(onDone = { showOnboarding = false }, modifier = modifier)
+        return
     }
 
     Column(
@@ -207,6 +214,15 @@ fun SettingsScreen(
                 modifier = Modifier.weight(1f)
             )
             Switch(checked = saveCrashes, onCheckedChange = onSaveCrashes)
+        }
+
+        HorizontalDivider()
+
+        Button(
+            onClick = { showOnboarding = true },
+            modifier = Modifier.fillMaxWidth(),
+        ) {
+            Text(stringResource(R.string.onboard_settings_button))
         }
 
         Button(

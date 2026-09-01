@@ -1,11 +1,11 @@
 package org.astroalarm.widget
 
 import android.graphics.*
-import org.astroalarm.astro.alarm.AstroNextFire
 import org.astroalarm.astro.model.AstroAlarm
 import org.astroalarm.astro.moon.LunarCalculator
 import org.astroalarm.astro.place.AstroPlace
-import org.astroalarm.astro.sun.SolarMath
+import org.astroalarm.astro.sky.BodySky
+import org.astroalarm.astro.sky.SkyBodies
 import org.astroalarm.astro.zodiac.ZodiacCalculator
 import org.astroalarm.astro.zodiac.ZodiacSign
 import java.time.Instant
@@ -43,11 +43,13 @@ object Astro3DRenderer {
 
         val tiltRad = Math.toRadians((90.0 - lat).coerceIn(15.0, 75.0))
         val sinT = sin(tiltRad).toFloat()
-        val jd = SolarMath.julianDay(date)
-        val t = SolarMath.julianCentury(jd)
-        val sunDec = SolarMath.sunDeclination(t, SolarMath.geomMeanLongSun(t), SolarMath.sunEqOfCenter(t, SolarMath.geomMeanAnomSun(t)))
+        val sunEq = SkyBodies.sun(now, lat, lon)
+        val moonEq = SkyBodies.moon(now, lat, lon)
+        val sunDec = sunEq?.decDeg ?: 0.0
+        val moonDec = moonEq?.decDeg ?: 0.0
+        val sunAng = sunEq?.let { BodySky.ringAngle(it.haRad, lat) } ?: BodySky.ringAngle(0.0, lat)
+        val moonAng = moonEq?.let { BodySky.ringAngle(it.haRad, lat) } ?: sunAng
         val moonAge = LunarCalculator.moonAgeDays(date)
-        val moonDec = 23.44 * sin((moonAge / 29.53059) * 2.0 * Math.PI)
 
         val ringR = size * 0.38f
         val sunRx = ringR * cos(Math.toRadians(sunDec)).toFloat()
@@ -64,25 +66,31 @@ object Astro3DRenderer {
         if (showZodiac) drawTiltedRingHalf(canvas, cx, cy, zodiacRx, zodiacRy, true, Color.argb(60, 140, 190, 255))
 
         EarthGlobeRenderer.drawGlobe(canvas, globeCx, globeCy, size * 0.16f, lat, lon, earth, true)
+        GlobeGroundTracks.draw(
+            canvas, globeCx, globeCy, size * 0.16f, lat, lon, sunDec, moonDec,
+            GlobeGroundTracks.subLongitude(lon, sunEq?.haRad ?: 0.0),
+            GlobeGroundTracks.subLongitude(lon, moonEq?.haRad ?: 0.0),
+        )
 
         drawTiltedRingHalf(canvas, cx, moonCy, moonRx, moonRy, false, Color.rgb(240, 245, 255))
         drawTiltedRingHalf(canvas, cx, sunCy, sunRx, sunRy, false, Color.rgb(255, 215, 0))
+        Astro3DTransitOverlay.draw(
+            canvas, TransitTicks.marks(place, now),
+            cx, sunCy, sunRx, sunRy, moonCy, moonRx, moonRy, size,
+        )
         if (showZodiac) {
             drawTiltedRingHalf(canvas, cx, cy, zodiacRx, zodiacRy, false, Color.argb(175, 140, 190, 255))
             val sunLon = ZodiacCalculator.sunLongitudeAt(now)
-            drawOnRing(canvas, cx, cy, zodiacRx, zodiacRy, sunLon, ZodiacSign.fromEclipticLongitude(sunLon), size)
+            ZodiacGlyph.drawRing(canvas, cx, cy, zodiacRx, zodiacRy, sunLon, ZodiacSign.fromEclipticLongitude(sunLon), size)
         }
 
-        val sunFraction = (zdt.hour * 60 + zdt.minute + zdt.second / 60f) / 1440f
-        val sunAng = (sunFraction * 2.0 * Math.PI) - Math.PI / 2.0
         val (sx, sy) = ellipsePoint(cx, sunCy, sunRx, sunRy, sunAng)
         drawBody(canvas, sx, sy, size * 0.08f, Color.rgb(255, 220, 64), "☀️", size)
 
-        val moonAng = ((sunFraction + moonAge / 29.53059) % 1.0 * 2.0 * Math.PI) - Math.PI / 2.0
         val (mx, my) = ellipsePoint(cx, moonCy, moonRx, moonRy, moonAng)
         drawBody(canvas, mx, my, size * 0.065f, Color.rgb(200, 220, 255), moonPhaseEmoji(moonAge), size)
 
-        drawAlarmNodes(canvas, alarms, place, now, cx, sunCy, sunRx, sunRy, size)
+        Astro3DTransitOverlay.drawAlarms(canvas, alarms, place, now, cx, sunCy, sunRx, sunRy, size)
         return bitmap
     }
 
@@ -112,32 +120,5 @@ object Astro3DRenderer {
     private fun drawTiltedRingHalf(canvas: Canvas, cx: Float, cy: Float, rx: Float, ry: Float, isBack: Boolean, color: Int) {
         val p = Paint(Paint.ANTI_ALIAS_FLAG).apply { style = Paint.Style.STROKE; strokeWidth = (rx * 0.016f).coerceIn(1.8f, 3.5f); this.color = color }
         canvas.drawArc(RectF(cx - rx, cy - ry, cx + rx, cy + ry), if (isBack) 180f else 0f, 180f, false, p)
-    }
-
-    private fun drawOnRing(canvas: Canvas, cx: Float, cy: Float, rx: Float, ry: Float, sunLon: Double, midday: ZodiacSign, size: Int) {
-        val ep = Paint(Paint.ANTI_ALIAS_FLAG).apply { textAlign = Paint.Align.CENTER; textSize = (size * 0.068f).coerceIn(18f, 34f) }
-        ZodiacSign.entries.forEach { sign ->
-            val ang = Math.toRadians(sign.startLongitudeDeg + 15.0 - sunLon)
-            val (x, y) = ellipsePoint(cx, cy, rx, ry, ang)
-            val front = sin(ang) >= 0
-            ep.color = if (sign == midday) Color.rgb(255, 215, 60) else if (front) Color.rgb(220, 238, 255) else Color.argb(130, 150, 180, 220)
-            canvas.drawText(sign.symbol, x, y + ep.textSize * 0.35f, ep)
-        }
-    }
-
-    private fun drawAlarmNodes(canvas: Canvas, alarms: List<AstroAlarm>, place: AstroPlace?, now: Instant, cx: Float, cy: Float, rx: Float, ry: Float, size: Int) {
-        val nodePaint = Paint(Paint.ANTI_ALIAS_FLAG).apply { color = Color.rgb(255, 60, 60) }
-        val horizon = now.plusSeconds(86400L)
-        val zone = place?.zone ?: java.time.ZoneId.systemDefault()
-        alarms.filter { it.enabled }.forEach { alarm ->
-            AstroNextFire.nextInstant(alarm, place, now)?.let { next ->
-                if (next.isAfter(now) && !next.isAfter(horizon)) {
-                    val zdt = ZonedDateTime.ofInstant(next, zone)
-                    val ang = ((zdt.hour * 60 + zdt.minute) / 1440.0 * 2.0 * Math.PI) - Math.PI / 2.0
-                    val (x, y) = ellipsePoint(cx, cy, rx, ry, ang)
-                    canvas.drawCircle(x, y, (size * 0.024f).coerceIn(4f, 9f), nodePaint)
-                }
-            }
-        }
     }
 }

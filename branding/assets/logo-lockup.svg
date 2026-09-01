@@ -1,5 +1,15 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 72" role="img" aria-label="Golden Path">
-  <rect x="0" y="4" width="64" height="64" rx="12" fill="#1a1a2e"/>
-  <path d="M16 44 L32 20 L48 44 Z" fill="#e94560"/>
-  <text x="80" y="48" font-family="system-ui, -apple-system, sans-serif" font-size="32" font-weight="600" fill="#1a1a2e">Golden Path</text>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 360 72" role="img" aria-label="AstroAlarm">
+  <rect x="0" y="4" width="64" height="64" rx="12" fill="#0D121D"/>
+  <g transform="translate(0,4) scale(0.125)">
+    <circle cx="256" cy="256" r="205" fill="#151E2E" stroke="#78909C" stroke-width="8"/>
+    <path d="M 256 256 L 51 256 A 205 205 0 0 1 461 256 Z" fill="#D8E8F8"/>
+    <path d="M 256 256 L 51 256 A 205 205 0 0 1 92 138 Z" fill="#FFA726"/>
+    <path d="M 256 256 L 420 138 A 205 205 0 0 1 461 256 Z" fill="#FFA726"/>
+    <path d="M 256 256 L 230 54 A 205 205 0 0 1 282 54 Z" fill="#FFFFFF"/>
+    <circle cx="256" cy="256" r="56" fill="#1976D2" stroke="#64B5F6" stroke-width="4"/>
+    <path d="M 243 220 Q 276 210 286 240 Q 271 276 235 266 Q 220 240 243 220 Z" fill="#388E3C"/>
+    <circle cx="256" cy="256" r="8" fill="#FFD54F"/>
+    <line x1="256" y1="256" x2="256" y2="82" stroke="#EF5350" stroke-width="9" stroke-linecap="round"/>
+  </g>
+  <text x="80" y="48" font-family="system-ui, -apple-system, sans-serif" font-size="32" font-weight="600" fill="#C9A227">AstroAlarm</text>
 </svg>

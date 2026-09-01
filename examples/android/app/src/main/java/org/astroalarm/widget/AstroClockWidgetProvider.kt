@@ -27,6 +27,8 @@ class AstroClockWidgetProvider : AppWidgetProvider() {
         val place = placeStore.get()
         val alarms = alarmStore.getAll()
         val showZodiac = displayPrefs.isShowZodiac2D()
+        val showEventTimes = displayPrefs.isShowEventTimes2D()
+        val showMonthTicks = displayPrefs.isShowMonthTicks2D()
         val now = Instant.now()
         val zone = place?.zone ?: java.time.ZoneId.systemDefault()
         val today = LocalDate.now(zone)
@@ -55,7 +57,8 @@ class AstroClockWidgetProvider : AppWidgetProvider() {
             val bitmap = AstroDiskRenderer.renderDisk(
                 place, alarms, now, sizePx,
                 showZodiac = showZodiac,
-                earth = EarthTexture.get(context),
+                showEventTimes = showEventTimes,
+                showMonthTicks = showMonthTicks,
             )
 
             val views = RemoteViews(context.packageName, R.layout.widget_astro).apply {

@@ -1,8 +1,6 @@
 package org.astroalarm.astro.alarm
 
-import android.app.KeyguardManager
 import android.content.Context
-import android.media.AudioAttributes
 import android.media.Ringtone
 import android.media.RingtoneManager
 import android.net.Uri
@@ -54,10 +52,12 @@ class AstroAlarmActivity : ComponentActivity(), TextToSpeech.OnInitListener {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O_MR1) {
             setShowWhenLocked(true)
             setTurnScreenOn(true)
-            (getSystemService(Context.KEYGUARD_SERVICE) as? KeyguardManager)?.requestDismissKeyguard(this, null)
         } else {
             @Suppress("DEPRECATION")
-            window.addFlags(WindowManager.LayoutParams.FLAG_SHOW_WHEN_LOCKED or WindowManager.LayoutParams.FLAG_DISMISS_KEYGUARD or WindowManager.LayoutParams.FLAG_TURN_SCREEN_ON)
+            window.addFlags(
+                WindowManager.LayoutParams.FLAG_SHOW_WHEN_LOCKED or
+                    WindowManager.LayoutParams.FLAG_TURN_SCREEN_ON,
+            )
         }
         window.addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON)
     }
@@ -68,7 +68,7 @@ class AstroAlarmActivity : ComponentActivity(), TextToSpeech.OnInitListener {
                 ?: RingtoneManager.getDefaultUri(RingtoneManager.TYPE_ALARM)
                 ?: RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION)
             ringtone = RingtoneManager.getRingtone(applicationContext, uri)?.apply {
-                audioAttributes = AudioAttributes.Builder().setUsage(AudioAttributes.USAGE_ALARM).setContentType(AudioAttributes.CONTENT_TYPE_SONIFICATION).build()
+                audioAttributes = AlarmNotificationChannel.alarmAudioAttributes()
                 if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.P) isLooping = true
                 play()
             }
@@ -95,6 +95,7 @@ class AstroAlarmActivity : ComponentActivity(), TextToSpeech.OnInitListener {
 
     override fun onInit(status: Int) {
         if (status == TextToSpeech.SUCCESS) {
+            tts?.setAudioAttributes(AlarmNotificationChannel.alarmAudioAttributes())
             val ttsPrefs = TtsPreferences(applicationContext).getVoice()
             tts?.setPitch(ttsPrefs.pitch)
             if (ttsPrefs.languageTag.isNotBlank()) {
@@ -114,20 +115,24 @@ class AstroAlarmActivity : ComponentActivity(), TextToSpeech.OnInitListener {
     private fun stopAlarmOutput() {
         runCatching { ringtone?.stop() }
         runCatching { vibrator?.cancel() }
-        runCatching {
-            tts?.stop()
-            tts?.shutdown()
+        val engine = tts
+        tts = null
+        if (engine != null) {
+            runCatching { engine.stop() }
+            runCatching { engine.shutdown() }
         }
     }
 
     private fun onSnoozeClicked() {
         stopAlarmOutput()
+        AlarmNotificationChannel.cancel(this)
         AstroAlarmScheduler.rescheduleAll(this)
         finish()
     }
 
     private fun onStopClicked() {
         stopAlarmOutput()
+        AlarmNotificationChannel.cancel(this)
         activeAlarm?.let { alarm ->
             val store = AstroAlarmStore(this)
             val updated = if (alarm.isOnce) alarm.copy(enabled = false, lastFiredEpochMs = System.currentTimeMillis()) else alarm.copy(lastFiredEpochMs = System.currentTimeMillis())

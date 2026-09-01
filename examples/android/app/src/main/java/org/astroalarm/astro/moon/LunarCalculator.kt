@@ -1,74 +1,71 @@
 package org.astroalarm.astro.moon
 
 import org.astroalarm.astro.model.LunarEventType
-import org.astroalarm.astro.sun.SolarMath
+import org.astroalarm.astro.sky.SkyBodies
+import org.shredzone.commons.suncalc.MoonIllumination
+import org.shredzone.commons.suncalc.MoonPhase
+import org.shredzone.commons.suncalc.MoonTimes
 import java.time.Instant
 import java.time.LocalDate
 import java.time.ZoneId
-import kotlin.math.*
+import java.time.ZoneOffset
 
 object LunarCalculator {
-    private const val SYNODIC_MONTH = 29.53058867
-    private const val BASE_NEW_MOON_JD = 2451549.5
+    const val SYNODIC_MONTH = 29.53058867
 
-    fun moonAgeDays(date: LocalDate): Double {
-        val jd = SolarMath.julianDay(date)
-        val daysSinceBase = jd - BASE_NEW_MOON_JD
-        var age = daysSinceBase % SYNODIC_MONTH
-        if (age < 0) age += SYNODIC_MONTH
-        return age
-    }
+    fun moonAgeDays(date: LocalDate): Double = runCatching {
+        // suncalc phase: -180 new (waxing) → 0 full → +180 new (waning)
+        val phase = MoonIllumination.compute().on(date.atStartOfDay(ZoneOffset.UTC)).execute().phase
+        var age = ((phase + 180.0) / 360.0) * SYNODIC_MONTH
+        if (age < 0.0) age += SYNODIC_MONTH
+        if (age >= SYNODIC_MONTH) age -= SYNODIC_MONTH
+        age
+    }.getOrDefault(0.0)
 
     fun calculate(
         event: LunarEventType,
         date: LocalDate,
         latitude: Double,
         longitude: Double,
-        zoneId: ZoneId
-    ): Instant? {
-        val baseStart = date.atStartOfDay(zoneId).toInstant()
-        val age = moonAgeDays(date)
-        return when (event) {
-            LunarEventType.NewMoon -> nextPhaseInstant(date, zoneId, 0.0)
-            LunarEventType.WaxingCrescent -> nextPhaseInstant(date, zoneId, 3.69)
-            LunarEventType.FirstQuarter -> nextPhaseInstant(date, zoneId, 7.38)
-            LunarEventType.WaxingGibbous -> nextPhaseInstant(date, zoneId, 11.07)
-            LunarEventType.FullMoon -> nextPhaseInstant(date, zoneId, 14.765)
-            LunarEventType.WaningGibbous -> nextPhaseInstant(date, zoneId, 18.45)
-            LunarEventType.LastQuarter -> nextPhaseInstant(date, zoneId, 22.15)
-            LunarEventType.WaningCrescent -> nextPhaseInstant(date, zoneId, 25.84)
-            LunarEventType.MoonTransit -> moonTransitInstant(date, longitude, zoneId, age)
-            LunarEventType.Moonrise -> moonRiseSetInstant(date, latitude, longitude, zoneId, age, isRise = true)
-            LunarEventType.Moonset -> moonRiseSetInstant(date, latitude, longitude, zoneId, age, isRise = false)
+        zoneId: ZoneId,
+    ): Instant? = runCatching {
+        when (event) {
+            LunarEventType.NewMoon -> phase(date, zoneId, MoonPhase.Phase.NEW_MOON)
+            LunarEventType.WaxingCrescent -> phase(date, zoneId, MoonPhase.Phase.WAXING_CRESCENT)
+            LunarEventType.FirstQuarter -> phase(date, zoneId, MoonPhase.Phase.FIRST_QUARTER)
+            LunarEventType.WaxingGibbous -> phase(date, zoneId, MoonPhase.Phase.WAXING_GIBBOUS)
+            LunarEventType.FullMoon -> phase(date, zoneId, MoonPhase.Phase.FULL_MOON)
+            LunarEventType.WaningGibbous -> phase(date, zoneId, MoonPhase.Phase.WANING_GIBBOUS)
+            LunarEventType.LastQuarter -> phase(date, zoneId, MoonPhase.Phase.LAST_QUARTER)
+            LunarEventType.WaningCrescent -> phase(date, zoneId, MoonPhase.Phase.WANING_CRESCENT)
+            LunarEventType.Moonrise -> times(date, latitude, longitude, zoneId).rise?.toInstant()
+            LunarEventType.Moonset -> times(date, latitude, longitude, zoneId).set?.toInstant()
+            LunarEventType.MoonTransit -> transit(date, latitude, longitude, zoneId)
         }
-    }
+    }.getOrNull()
 
-    private fun nextPhaseInstant(date: LocalDate, zone: ZoneId, targetAge: Double): Instant {
-        val currentAge = moonAgeDays(date)
-        var diff = targetAge - currentAge
-        if (diff < 0) diff += SYNODIC_MONTH
-        val seconds = (diff * 86400.0).roundToLong()
-        return date.atStartOfDay(zone).toInstant().plusSeconds(seconds)
-    }
+    private fun phase(date: LocalDate, zone: ZoneId, kind: MoonPhase.Phase): Instant? =
+        MoonPhase.compute().on(date.atStartOfDay(zone)).timezone(zone).phase(kind).execute().time?.toInstant()
 
-    private fun moonTransitInstant(date: LocalDate, lon: Double, zone: ZoneId, age: Double): Instant {
-        val offsetHours = zone.rules.getOffset(date.atStartOfDay(zone).toInstant()).totalSeconds / 3600.0
-        val transitHour = (age * (24.0 / SYNODIC_MONTH) + 12.0 - (lon / 15.0) + offsetHours) % 24.0
-        val normHour = if (transitHour < 0) transitHour + 24.0 else transitHour
-        return date.atStartOfDay(zone).toInstant().plusSeconds((normHour * 3600.0).roundToLong())
-    }
+    private fun times(date: LocalDate, lat: Double, lon: Double, zone: ZoneId): MoonTimes =
+        MoonTimes.compute().on(date.atStartOfDay(zone)).timezone(zone).at(lat, lon).oneDay().execute()
 
-    private fun moonRiseSetInstant(
-        date: LocalDate,
-        lat: Double,
-        lon: Double,
-        zone: ZoneId,
-        age: Double,
-        isRise: Boolean
-    ): Instant {
-        val transit = moonTransitInstant(date, lon, zone, age)
-        val deltaHours = 6.0 + (sin(lat * Math.PI / 180.0) * 0.5)
-        val shiftSeconds = (deltaHours * 3600.0).roundToLong()
-        return if (isRise) transit.minusSeconds(shiftSeconds) else transit.plusSeconds(shiftSeconds)
+    private fun transit(date: LocalDate, lat: Double, lon: Double, zone: ZoneId): Instant? {
+        val start = date.atStartOfDay(zone).toInstant()
+        var prevT = start
+        var prevHa = SkyBodies.moon(start, lat, lon)?.haRad ?: return null
+        for (i in 1..48) {
+            val t = start.plusSeconds(i * 1800L)
+            val ha = SkyBodies.moon(t, lat, lon)?.haRad ?: continue
+            if (prevHa < 0.0 && ha >= 0.0) {
+                val span = ha - prevHa
+                val frac = if (span == 0.0) 0.0 else (-prevHa / span)
+                val dt = (t.epochSecond - prevT.epochSecond) * frac
+                return prevT.plusSeconds(dt.toLong())
+            }
+            prevT = t
+            prevHa = ha
+        }
+        return null
     }
 }

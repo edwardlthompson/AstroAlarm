@@ -35,18 +35,19 @@ object AstroDiskOverlays {
         canvas.drawText(timeStr, tx, ty, tp)
     }
 
-    fun drawZodiacRing(canvas: Canvas, center: Float, dist: Float, emojiSize: Float, sunLon: Double, aNoonDeg: Float) {
-        val defaultPaint = Paint(Paint.ANTI_ALIAS_FLAG).apply { textSize = emojiSize; textAlign = Paint.Align.CENTER; color = Color.rgb(225, 235, 250) }
-        val middayPaint = Paint(Paint.ANTI_ALIAS_FLAG).apply { textSize = emojiSize * 1.25f; typeface = Typeface.DEFAULT_BOLD; textAlign = Paint.Align.CENTER; color = Color.rgb(255, 212, 34) }
+    fun drawZodiacRing(
+        canvas: Canvas,
+        center: Float,
+        dist: Float,
+        sunLon: Double,
+        aNoonDeg: Float,
+        size: Int,
+    ) {
         val middaySign = ZodiacSign.fromEclipticLongitude(sunLon)
-
-        ZodiacSign.entries.forEach { sign ->
-            val signCenter = sign.startLongitudeDeg + 15.0
-            val deg = aNoonDeg + (signCenter - sunLon).toFloat()
-            val rad = deg * (Math.PI / 180.0)
-            val x = center + dist * cos(rad).toFloat()
-            val y = center + dist * sin(rad).toFloat() + emojiSize * 0.35f
-            canvas.drawText(sign.symbol, x, y, if (sign == middaySign) middayPaint else defaultPaint)
+        ZodiacRingLayout.positions(center, dist, sunLon, aNoonDeg, size).forEach { hit ->
+            val bubble = if (hit.sign == middaySign) Color.rgb(255, 196, 48) else Color.rgb(48, 78, 118)
+            val glyph = if (hit.sign == middaySign) Color.rgb(40, 24, 0) else Color.rgb(240, 248, 255)
+            ZodiacGlyph.draw(canvas, hit.x, hit.y, hit.sign, bubble, glyph, size)
         }
     }
 
@@ -71,6 +72,69 @@ object AstroDiskOverlays {
         displayLines.forEach { line ->
             canvas.drawText(line, center, textY, textPaint)
             textY += lineHeight
+        }
+    }
+
+    fun drawCenterHub(canvas: Canvas, center: Float, size: Int) {
+        val hub = Paint(Paint.ANTI_ALIAS_FLAG).apply {
+            color = DiskCenterHub.COLOR
+            style = Paint.Style.FILL
+        }
+        canvas.drawCircle(center, center, DiskCenterHub.radius(size), hub)
+    }
+
+    fun drawZodiacCusps(
+        canvas: Canvas,
+        center: Float,
+        radius: Float,
+        size: Int,
+        sunLon: Double,
+        aNoonDeg: Float,
+    ) {
+        drawRimTicks(canvas, center, radius, size, ZodiacRingLayout.cuspAngles(sunLon, aNoonDeg), Color.rgb(255, 196, 48))
+    }
+
+    fun drawMonthRim(canvas: Canvas, center: Float, radius: Float, size: Int, marks: List<MonthRimTicks.Mark>) {
+        val tickLen = (size * 0.028f).coerceIn(6f, 12f)
+        drawRimTicks(canvas, center, radius, size, marks.map { it.tickDeg }, Color.rgb(220, 228, 240))
+        val tp = Paint(Paint.ANTI_ALIAS_FLAG).apply {
+            color = Color.rgb(230, 236, 245)
+            textSize = (size * 0.038f).coerceIn(9f, 14f)
+            typeface = Typeface.DEFAULT_BOLD
+            textAlign = Paint.Align.CENTER
+        }
+        marks.forEach { mark ->
+            val rad = mark.labelDeg * (Math.PI / 180.0)
+            val cosR = cos(rad).toFloat()
+            val sinR = sin(rad).toFloat()
+            val lx = center + (radius + tickLen + tp.textSize * 0.70f) * cosR
+            val ly = center + (radius + tickLen + tp.textSize * 0.70f) * sinR - (tp.ascent() + tp.descent()) / 2f
+            canvas.drawText(mark.label, lx, ly, tp)
+        }
+    }
+
+    private fun drawRimTicks(
+        canvas: Canvas,
+        center: Float,
+        radius: Float,
+        size: Int,
+        angles: List<Float>,
+        color: Int,
+    ) {
+        val tickLen = (size * 0.028f).coerceIn(6f, 12f)
+        val tick = Paint(Paint.ANTI_ALIAS_FLAG).apply {
+            this.color = color
+            strokeWidth = (size * 0.008f).coerceIn(1.6f, 3.2f)
+            style = Paint.Style.STROKE
+        }
+        angles.forEach { deg ->
+            val rad = deg * (Math.PI / 180.0)
+            val cosR = cos(rad).toFloat()
+            val sinR = sin(rad).toFloat()
+            canvas.drawLine(
+                center + radius * cosR, center + radius * sinR,
+                center + (radius + tickLen) * cosR, center + (radius + tickLen) * sinR, tick,
+            )
         }
     }
 }
