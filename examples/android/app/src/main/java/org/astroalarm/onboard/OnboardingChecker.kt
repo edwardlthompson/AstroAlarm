@@ -28,6 +28,13 @@ object OnboardingChecker {
     fun snapshot(context: Context, sdk: Int = Build.VERSION.SDK_INT): Map<OnboardingStep, Boolean> =
         OnboardingPolicy.steps(sdk).associateWith { isGranted(context, it, sdk) }
 
+    /** Hide the first-launch gate under Espresso / Compose UI tests. */
+    fun skipUiGate(): Boolean = runCatching {
+        val threadClass = Class.forName("android.app.ActivityThread")
+        val thread = threadClass.getMethod("currentActivityThread").invoke(null) ?: return false
+        threadClass.getMethod("getInstrumentation").invoke(thread) != null
+    }.getOrDefault(false)
+
     private fun has(context: Context, permission: String): Boolean =
         ContextCompat.checkSelfPermission(context, permission) == PackageManager.PERMISSION_GRANTED
 

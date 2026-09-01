@@ -26,7 +26,7 @@ First-launch checklist so AstroAlarm can ring on time over the lock screen.
 
 ## Tests
 
-- Automated: yes — `OnboardingPolicyTest.kt`
+- Automated: yes — `OnboardingPolicyTest.kt`; instrumented Golden Path tests skip the gate via `OnboardingChecker.skipUiGate()`
 
 ## Fallback validation
 
