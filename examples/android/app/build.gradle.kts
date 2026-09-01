@@ -19,7 +19,7 @@ android {
         applicationId = "org.astroalarm"
         minSdk = 26
         targetSdk = 37
-        versionCode = 10101
+        versionCode = 10102
         versionName = "1.3.1" // x-release-please-version
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
     }
