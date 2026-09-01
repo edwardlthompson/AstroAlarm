@@ -130,6 +130,8 @@
     <string name="astro_toggle_show_zodiac_3d_desc">Muestra el anillo celeste del zodiaco 3D en el espacio</string>
     <string name="astro_toggle_show_event_times">Mostrar horas de eventos</string>
     <string name="astro_toggle_show_event_times_desc">Horas de alarmas, amanecer y atardecer en la esfera de 24h</string>
+    <string name="astro_toggle_show_month_ticks">Mostrar meses</string>
+    <string name="astro_toggle_show_month_ticks_desc">Inicio de cada mes (2 letras) en el borde</string>
     <string name="astro_solar_noon">Mediodía solar</string>
     <string name="astro_solar_midnight">Medianoche solar</string>
     <string name="astro_zodiac_overhead_noon">Zodíaco cenital al mediodía</string>
@@ -220,4 +222,20 @@
     <string name="astro_widget_upcoming_name">Próximas alarmas</string>
     <string name="astro_widget_upcoming_desc">Resumen de las próximas alarmas y eventos astronómicos</string>
     <string name="astro_widget_upcoming_empty">Sin alarmas próximas</string>
+    <string name="onboard_title">Permite que suenen las alarmas</string>
+    <string name="onboard_body">AstroAlarm necesita esto para que las alarmas de amanecer, luna y reloj suenen a tiempo, sobre la pantalla de bloqueo, incluso con el teléfono dormido.</string>
+    <string name="onboard_continue">Continuar</string>
+    <string name="onboard_grant">Permitir</string>
+    <string name="onboard_granted">Permitido</string>
+    <string name="onboard_settings_button">Permisos de alarma</string>
+    <string name="onboard_notifications_title">Notificaciones</string>
+    <string name="onboard_notifications_body">Muestra la alarma y la interfaz a pantalla completa.</string>
+    <string name="onboard_location_title">Ubicación</string>
+    <string name="onboard_location_body">Calcula ortos, ocasos y horas lunares para tu lugar.</string>
+    <string name="onboard_exact_title">Alarmas exactas</string>
+    <string name="onboard_exact_body">Dispara a la hora real del evento, no unos minutos más tarde.</string>
+    <string name="onboard_fsi_title">Alarmas a pantalla completa</string>
+    <string name="onboard_fsi_body">Muestra Detener y Posponer sobre la pantalla de bloqueo.</string>
+    <string name="onboard_battery_title">Ignorar optimización de batería</string>
+    <string name="onboard_battery_body">Pon AstroAlarm en Sin restricciones para que OxygenOS no mate las alarmas con la pantalla apagada.</string>
 </resources>

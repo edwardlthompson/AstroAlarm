@@ -14,7 +14,7 @@ AstroAlarm is a single-purpose Android alarm app. The product surface is Compose
 
 - **View:** Jetpack Compose (`org.astroalarm.ui`) plus `AstroAlarmActivity` / widget `RemoteViews`
 - **ViewModel-equivalent:** `AstroAlarmStore` and `AstroPlaceStore` expose `StateFlow`; screens collect state and call store mutations
-- **Model:** `AstroAlarm`, `AlarmTarget`, NOAA/Meeus calculators, `AstroNextFire`
+- **Model:** `AstroAlarm`, `AlarmTarget`, suncalc-backed `SolarCalculator` / `LunarCalculator`, `AstroNextFire`
 
 Persistence is JSON in SharedPreferences (`AstroAlarmJson`) rather than Room for the first slice. Room and Hilt are on the classpath for later stores. Exact alarms use `AlarmManager.setAlarmClock`.
 

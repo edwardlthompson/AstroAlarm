@@ -30,10 +30,12 @@
 ## Demo
 
 <p align="center">
-  <img src="{{lockup_path}}" alt="{{name}} lockup" width="320" />
+  <img src="{{icon_path}}" alt="{{name}} app icon" width="180" />
 </p>
-
-> Add screenshots or a short demo GIF under `docs/images/` and link them here when available.
+<p align="center">
+  <img src="{{splash_path}}" alt="{{name}} launch splash" width="220" />
+</p>
+<p align="center"><em>App icon and launch splash</em></p>
 
 ## Features
 
@@ -57,6 +59,7 @@ flowchart TD
   Readme --> Agents[START_HERE]
   Agents --> Tour["/tour or TOUR.md"]
   Tour --> Coach["/coach"]
+
 ```
 
 ## Install

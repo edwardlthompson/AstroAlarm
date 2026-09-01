@@ -5,6 +5,7 @@ import org.astroalarm.astro.model.AstroAlarm
 import org.astroalarm.astro.model.SolarEventType
 import org.astroalarm.astro.moon.LunarCalculator
 import org.astroalarm.astro.place.AstroPlace
+import org.astroalarm.astro.sky.SkyBodies
 import org.astroalarm.astro.sun.SolarCalculator
 import org.astroalarm.astro.zodiac.ZodiacCalculator
 import java.time.Instant
@@ -21,12 +22,13 @@ object AstroDiskRenderer {
         size: Int = 300,
         showZodiac: Boolean = true,
         showEventTimes: Boolean = true,
+        showMonthTicks: Boolean = false,
     ): Bitmap {
         val bitmap = Bitmap.createBitmap(size, size, Bitmap.Config.ARGB_8888)
         val canvas = Canvas(bitmap)
         val center = size / 2f
         val emojiSize = (size * 0.078f).coerceIn(18f, 38f)
-        val radius = center - emojiSize * 1.50f - 4f
+        val radius = center - ZodiacGlyph.diskMargin(size)
         val zone = place?.zone ?: java.time.ZoneId.systemDefault()
         val nowZdt = ZonedDateTime.ofInstant(now, zone)
         val nowAngle = (nowZdt.hour * 60 + nowZdt.minute + (nowZdt.second / 60f)) / 1440f * 360f
@@ -82,7 +84,7 @@ object AstroDiskRenderer {
         paint.style = Paint.Style.STROKE; paint.strokeWidth = (size * 0.012f).coerceIn(2f, 5f); paint.color = Color.GRAY
         canvas.drawCircle(center, center, radius, paint)
 
-        val dist = radius + emojiSize * 0.95f
+        val dist = ZodiacGlyph.ringDistance(center, size)
         val timeFmt = DateTimeFormatter.ofPattern("HH:mm", Locale.getDefault())
         val tSize = (size * 0.052f).coerceIn(13f, 26f)
         val bodyEmojiSize = (size * 0.078f).coerceIn(18f, 38f)
@@ -93,19 +95,22 @@ object AstroDiskRenderer {
         }
 
         // Real-time sun and moon (phase) on the inner ring
-        val aSunRad = -Math.PI / 2.0
-        val sx = center + (radius * 0.74f) * cos(aSunRad).toFloat()
-        val sy = center + (radius * 0.74f) * sin(aSunRad).toFloat()
+        val sunEq = place?.let { SkyBodies.sun(now, it.latitude, it.longitude) }
+        val moonEq = place?.let { SkyBodies.moon(now, it.latitude, it.longitude) }
+        val moonAge = LunarCalculator.moonAgeDays(date)
+        val aNoonDeg = aNoon ?: -90f
+        val sunDeg = sunEq?.let { TransitTicks.diskAngleDeg(it.haRad, aNoonDeg) } ?: -90f
+        val moonDeg = moonEq?.let { TransitTicks.diskAngleDeg(it.haRad, aNoonDeg) } ?: sunDeg
+        val sx = center + (radius * 0.74f) * cos(Math.toRadians(sunDeg.toDouble())).toFloat()
+        val sy = center + (radius * 0.74f) * sin(Math.toRadians(sunDeg.toDouble())).toFloat()
         canvas.drawCircle(sx, sy, size * 0.045f, Paint(Paint.ANTI_ALIAS_FLAG).apply {
             shader = RadialGradient(sx, sy, size * 0.045f, intArrayOf(Color.WHITE, Color.rgb(255, 215, 60), Color.TRANSPARENT), floatArrayOf(0f, 0.4f, 1f), Shader.TileMode.CLAMP)
         })
         val ep = Paint(Paint.ANTI_ALIAS_FLAG).apply { textSize = bodyEmojiSize; textAlign = Paint.Align.CENTER }
         canvas.drawText("☀️", sx, sy + bodyEmojiSize * 0.35f, ep)
 
-        val moonAge = LunarCalculator.moonAgeDays(date)
-        val moonAngleRad = (-Math.PI / 2.0) + ((moonAge / 29.53059) * 2.0 * Math.PI)
-        val mx = center + (radius * 0.74f) * cos(moonAngleRad).toFloat()
-        val my = center + (radius * 0.74f) * sin(moonAngleRad).toFloat()
+        val mx = center + (radius * 0.74f) * cos(Math.toRadians(moonDeg.toDouble())).toFloat()
+        val my = center + (radius * 0.74f) * sin(Math.toRadians(moonDeg.toDouble())).toFloat()
         canvas.drawCircle(mx, my, size * 0.040f, Paint(Paint.ANTI_ALIAS_FLAG).apply {
             shader = RadialGradient(mx, my, size * 0.040f, intArrayOf(Color.WHITE, Color.rgb(180, 210, 255), Color.TRANSPARENT), floatArrayOf(0f, 0.5f, 1f), Shader.TileMode.CLAMP)
         })
@@ -115,10 +120,15 @@ object AstroDiskRenderer {
         }
         canvas.drawText(moonEmoji, mx, my + bodyEmojiSize * 0.35f, ep)
 
+        val sunLon = ZodiacCalculator.sunLongitudeAt(noon ?: now)
         if (showZodiac) {
-            val sunLon = ZodiacCalculator.sunLongitudeAt(noon ?: now)
-            val aNoonDeg = aNoon ?: (aRise?.let { r -> aSet?.let { s -> r + sw(r, s) / 2f } } ?: 0f)
-            AstroDiskOverlays.drawZodiacRing(canvas, center, dist, emojiSize, sunLon, aNoonDeg)
+            AstroDiskOverlays.drawZodiacRing(canvas, center, dist, sunLon, aNoonDeg, size)
+            AstroDiskOverlays.drawZodiacCusps(canvas, center, radius, size, sunLon, aNoonDeg)
+        }
+        if (showMonthTicks) {
+            AstroDiskOverlays.drawMonthRim(
+                canvas, center, radius, size, MonthRimTicks.marks(date.year, zone, sunLon, aNoonDeg),
+            )
         }
 
         if (eventTimes.alarmMarkers) {

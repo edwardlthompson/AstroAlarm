@@ -130,6 +130,8 @@
     <string name="astro_toggle_show_zodiac_3d_desc">Affiche l\'anneau céleste du zodiaque 3D dans l\'espace</string>
     <string name="astro_toggle_show_event_times">Afficher les heures d\'événements</string>
     <string name="astro_toggle_show_event_times_desc">Heures des alarmes, lever et coucher du soleil sur le cadran 24h</string>
+    <string name="astro_toggle_show_month_ticks">Afficher les mois</string>
+    <string name="astro_toggle_show_month_ticks_desc">Début de chaque mois (2 lettres) sur le bord</string>
     <string name="astro_solar_noon">Midi solaire</string>
     <string name="astro_solar_midnight">Minuit solaire</string>
     <string name="astro_zodiac_overhead_noon">Zodiaque au zénith à midi</string>
@@ -220,4 +222,20 @@
     <string name="astro_widget_upcoming_name">Prochaines alarmes</string>
     <string name="astro_widget_upcoming_desc">Résumé des prochaines alarmes et événements astronomiques</string>
     <string name="astro_widget_upcoming_empty">Aucune alarme à venir</string>
+    <string name="onboard_title">Autoriser les alarmes à sonner</string>
+    <string name="onboard_body">AstroAlarm en a besoin pour que les alarmes de lever, de lune et d\'horloge sonnent à l\'heure, au-dessus de l\'écran de verrouillage, même lorsque le téléphone dort.</string>
+    <string name="onboard_continue">Continuer</string>
+    <string name="onboard_grant">Autoriser</string>
+    <string name="onboard_granted">Autorisé</string>
+    <string name="onboard_settings_button">Autorisations d\'alarme</string>
+    <string name="onboard_notifications_title">Notifications</string>
+    <string name="onboard_notifications_body">Affiche l\'alarme et l\'interface plein écran.</string>
+    <string name="onboard_location_title">Localisation</string>
+    <string name="onboard_location_body">Calcule levers, couchers et heures lunaires pour votre lieu.</string>
+    <string name="onboard_exact_title">Alarmes exactes</string>
+    <string name="onboard_exact_body">Déclenche à l\'instant réel de l\'événement, pas quelques minutes plus tard.</string>
+    <string name="onboard_fsi_title">Alarmes plein écran</string>
+    <string name="onboard_fsi_body">Affiche Arrêter et Répéter au-dessus de l\'écran de verrouillage.</string>
+    <string name="onboard_battery_title">Ignorer l\'optimisation de batterie</string>
+    <string name="onboard_battery_body">Mettez AstroAlarm en Non restreint pour qu\'OxygenOS ne tue pas les alarmes écran éteint.</string>
 </resources>

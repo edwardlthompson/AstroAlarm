@@ -28,6 +28,7 @@ import dev.foss.goldenpath.ui.theme.next
 import kotlinx.coroutines.CoroutineScope
 import dev.foss.goldenpath.ui.theme.GoldenPathTheme
 import kotlinx.coroutines.launch
+import org.astroalarm.ui.onboard.OnboardingGate
 
 @Composable
 fun GoldenPathApp(
@@ -72,6 +73,7 @@ fun GoldenPathApp(
 
     GoldenPathTheme(themeMode = themeMode) {
         NavigationModeProvider {
+            OnboardingGate {
             GoldenPathScreen(
                 snackbarHostState = snackbarHostState,
                 themeMode = themeMode,
@@ -143,6 +145,7 @@ fun GoldenPathApp(
                 },
                 onApplyUpdate = {},
             )
+            }
         }
     }
 }

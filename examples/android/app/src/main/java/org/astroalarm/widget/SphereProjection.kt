@@ -24,4 +24,19 @@ object SphereProjection {
         val lon = lon0 + atan2(x, z * cos(lat0) - y * sin(lat0))
         return Math.toDegrees(lat) to Math.toDegrees(lon)
     }
+
+    /**
+     * Orthographic map of a lat/lon onto the unit sphere. [z] >= 0 is the
+     * hemisphere facing the observer at ([lat0Deg], [lon0Deg]). [x] right, [y] up.
+     */
+    fun latLonToDisk(latDeg: Double, lonDeg: Double, lat0Deg: Double, lon0Deg: Double): Triple<Double, Double, Double> {
+        val lat = Math.toRadians(latDeg)
+        val lon = Math.toRadians(lonDeg)
+        val lat0 = Math.toRadians(lat0Deg)
+        val dlon = lon - Math.toRadians(lon0Deg)
+        val x = cos(lat) * sin(dlon)
+        val y = cos(lat0) * sin(lat) - sin(lat0) * cos(lat) * cos(dlon)
+        val z = sin(lat0) * sin(lat) + cos(lat0) * cos(lat) * cos(dlon)
+        return Triple(x, y, z)
+    }
 }

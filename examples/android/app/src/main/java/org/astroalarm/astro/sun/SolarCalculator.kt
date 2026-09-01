@@ -1,11 +1,10 @@
 package org.astroalarm.astro.sun
 
 import org.astroalarm.astro.model.SolarEventType
+import org.shredzone.commons.suncalc.SunTimes
 import java.time.Instant
 import java.time.LocalDate
 import java.time.ZoneId
-import java.time.ZonedDateTime
-import kotlin.math.roundToLong
 
 object SolarCalculator {
     const val ZENITH_OFFICIAL = 90.8333
@@ -20,77 +19,51 @@ object SolarCalculator {
         date: LocalDate,
         latitude: Double,
         longitude: Double,
-        zoneId: ZoneId
-    ): Instant? {
-        return when (event) {
-            SolarEventType.Sunrise -> eventInstant(date, latitude, longitude, zoneId, ZENITH_OFFICIAL, isMorning = true)
-            SolarEventType.Sunset -> eventInstant(date, latitude, longitude, zoneId, ZENITH_OFFICIAL, isMorning = false)
-            SolarEventType.CivilDawn -> eventInstant(date, latitude, longitude, zoneId, ZENITH_CIVIL, isMorning = true)
-            SolarEventType.CivilDusk -> eventInstant(date, latitude, longitude, zoneId, ZENITH_CIVIL, isMorning = false)
-            SolarEventType.NauticalDawn -> eventInstant(date, latitude, longitude, zoneId, ZENITH_NAUTICAL, isMorning = true)
-            SolarEventType.NauticalDusk -> eventInstant(date, latitude, longitude, zoneId, ZENITH_NAUTICAL, isMorning = false)
-            SolarEventType.AstronomicalDawn -> eventInstant(date, latitude, longitude, zoneId, ZENITH_ASTRONOMICAL, isMorning = true)
-            SolarEventType.AstronomicalDusk -> eventInstant(date, latitude, longitude, zoneId, ZENITH_ASTRONOMICAL, isMorning = false)
-            SolarEventType.SolarNoon -> solarNoonInstant(date, latitude, longitude, zoneId)
-            SolarEventType.SolarMidnight -> solarNoonInstant(date, latitude, longitude, zoneId)?.plusSeconds(12 * 3600)
-            SolarEventType.GoldenHourMorning -> eventInstant(date, latitude, longitude, zoneId, ZENITH_GOLDEN_HOUR, isMorning = true)
-            SolarEventType.GoldenHourEvening -> eventInstant(date, latitude, longitude, zoneId, ZENITH_GOLDEN_HOUR, isMorning = false)
-            SolarEventType.BlueHourMorning -> eventInstant(date, latitude, longitude, zoneId, ZENITH_BLUE_HOUR_BOTTOM, isMorning = true)
-            SolarEventType.BlueHourEvening -> eventInstant(date, latitude, longitude, zoneId, ZENITH_BLUE_HOUR_BOTTOM, isMorning = false)
-            SolarEventType.MarchEquinox -> seasonInstant(date.year, 3, 20, 9, 0, zoneId)
-            SolarEventType.JuneSolstice -> seasonInstant(date.year, 6, 21, 3, 0, zoneId)
-            SolarEventType.SeptemberEquinox -> seasonInstant(date.year, 9, 22, 18, 0, zoneId)
-            SolarEventType.DecemberSolstice -> seasonInstant(date.year, 12, 21, 15, 0, zoneId)
+        zoneId: ZoneId,
+    ): Instant? = runCatching {
+        when (event) {
+            SolarEventType.Sunrise -> inst(times(date, latitude, longitude, zoneId, SunTimes.Twilight.VISUAL)?.rise)
+            SolarEventType.Sunset -> inst(times(date, latitude, longitude, zoneId, SunTimes.Twilight.VISUAL)?.set)
+            SolarEventType.CivilDawn -> inst(times(date, latitude, longitude, zoneId, SunTimes.Twilight.CIVIL)?.rise)
+            SolarEventType.CivilDusk -> inst(times(date, latitude, longitude, zoneId, SunTimes.Twilight.CIVIL)?.set)
+            SolarEventType.NauticalDawn -> inst(times(date, latitude, longitude, zoneId, SunTimes.Twilight.NAUTICAL)?.rise)
+            SolarEventType.NauticalDusk -> inst(times(date, latitude, longitude, zoneId, SunTimes.Twilight.NAUTICAL)?.set)
+            SolarEventType.AstronomicalDawn -> inst(times(date, latitude, longitude, zoneId, SunTimes.Twilight.ASTRONOMICAL)?.rise)
+            SolarEventType.AstronomicalDusk -> inst(times(date, latitude, longitude, zoneId, SunTimes.Twilight.ASTRONOMICAL)?.set)
+            SolarEventType.SolarNoon -> inst(times(date, latitude, longitude, zoneId, SunTimes.Twilight.VISUAL)?.noon)
+            SolarEventType.SolarMidnight -> inst(times(date, latitude, longitude, zoneId, SunTimes.Twilight.VISUAL)?.nadir)
+            SolarEventType.GoldenHourMorning -> inst(times(date, latitude, longitude, zoneId, SunTimes.Twilight.GOLDEN_HOUR)?.rise)
+            SolarEventType.GoldenHourEvening -> inst(times(date, latitude, longitude, zoneId, SunTimes.Twilight.GOLDEN_HOUR)?.set)
+            SolarEventType.BlueHourMorning -> inst(times(date, latitude, longitude, zoneId, SunTimes.Twilight.NIGHT_HOUR)?.rise)
+            SolarEventType.BlueHourEvening -> inst(times(date, latitude, longitude, zoneId, SunTimes.Twilight.NIGHT_HOUR)?.set)
+            SolarEventType.MarchEquinox -> SolarSeasons.instant(date.year, 0.0)
+            SolarEventType.JuneSolstice -> SolarSeasons.instant(date.year, 90.0)
+            SolarEventType.SeptemberEquinox -> SolarSeasons.instant(date.year, 180.0)
+            SolarEventType.DecemberSolstice -> SolarSeasons.instant(date.year, 270.0)
         }
-    }
+    }.getOrNull()
 
-    fun solarNoonInstant(date: LocalDate, lat: Double, lon: Double, zone: ZoneId): Instant? {
-        val jd = SolarMath.julianDay(date)
-        val t = SolarMath.julianCentury(jd)
-        val l0 = SolarMath.geomMeanLongSun(t)
-        val m = SolarMath.geomMeanAnomSun(t)
-        val e = SolarMath.eccentEarthOrbit(t)
-        val eqTime = SolarMath.equationOfTime(t, l0, m, e)
-        val offset = zone.rules.getOffset(date.atStartOfDay(zone).toInstant()).totalSeconds / 3600.0
-        val noonMinutes = 720.0 - (4.0 * lon) - eqTime + (offset * 60.0)
-        return minutesToInstant(date, zone, noonMinutes)
-    }
+    fun solarNoonInstant(date: LocalDate, lat: Double, lon: Double, zone: ZoneId): Instant? =
+        calculate(SolarEventType.SolarNoon, date, lat, lon, zone)
 
-    private fun eventInstant(
+    private fun times(
         date: LocalDate,
         lat: Double,
         lon: Double,
         zone: ZoneId,
-        zenith: Double,
-        isMorning: Boolean
-    ): Instant? {
-        val jd = SolarMath.julianDay(date)
-        val t = SolarMath.julianCentury(jd)
-        val l0 = SolarMath.geomMeanLongSun(t)
-        val m = SolarMath.geomMeanAnomSun(t)
-        val c = SolarMath.sunEqOfCenter(t, m)
-        val e = SolarMath.eccentEarthOrbit(t)
-        val decl = SolarMath.sunDeclination(t, l0, c)
-        val ha = SolarMath.hourAngle(lat, decl, zenith) ?: return null
-        val eqTime = SolarMath.equationOfTime(t, l0, m, e)
-        val offset = zone.rules.getOffset(date.atStartOfDay(zone).toInstant()).totalSeconds / 3600.0
-        val eventMinutes = if (isMorning) {
-            720.0 - 4.0 * (lon + ha) - eqTime + (offset * 60.0)
-        } else {
-            720.0 - 4.0 * (lon - ha) - eqTime + (offset * 60.0)
-        }
-        return minutesToInstant(date, zone, eventMinutes)
-    }
+        twilight: SunTimes.Twilight,
+    ): SunTimes? = SunTimes.compute()
+        .on(date.atStartOfDay(zone))
+        .timezone(zone)
+        .at(lat, lon)
+        .oneDay()
+        .twilight(twilight)
+        .execute()
 
-    private fun minutesToInstant(date: LocalDate, zone: ZoneId, minutesSinceMidnight: Double): Instant {
-        val seconds = (minutesSinceMidnight * 60.0).roundToLong()
-        val startOfDay = date.atStartOfDay(zone).toEpochSecond()
-        return Instant.ofEpochSecond(startOfDay + seconds)
-    }
-
-    private fun seasonInstant(year: Int, month: Int, day: Int, hour: Int, min: Int, zone: ZoneId): Instant {
-        return ZonedDateTime.of(year, month, day, hour, min, 0, 0, ZoneId.of("UTC"))
-            .withZoneSameInstant(zone)
-            .toInstant()
+    private fun inst(value: Any?): Instant? = when (value) {
+        null -> null
+        is Instant -> value
+        is java.time.ZonedDateTime -> value.toInstant()
+        else -> null
     }
 }

@@ -39,4 +39,14 @@ class AstroDisplayPreferencesTest {
         assertFalse(reader.isShowEventTimes2D())
         assertFalse(reader.showEventTimes2D.first())
     }
+
+    @Test
+    fun monthTicksDefaultOffAndPersist() = runBlocking {
+        val prefs = AstroDisplayPreferences(context)
+        assertFalse(prefs.isShowMonthTicks2D())
+        prefs.setShowMonthTicks2D(true)
+        val reader = AstroDisplayPreferences(context)
+        assertTrue(reader.isShowMonthTicks2D())
+        assertTrue(reader.showMonthTicks2D.first())
+    }
 }

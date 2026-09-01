@@ -1,8 +1,7 @@
 package org.astroalarm.astro.sun
 
+import java.time.Instant
 import java.time.LocalDate
-import java.time.ZoneId
-import java.time.ZonedDateTime
 import kotlin.math.*
 
 object SolarMath {
@@ -18,6 +17,9 @@ object SolarMath {
         val mo = m + 12 * a - 3
         return d + floor((153 * mo + 2) / 5.0) + 365 * yr + floor(yr / 4.0) - floor(yr / 100.0) + floor(yr / 400.0) - 32045.0
     }
+
+    fun julianDay(instant: Instant): Double =
+        2451545.0 + (instant.epochSecond - 946728000.0) / 86400.0 + instant.nano / 8.64e13
 
     fun julianCentury(jd: Double): Double = (jd - 2451545.0) / 36525.0
 

@@ -31,6 +31,7 @@ import org.astroalarm.astro.settings.AstroDisplayPreferences
 import org.astroalarm.astro.zodiac.ZodiacCalculator
 import org.astroalarm.widget.Astro3DClockWidgetProvider
 import org.astroalarm.widget.Astro3DRenderer
+import org.astroalarm.widget.ClockParallax
 import org.astroalarm.widget.ClockRenderSize
 import org.astroalarm.widget.EarthTexture
 import java.time.Instant
@@ -55,8 +56,9 @@ fun Astro3DClockScreen(
         val listener = object : SensorEventListener {
             override fun onSensorChanged(event: SensorEvent?) {
                 if (event != null) {
-                    tiltX = (-event.values[0] * 2.2f).coerceIn(-16f, 16f)
-                    tiltY = (event.values[1] * 2.2f).coerceIn(-16f, 16f)
+                    val (px, py) = ClockParallax.fromAccelerometer(event.values[0], event.values[2])
+                    tiltX = px
+                    tiltY = py
                 }
             }
             override fun onAccuracyChanged(sensor: Sensor?, accuracy: Int) {}
@@ -84,7 +86,6 @@ fun Astro3DClockScreen(
     ) {
         ZodiacToggleRow(
             title = stringResource(R.string.astro_toggle_show_zodiac_3d),
-            description = stringResource(R.string.astro_toggle_show_zodiac_3d_desc),
             checked = showZodiac,
             onCheckedChange = { displayPrefs.setShowZodiac3D(it) }
         )

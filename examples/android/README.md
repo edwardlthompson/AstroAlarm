@@ -1,10 +1,10 @@
 <p align="center">
-  <img src="../../branding/assets/logo-mark.svg" alt="Golden Path" width="64" />
+  <img src="../../branding/assets/app-icon-512.svg" alt="AstroAlarm" width="96" />
 </p>
 
-# Golden Path Android (FOSS)
+# AstroAlarm Android (FOSS)
 
-FOSS apps with a clear path from idea to release — FOSS-only Gradle/Kotlin skeleton (no Google Play Services or Firebase). Brand kit: [`branding/BRANDING.md`](../../branding/BRANDING.md).
+Wake with the sun, the moon, and your own clock — FOSS Gradle/Kotlin app (no Google Play Services or Firebase). Brand kit: [`branding/BRANDING.md`](../../branding/BRANDING.md).
 
 ## Repository layout
 

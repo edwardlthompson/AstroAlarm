@@ -15,7 +15,6 @@ import androidx.compose.ui.unit.sp
 @Composable
 fun ZodiacToggleRow(
     title: String,
-    description: String,
     checked: Boolean,
     onCheckedChange: (Boolean) -> Unit,
     modifier: Modifier = Modifier,
@@ -27,10 +26,9 @@ fun ZodiacToggleRow(
     ) {
         OverlayToggleLine(
             title = title,
-            description = description,
             checked = checked,
             onCheckedChange = onCheckedChange,
-            modifier = Modifier.padding(horizontal = 12.dp, vertical = 6.dp),
+            modifier = Modifier.padding(horizontal = 12.dp, vertical = 2.dp),
         )
     }
 }
@@ -41,10 +39,11 @@ fun ClockOverlayToggles(
     onShowZodiacChange: (Boolean) -> Unit,
     showEventTimes: Boolean,
     onShowEventTimesChange: (Boolean) -> Unit,
+    showMonthTicks: Boolean,
+    onShowMonthTicksChange: (Boolean) -> Unit,
     zodiacTitle: String,
-    zodiacDescription: String,
     eventTimesTitle: String,
-    eventTimesDescription: String,
+    monthTicksTitle: String,
     modifier: Modifier = Modifier,
 ) {
     Surface(
@@ -52,11 +51,10 @@ fun ClockOverlayToggles(
         shape = RoundedCornerShape(12.dp),
         color = MaterialTheme.colorScheme.surfaceVariant.copy(alpha = 0.85f)
     ) {
-        Column(modifier = Modifier.padding(horizontal = 12.dp, vertical = 4.dp)) {
-            OverlayToggleLine(zodiacTitle, zodiacDescription, showZodiac, onShowZodiacChange)
-            OverlayToggleLine(
-                eventTimesTitle, eventTimesDescription, showEventTimes, onShowEventTimesChange,
-            )
+        Column(modifier = Modifier.padding(horizontal = 12.dp, vertical = 2.dp)) {
+            OverlayToggleLine(zodiacTitle, showZodiac, onShowZodiacChange)
+            OverlayToggleLine(eventTimesTitle, showEventTimes, onShowEventTimesChange)
+            OverlayToggleLine(monthTicksTitle, showMonthTicks, onShowMonthTicksChange)
         }
     }
 }
@@ -64,23 +62,20 @@ fun ClockOverlayToggles(
 @Composable
 private fun OverlayToggleLine(
     title: String,
-    description: String,
     checked: Boolean,
     onCheckedChange: (Boolean) -> Unit,
     modifier: Modifier = Modifier,
 ) {
     Row(
-        modifier = modifier.fillMaxWidth().padding(vertical = 2.dp),
+        modifier = modifier.fillMaxWidth().padding(vertical = 0.dp),
         verticalAlignment = Alignment.CenterVertically
     ) {
-        Column(modifier = Modifier.weight(1f)) {
-            Text(text = title, fontWeight = FontWeight.Bold, fontSize = 14.sp)
-            Text(
-                text = description,
-                fontSize = 11.sp,
-                color = MaterialTheme.colorScheme.onSurfaceVariant
-            )
-        }
+        Text(
+            text = title,
+            fontWeight = FontWeight.Bold,
+            fontSize = 14.sp,
+            modifier = Modifier.weight(1f),
+        )
         Switch(
             checked = checked,
             onCheckedChange = onCheckedChange,

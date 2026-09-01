@@ -26,27 +26,29 @@
 
 ## Pitch
 
-AstroAlarm is a FOSS Android astronomical alarm clock. It calculates sunrise, sunset, twilight, golden hour, moonrise, moon phases, solstices, and equinoxes on the device with NOAA and Meeus algorithms — no cloud, no Play Services, no trackers.
+AstroAlarm is a FOSS Android astronomical alarm clock. It calculates sunrise, sunset, twilight, golden hour, moonrise, moon phases, solstices, and equinoxes on the device with Apache-2.0 commons-suncalc (sun and moon) and NOAA apparent longitude for seasons — no cloud, no Play Services, no trackers.
 
 Set alarms for a solar or lunar event, offset them before or after, or pick a custom time on tactile hour and minute wheels. When the alarm rings it can speak the event, vibrate, and require a math puzzle before you can stop it.
 
-A rotating day/night home widget shows the solar disk and the next alarm. Location comes from an offline city list or the system location provider. MIT licensed. GitHub Releases only.
+In-app 2D and 3D clocks show the solar disk, Earth globe, and transit rings. Home widgets rotate through day and night. Location comes from an offline city list or the system location provider. MIT licensed. GitHub Releases only.
 
 ## Demo
 
 <p align="center">
-  <img src="branding/assets/logo-lockup.svg" alt="AstroAlarm lockup" width="320" />
+  <img src="branding/assets/app-icon-512.svg" alt="AstroAlarm app icon" width="180" />
 </p>
-
-> Add screenshots or a short demo GIF under `docs/images/` and link them here when available.
+<p align="center">
+  <img src="branding/assets/splash.svg" alt="AstroAlarm launch splash" width="220" />
+</p>
+<p align="center"><em>App icon and launch splash</em></p>
 
 ## Features
 
-- On-device NOAA solar and Meeus lunar ephemeris — no network required for calculations
+- On-device suncalc sun/moon ephemeris — no network required for calculations
 - Eighteen solar events and eleven lunar events, plus custom clock alarms
+- 2D 24-hour solar disk and 3D Earth-globe transit clocks (in-app and widgets)
 - Lockscreen snooze and stop with an optional math unlock challenge
 - Material You wheels for time and event offsets, with Spanish and French translations
-- Rotating 24-hour day/night home widget with next-alarm preview
 - 100% FOSS: no Google Play Services, Firebase, or proprietary telemetry
 
 ## Quick start
@@ -54,7 +56,7 @@ A rotating day/night home widget shows the solar disk and the next alarm. Locati
 1. Install the APK from GitHub Releases (not listed on Play Store).
 2. Set a city from the offline list or tap Locate so sun and moon events can fire.
 3. Add a solar, lunar, or custom clock alarm. Choose tone, TTS, vibrate, math unlock, and snooze.
-4. Optional: add the astronomical clock widget to the home screen.
+4. Optional: pin the 2D clock, 3D globe, or upcoming-alarms widget to the home screen.
 
 ## For humans
 
@@ -70,6 +72,7 @@ flowchart TD
   Readme --> Agents[START_HERE]
   Agents --> Tour["/tour or TOUR.md"]
   Tour --> Coach["/coach"]
+
 ```
 
 ## Install

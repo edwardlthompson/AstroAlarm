@@ -5,6 +5,7 @@ import android.content.ComponentName
 import android.os.Build
 import android.widget.Toast
 import androidx.compose.foundation.Image
+import androidx.compose.foundation.gestures.detectTapGestures
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
@@ -14,7 +15,9 @@ import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.asImageBitmap
+import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.platform.LocalUriHandler
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
@@ -30,6 +33,7 @@ import org.astroalarm.astro.zodiac.ZodiacCalculator
 import org.astroalarm.widget.AstroClockWidgetProvider
 import org.astroalarm.widget.AstroDiskRenderer
 import org.astroalarm.widget.ClockRenderSize
+import org.astroalarm.widget.ZodiacRingLayout
 import java.time.Instant
 import java.time.ZonedDateTime
 import java.time.format.DateTimeFormatter
@@ -45,6 +49,7 @@ fun AstroClockScreen(
     val displayPrefs = remember { AstroDisplayPreferences(context) }
     val showZodiac by displayPrefs.showZodiac2D.collectAsState()
     val showEventTimes by displayPrefs.showEventTimes2D.collectAsState()
+    val showMonthTicks by displayPrefs.showMonthTicks2D.collectAsState()
     var now by remember { mutableStateOf(Instant.now()) }
 
     LaunchedEffect(Unit) {
@@ -73,10 +78,11 @@ fun AstroClockScreen(
             onShowZodiacChange = { displayPrefs.setShowZodiac2D(it) },
             showEventTimes = showEventTimes,
             onShowEventTimesChange = { displayPrefs.setShowEventTimes2D(it) },
+            showMonthTicks = showMonthTicks,
+            onShowMonthTicksChange = { displayPrefs.setShowMonthTicks2D(it) },
             zodiacTitle = stringResource(R.string.astro_toggle_show_zodiac),
-            zodiacDescription = stringResource(R.string.astro_toggle_show_zodiac_desc),
             eventTimesTitle = stringResource(R.string.astro_toggle_show_event_times),
-            eventTimesDescription = stringResource(R.string.astro_toggle_show_event_times_desc),
+            monthTicksTitle = stringResource(R.string.astro_toggle_show_month_ticks),
         )
 
         BoxWithConstraints(
@@ -85,13 +91,25 @@ fun AstroClockScreen(
         ) {
             val side = minOf(maxWidth, maxHeight)
             val sizePx = ClockRenderSize.fromMinDp(side.value.toInt().coerceAtLeast(80))
-            val diskBitmap = remember(place, alarms, now.epochSecond / 10, sizePx, showZodiac, showEventTimes) {
-                AstroDiskRenderer.renderDisk(place, alarms, now, sizePx, showZodiac, showEventTimes)
+            val diskBitmap = remember(place, alarms, now.epochSecond / 10, sizePx, showZodiac, showEventTimes, showMonthTicks) {
+                AstroDiskRenderer.renderDisk(place, alarms, now, sizePx, showZodiac, showEventTimes, showMonthTicks)
             }
+            val zodiacHits = remember(place, now.epochSecond / 10, sizePx, showZodiac) {
+                if (showZodiac) ZodiacRingLayout.diskHits(place, now, sizePx) else emptyList()
+            }
+            val uriHandler = LocalUriHandler.current
             Image(
                 bitmap = diskBitmap.asImageBitmap(),
                 contentDescription = stringResource(R.string.astro_widget_desc),
-                modifier = Modifier.size(side)
+                modifier = Modifier.size(side).pointerInput(zodiacHits, sizePx) {
+                    detectTapGestures { tap ->
+                        val bx = tap.x * sizePx / size.width
+                        val by = tap.y * sizePx / size.height
+                        ZodiacRingLayout.at(zodiacHits, bx, by)?.let { sign ->
+                            runCatching { uriHandler.openUri(ZodiacRingLayout.wikipediaUrl(sign)) }
+                        }
+                    }
+                }
             )
         }
 

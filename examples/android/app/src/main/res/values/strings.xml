@@ -130,6 +130,8 @@
     <string name="astro_toggle_show_zodiac_3d_desc">Shows the 3D celestial zodiac transit ring in space</string>
     <string name="astro_toggle_show_event_times">Show event times</string>
     <string name="astro_toggle_show_event_times_desc">Alarm, sunrise, and sunset times on the 24h dial</string>
+    <string name="astro_toggle_show_month_ticks">Show month ticks</string>
+    <string name="astro_toggle_show_month_ticks_desc">Two-letter month starts on the outer rim</string>
     <string name="astro_solar_noon">Solar Noon</string>
     <string name="astro_solar_midnight">Solar Midnight</string>
     <string name="astro_zodiac_overhead_noon">Midday Overhead Zodiac</string>
@@ -220,4 +222,20 @@
     <string name="astro_widget_upcoming_name">Upcoming Alarms</string>
     <string name="astro_widget_upcoming_desc">Summary of upcoming alarms and astronomical events</string>
     <string name="astro_widget_upcoming_empty">No upcoming alarms</string>
+    <string name="onboard_title">Allow alarms to fire</string>
+    <string name="onboard_body">AstroAlarm needs these so sunrise, moon, and clock alarms can ring on time, over the lock screen, even when the phone is asleep.</string>
+    <string name="onboard_continue">Continue</string>
+    <string name="onboard_grant">Allow</string>
+    <string name="onboard_granted">Allowed</string>
+    <string name="onboard_settings_button">Alarm permissions</string>
+    <string name="onboard_notifications_title">Notifications</string>
+    <string name="onboard_notifications_body">Shows the ringing alarm and the full-screen wake UI.</string>
+    <string name="onboard_location_title">Location</string>
+    <string name="onboard_location_body">Computes sunrise, sunset, and moon times for your place.</string>
+    <string name="onboard_exact_title">Exact alarms</string>
+    <string name="onboard_exact_body">Lets alarms fire at the true event time, not a few minutes later.</string>
+    <string name="onboard_fsi_title">Full-screen alarms</string>
+    <string name="onboard_fsi_body">Shows Stop and Snooze over the lock screen.</string>
+    <string name="onboard_battery_title">Ignore battery optimizations</string>
+    <string name="onboard_battery_body">Set AstroAlarm to Unrestricted so OxygenOS does not kill alarms while the screen is off.</string>
 </resources>

@@ -67,21 +67,7 @@ object AstroNextFire {
         if (isSeasonal) {
             val thisYear = today.year
             for (year in thisYear..(thisYear + 3)) {
-                val month = when (target.event) {
-                    SolarEventType.MarchEquinox -> 3
-                    SolarEventType.JuneSolstice -> 6
-                    SolarEventType.SeptemberEquinox -> 9
-                    SolarEventType.DecemberSolstice -> 12
-                    else -> 1
-                }
-                val day = when (target.event) {
-                    SolarEventType.MarchEquinox -> 20
-                    SolarEventType.JuneSolstice -> 21
-                    SolarEventType.SeptemberEquinox -> 22
-                    SolarEventType.DecemberSolstice -> 21
-                    else -> 1
-                }
-                val date = LocalDate.of(year, month, day)
+                val date = LocalDate.of(year, 1, 1)
                 val base = SolarCalculator.calculate(target.event, date, place.latitude, place.longitude, place.zone)
                     ?: continue
                 val fireInstant = base.plusSeconds(target.offsetMinutes * 60L)

@@ -43,4 +43,26 @@ class SphereProjectionTest {
         assertEquals(0.0, ll!!.first, 1.0)
         assertEquals(true, abs(ll.second - 170.0) > 10.0)
     }
+
+    @Test
+    fun observerProjectsToDiskCenter() {
+        val (x, y, z) = SphereProjection.latLonToDisk(40.7, -74.0, 40.7, -74.0)
+        assertEquals(0.0, x, 1e-6)
+        assertEquals(0.0, y, 1e-6)
+        assertEquals(1.0, z, 1e-6)
+    }
+
+    @Test
+    fun equatorEastIsRightLimb() {
+        val (x, y, z) = SphereProjection.latLonToDisk(0.0, 90.0, 0.0, 0.0)
+        assertEquals(1.0, x, 1e-6)
+        assertEquals(0.0, y, 1e-6)
+        assertEquals(0.0, z, 0.02)
+    }
+
+    @Test
+    fun antipodeIsOnTheBack() {
+        val (_, _, z) = SphereProjection.latLonToDisk(0.0, 180.0, 0.0, 0.0)
+        assertEquals(true, z < 0.0)
+    }
 }
