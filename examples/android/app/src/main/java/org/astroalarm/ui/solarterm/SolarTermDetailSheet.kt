@@ -13,7 +13,6 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.geometry.Offset
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.StrokeCap
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.semantics.contentDescription
@@ -74,6 +73,6 @@ private fun YearDayBar(dayOfYear: Int, modifier: Modifier = Modifier) {
         val y = size.height / 2f
         drawLine(scheme.outlineVariant, Offset(0f, y), Offset(size.width, y), size.height * 0.35f, StrokeCap.Round)
         val x = size.width * ((dayOfYear - 1) / 365f).coerceIn(0f, 1f)
-        drawCircle(Color(0xFFE53935), radius = size.height * 0.42f, center = Offset(x, y))
+        drawCircle(scheme.error, radius = size.height * 0.42f, center = Offset(x, y))
     }
 }
