@@ -6,6 +6,8 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [Unreleased]
+
 ## [1.3.0](https://github.com/edwardlthompson/AstroAlarm/compare/v1.2.0...v1.3.0) (2026-09-01)
 
 
@@ -24,8 +26,6 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 * **android:** skip onboarding gate during instrumented UI tests ([7c6990d](https://github.com/edwardlthompson/AstroAlarm/commit/7c6990de332af402c6cf45f30131a926d43c5ccc))
 * **android:** use Alarm channel for lockscreen ringing ([8754df3](https://github.com/edwardlthompson/AstroAlarm/commit/8754df3791e243d7d3f2e5028c100d7b9216f4b3))
 * **android:** use Alarm channel for lockscreen ringing ([b80f42c](https://github.com/edwardlthompson/AstroAlarm/commit/b80f42cf49b92346faff392af091f3829a844c7b))
-
-## [Unreleased]
 
 ## [1.2.0](https://github.com/edwardlthompson/AstroAlarm/compare/v1.1.0...v1.2.0) (2026-08-31)
 
