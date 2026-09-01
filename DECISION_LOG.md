@@ -17,6 +17,13 @@
 
 ## Entries
 
+### 2026-09-01 — 24 Solar Terms year view
+- **Status:** Accepted
+- **Context:** Request for an additive jieqi year overlay (2D + 3D + widget) without changing daily clocks.
+- **Decision:** Self-contained `org.astroalarm.solarterm` module plus Year tab gated by a default-off setting. Reuse NOAA `SolarSeasons.apparentLon` with typical-month root finding (not `SolarSeasons.instant`, which maps 315° to December). Cache current and next tropical years. Southern “local seasons” remaps English names and colors only.
+- **Alternatives considered:** Swiss Ephemeris / Skyfield (rejected: extra native deps; NOAA already drives seasons/zodiac). Overlaying jieqi on the daily 2D/3D clocks (rejected: user asked to leave daily features alone).
+- **Consequences:** Times match the in-app NOAA model (seconds of that model). Enable Year View in Settings to see the fourth tab.
+
 ### 2026-09-01 — v1.3.0 scientific sun/moon engine
 - **Status:** Accepted
 - **Context:** The 3D moon was a synodic cartoon; southern noon was pinned south; NOAA solar used date-only JD. User asked for one accurate on-device engine, then `/cleanup` `/ship` and sideload.

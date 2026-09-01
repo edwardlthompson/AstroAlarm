@@ -9,7 +9,7 @@
 |-------|-----------|---------|-------|
 | Platform | Android (Kotlin, Jetpack Compose, Material 3) | 1.3.0 | Child of agent-project-bootstrap; GitHub Releases APK `astroalarm-X.Y.Z-foss.apk` |
 | Persistence | JSON SharedPreferences + DataStore | - | Room/Hilt on classpath for later stores |
-| Ephemeris | commons-suncalc 3.11 + NOAA tropical longitude | on-device | Sun/moon times and HA/dec; NOAA only for seasons/zodiac |
+| Ephemeris | commons-suncalc 3.11 + NOAA tropical longitude | on-device | Sun/moon times and HA/dec; NOAA for seasons, zodiac, and 24 Solar Terms |
 | License | MIT | - | Pure FOSS; no Play Services / Firebase |
 | Distribution | GitHub Releases | - | F-Droid later |
 ## Active Modules
@@ -34,7 +34,7 @@
 
 ### Project Purpose
 
-FOSS Android astronomical alarm clock: on-device suncalc sun/moon ephemeris, solar/lunar/custom alarms, lockscreen math unlock, rotating day/night widget.
+FOSS Android astronomical alarm clock: on-device suncalc sun/moon ephemeris, solar/lunar/custom alarms, optional 24 Solar Terms year view, lockscreen math unlock, rotating day/night widget.
 
 ### Key Constraints
 
@@ -44,6 +44,7 @@ FOSS Android astronomical alarm clock: on-device suncalc sun/moon ephemeris, sol
 
 ## Session Retrospectives
 
+| 2026-09-01 | 24 Solar Terms year view | Optional Year tab (default off), NOAA jieqi finder, 2D/3D + widget | Do not reuse `SolarSeasons.instant` for 315°; keep daily clocks untouched |
 | 2026-09-01 | v1.3.0 /ship | commons-suncalc sun/moon; RP #9; connected tests needed `skipUiGate`; sideload uses PC upload key | Do not apply `vcodeql-bundle-*` tags; onboarding must skip under instrumentation |
 | 2026-08-31 | v1.2.0 /ship | Smaller 2D callouts; RP #5 cut 1.2.0; `astroalarm-1.2.0-foss.apk` on a stable (not prerelease) GitHub Release | Add `ANDROID_KEYSTORE_*` secrets for a stable upload key; bump README `template-X.Y.Z` in the same RP extra-files |
 | 2026-08-30 | AstroAlarm init | Bootstrapped from agent-project-bootstrap; migrated OpenShouter astro suite; `test assembleRelease` green; `validate-bootstrap --quick` green | HUMAN: create GitHub repo, enable Dependabot/branch protection; do not commit `local.properties` |
