@@ -6,6 +6,25 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.3.0](https://github.com/edwardlthompson/AstroAlarm/compare/v1.2.0...v1.3.0) (2026-09-01)
+
+
+### Added
+
+* **android:** add 2D clock toggle to hide event times ([f092d59](https://github.com/edwardlthompson/AstroAlarm/commit/f092d5910e594db16dcb63e556ce48479f8bbba2))
+* **android:** compute sun and moon with commons-suncalc ([8f1a5a5](https://github.com/edwardlthompson/AstroAlarm/commit/8f1a5a58e6c993a71e6e7e6a50f0a201edbd30dd))
+* **android:** use a plain hub at the 2D clock center ([39493ba](https://github.com/edwardlthompson/AstroAlarm/commit/39493ba8d5cc4795da097432a292d2f4d8a2b362))
+* **android:** use a plain hub at the 2D clock center ([e06011d](https://github.com/edwardlthompson/AstroAlarm/commit/e06011dd5ee525a67a560bb94890060540a38ed5))
+
+
+### Fixed
+
+* **android:** pass STREAM_ALARM to NotificationCompat.setSound ([14e6c4f](https://github.com/edwardlthompson/AstroAlarm/commit/14e6c4f933875f784c7eab05b03256373f963ef3))
+* **android:** silence alarm channel and keep ringing notification ([c2eee39](https://github.com/edwardlthompson/AstroAlarm/commit/c2eee39be51c63e925aa9af75be0ea116fd17d86))
+* **android:** skip onboarding gate during instrumented UI tests ([7c6990d](https://github.com/edwardlthompson/AstroAlarm/commit/7c6990de332af402c6cf45f30131a926d43c5ccc))
+* **android:** use Alarm channel for lockscreen ringing ([8754df3](https://github.com/edwardlthompson/AstroAlarm/commit/8754df3791e243d7d3f2e5028c100d7b9216f4b3))
+* **android:** use Alarm channel for lockscreen ringing ([b80f42c](https://github.com/edwardlthompson/AstroAlarm/commit/b80f42cf49b92346faff392af091f3829a844c7b))
+
 ## [Unreleased]
 
 ## [1.2.0](https://github.com/edwardlthompson/AstroAlarm/compare/v1.1.0...v1.2.0) (2026-08-31)

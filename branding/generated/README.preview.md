@@ -9,7 +9,7 @@
 <p align="center"><strong>Wake with the sun, the moon, and your own clock.</strong></p>
 
 <p align="center">
-  <img src="https://img.shields.io/badge/template-1.2.0-0969da?style=flat-square" alt="Template" /> <!-- x-release-please-version -->
+  <img src="https://img.shields.io/badge/template-1.3.0?style=flat-square" alt="Template" /> <!-- x-release-please-version -->
   <img src="https://img.shields.io/badge/license-MIT-2ea043?style=flat-square" alt="MIT" />
   <img src="https://img.shields.io/badge/FOSS-no_tracking-656d76?style=flat-square" alt="FOSS" />
   <img src="https://img.shields.io/badge/status-active-C9A227?style=flat-square" alt="status" />
