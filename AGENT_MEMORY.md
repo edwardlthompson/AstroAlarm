@@ -7,7 +7,7 @@
 
 | Layer | Technology | Version | Notes |
 |-------|-----------|---------|-------|
-| Platform | Android (Kotlin, Jetpack Compose, Material 3) | 1.3.0 | Child of agent-project-bootstrap; GitHub Releases APK `astroalarm-X.Y.Z-foss.apk` |
+| Platform | Android (Kotlin, Jetpack Compose, Material 3) | 1.3.1 | Child of agent-project-bootstrap; GitHub Releases APK `astroalarm-X.Y.Z-foss.apk` |
 | Persistence | JSON SharedPreferences + DataStore | - | Room/Hilt on classpath for later stores |
 | Ephemeris | commons-suncalc 3.11 + NOAA tropical longitude | on-device | Sun/moon times and HA/dec; NOAA only for seasons/zodiac |
 | License | MIT | - | Pure FOSS; no Play Services / Firebase |
@@ -44,7 +44,7 @@ FOSS Android astronomical alarm clock: on-device suncalc sun/moon ephemeris, sol
 
 ## Session Retrospectives
 
-| 2026-09-01 | v1.3.0 /ship | commons-suncalc sun/moon; RP #9; connected tests needed `skipUiGate`; sideload uses PC upload key | Do not apply `vcodeql-bundle-*` tags; onboarding must skip under instrumentation |
+| 2026-09-01 | v1.3.1 /ship | Lockscreen TTS repeats every 2s until dismiss; RP #11; F-Droid changelog 10101; sideload PC upload key | Do not apply `vcodeql-bundle-*` tags; bump F-Droid `changelogs/{versionCode}.txt` with versionCode |
 | 2026-08-31 | v1.2.0 /ship | Smaller 2D callouts; RP #5 cut 1.2.0; `astroalarm-1.2.0-foss.apk` on a stable (not prerelease) GitHub Release | Add `ANDROID_KEYSTORE_*` secrets for a stable upload key; bump README `template-X.Y.Z` in the same RP extra-files |
 | 2026-08-30 | AstroAlarm init | Bootstrapped from agent-project-bootstrap; migrated OpenShouter astro suite; `test assembleRelease` green; `validate-bootstrap --quick` green | HUMAN: create GitHub repo, enable Dependabot/branch protection; do not commit `local.properties` |
 | 2026-08-28 | v1.0.0 /ship | Cloud agent #81 reviewed+merged; RP #82 cut first stable; Unreleased empty; SBOM+OpenVEX on the tag | Do not merge RP while upgrade-sim still fails on pruned stacks; `Release-As: 1.0.0` beats 0.26.0 |

@@ -17,6 +17,13 @@
 
 ## Entries
 
+### 2026-09-01 — v1.3.1 lockscreen TTS repeat
+- **Status:** Accepted
+- **Context:** Lockscreen TTS spoke the alarm label once. User asked for repeats with a 2s gap until dismiss, `/ship`, and sideload on OP12/OP13.
+- **Decision:** `AlarmTtsRepeater` schedules the next speak 2000 ms after `onDone`/`onError`; snooze/stop cancel the delay. Empty Unreleased; `fix(android)` so Release Please cuts **1.3.1** (PR #11). `versionCode` 10101 plus F-Droid `changelogs/10101.txt`. Sideload with the PC upload keystore. Skip bogus `codeql-action@vcodeql-bundle-*`. Codex skipped (no key/CLI).
+- **Alternatives considered:** Fixed 2s from speak start (rejected: overlapping utterances). Retry forever on TTS error while running (accepted: same gap as success).
+- **Consequences:** Next HUMAN remains CII. Dependabot #1 and #4 stay open. After ship, check out `cursor/solar-terms-year-view-6857` (PR #10).
+
 ### 2026-09-01 — Close AUTO/ADB leftovers after v1.3.0
 - **Status:** Accepted
 - **Context:** User asked to finish remaining AUTO/ADB BUILD_PLAN rows and automate HUMAN work.
