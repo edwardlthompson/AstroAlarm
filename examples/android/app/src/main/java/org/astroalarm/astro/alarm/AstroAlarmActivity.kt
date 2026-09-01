@@ -1,7 +1,6 @@
 package org.astroalarm.astro.alarm
 
 import android.content.Context
-import android.media.AudioAttributes
 import android.media.Ringtone
 import android.media.RingtoneManager
 import android.net.Uri
@@ -69,7 +68,7 @@ class AstroAlarmActivity : ComponentActivity(), TextToSpeech.OnInitListener {
                 ?: RingtoneManager.getDefaultUri(RingtoneManager.TYPE_ALARM)
                 ?: RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION)
             ringtone = RingtoneManager.getRingtone(applicationContext, uri)?.apply {
-                audioAttributes = AudioAttributes.Builder().setUsage(AudioAttributes.USAGE_ALARM).setContentType(AudioAttributes.CONTENT_TYPE_SONIFICATION).build()
+                audioAttributes = AlarmNotificationChannel.alarmAudioAttributes()
                 if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.P) isLooping = true
                 play()
             }
@@ -96,6 +95,7 @@ class AstroAlarmActivity : ComponentActivity(), TextToSpeech.OnInitListener {
 
     override fun onInit(status: Int) {
         if (status == TextToSpeech.SUCCESS) {
+            tts?.setAudioAttributes(AlarmNotificationChannel.alarmAudioAttributes())
             val ttsPrefs = TtsPreferences(applicationContext).getVoice()
             tts?.setPitch(ttsPrefs.pitch)
             if (ttsPrefs.languageTag.isNotBlank()) {
@@ -115,9 +115,11 @@ class AstroAlarmActivity : ComponentActivity(), TextToSpeech.OnInitListener {
     private fun stopAlarmOutput() {
         runCatching { ringtone?.stop() }
         runCatching { vibrator?.cancel() }
-        runCatching {
-            tts?.stop()
-            tts?.shutdown()
+        val engine = tts
+        tts = null
+        if (engine != null) {
+            runCatching { engine.stop() }
+            runCatching { engine.shutdown() }
         }
     }
 

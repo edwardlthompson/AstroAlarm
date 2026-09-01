@@ -12,9 +12,14 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 * **android:** add a 2D clock toggle that hides alarm, sunrise, and sunset times
 
+### Changed
+
+* **android:** drop the Earth globe from the 2D clock center
+
 ### Fixed
 
 * **android:** use an Alarm notification channel so ringing covers the lock screen without unlocking
+* **android:** launch lock-screen ringing via full-screen intent only and speak TTS on the alarm stream
 
 ## [1.2.0](https://github.com/edwardlthompson/AstroAlarm/compare/v1.1.0...v1.2.0) (2026-08-31)
 

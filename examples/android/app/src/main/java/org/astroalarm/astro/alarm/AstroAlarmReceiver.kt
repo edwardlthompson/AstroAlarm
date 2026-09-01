@@ -45,8 +45,6 @@ class AstroAlarmReceiver : BroadcastReceiver() {
             AlarmNotificationChannel.NOTIFICATION_ID,
             AlarmNotificationChannel.buildRinging(context, fullScreenPending),
         )
-
-        runCatching { context.startActivity(activityIntent) }
     }
 
     private fun handleActionSetAlarm(context: Context, intent: Intent) {

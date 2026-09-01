@@ -30,7 +30,6 @@ import org.astroalarm.astro.zodiac.ZodiacCalculator
 import org.astroalarm.widget.AstroClockWidgetProvider
 import org.astroalarm.widget.AstroDiskRenderer
 import org.astroalarm.widget.ClockRenderSize
-import org.astroalarm.widget.EarthTexture
 import java.time.Instant
 import java.time.ZonedDateTime
 import java.time.format.DateTimeFormatter
@@ -46,7 +45,6 @@ fun AstroClockScreen(
     val displayPrefs = remember { AstroDisplayPreferences(context) }
     val showZodiac by displayPrefs.showZodiac2D.collectAsState()
     val showEventTimes by displayPrefs.showEventTimes2D.collectAsState()
-    val earth = remember { EarthTexture.get(context) }
     var now by remember { mutableStateOf(Instant.now()) }
 
     LaunchedEffect(Unit) {
@@ -87,10 +85,8 @@ fun AstroClockScreen(
         ) {
             val side = minOf(maxWidth, maxHeight)
             val sizePx = ClockRenderSize.fromMinDp(side.value.toInt().coerceAtLeast(80))
-            val diskBitmap = remember(place, alarms, now.epochSecond / 10, sizePx, showZodiac, showEventTimes, earth) {
-                AstroDiskRenderer.renderDisk(
-                    place, alarms, now, sizePx, showZodiac, earth, showEventTimes,
-                )
+            val diskBitmap = remember(place, alarms, now.epochSecond / 10, sizePx, showZodiac, showEventTimes) {
+                AstroDiskRenderer.renderDisk(place, alarms, now, sizePx, showZodiac, showEventTimes)
             }
             Image(
                 bitmap = diskBitmap.asImageBitmap(),
