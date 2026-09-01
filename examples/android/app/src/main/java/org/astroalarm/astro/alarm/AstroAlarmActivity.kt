@@ -6,6 +6,8 @@ import android.media.RingtoneManager
 import android.net.Uri
 import android.os.Build
 import android.os.Bundle
+import android.os.Handler
+import android.os.Looper
 import android.os.VibrationEffect
 import android.os.Vibrator
 import android.os.VibratorManager
@@ -19,12 +21,13 @@ import org.astroalarm.astro.model.AstroAlarm
 import org.astroalarm.tts.TtsPreferences
 import org.astroalarm.ui.AstroAlarmLockscreenView
 import java.time.LocalTime
-import java.util.Locale
 
 class AstroAlarmActivity : ComponentActivity(), TextToSpeech.OnInitListener {
+    private val ttsHandler = Handler(Looper.getMainLooper())
     private var ringtone: Ringtone? = null
     private var vibrator: Vibrator? = null
     private var tts: TextToSpeech? = null
+    private var ttsSession: AlarmTtsSession? = null
     private var activeAlarm: AstroAlarm? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -94,33 +97,23 @@ class AstroAlarmActivity : ComponentActivity(), TextToSpeech.OnInitListener {
     }
 
     override fun onInit(status: Int) {
-        if (status == TextToSpeech.SUCCESS) {
-            tts?.setAudioAttributes(AlarmNotificationChannel.alarmAudioAttributes())
-            val ttsPrefs = TtsPreferences(applicationContext).getVoice()
-            tts?.setPitch(ttsPrefs.pitch)
-            if (ttsPrefs.languageTag.isNotBlank()) {
-                tts?.language = Locale.forLanguageTag(ttsPrefs.languageTag)
-            } else {
-                tts?.language = Locale.getDefault()
-            }
-            if (ttsPrefs.voiceName.isNotBlank()) {
-                val match = tts?.voices?.firstOrNull { it.name == ttsPrefs.voiceName }
-                if (match != null) tts?.voice = match
-            }
-            val text = activeAlarm?.label ?: getString(R.string.astro_custom_alarm_title)
-            tts?.speak(text, TextToSpeech.QUEUE_FLUSH, null, "astro_alarm_shout")
-        }
+        val engine = tts ?: return
+        if (status != TextToSpeech.SUCCESS) return
+        val text = activeAlarm?.label ?: getString(R.string.astro_custom_alarm_title)
+        ttsSession = AlarmTtsSession.bind(
+            engine,
+            ttsHandler,
+            text,
+            TtsPreferences(applicationContext).getVoice(),
+        )
     }
 
     private fun stopAlarmOutput() {
         runCatching { ringtone?.stop() }
         runCatching { vibrator?.cancel() }
-        val engine = tts
         tts = null
-        if (engine != null) {
-            runCatching { engine.stop() }
-            runCatching { engine.shutdown() }
-        }
+        ttsSession?.stop()
+        ttsSession = null
     }
 
     private fun onSnoozeClicked() {

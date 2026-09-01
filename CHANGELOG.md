@@ -10,14 +10,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [1.3.0](https://github.com/edwardlthompson/AstroAlarm/compare/v1.2.0...v1.3.0) (2026-09-01)
 
-
 ### Added
 
 * **android:** add 2D clock toggle to hide event times ([f092d59](https://github.com/edwardlthompson/AstroAlarm/commit/f092d5910e594db16dcb63e556ce48479f8bbba2))
 * **android:** compute sun and moon with commons-suncalc ([8f1a5a5](https://github.com/edwardlthompson/AstroAlarm/commit/8f1a5a58e6c993a71e6e7e6a50f0a201edbd30dd))
 * **android:** use a plain hub at the 2D clock center ([39493ba](https://github.com/edwardlthompson/AstroAlarm/commit/39493ba8d5cc4795da097432a292d2f4d8a2b362))
 * **android:** use a plain hub at the 2D clock center ([e06011d](https://github.com/edwardlthompson/AstroAlarm/commit/e06011dd5ee525a67a560bb94890060540a38ed5))
-
 
 ### Fixed
 
