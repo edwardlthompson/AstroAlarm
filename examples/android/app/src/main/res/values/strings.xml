@@ -173,8 +173,8 @@
     <string name="astro_custom_alarm_title">Alarm</string>
     <string name="astro_alarm_ringing">Alarm Ringing</string>
     <string name="astro_alarm_tap_to_open">Tap to open alarm</string>
-    <string name="astro_channel_name">AstroAlarm alarms</string>
-    <string name="astro_channel_desc">Full-screen lockscreen alarms for sun, moon, and custom times</string>
+    <string name="astro_channel_name">Alarm</string>
+    <string name="astro_channel_desc">Full-screen lockscreen alarms you can stop without unlocking</string>
     <string name="astro_action_snooze">Snooze (%d min)</string>
     <string name="astro_action_stop">Stop</string>
     <string name="astro_widget_desc">Rotating day/night astronomical clock</string>
