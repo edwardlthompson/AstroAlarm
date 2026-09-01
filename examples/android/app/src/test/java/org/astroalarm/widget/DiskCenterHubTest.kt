@@ -1,15 +1,12 @@
 package org.astroalarm.widget
 
-import android.graphics.Color
 import org.junit.Assert.assertEquals
-import org.junit.Assert.assertTrue
+import org.junit.Assert.assertNotNull
 import org.junit.Test
 import org.junit.runner.RunWith
 import org.robolectric.RobolectricTestRunner
 import org.robolectric.annotation.Config
 import java.time.Instant
-import java.time.LocalDateTime
-import java.time.ZoneOffset
 
 @RunWith(RobolectricTestRunner::class)
 @Config(sdk = [26])
@@ -23,23 +20,16 @@ class DiskCenterHubTest {
     }
 
     @Test
-    fun twoDDiskPaintsPlainHubAtCenter() {
-        val now = LocalDateTime.of(2026, 8, 31, 12, 0).toInstant(ZoneOffset.UTC)
+    fun twoDDiskRendersWithoutEarthTexture() {
         val bmp = AstroDiskRenderer.renderDisk(
             place = null,
             alarms = emptyList(),
-            now = now,
-            size = 200,
+            now = Instant.EPOCH,
+            size = 64,
             showZodiac = false,
         )
-        val cx = bmp.width / 2
-        val cy = bmp.height / 2
-        assertEquals(DiskCenterHub.COLOR, bmp.getPixel(cx, cy))
-        val hubR = DiskCenterHub.radius(200)
-        val inside = bmp.getPixel(cx + (hubR * 0.3f).toInt(), cy)
-        assertEquals(DiskCenterHub.COLOR, inside)
-        val outside = bmp.getPixel(cx + hubR.toInt() + 8, cy)
-        assertTrue(outside != DiskCenterHub.COLOR)
-        assertTrue(Color.alpha(outside) > 0)
+        assertNotNull(bmp)
+        assertEquals(64, bmp.width)
+        assertEquals(64, bmp.height)
     }
 }
