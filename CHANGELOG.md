@@ -8,34 +8,6 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
-### Added
-
-* **android:** add a 2D clock toggle that hides alarm, sunrise, and sunset times
-* **android:** first-launch onboarding for alarm, location, and battery grants
-* **android:** tick solar midnight, noon, rise, and set on the 3D sun transit (solar hour angle)
-* **android:** tick lunar culmination on the 3D moon ring (local meridian)
-* **android:** add a 2D toggle for two-letter month ticks on the outer rim
-* **android:** draw front-hemisphere sun/moon ground tracks on the 3D globe
-* **android:** open Wikipedia from a tapped 2D in-app zodiac sign
-
-### Documentation
-
-* **readme:** show the clock-wheel app icon and launch splash on the pitch README
-
-### Changed
-
-* **android:** drop the Earth globe from the 2D clock center
-* **android:** draw Unicode ♈–♓ zodiac signs (yellow bubble = sun's sign)
-* **android:** center 2D month labels in each month; yellow zodiac-cusp ticks follow the zodiac toggle
-* **android:** compute sun and moon positions and event times with commons-suncalc 3.11 so 2D/3D clocks share alarm hour angles (southern noon toward geographic north; polar rise/set may be absent)
-
-### Fixed
-
-* **android:** use an Alarm notification channel so ringing covers the lock screen without unlocking
-* **android:** launch lock-screen ringing via full-screen intent only and speak TTS on the alarm stream
-* **android:** drive 3D vertical parallax from accelerometer Z so pitch is not pegged by gravity
-* **android:** drop 2D/3D overlay-toggle descriptions so rows are label plus switch only
-
 ## [1.2.0](https://github.com/edwardlthompson/AstroAlarm/compare/v1.1.0...v1.2.0) (2026-08-31)
 
 ### Added

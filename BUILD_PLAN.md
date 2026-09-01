@@ -105,7 +105,7 @@ When **Sprint 0** ends: stop re-reading `docs/INITIALIZATION_PROMPT.md` as the d
 | *Archived — see COMPLETED_TASKS.md* | — | — |
 ### Sprint 2+ — Incremental Features
 
-> **settings** archived in COMPLETED_TASKS.md @ `825fb6d`. Next named feature starts here.
+> **clock-3d-moon-sky** archived in COMPLETED_TASKS.md. **settings** archived in COMPLETED_TASKS.md @ `825fb6d`. Next named feature starts here.
 
 > One vertical slice at a time. See `docs/FEATURE_MODULES.md`. Reference exemplars: `docs/features/settings.md` (Sprint 2), About (Sprint 1).
 
@@ -174,6 +174,7 @@ When **Sprint 0** ends: stop re-reading `docs/INITIALIZATION_PROMPT.md` as the d
 
 | Sprint                                                            | Status   | Archive                          |
 | ----------------------------------------------------------------- | -------- | -------------------------------- |
+| clock-3d-moon-sky                                                 | Complete | `COMPLETED_TASKS.md`             |
 | Sprint 2 — settings exemplar                                      | Complete | `COMPLETED_TASKS.md` @ `825fb6d` |
 | Sprint 1 — Golden Path Foundation                                 | Complete | `COMPLETED_TASKS.md` @ `825fb6d` |
 | Sprint 0 — Template Customization                                 | Complete | `COMPLETED_TASKS.md` @ `825fb6d` |

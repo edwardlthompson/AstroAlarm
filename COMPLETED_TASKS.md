@@ -2,6 +2,13 @@
 
 > Archive of finished BUILD_PLAN items.
 
+## clock-3d-moon-sky (2026-09-01)
+
+- ✅ [AGENT] Copy `docs/features/_template.md` → `docs/features/clock-3d-moon-sky.md`; refine acceptance criteria
+- ✅ [AGENT] Scaffold feature container (public API boundary only)
+- ✅ [AGENT] Unit tests for feature pure logic (skip if Parallel agent completed)
+- ✅ [AGENT] Wire view/adapter; composition root (`appBootstrap.ts` / `GoldenPathApp.kt`) ≤10 lines
+
 ## M43 leftover — local Ollama (2026-08-31)
 
 - ✅ [HUMAN] Optional: install Ollama and point Cursor Models at `http://127.0.0.1:11434/v1` (`docs/LOCAL_MODELS.md`)
