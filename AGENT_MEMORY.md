@@ -7,7 +7,7 @@
 
 | Layer | Technology | Version | Notes |
 |-------|-----------|---------|-------|
-| Platform | Android (Kotlin, Jetpack Compose, Material 3) | 1.3.1 | Child of agent-project-bootstrap; GitHub Releases APK `astroalarm-X.Y.Z-foss.apk` |
+| Platform | Android (Kotlin, Jetpack Compose, Material 3) | 1.4.0 | Child of agent-project-bootstrap; GitHub Releases APK `astroalarm-X.Y.Z-foss.apk` |
 | Persistence | JSON SharedPreferences + DataStore | - | Room/Hilt on classpath for later stores |
 | Ephemeris | commons-suncalc 3.11 + NOAA tropical longitude + on-device Kepler | on-device | Sun/moon times; NOAA for seasons/zodiac/jieqi; Kepler for Sol tab and planet alarms |
 | License | MIT | - | Pure FOSS; no Play Services / Firebase |
@@ -44,7 +44,7 @@ FOSS Android astronomical alarm clock: on-device suncalc sun/moon ephemeris, sol
 
 ## Session Retrospectives
 
-| 2026-09-01 | Yearly/Sol /ship | Yearly hub + Sol Kepler + celestial alarms; Moon anti-sunward at full; jieqi wrap | Do not apply `vcodeql-bundle-*` tags; Yearly Moon offset is `canvasDeg + 180` |
+| 2026-09-02 | v1.4.0 /ship | Yearly hub + Sol Kepler + celestial alarms; RP #12; Moon anti-sunward at full; jieqi wrap; sideload PC upload key | Do not apply `vcodeql-bundle-*` tags; Yearly Moon offset is `canvasDeg + 180`; versionCode 10104 is not auto-bumped |
 | 2026-09-01 | Yearly Sol labels | Shared pin copy; Yearly Moon ecliptic; N/S off traces; jieqi inset edges; Sol teaching chrome | Daily 3D tracks stay on Earth; do not un-rotate them onto the sun ring |
 | 2026-09-01 | Yearly Sol align | Shared pin Y; 3D globe nod by sunDec; compact emoji band; N/S on traces; non-scrolling tabs | Do not rotate 3D rings with the globe; green stays north |
 | 2026-09-01 | v1.3.1 /ship | Lockscreen TTS repeats every 2s until dismiss; RP #11; F-Droid changelog 10101; sideload PC upload key | Do not apply `vcodeql-bundle-*` tags; bump F-Droid `changelogs/{versionCode}.txt` with versionCode |

@@ -17,6 +17,13 @@
 
 ## Entries
 
+### 2026-09-02 — v1.4.0 /ship
+- **Status:** Accepted
+- **Context:** Yearly hub, Sol Kepler map, celestial alarms, and Elementary math were ready to publish after local `/prerelease`.
+- **Decision:** Empty Unreleased; `feat(android)` so Release Please cuts **1.4.0** (PR #12, admin-merge). Sideload with the PC upload keystore. Skip bogus `codeql-action@vcodeql-bundle-*`. Codex skipped (no key/CLI). `versionCode` stays 10104.
+- **Alternatives considered:** Waiting for Dependabot Gradle PRs before push (rejected: weekly backup only). Applying `vcodeql-bundle-*` tags (rejected: known invalid).
+- **Consequences:** GitHub Release **v1.4.0** has SBOM + OpenVEX. Devices keep the same upload cert as 1.3.x sideloads.
+
 ### 2026-09-01 — Yearly Moon hub offset (anti-sunward at full)
 - **Status:** Accepted
 - **Context:** Geocentric ecliptic longitude as a canvas offset from Earth put a full Moon toward the Sun. Kepler top-down (2023-08-02) shows the Moon on the far side of Earth.
