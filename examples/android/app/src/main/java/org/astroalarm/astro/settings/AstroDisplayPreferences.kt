@@ -27,14 +27,8 @@ class AstroDisplayPreferences(private val context: Context) {
     private val _showMonthTicks2D = MutableStateFlow(prefs.getBoolean(KEY_SHOW_MONTH_TICKS_2D, false))
     val showMonthTicks2D: StateFlow<Boolean> = _showMonthTicks2D.asStateFlow()
 
-    private val _showSolarTermsYear = MutableStateFlow(prefs.getBoolean(KEY_SHOW_SOLAR_TERMS_YEAR, false))
-    val showSolarTermsYear: StateFlow<Boolean> = _showSolarTermsYear.asStateFlow()
-
-    private val _solarTermTraditional = MutableStateFlow(prefs.getBoolean(KEY_SOLAR_TERM_TRADITIONAL, false))
-    val solarTermTraditional: StateFlow<Boolean> = _solarTermTraditional.asStateFlow()
-
-    private val _solarTermLocalSeasons = MutableStateFlow(prefs.getBoolean(KEY_SOLAR_TERM_LOCAL_SEASONS, false))
-    val solarTermLocalSeasons: StateFlow<Boolean> = _solarTermLocalSeasons.asStateFlow()
+    private val _solarTermCompact = MutableStateFlow(prefs.getBoolean(KEY_SOLAR_TERM_COMPACT, false))
+    val solarTermCompact: StateFlow<Boolean> = _solarTermCompact.asStateFlow()
 
     private val _alarmViewMode = MutableStateFlow(
         if (prefs.getString(KEY_ALARM_VIEW_MODE, AlarmViewMode.NextDue.name) == AlarmViewMode.Grouped.name)
@@ -72,21 +66,9 @@ class AstroDisplayPreferences(private val context: Context) {
         AstroUpcomingWidgetProvider.updateAll(context)
     }
 
-    fun setShowSolarTermsYear(enabled: Boolean) {
-        prefs.edit().putBoolean(KEY_SHOW_SOLAR_TERMS_YEAR, enabled).apply()
-        _showSolarTermsYear.value = enabled
-        SolarTermWidgetProvider.updateAll(context)
-    }
-
-    fun setSolarTermTraditional(enabled: Boolean) {
-        prefs.edit().putBoolean(KEY_SOLAR_TERM_TRADITIONAL, enabled).apply()
-        _solarTermTraditional.value = enabled
-        SolarTermWidgetProvider.updateAll(context)
-    }
-
-    fun setSolarTermLocalSeasons(enabled: Boolean) {
-        prefs.edit().putBoolean(KEY_SOLAR_TERM_LOCAL_SEASONS, enabled).apply()
-        _solarTermLocalSeasons.value = enabled
+    fun setSolarTermCompact(enabled: Boolean) {
+        prefs.edit().putBoolean(KEY_SOLAR_TERM_COMPACT, enabled).apply()
+        _solarTermCompact.value = enabled
         SolarTermWidgetProvider.updateAll(context)
     }
 
@@ -94,9 +76,7 @@ class AstroDisplayPreferences(private val context: Context) {
     fun isShowZodiac3D(): Boolean = _showZodiac3D.value
     fun isShowEventTimes2D(): Boolean = _showEventTimes2D.value
     fun isShowMonthTicks2D(): Boolean = _showMonthTicks2D.value
-    fun isShowSolarTermsYear(): Boolean = _showSolarTermsYear.value
-    fun isSolarTermTraditional(): Boolean = _solarTermTraditional.value
-    fun isSolarTermLocalSeasons(): Boolean = _solarTermLocalSeasons.value
+    fun isSolarTermCompact(): Boolean = _solarTermCompact.value
     fun getAlarmViewMode(): AlarmViewMode = _alarmViewMode.value
 
     companion object {
@@ -105,9 +85,7 @@ class AstroDisplayPreferences(private val context: Context) {
         private const val KEY_SHOW_ZODIAC_3D = "show_zodiac_3d"
         private const val KEY_SHOW_EVENT_TIMES_2D = "show_event_times_2d"
         private const val KEY_SHOW_MONTH_TICKS_2D = "show_month_ticks_2d"
-        private const val KEY_SHOW_SOLAR_TERMS_YEAR = "show_solar_terms_year"
-        private const val KEY_SOLAR_TERM_TRADITIONAL = "solar_term_traditional"
-        private const val KEY_SOLAR_TERM_LOCAL_SEASONS = "solar_term_local_seasons"
+        private const val KEY_SOLAR_TERM_COMPACT = "solar_term_compact"
         private const val KEY_ALARM_VIEW_MODE = "alarm_view_mode"
     }
 }

@@ -3,8 +3,8 @@ package org.astroalarm.widget
 import android.graphics.Canvas
 import android.graphics.Color
 import android.graphics.Paint
+import org.astroalarm.astro.alarm.AlarmTargetCopy
 import org.astroalarm.astro.alarm.AstroNextFire
-import org.astroalarm.astro.model.AlarmTarget
 import org.astroalarm.astro.model.AstroAlarm
 import org.astroalarm.astro.place.AstroPlace
 import java.time.Instant
@@ -41,12 +41,7 @@ object AstroDiskAlarmOverlay {
                         (size * 0.026f).coerceIn(5f, 12f),
                         dotPaint,
                     )
-                    val icon = when (val t = alarm.target) {
-                        is AlarmTarget.Solar -> "☀️ "
-                        is AlarmTarget.Lunar -> "🌙 "
-                        is AlarmTarget.Zodiac -> t.sign.symbol + " "
-                        is AlarmTarget.CustomClock -> "⏰ "
-                    }
+                    val icon = AlarmTargetCopy.icon(alarm.target)
                     upcomingItems.add(next to (icon + z.format(timeFmt)))
                 }
             }

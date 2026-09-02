@@ -9,7 +9,7 @@
 |-------|-----------|---------|-------|
 | Platform | Android (Kotlin, Jetpack Compose, Material 3) | 1.3.1 | Child of agent-project-bootstrap; GitHub Releases APK `astroalarm-X.Y.Z-foss.apk` |
 | Persistence | JSON SharedPreferences + DataStore | - | Room/Hilt on classpath for later stores |
-| Ephemeris | commons-suncalc 3.11 + NOAA tropical longitude | on-device | Sun/moon times and HA/dec; NOAA for seasons, zodiac, and 24 Solar Terms |
+| Ephemeris | commons-suncalc 3.11 + NOAA tropical longitude + on-device Kepler | on-device | Sun/moon times; NOAA for seasons/zodiac/jieqi; Kepler for Sol tab and planet alarms |
 | License | MIT | - | Pure FOSS; no Play Services / Firebase |
 | Distribution | GitHub Releases | - | F-Droid later |
 ## Active Modules
@@ -34,7 +34,7 @@
 
 ### Project Purpose
 
-FOSS Android astronomical alarm clock: on-device suncalc sun/moon ephemeris, solar/lunar/custom alarms, optional 24 Solar Terms year view, lockscreen math unlock, rotating day/night widget.
+FOSS Android astronomical alarm clock: on-device suncalc sun/moon ephemeris, solar/lunar/seasonal/planet/custom alarms, Yearly Earth+Moon hub, Sol true-AU map, lockscreen math unlock, rotating day/night widget.
 
 ### Key Constraints
 
@@ -44,7 +44,9 @@ FOSS Android astronomical alarm clock: on-device suncalc sun/moon ephemeris, sol
 
 ## Session Retrospectives
 
-| 2026-09-01 | 24 Solar Terms year view | Optional Year tab (default off), NOAA jieqi finder, 2D/3D + widget | Do not reuse `SolarSeasons.instant` for 315°; keep daily clocks untouched |
+| 2026-09-01 | Yearly/Sol /ship | Yearly hub + Sol Kepler + celestial alarms; Moon anti-sunward at full; jieqi wrap | Do not apply `vcodeql-bundle-*` tags; Yearly Moon offset is `canvasDeg + 180` |
+| 2026-09-01 | Yearly Sol labels | Shared pin copy; Yearly Moon ecliptic; N/S off traces; jieqi inset edges; Sol teaching chrome | Daily 3D tracks stay on Earth; do not un-rotate them onto the sun ring |
+| 2026-09-01 | Yearly Sol align | Shared pin Y; 3D globe nod by sunDec; compact emoji band; N/S on traces; non-scrolling tabs | Do not rotate 3D rings with the globe; green stays north |
 | 2026-09-01 | v1.3.1 /ship | Lockscreen TTS repeats every 2s until dismiss; RP #11; F-Droid changelog 10101; sideload PC upload key | Do not apply `vcodeql-bundle-*` tags; bump F-Droid `changelogs/{versionCode}.txt` with versionCode |
 | 2026-09-01 | v1.3.0 /ship | commons-suncalc sun/moon; RP #9; connected tests needed `skipUiGate`; sideload uses PC upload key | Do not apply `vcodeql-bundle-*` tags; onboarding must skip under instrumentation |
 | 2026-08-31 | v1.2.0 /ship | Smaller 2D callouts; RP #5 cut 1.2.0; `astroalarm-1.2.0-foss.apk` on a stable (not prerelease) GitHub Release | Add `ANDROID_KEYSTORE_*` secrets for a stable upload key; bump README `template-X.Y.Z` in the same RP extra-files |

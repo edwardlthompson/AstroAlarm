@@ -30,7 +30,6 @@ import java.time.ZonedDateTime
 fun SolarTermDetailSheet(
     term: SolarTerm,
     english: String,
-    hanzi: String,
     whenLocal: String,
     description: String,
     instant: Instant,
@@ -38,7 +37,7 @@ fun SolarTermDetailSheet(
     onDismiss: () -> Unit,
 ) {
     val doy = ZonedDateTime.ofInstant(instant, zone).dayOfYear
-    val talk = "$hanzi ${term.pinyin}, $english, $whenLocal"
+    val talk = "${term.pinyin}, $english, $whenLocal"
     ModalBottomSheet(onDismissRequest = onDismiss) {
         androidx.compose.foundation.layout.Column(
             modifier = Modifier
@@ -47,7 +46,7 @@ fun SolarTermDetailSheet(
                 .padding(horizontal = 20.dp, vertical = 8.dp)
                 .semantics { contentDescription = talk }
         ) {
-            Text("$hanzi  ${term.glyph}", style = MaterialTheme.typography.headlineSmall)
+            Text("${term.glyph}  $english", style = MaterialTheme.typography.headlineSmall)
             Text(term.pinyin, style = MaterialTheme.typography.titleMedium, color = MaterialTheme.colorScheme.primary)
             Text(english, style = MaterialTheme.typography.titleMedium)
             Text(

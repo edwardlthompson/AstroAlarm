@@ -11,7 +11,6 @@ import android.widget.RemoteViews
 import dev.foss.goldenpath.MainActivity
 import dev.foss.goldenpath.R
 import org.astroalarm.astro.place.AstroPlaceStore
-import org.astroalarm.astro.settings.AstroDisplayPreferences
 import org.astroalarm.ui.solarterm.SolarTermDrawFactory
 import org.astroalarm.ui.solarterm.SolarTermFormat
 import org.astroalarm.ui.solarterm.SolarTermWheelRenderer
@@ -21,24 +20,16 @@ class SolarTermWidgetProvider : AppWidgetProvider() {
 
     override fun onUpdate(context: Context, appWidgetManager: AppWidgetManager, appWidgetIds: IntArray) {
         val place = AstroPlaceStore(context).get()
-        val prefs = AstroDisplayPreferences(context)
         val now = Instant.now()
         val dark = isNightUi(context)
         val compactPair = SolarTermDrawFactory.request(
-            context.resources, place, now,
-            traditional = prefs.isSolarTermTraditional(),
-            localSeasons = prefs.isSolarTermLocalSeasons(),
-            dark = dark,
-            compact = true,
+            context.resources, place, now, dark = dark, compact = true,
         )
         val snap = compactPair.first
         val req = compactPair.second
         val zone = SolarTermFormat.zoneOf(place)
         val desc = SolarTermFormat.nextGlance(
-            context.resources, snap.next, zone,
-            prefs.isSolarTermTraditional(),
-            SolarTermFormat.southern(place),
-            prefs.isSolarTermLocalSeasons(),
+            context.resources, snap.next, zone, SolarTermFormat.southern(place),
         )
         val launch = PendingIntent.getActivity(
             context, 8870, Intent(context, MainActivity::class.java),
@@ -51,7 +42,9 @@ class SolarTermWidgetProvider : AppWidgetProvider() {
             val compact = minOf(minW, minH) < 220
             val sized = if (compact) req else req.copy(compact = false)
             val sizePx = ClockRenderSize.fromMinDp(minOf(minW, minH))
-            val bitmap = SolarTermWheelRenderer.render(sized, sizePx)
+            val bitmap = SolarTermWheelRenderer.render(
+                sized, sizePx, EarthTexture.get(context), MoonTexture.get(context)
+            )
             val views = RemoteViews(context.packageName, R.layout.widget_astro).apply {
                 setImageViewBitmap(R.id.widget_astro_disk, bitmap)
                 setContentDescription(R.id.widget_astro_disk, desc)

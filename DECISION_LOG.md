@@ -17,8 +17,64 @@
 
 ## Entries
 
-### 2026-09-01 — 24 Solar Terms year view
+### 2026-09-01 — Yearly Moon hub offset (anti-sunward at full)
 - **Status:** Accepted
+- **Context:** Geocentric ecliptic longitude as a canvas offset from Earth put a full Moon toward the Sun. Kepler top-down (2023-08-02) shows the Moon on the far side of Earth.
+- **Decision:** `moonAroundEarthDeg = canvasDeg(moonLon) + 180`. Earth sits at the Sun’s apparent lon, so full moon is anti-sunward (same bearing as Earth from the Sun). New moon stays sunward.
+- **Alternatives considered:** Flipping `elongationDeg` (rejected: ecliptic lon tests at full/new were already correct). Daily hour angle (rejected: 24h sky clock).
+- **Consequences:** Jieqi names wrap up to three lines and stop outside the emoji radius.
+
+### 2026-09-01 — Yearly Sol labels (pin copy, ecliptic Moon, teaching chrome)
+- **Status:** Accepted
+- **Context:** Five pin buttons used different copy. Yearly Moon fed topocentric azimuth into an ecliptic canvas map, so it disagreed with the year wheel. N/S sat on the pole strokes after the size bump. Jieqi name and date stacked on the shared dividing ray. Sol had Kepler wakes but little teaching chrome.
+- **Decision:** Unify visible pin text; keep distinct TalkBack. Place the Yearly Moon at `sun lon + elongation` (suncalc phase as elongation; mean-lon fallback). Pad N/S from `textSize` and push off the stroke. Inset name/date 3° into each wedge. Sol draws hairline spokes under wakes, a 1 AU bar, Mars–Neptune opposition ticks, a local date, and tap ν / light-time / Earth perihelion-aphelion.
+- **Alternatives considered:** Daily hour-angle Moon on Yearly (rejected: 24h sky clock, not ecliptic). Un-rotating 3D ground tracks to sit under the gold sun (rejected: slides tracks off the continents).
+- **Consequences:** Full moon sits opposite the Sun on Yearly. Daily 3D tracks stay glued to Earth. Sol light-time is geometric only.
+
+### 2026-09-01 — Yearly Sol align (chrome Y, 3D nod, pole letters)
+- **Status:** Accepted
+- **Context:** 3D Add Widget sat lower than 2D because leftover height lived between the square and the pin. Daily 3D Earth was upright in the observer camera. Yearly Earth had a cluttering stick; compact band was still wide; top tabs scrolled; Sol pluses were unexplained.
+- **Decision:** `DiskChrome.Reserve` stacks square+pin+first caption inside the weight box. Globe+axis+tracks clip-and-roll around the pin by `|sunDec|` (June toward the Sun, December away). Rings stay local-sky. Compact inner comes from glyph+pad. Invert green/red radial signs so N is farther at December; N/S sit on the traces; no stick. `PrimaryTabRow` equal-width, collapse Daily labels below 400.dp. Caption: yellow + is perihelion.
+- **Alternatives considered:** Sunward globe camera (rejected: moves the user off center). Nested full footer in the weight box (rejected: overflow). Scrollable tab row fallback (rejected).
+- **Consequences:** Gold sun on the ring need not sit on the rotated subsolar dot. Narrow phones show `2D`/`3D` without the Daily stack.
+
+### 2026-09-01 — Yearly Sol learn (top-align, Kepler orbits, wakes)
+- **Status:** Accepted
+- **Context:** Daily 3D letterboxed the square because Center alignment plus less chrome left extra height. Sol drew circular rings at today’s AU. Yearly needed hub axes, both pole traces, inward radial type, and a city-only location line. Bodies needed a directional comet wake.
+- **Decision:** TopCenter the Daily/Yearly/Sol squares. Clip faint VH + solstice + equinox diameters to the hub fill. Dual green/red pole traces at `inner * 0.07`. Radial name/date on dividing lines; emoji on the inner rim. Location is `place.cityName`. Sol samples real-*e* Kepler polylines plus a home widget. Shared `OrbitWake` (28° gap ahead, thick behind) on Sol, Yearly Earth, and Daily 3D sun/moon (zodiac stays even).
+- **Alternatives considered:** Copy Yearly `E_VIS = 0.22` onto Sol (rejected: hides true eccentricity). Uniform 3D ring stroke (rejected: no travel direction).
+- **Consequences:** Mercury/Mars orbits look eccentric; Earth on Sol stays nearly round. 3D wakes still split back vs front so they do not paint through the globe.
+
+### 2026-09-01 — Yearly winding, axes, tab chrome
+- **Status:** Accepted
+- **Context:** Now-up parked Earth at 12 o’clock and spun the jieqi ring the opposite way from Earth’s path. Daily 3D had sun/moon tracks but no geographic axis. Tab chrome mixed toggles above the widget preview.
+- **Decision:** Freeze the jieqi ring (Lìchūn at 12); Earth, needle, and true anomaly travel CCW; keep January perihelion. Daily 3D draws an N–S spindle in the same `SphereProjection` camera as ground tracks. Yearly draws a 23.44° tilt stick (NH sunward in June) and a green sine spiral. Chrome order is square preview, pin, toggles last (Sol has no pin; Alarms pin at top).
+- **Alternatives considered:** Invert the ellipse so July is closest (rejected: true perihelion is January). Keep now-up (rejected: counter-motion).
+- **Consequences:** June Earth is no longer at 12 o’clock. Ground-track math is unchanged.
+
+### 2026-09-01 — Yearly Sol polish (calendar hub, locale names, overlays)
+- **Status:** Accepted
+- **Context:** Five tabs overflowed Daily labels; Traditional/Local switches duplicated locale and hemisphere; compact hub was small; jieqi stamps included the year; Earth sat at 6 o’clock after now-up; the pole globe used GMST instead of the noon meridian; Sol and Yearly lacked alarm dots.
+- **Decision:** Stack Daily 2D/3D labels; drop Traditional/Local (zh resource pack + auto-southern from latitude); compact inner ≈ 0.38 with a 2% gutter and outer-rim emoji; stamps `MMM d HH:mm`; Earth and current true anomaly at 12 o’clock; pole camera + subsolar `lon0` so the user pin faces the hub Sun; Sol orbit rings + ♈ tick + planet-alarm dots; Yearly jieqi alarm dots.
+- **Alternatives considered:** Heliocentric Earth opposite the Sun (rejected: Yearly is a calendar diagram). Keep hanzi on en/es/fr (rejected: locale packs only).
+- **Consequences:** Chinese names appear only when the device language is zh. Compact is the only Yearly overlay switch.
+
+### 2026-09-01 — Yearly globe, Sol tab, math, celestial alarms
+- **Status:** Accepted
+- **Context:** Follow-up to the always-on Year tab: math prefs could drop `apply()` writes; Genius was unused; Yearly labels spun with the wheel; user wanted a 2D true-AU Sol map without moons and separate Seasonal vs Planet alarms including pair and all-eight clustering.
+- **Decision:** `MathPreferences.commit()` + Elementary; Yearly upright labels, Compact switch, NASA Earth at true anomaly with exaggerated Moon; Sol tab is planets-only Kepler AU; new `AlarmTarget` kinds `solarterm` / `planet` / `planet_align` / `all_planets_align`. Pair orb 8° geocentric; all-eight uses heliocentric circular span ≤ 90° (50-year cap).
+- **Alternatives considered:** Fold jieqi into Sun (rejected: daily solar list stays daily). True-scale Moon on Sol (rejected: unreadable). Genius difficulty (rejected: user asked Elementary instead).
+- **Consequences:** Rise/set still need a place; jieqi and alignments do not. Sol has no moons. Yearly Moon orbit is visually enlarged.
+
+### 2026-09-01 — Year tab always on, 2D only, sun–Earth hub
+- **Status:** Accepted
+- **Context:** User asked to drop the Settings gate and 3D year ring, put Traditional / Local seasons chips on the Year tab, keep the widget, now-up short needle, and show the Sun with Earth’s orbit at true seasonal distance.
+- **Decision:** Fourth tab is always present. 2D wheel rotates so the current jieqi is at 12 o’clock (same convention as daily 2D). Short needle in screen space. Hub: Sun at center, Earth on an exaggerated Kepler ellipse at NOAA true anomaly (perihelion early January). Deleted `SolarTerm3DRenderer` and the Settings year section. Daily 3D clock tab is unchanged.
+- **Alternatives considered:** Invert AU so northern summer is closest (rejected: that is not the real orbit). Keep 3D year ring (rejected: user saw no value).
+- **Consequences:** Earth is nearest in early January (southern summer / northern winter). Visual eccentricity is exaggerated (~0.22) so perihelion vs aphelion is readable in the hub.
+
+### 2026-09-01 — 24 Solar Terms year view
+- **Status:** Superseded
 - **Context:** Request for an additive jieqi year overlay (2D + 3D + widget) without changing daily clocks.
 - **Decision:** Self-contained `org.astroalarm.solarterm` module plus Year tab gated by a default-off setting. Reuse NOAA `SolarSeasons.apparentLon` with typical-month root finding (not `SolarSeasons.instant`, which maps 315° to December). Cache current and next tropical years. Southern “local seasons” remaps English names and colors only.
 - **Alternatives considered:** Swiss Ephemeris / Skyfield (rejected: extra native deps; NOAA already drives seasons/zodiac). Overlaying jieqi on the daily 2D/3D clocks (rejected: user asked to leave daily features alone).

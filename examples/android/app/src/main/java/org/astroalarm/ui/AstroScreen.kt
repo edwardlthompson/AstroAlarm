@@ -16,8 +16,11 @@ import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.semantics.contentDescription
+import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import dev.foss.goldenpath.R
@@ -31,6 +34,7 @@ import org.astroalarm.astro.place.AstroPlaceStore
 import org.astroalarm.astro.settings.AstroDisplayPreferences
 import org.astroalarm.widget.AstroUpcomingWidgetProvider
 import org.astroalarm.ui.solarterm.SolarTermScreen
+import org.astroalarm.ui.sol.SolScreen
 
 @Composable
 fun AstroScreen(
@@ -41,7 +45,6 @@ fun AstroScreen(
     val context = LocalContext.current
     val displayPrefs = remember { AstroDisplayPreferences(context) }
     val viewMode by displayPrefs.alarmViewMode.collectAsState()
-    val showSolarTerms by displayPrefs.showSolarTermsYear.collectAsState()
     val coroutineScope = rememberCoroutineScope()
     val place by placeStore.place.collectAsState()
     val alarms by alarmStore.alarms.collectAsState()
@@ -49,10 +52,7 @@ fun AstroScreen(
     var editingAlarm by remember { mutableStateOf<AstroAlarm?>(null) }
     var showAddDialogWithTarget by remember { mutableStateOf<AlarmTarget?>(null) }
 
-    val pagerState = rememberPagerState(pageCount = { if (showSolarTerms) 4 else 3 })
-    LaunchedEffect(showSolarTerms) {
-        if (!showSolarTerms && pagerState.currentPage > 2) pagerState.scrollToPage(2)
-    }
+    val pagerState = rememberPagerState(pageCount = { 5 })
 
     val hasLocation = place != null && place!!.isValid
     val defaultTarget = if (hasLocation) {
@@ -81,32 +81,60 @@ fun AstroScreen(
                 .fillMaxSize()
                 .padding(innerPadding)
         ) {
+            val wideTabs = LocalConfiguration.current.screenWidthDp >= 400
             PrimaryTabRow(
                 selectedTabIndex = pagerState.currentPage,
-                modifier = Modifier.fillMaxWidth()
+                modifier = Modifier.fillMaxWidth(),
             ) {
                 Tab(
                     selected = pagerState.currentPage == 0,
                     onClick = { coroutineScope.launch { pagerState.animateScrollToPage(0) } },
-                    text = { Text(stringResource(R.string.astro_tab_alarms), fontSize = 13.sp) }
+                    text = { Text(stringResource(R.string.astro_tab_alarms), fontSize = 11.sp) }
                 )
                 Tab(
                     selected = pagerState.currentPage == 1,
                     onClick = { coroutineScope.launch { pagerState.animateScrollToPage(1) } },
-                    text = { Text(stringResource(R.string.astro_tab_clock_wheel), fontSize = 13.sp) }
+                    modifier = Modifier.semantics {
+                        contentDescription = "${context.getString(R.string.astro_tab_daily)} ${context.getString(R.string.astro_tab_2d)}"
+                    },
+                    text = {
+                        if (wideTabs) {
+                            Column(horizontalAlignment = Alignment.CenterHorizontally) {
+                                Text(stringResource(R.string.astro_tab_daily), fontSize = 11.sp)
+                                Text(stringResource(R.string.astro_tab_2d), fontSize = 11.sp)
+                            }
+                        } else {
+                            Text(stringResource(R.string.astro_tab_2d), fontSize = 11.sp)
+                        }
+                    }
                 )
                 Tab(
                     selected = pagerState.currentPage == 2,
                     onClick = { coroutineScope.launch { pagerState.animateScrollToPage(2) } },
-                    text = { Text(stringResource(R.string.astro_tab_3d_clock), fontSize = 13.sp) }
+                    modifier = Modifier.semantics {
+                        contentDescription = "${context.getString(R.string.astro_tab_daily)} ${context.getString(R.string.astro_tab_3d)}"
+                    },
+                    text = {
+                        if (wideTabs) {
+                            Column(horizontalAlignment = Alignment.CenterHorizontally) {
+                                Text(stringResource(R.string.astro_tab_daily), fontSize = 11.sp)
+                                Text(stringResource(R.string.astro_tab_3d), fontSize = 11.sp)
+                            }
+                        } else {
+                            Text(stringResource(R.string.astro_tab_3d), fontSize = 11.sp)
+                        }
+                    }
                 )
-                if (showSolarTerms) {
-                    Tab(
-                        selected = pagerState.currentPage == 3,
-                        onClick = { coroutineScope.launch { pagerState.animateScrollToPage(3) } },
-                        text = { Text(stringResource(R.string.solar_term_tab_year), fontSize = 13.sp) }
-                    )
-                }
+                Tab(
+                    selected = pagerState.currentPage == 3,
+                    onClick = { coroutineScope.launch { pagerState.animateScrollToPage(3) } },
+                    text = { Text(stringResource(R.string.astro_tab_yearly), fontSize = 11.sp) }
+                )
+                Tab(
+                    selected = pagerState.currentPage == 4,
+                    onClick = { coroutineScope.launch { pagerState.animateScrollToPage(4) } },
+                    text = { Text(stringResource(R.string.astro_tab_sol), fontSize = 11.sp) }
+                )
             }
 
             HorizontalPager(
@@ -122,31 +150,28 @@ fun AstroScreen(
                                 .fillMaxSize()
                                 .padding(horizontal = 16.dp)
                         ) {
-                            Row(
+                            Button(
+                                onClick = {
+                                    val appWidgetManager = context.getSystemService(AppWidgetManager::class.java)
+                                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O && appWidgetManager != null && appWidgetManager.isRequestPinAppWidgetSupported) {
+                                        val provider = ComponentName(context, AstroUpcomingWidgetProvider::class.java)
+                                        appWidgetManager.requestPinAppWidget(provider, null, null)
+                                        Toast.makeText(context, context.getString(R.string.astro_widget_pinned_success), Toast.LENGTH_SHORT).show()
+                                    } else {
+                                        Toast.makeText(context, context.getString(R.string.astro_widget_pin_manual_guide), Toast.LENGTH_LONG).show()
+                                    }
+                                },
                                 modifier = Modifier
                                     .fillMaxWidth()
-                                    .padding(top = 4.dp, bottom = 2.dp),
-                                horizontalArrangement = Arrangement.SpaceBetween,
-                                verticalAlignment = Alignment.CenterVertically
+                                    .padding(top = 8.dp, bottom = 4.dp)
+                                    .semantics {
+                                        contentDescription = context.getString(R.string.astro_add_upcoming_widget_cd)
+                                    },
+                                shape = RoundedCornerShape(12.dp)
                             ) {
-                                Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
-                                    FilterChip(
-                                        selected = viewMode == AlarmViewMode.NextDue,
-                                        onClick = { displayPrefs.setAlarmViewMode(AlarmViewMode.NextDue) },
-                                        label = { Text(stringResource(R.string.astro_sort_next_due)) }
-                                    )
-                                    FilterChip(
-                                        selected = viewMode == AlarmViewMode.Grouped,
-                                        onClick = { displayPrefs.setAlarmViewMode(AlarmViewMode.Grouped) },
-                                        label = { Text(stringResource(R.string.astro_sort_grouped)) }
-                                    )
-                                }
-                                TextButton(
-                                    onClick = { coroutineScope.launch { pagerState.animateScrollToPage(1) } },
-                                    contentPadding = PaddingValues(horizontal = 4.dp, vertical = 2.dp)
-                                ) {
-                                    Text(stringResource(R.string.astro_swipe_hint), fontSize = 11.sp)
-                                }
+                                Icon(Icons.Default.AddCircle, contentDescription = null)
+                                Spacer(modifier = Modifier.width(8.dp))
+                                Text(stringResource(R.string.astro_add_upcoming_widget_btn))
                             }
 
                             LazyColumn(
@@ -189,36 +214,41 @@ fun AstroScreen(
                                     )
                                 }
 
-                                item {
-                                    Button(
-                                        onClick = {
-                                            val appWidgetManager = context.getSystemService(AppWidgetManager::class.java)
-                                            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O && appWidgetManager != null && appWidgetManager.isRequestPinAppWidgetSupported) {
-                                                val provider = ComponentName(context, AstroUpcomingWidgetProvider::class.java)
-                                                appWidgetManager.requestPinAppWidget(provider, null, null)
-                                                Toast.makeText(context, context.getString(R.string.astro_widget_pinned_success), Toast.LENGTH_SHORT).show()
-                                            } else {
-                                                Toast.makeText(context, context.getString(R.string.astro_widget_pin_manual_guide), Toast.LENGTH_LONG).show()
-                                            }
-                                        },
-                                        modifier = Modifier
-                                            .fillMaxWidth()
-                                            .padding(vertical = 8.dp),
-                                        shape = RoundedCornerShape(12.dp)
-                                    ) {
-                                        Icon(Icons.Default.AddCircle, contentDescription = null)
-                                        Spacer(modifier = Modifier.width(8.dp))
-                                        Text(stringResource(R.string.astro_add_upcoming_widget_btn))
-                                    }
-                                }
+                                item { Spacer(modifier = Modifier.height(8.dp)) }
+                            }
 
-                                item { Spacer(modifier = Modifier.height(72.dp)) }
+                            Row(
+                                modifier = Modifier
+                                    .fillMaxWidth()
+                                    .padding(top = 2.dp, bottom = 72.dp),
+                                horizontalArrangement = Arrangement.SpaceBetween,
+                                verticalAlignment = Alignment.CenterVertically
+                            ) {
+                                Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
+                                    FilterChip(
+                                        selected = viewMode == AlarmViewMode.NextDue,
+                                        onClick = { displayPrefs.setAlarmViewMode(AlarmViewMode.NextDue) },
+                                        label = { Text(stringResource(R.string.astro_sort_next_due)) }
+                                    )
+                                    FilterChip(
+                                        selected = viewMode == AlarmViewMode.Grouped,
+                                        onClick = { displayPrefs.setAlarmViewMode(AlarmViewMode.Grouped) },
+                                        label = { Text(stringResource(R.string.astro_sort_grouped)) }
+                                    )
+                                }
+                                TextButton(
+                                    onClick = { coroutineScope.launch { pagerState.animateScrollToPage(1) } },
+                                    contentPadding = PaddingValues(horizontal = 4.dp, vertical = 2.dp)
+                                ) {
+                                    Text(stringResource(R.string.astro_swipe_hint), fontSize = 11.sp)
+                                }
                             }
                         }
                     }
                     1 -> AstroClockScreen(place = place, alarms = alarms, modifier = Modifier.fillMaxSize())
                     2 -> Astro3DClockScreen(place = place, alarms = alarms, modifier = Modifier.fillMaxSize())
-                    else -> SolarTermScreen(place = place, modifier = Modifier.fillMaxSize())
+                    3 -> SolarTermScreen(place = place, alarms = alarms, modifier = Modifier.fillMaxSize())
+                    else -> SolScreen(place = place, alarms = alarms, modifier = Modifier.fillMaxSize())
                 }
             }
         }

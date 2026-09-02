@@ -105,26 +105,9 @@ When **Sprint 0** ends: stop re-reading `docs/INITIALIZATION_PROMPT.md` as the d
 | *Archived — see COMPLETED_TASKS.md* | — | — |
 ### Sprint 2+ — Incremental Features
 
-> **clock-3d-moon-sky** archived in COMPLETED_TASKS.md. **settings** archived in COMPLETED_TASKS.md @ `825fb6d`. Next named feature starts here.
+> **Yearly/Sol/math/celestial** slices archived in COMPLETED_TASKS.md (2026-09-01). Next named feature starts here.
 
 > One vertical slice at a time. See `docs/FEATURE_MODULES.md`. Reference exemplars: `docs/features/settings.md` (Sprint 2), About (Sprint 1).
-
-### Feature — solar-terms (24 Solar Terms year view)
-
-> Optional Year tab. Daily 2D/3D clocks unchanged when the toggle is off.
-
-1. ✅ [AGENT] Copy `docs/features/_template.md` → `docs/features/solar-terms.md`; refine acceptance criteria
-2. ✅ [AGENT] Scaffold `org.astroalarm.solarterm` + `ui/solarterm` + widget (public API locked)
-
-| Task | Owner | Isolated scope |
-| ---- | ----- | -------------- |
-| Logic + unit tests | AGENT | `examples/android/app/src/main/java/org/astroalarm/solarterm/` |
-| View + i18n | AGENT | `examples/android/app/src/main/java/org/astroalarm/ui/solarterm/`, `res/values*/solar_terms.xml` |
-| Feature spec + acceptance | AGENT | `docs/features/solar-terms.md` |
-| E2e / instrumented smoke | AGENT | unit bitmap smoke (no new androidTest) |
-
-1. ✅ [AGENT] Unit tests for feature pure logic
-2. ✅ [AGENT] Wire Year tab + Settings section + widget receiver (composition root unchanged)
 
 ### Critique
 
@@ -134,7 +117,6 @@ When **Sprint 0** ends: stop re-reading `docs/INITIALIZATION_PROMPT.md` as the d
 | Network timeout | N/A — no network I/O; ephemeris is on-device NOAA |
 | Race conditions | `SolarTermCache` is synchronized; widget and UI share cached tropical years |
 | Unhandled exceptions | 3D `runCatching` falls back to 2D wheel; root-find is bounded 40 iterations |
-
 **Agent rule:** After every `[AGENT]` step → `bash scripts/watch-agent-gates.sh --once --autofix --step <scaffold|tests|wire>`.
 
 #### Per-feature Sequential (steps 1–2: lock API)
@@ -200,6 +182,7 @@ When **Sprint 0** ends: stop re-reading `docs/INITIALIZATION_PROMPT.md` as the d
 
 | Sprint                                                            | Status   | Archive                          |
 | ----------------------------------------------------------------- | -------- | -------------------------------- |
+| Yearly/Sol/math/celestial                                         | Complete | `COMPLETED_TASKS.md`             |
 | M43 leftover — Android SDK + devices                              | Complete | `COMPLETED_TASKS.md`             |
 | clock-3d-moon-sky                                                 | Complete | `COMPLETED_TASKS.md`             |
 | Sprint 2 — settings exemplar                                      | Complete | `COMPLETED_TASKS.md` @ `825fb6d` |

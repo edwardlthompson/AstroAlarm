@@ -37,6 +37,41 @@ object EarthGlobeRenderer {
         }
     }
 
+    fun poleLat(userLat: Double?): Double = if ((userLat ?: 0.0) < 0.0) -90.0 else 90.0
+
+    fun drawPoleGlobe(
+        canvas: Canvas,
+        cx: Float,
+        cy: Float,
+        r: Float,
+        lat0: Double,
+        lon0: Double,
+        texture: Bitmap?,
+        userLat: Double?,
+        userLon: Double?,
+        sunwardDeg: Float,
+    ) {
+        if (r <= 2f) return
+        val noonScreen = if (lat0 < 0.0) -90f else 90f
+        canvas.save()
+        canvas.rotate(sunwardDeg - noonScreen, cx, cy)
+        runCatching { drawGlobe(canvas, cx, cy, r, lat0, lon0, texture, highlightUser = false) }
+            .onFailure {
+                canvas.drawCircle(cx, cy, r, Paint(Paint.ANTI_ALIAS_FLAG).apply { color = Color.rgb(16, 52, 116) })
+            }
+        if (userLat != null && userLon != null) {
+            val (x, y, z) = SphereProjection.latLonToDisk(userLat, userLon, lat0, lon0)
+            if (z >= 0.0) {
+                val px = cx + x.toFloat() * r
+                val py = cy - y.toFloat() * r
+                val pinR = (r * 0.14f).coerceIn(2.0f, 5.0f)
+                canvas.drawCircle(px, py, pinR, Paint(Paint.ANTI_ALIAS_FLAG).apply { color = Color.argb(200, 255, 68, 68) })
+                canvas.drawCircle(px, py, pinR * 0.42f, Paint(Paint.ANTI_ALIAS_FLAG).apply { color = Color.rgb(255, 235, 59) })
+            }
+        }
+        canvas.restore()
+    }
+
     private fun rasterize(texture: Bitmap, r: Float, lat: Double, lon: Double): Bitmap {
         val d = (r * 2f).toInt().coerceAtLeast(4)
         val key = "${(lat * 4).toInt()}|${(lon * 4).toInt()}|$d"

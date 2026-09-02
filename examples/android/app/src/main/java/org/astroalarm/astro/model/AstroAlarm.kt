@@ -1,5 +1,7 @@
 package org.astroalarm.astro.model
 
+import org.astroalarm.sol.PlanetBody
+import org.astroalarm.sol.PlanetEventType
 import org.astroalarm.astro.zodiac.ZodiacPoint
 import org.astroalarm.astro.zodiac.ZodiacSign
 import java.time.DayOfWeek
@@ -44,6 +46,10 @@ sealed interface AlarmTarget {
     data class Solar(val event: SolarEventType, val offsetMinutes: Int = 0) : AlarmTarget
     data class Lunar(val event: LunarEventType, val offsetMinutes: Int = 0) : AlarmTarget
     data class Zodiac(val sign: ZodiacSign, val point: ZodiacPoint, val offsetMinutes: Int = 0) : AlarmTarget
+    data class SolarTerm(val term: org.astroalarm.solarterm.SolarTerm, val offsetMinutes: Int = 0) : AlarmTarget
+    data class Planet(val body: PlanetBody, val event: PlanetEventType, val offsetMinutes: Int = 0) : AlarmTarget
+    data class PlanetAlign(val bodyA: PlanetBody, val bodyB: PlanetBody, val offsetMinutes: Int = 0) : AlarmTarget
+    data class AllPlanetsAlign(val offsetMinutes: Int = 0) : AlarmTarget
 }
 
 data class AstroAlarm(

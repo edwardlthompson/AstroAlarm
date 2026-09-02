@@ -40,9 +40,9 @@ enum class SolarTerm(
 
     fun next(): SolarTerm = entries[(ordinal + 1) % entries.size]
 
-    /** Names/colors only: southern “local seasons” shift by half a year. Longitudes stay astronomical. */
-    fun localAlias(localSeasons: Boolean, southern: Boolean): SolarTerm =
-        if (localSeasons && southern) entries[(ordinal + 12) % entries.size] else this
+    /** Names/colors only: southern latitudes shift by half a year. Longitudes stay astronomical. */
+    fun localAlias(southern: Boolean): SolarTerm =
+        if (southern) entries[(ordinal + 12) % entries.size] else this
 
     companion object {
         fun containing(longitudeDeg: Double): SolarTerm {

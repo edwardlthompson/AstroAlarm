@@ -62,10 +62,10 @@ fun MathSettingsSection(
             ) {
                 MathDifficulty.entries.forEach { diff ->
                     val label = when (diff) {
+                        MathDifficulty.ELEMENTARY -> stringResource(R.string.astro_math_diff_elementary)
                         MathDifficulty.EASY -> stringResource(R.string.astro_math_diff_easy)
                         MathDifficulty.MEDIUM -> stringResource(R.string.astro_math_diff_medium)
                         MathDifficulty.HARD -> stringResource(R.string.astro_math_diff_hard)
-                        MathDifficulty.GENIUS -> stringResource(R.string.astro_math_diff_genius)
                     }
                     FilterChip(
                         selected = difficulty == diff,

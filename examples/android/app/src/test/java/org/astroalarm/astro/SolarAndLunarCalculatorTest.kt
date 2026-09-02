@@ -73,5 +73,15 @@ class SolarAndLunarCalculatorTest {
         assertNotNull(fullMoon)
         assertNotNull(newMoon)
         assertNotNull(moonrise)
+        val fullElong = LunarCalculator.elongationDeg(fullMoon!!)
+        val newElong = LunarCalculator.elongationDeg(newMoon!!)
+        assertTrue("full elongation $fullElong", kotlin.math.abs(fullElong - 180.0) < 15.0)
+        val newErr = kotlin.math.min(newElong, 360.0 - newElong)
+        assertTrue("new elongation $newElong", newErr < 15.0)
+        val sunFull = org.astroalarm.astro.sun.SolarSeasons.apparentLon(fullMoon)
+        val moonFull = LunarCalculator.eclipticLon(fullMoon)
+        var sep = (moonFull - sunFull) % 360.0
+        if (sep < 0.0) sep += 360.0
+        assertTrue("ecliptic sep $sep", kotlin.math.abs(sep - 180.0) < 15.0)
     }
 }

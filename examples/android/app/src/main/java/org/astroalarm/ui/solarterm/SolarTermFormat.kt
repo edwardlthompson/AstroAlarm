@@ -12,14 +12,14 @@ import java.util.Locale
 
 object SolarTermFormat {
     private val stamp: DateTimeFormatter =
-        DateTimeFormatter.ofPattern("MMM d, yyyy HH:mm", Locale.getDefault())
+        DateTimeFormatter.ofPattern("MMM d HH:mm", Locale.getDefault())
 
     fun localStamp(instant: Instant, zone: ZoneId): String = stamp.withZone(zone).format(instant)
 
     fun locationLabel(res: Resources, place: AstroPlace?): String {
         if (place == null || !place.isValid) return res.getString(R.string.solar_term_device_zone)
         return if (place.cityName.isNotBlank()) {
-            res.getString(R.string.solar_term_at_location, place.cityName)
+            place.cityName
         } else {
             res.getString(R.string.solar_term_at_coords, place.latitude, place.longitude)
         }
@@ -31,21 +31,14 @@ object SolarTermFormat {
         else -> res.getString(R.string.solar_term_next_in_days, (hours / 24L).toInt())
     }
 
-    fun nextGlance(
-        res: Resources,
-        next: SolarTermOccurrence,
-        zone: ZoneId,
-        traditional: Boolean,
-        southern: Boolean,
-        localSeasons: Boolean,
-    ): String {
-        val shown = next.term.localAlias(localSeasons, southern)
-        val name = "${shown.hanzi(traditional)} ${SolarTermCopy.name(res, shown)}"
+    fun nextGlance(res: Resources, next: SolarTermOccurrence, zone: ZoneId, southern: Boolean): String {
+        val shown = next.term.localAlias(southern)
+        val name = SolarTermCopy.name(res, shown)
         return res.getString(R.string.solar_term_next_label, name, localStamp(next.utc, zone))
     }
 
     fun talkBack(res: Resources, term: SolarTerm, english: String, whenLocal: String): String =
-        res.getString(R.string.solar_term_cd_sector, term.hanzi(false) + " " + term.pinyin, english, whenLocal)
+        res.getString(R.string.solar_term_cd_sector, term.pinyin, english, whenLocal)
 
     fun zoneOf(place: AstroPlace?): ZoneId = place?.zone ?: ZoneId.systemDefault()
 

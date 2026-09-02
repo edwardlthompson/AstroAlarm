@@ -23,7 +23,11 @@ fun RepeatDaysSection(
     selectedDays: Set<DayOfWeek>,
     onDaysChange: (Set<DayOfWeek>) -> Unit
 ) {
-    val isSeasonal = (target is AlarmTarget.Solar && AstroEventLabels.isSeasonal(target.event)) || target is AlarmTarget.Zodiac
+    val isSeasonal = (target is AlarmTarget.Solar && AstroEventLabels.isSeasonal(target.event)) ||
+        target is AlarmTarget.Zodiac || target is AlarmTarget.SolarTerm ||
+        target is AlarmTarget.PlanetAlign || target is AlarmTarget.AllPlanetsAlign ||
+        (target is AlarmTarget.Planet && target.event != org.astroalarm.sol.PlanetEventType.Rise &&
+            target.event != org.astroalarm.sol.PlanetEventType.Set)
 
     Card(
         modifier = Modifier.fillMaxWidth(),

@@ -1,0 +1,26 @@
+package org.astroalarm.sol
+
+/** JPL/NASA Keplerian elements at J2000 plus rates per Julian century (approx_pos). */
+data class KeplerEl(
+    val a: Double, val da: Double,
+    val e: Double, val de: Double,
+    val i: Double, val di: Double,
+    val L: Double, val dL: Double,
+    val varpi: Double, val dVarpi: Double,
+    val Omega: Double, val dOmega: Double,
+)
+
+object PlanetElements {
+    private val table: Map<PlanetBody, KeplerEl> = mapOf(
+        PlanetBody.MERCURY to KeplerEl(0.38709927, 0.00000037, 0.20563593, 0.00001906, 7.00497902, -0.00594749, 252.25032350, 149472.67411175, 77.45779628, 0.16047689, 48.33076593, -0.12534081),
+        PlanetBody.VENUS to KeplerEl(0.72333566, 0.00000390, 0.00677672, -0.00004107, 3.39467605, -0.00078890, 181.97909950, 58517.81538729, 131.60246718, 0.00268329, 76.67984255, -0.27769418),
+        PlanetBody.EARTH to KeplerEl(1.00000261, 0.00000562, 0.01671123, -0.00004392, -0.00001531, -0.01294668, 100.46457166, 35999.37244981, 102.93768193, 0.32327364, 0.0, 0.0),
+        PlanetBody.MARS to KeplerEl(1.52371034, 0.00001847, 0.09339410, 0.00007882, 1.84969142, -0.00813131, -4.55343205, 19140.30268499, -23.94362959, 0.44441088, 49.55953891, -0.29257343),
+        PlanetBody.JUPITER to KeplerEl(5.20288700, -0.00011607, 0.04838624, -0.00013253, 1.30439695, -0.00183714, 34.39644051, 3034.74612775, 14.72857493, 0.21252668, 100.47390909, 0.20469106),
+        PlanetBody.SATURN to KeplerEl(9.53667594, -0.00125060, 0.05386179, -0.00050991, 2.48599187, 0.00193609, 49.95424423, 1222.49362201, 92.59887831, -0.41897216, 113.66242448, -0.28867794),
+        PlanetBody.URANUS to KeplerEl(19.18916464, -0.00196176, 0.04725744, -0.00004397, 0.77263783, -0.00242939, 313.23810451, 428.48202785, 170.95427630, 0.40805281, 74.01692503, 0.04240589),
+        PlanetBody.NEPTUNE to KeplerEl(30.06992276, 0.00026291, 0.00859048, 0.00005105, 1.77004347, 0.00035372, -55.12002969, 218.45945325, 44.96476227, -0.32241464, 131.78422574, -0.00508664),
+    )
+
+    fun of(body: PlanetBody): KeplerEl = table.getValue(body)
+}

@@ -73,7 +73,10 @@ fun AstroEditDialog(
         }
     }
 
-    val isAstroTarget = target is AlarmTarget.Solar || target is AlarmTarget.Lunar
+    val currentTarget = target
+    val isAstroTarget = currentTarget is AlarmTarget.Solar || currentTarget is AlarmTarget.Lunar ||
+        (currentTarget is AlarmTarget.Planet && (currentTarget.event == org.astroalarm.sol.PlanetEventType.Rise ||
+            currentTarget.event == org.astroalarm.sol.PlanetEventType.Set))
     val canSave = !isAstroTarget || hasLocation
 
     Dialog(onDismissRequest = onDismiss, properties = DialogProperties(usePlatformDefaultWidth = false)) {
@@ -128,6 +131,7 @@ fun AstroEditDialog(
                                     is AlarmTarget.Solar -> AstroEventLabels.offsetSummary(t.offsetMinutes, AstroEventLabels.solarLabel(t.event))
                                     is AlarmTarget.Lunar -> AstroEventLabels.offsetSummary(t.offsetMinutes, AstroEventLabels.lunarLabel(t.event))
                                     is AlarmTarget.Zodiac -> AstroEventLabels.offsetSummary(t.offsetMinutes, AstroEventLabels.zodiacLabel(t.sign, t.point))
+                                    else -> org.astroalarm.astro.alarm.AlarmTargetCopy.fallback(t)
                                 }
                             )
                         },
@@ -177,6 +181,7 @@ fun AstroEditDialog(
                                     is AlarmTarget.Solar -> AstroEventLabels.offsetSummary(t.offsetMinutes, AstroEventLabels.solarLabel(t.event))
                                     is AlarmTarget.Lunar -> AstroEventLabels.offsetSummary(t.offsetMinutes, AstroEventLabels.lunarLabel(t.event))
                                     is AlarmTarget.Zodiac -> AstroEventLabels.offsetSummary(t.offsetMinutes, AstroEventLabels.zodiacLabel(t.sign, t.point))
+                                    else -> org.astroalarm.astro.alarm.AlarmTargetCopy.fallback(t)
                                 }
                             }
                             val result = AstroAlarm(

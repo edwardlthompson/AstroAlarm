@@ -2,12 +2,7 @@ package org.astroalarm.astro.alarm
 
 import org.json.JSONArray
 import org.json.JSONObject
-import org.astroalarm.astro.model.AlarmTarget
 import org.astroalarm.astro.model.AstroAlarm
-import org.astroalarm.astro.model.LunarEventType
-import org.astroalarm.astro.model.SolarEventType
-import org.astroalarm.astro.zodiac.ZodiacPoint
-import org.astroalarm.astro.zodiac.ZodiacSign
 import java.time.DayOfWeek
 import java.util.UUID
 
@@ -24,36 +19,10 @@ object AstroAlarmJson {
         obj.put("snoozeMinutes", alarm.snoozeMinutes)
         obj.put("mathUnlockEnabled", alarm.mathUnlockEnabled)
         obj.put("lastFiredEpochMs", alarm.lastFiredEpochMs)
-
         val daysArr = JSONArray()
         alarm.daysOfWeek.forEach { daysArr.put(it.name) }
         obj.put("daysOfWeek", daysArr)
-
-        val targetObj = JSONObject()
-        when (val target = alarm.target) {
-            is AlarmTarget.CustomClock -> {
-                targetObj.put("kind", "clock")
-                targetObj.put("hour", target.hour)
-                targetObj.put("minute", target.minute)
-            }
-            is AlarmTarget.Solar -> {
-                targetObj.put("kind", "solar")
-                targetObj.put("event", target.event.name)
-                targetObj.put("offset", target.offsetMinutes)
-            }
-            is AlarmTarget.Lunar -> {
-                targetObj.put("kind", "lunar")
-                targetObj.put("event", target.event.name)
-                targetObj.put("offset", target.offsetMinutes)
-            }
-            is AlarmTarget.Zodiac -> {
-                targetObj.put("kind", "zodiac")
-                targetObj.put("sign", target.sign.name)
-                targetObj.put("point", target.point.name)
-                targetObj.put("offset", target.offsetMinutes)
-            }
-        }
-        obj.put("target", targetObj)
+        obj.put("target", AstroAlarmTargetJson.write(alarm.target))
         return obj
     }
 
@@ -68,44 +37,15 @@ object AstroAlarmJson {
         val snoozeMinutes = obj.optInt("snoozeMinutes", 10)
         val mathUnlock = obj.optBoolean("mathUnlockEnabled", false)
         val lastFired = obj.optLong("lastFiredEpochMs", 0L)
-
         val days = mutableSetOf<DayOfWeek>()
         val daysArr = obj.optJSONArray("daysOfWeek")
         if (daysArr != null) {
             for (i in 0 until daysArr.length()) {
-                val dName = daysArr.optString(i)
-                runCatching { DayOfWeek.valueOf(dName) }.getOrNull()?.let { days.add(it) }
+                runCatching { DayOfWeek.valueOf(daysArr.optString(i)) }.getOrNull()?.let { days.add(it) }
             }
         }
-
         val targetObj = obj.optJSONObject("target") ?: return null
-        val target: AlarmTarget = when (targetObj.optString("kind")) {
-            "clock" -> AlarmTarget.CustomClock(targetObj.optInt("hour", 7), targetObj.optInt("minute", 0))
-            "solar" -> {
-                val evName = targetObj.optString("event")
-                val normalizedName = when (evName) {
-                    "Dawn" -> "CivilDawn"
-                    "Dusk" -> "CivilDusk"
-                    else -> evName
-                }
-                val ev = runCatching { SolarEventType.valueOf(normalizedName) }.getOrDefault(SolarEventType.Sunrise)
-                AlarmTarget.Solar(ev, targetObj.optInt("offset", 0))
-            }
-            "lunar" -> {
-                val evName = targetObj.optString("event")
-                val ev = runCatching { LunarEventType.valueOf(evName) }.getOrDefault(LunarEventType.Moonrise)
-                AlarmTarget.Lunar(ev, targetObj.optInt("offset", 0))
-            }
-            "zodiac" -> {
-                val signName = targetObj.optString("sign")
-                val pointName = targetObj.optString("point")
-                val sign = runCatching { ZodiacSign.valueOf(signName) }.getOrDefault(ZodiacSign.Aries)
-                val point = runCatching { ZodiacPoint.valueOf(pointName) }.getOrDefault(ZodiacPoint.Beginning)
-                AlarmTarget.Zodiac(sign, point, targetObj.optInt("offset", 0))
-            }
-            else -> return null
-        }
-
+        val target = AstroAlarmTargetJson.read(targetObj) ?: return null
         return AstroAlarm(
             id = id,
             label = label,

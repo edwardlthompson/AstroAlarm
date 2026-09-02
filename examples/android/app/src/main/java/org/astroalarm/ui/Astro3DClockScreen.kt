@@ -21,6 +21,8 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.asImageBitmap
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.semantics.contentDescription
+import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -84,17 +86,11 @@ fun Astro3DClockScreen(
         horizontalAlignment = Alignment.CenterHorizontally,
         verticalArrangement = Arrangement.spacedBy(8.dp)
     ) {
-        ZodiacToggleRow(
-            title = stringResource(R.string.astro_toggle_show_zodiac_3d),
-            checked = showZodiac,
-            onCheckedChange = { displayPrefs.setShowZodiac3D(it) }
-        )
-
         BoxWithConstraints(
             modifier = Modifier.fillMaxWidth().weight(1f),
-            contentAlignment = Alignment.Center
+            contentAlignment = Alignment.TopCenter
         ) {
-            val side = minOf(maxWidth, maxHeight)
+            val side = minOf(maxWidth, (maxHeight - DiskChrome.Reserve).coerceAtLeast(0.dp))
             val sizePx = ClockRenderSize.fromMinDp(side.value.toInt().coerceAtLeast(80))
             val bitmap3D = remember(
                 place, alarms, now.epochSecond, sizePx, showZodiac,
@@ -111,38 +107,50 @@ fun Astro3DClockScreen(
                     earth = earth,
                 )
             }
-            Image(
-                bitmap = bitmap3D.asImageBitmap(),
-                contentDescription = stringResource(R.string.astro_widget_3d_desc),
-                modifier = Modifier.size(side)
-            )
-        }
-
-        Text(
-            text = place?.let {
-                String.format(java.util.Locale.getDefault(), "🌐 %.2f°, %.2f°   %s %s   ✨ %.1f°", it.latitude, it.longitude, middaySign.symbol, middaySign.englishName, sunLon)
-            } ?: String.format(java.util.Locale.getDefault(), "%s %s   ✨ %.1f°", middaySign.symbol, middaySign.englishName, sunLon),
-            fontSize = 13.sp,
-            fontWeight = FontWeight.Medium,
-            maxLines = 2
-        )
-
-        Button(
-            onClick = {
-                val mgr = context.getSystemService(AppWidgetManager::class.java)
-                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O && mgr != null && mgr.isRequestPinAppWidgetSupported) {
-                    mgr.requestPinAppWidget(ComponentName(context, Astro3DClockWidgetProvider::class.java), null, null)
-                    Toast.makeText(context, context.getString(R.string.astro_widget_pinned_success), Toast.LENGTH_SHORT).show()
-                } else {
-                    Toast.makeText(context, context.getString(R.string.astro_widget_pin_manual_guide), Toast.LENGTH_LONG).show()
+            Column(
+                Modifier.fillMaxWidth().align(Alignment.TopCenter),
+                horizontalAlignment = Alignment.CenterHorizontally,
+                verticalArrangement = Arrangement.spacedBy(8.dp)
+            ) {
+                Image(
+                    bitmap = bitmap3D.asImageBitmap(),
+                    contentDescription = stringResource(R.string.astro_widget_3d_desc),
+                    modifier = Modifier.size(side)
+                )
+                Button(
+                    onClick = {
+                        val mgr = context.getSystemService(AppWidgetManager::class.java)
+                        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O && mgr != null && mgr.isRequestPinAppWidgetSupported) {
+                            mgr.requestPinAppWidget(ComponentName(context, Astro3DClockWidgetProvider::class.java), null, null)
+                            Toast.makeText(context, context.getString(R.string.astro_widget_pinned_success), Toast.LENGTH_SHORT).show()
+                        } else {
+                            Toast.makeText(context, context.getString(R.string.astro_widget_pin_manual_guide), Toast.LENGTH_LONG).show()
+                        }
+                    },
+                    modifier = Modifier.fillMaxWidth().semantics {
+                        contentDescription = context.getString(R.string.astro_add_3d_widget_cd)
+                    },
+                    shape = RoundedCornerShape(12.dp)
+                ) {
+                    Icon(Icons.Default.AddCircle, contentDescription = null)
+                    Spacer(modifier = Modifier.width(8.dp))
+                    Text(stringResource(R.string.astro_add_3d_widget_btn))
                 }
-            },
-            modifier = Modifier.fillMaxWidth(),
-            shape = RoundedCornerShape(12.dp)
-        ) {
-            Icon(Icons.Default.AddCircle, contentDescription = null)
-            Spacer(modifier = Modifier.width(8.dp))
-            Text(stringResource(R.string.astro_add_3d_widget_btn))
+                Text(
+                    text = place?.let {
+                        String.format(java.util.Locale.getDefault(), "🌐 %.2f°, %.2f°   %s %s   ✨ %.1f°", it.latitude, it.longitude, middaySign.symbol, middaySign.englishName, sunLon)
+                    } ?: String.format(java.util.Locale.getDefault(), "%s %s   ✨ %.1f°", middaySign.symbol, middaySign.englishName, sunLon),
+                    fontSize = 13.sp,
+                    fontWeight = FontWeight.Medium,
+                    maxLines = 2
+                )
+            }
         }
+
+        ZodiacToggleRow(
+            title = stringResource(R.string.astro_toggle_show_zodiac_3d),
+            checked = showZodiac,
+            onCheckedChange = { displayPrefs.setShowZodiac3D(it) }
+        )
     }
 }

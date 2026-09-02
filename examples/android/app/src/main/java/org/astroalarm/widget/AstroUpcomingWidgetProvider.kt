@@ -10,10 +10,10 @@ import android.view.View
 import android.widget.RemoteViews
 import dev.foss.goldenpath.MainActivity
 import dev.foss.goldenpath.R
+import org.astroalarm.astro.alarm.AlarmTargetCopy
 import org.astroalarm.astro.alarm.AstroAlarmScheduler
 import org.astroalarm.astro.alarm.AstroAlarmStore
 import org.astroalarm.astro.alarm.AstroNextFire
-import org.astroalarm.astro.model.AlarmTarget
 import org.astroalarm.astro.place.AstroPlaceStore
 import org.astroalarm.astro.settings.AstroDisplayPreferences
 import org.astroalarm.ui.AlarmViewMode
@@ -38,29 +38,12 @@ class AstroUpcomingWidgetProvider : AppWidgetProvider() {
 
         val formattedItems: List<String> = if (viewMode == AlarmViewMode.Grouped) {
             // Grouped by Category
-            val solar = alarms.filter { it.target is AlarmTarget.Solar }.mapNotNull { a -> AstroNextFire.nextInstant(a, place, now)?.let { a to it } }
-            val lunar = alarms.filter { it.target is AlarmTarget.Lunar }.mapNotNull { a -> AstroNextFire.nextInstant(a, place, now)?.let { a to it } }
-            val zodiac = alarms.filter { it.target is AlarmTarget.Zodiac }.mapNotNull { a -> AstroNextFire.nextInstant(a, place, now)?.let { a to it } }
-            val clock = alarms.filter { it.target is AlarmTarget.CustomClock }.mapNotNull { a -> AstroNextFire.nextInstant(a, place, now)?.let { a to it } }
-
             val list = mutableListOf<String>()
-            (solar + lunar + zodiac + clock).forEach { (alarm, next) ->
+            alarms.mapNotNull { a -> AstroNextFire.nextInstant(a, place, now)?.let { a to it } }.forEach { (alarm, next) ->
                 if (next.isAfter(now) && !next.isAfter(horizon)) {
                     val zdt = ZonedDateTime.ofInstant(next, zone)
-                    val icon = when (val t = alarm.target) {
-                        is AlarmTarget.Solar -> "☀️ "
-                        is AlarmTarget.Lunar -> "🌙 "
-                        is AlarmTarget.Zodiac -> t.sign.symbol + " "
-                        is AlarmTarget.CustomClock -> "⏰ "
-                    }
-                    val label = alarm.label.ifBlank {
-                        when (val t = alarm.target) {
-                            is AlarmTarget.Solar -> t.event.name
-                            is AlarmTarget.Lunar -> t.event.name
-                            is AlarmTarget.Zodiac -> t.sign.englishName
-                            is AlarmTarget.CustomClock -> String.format(Locale.getDefault(), "%02d:%02d", t.hour, t.minute)
-                        }
-                    }
+                    val icon = AlarmTargetCopy.icon(alarm.target)
+                    val label = alarm.label.ifBlank { AlarmTargetCopy.fallback(alarm.target) }
                     list.add("$icon${zdt.format(timeFmt)} - $label")
                 }
             }
@@ -72,20 +55,8 @@ class AstroUpcomingWidgetProvider : AppWidgetProvider() {
                 AstroNextFire.nextInstant(alarm, place, now)?.let { next ->
                     if (next.isAfter(now) && !next.isAfter(horizon)) {
                         val zdt = ZonedDateTime.ofInstant(next, zone)
-                        val icon = when (val t = alarm.target) {
-                            is AlarmTarget.Solar -> "☀️ "
-                            is AlarmTarget.Lunar -> "🌙 "
-                            is AlarmTarget.Zodiac -> t.sign.symbol + " "
-                            is AlarmTarget.CustomClock -> "⏰ "
-                        }
-                        val label = alarm.label.ifBlank {
-                            when (val t = alarm.target) {
-                                is AlarmTarget.Solar -> t.event.name
-                                is AlarmTarget.Lunar -> t.event.name
-                                is AlarmTarget.Zodiac -> t.sign.englishName
-                                is AlarmTarget.CustomClock -> String.format(Locale.getDefault(), "%02d:%02d", t.hour, t.minute)
-                            }
-                        }
+                        val icon = AlarmTargetCopy.icon(alarm.target)
+                        val label = alarm.label.ifBlank { AlarmTargetCopy.fallback(alarm.target) }
                         upcomingItems.add(next to "$icon${zdt.format(timeFmt)} - $label")
                     }
                 }

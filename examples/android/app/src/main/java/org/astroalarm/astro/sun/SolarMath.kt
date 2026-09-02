@@ -81,6 +81,43 @@ object SolarMath {
         return eq * RAD_TO_DEG * 4.0 // in minutes of time
     }
 
+    /** Earth–Sun distance in AU (Kepler, NOAA eccentricity and equation of center). */
+    fun sunEarthAu(instant: Instant): Double {
+        val t = julianCentury(julianDay(instant))
+        val m = geomMeanAnomSun(t)
+        val e = eccentEarthOrbit(t)
+        val nu = (m + sunEqOfCenter(t, m)) * DEG_TO_RAD
+        return 1.000001018 * (1.0 - e * e) / (1.0 + e * cos(nu))
+    }
+
+    fun longitudeOfPerihelion(instant: Instant): Double {
+        val t = julianCentury(julianDay(instant))
+        var p = geomMeanLongSun(t) - geomMeanAnomSun(t)
+        while (p < 0.0) p += 360.0
+        while (p >= 360.0) p -= 360.0
+        return p
+    }
+
+    fun sunRightAscension(t: Double, l0: Double, c: Double): Double {
+        val lambda = sunApparentLong(t, l0, c) * DEG_TO_RAD
+        val eps = obliqCorrection(t) * DEG_TO_RAD
+        return atan2(cos(eps) * sin(lambda), cos(lambda)) * RAD_TO_DEG
+    }
+
+    /** Geographic longitude of the subsolar point (degrees, −180…180). */
+    fun subsolarLongitude(instant: Instant): Double {
+        val t = julianCentury(julianDay(instant))
+        val l0 = geomMeanLongSun(t)
+        val ra = sunRightAscension(t, l0, sunEqOfCenter(t, geomMeanAnomSun(t)))
+        val d = (instant.epochSecond - 946728000.0) / 86400.0
+        var gmst = (280.16 + 360.985647366 * d) % 360.0
+        if (gmst < 0.0) gmst += 360.0
+        var lon = ra - gmst
+        while (lon > 180.0) lon -= 360.0
+        while (lon < -180.0) lon += 360.0
+        return lon
+    }
+
     fun hourAngle(latDeg: Double, declinDeg: Double, zenithDeg: Double): Double? {
         val latR = latDeg * DEG_TO_RAD
         val decR = declinDeg * DEG_TO_RAD

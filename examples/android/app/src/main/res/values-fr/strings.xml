@@ -93,6 +93,11 @@
     <string name="astro_empty_lunar">Aucune alarme lunaire configurée.</string>
     <string name="astro_section_zodiac">Alarmes Zodiacales et Astrologiques</string>
     <string name="astro_empty_zodiac">Aucune alarme zodiacale configurée.</string>
+    <string name="astro_section_seasonal">Alarmes saisonnières</string>
+    <string name="astro_empty_seasonal">Aucune alarme saisonnière configurée.</string>
+    <string name="astro_section_planet">Alarmes planétaires</string>
+    <string name="astro_empty_planet">Aucune alarme planétaire configurée.</string>
+
     <string name="astro_action_add">Ajouter</string>
     <string name="astro_action_edit">Modifier</string>
     <string name="astro_action_delete">Supprimer</string>
@@ -104,6 +109,24 @@
     <string name="astro_dialog_select_solar">Sélectionner un Événement Solaire</string>
     <string name="astro_dialog_select_lunar">Sélectionner un Événement Lunaire</string>
     <string name="astro_dialog_select_zodiac">Sélectionner un Événement Zodiacal</string>
+    <string name="astro_dialog_select_seasonal">Choisir un terme solaire</string>
+    <string name="astro_seasonal_event_title">Terme solaire</string>
+    <string name="astro_planet_body_title">Planète</string>
+    <string name="astro_planet_event_title">Événement planétaire</string>
+    <string name="astro_planet_align_with">Aligner avec…</string>
+    <string name="astro_planet_all_align">Toutes les planètes s’alignent</string>
+    <string name="sol_caption">Vue héliocentrique en UA réelles · pincer pour zoomer · sans lunes · + jaune = périhélie</string>
+    <string name="sol_hint">Touchez une planète · pincez jusqu’à Neptune</string>
+    <string name="sol_cd">Carte du système solaire, planètes à l’échelle en UA</string>
+    <string name="sol_pin_widget">Ajouter le widget à l’écran d’accueil</string>
+    <string name="sol_pin_widget_cd">Ajouter le widget Sol à l’écran d’accueil</string>
+    <string name="sol_widget_name">Sol</string>
+    <string name="sol_widget_desc">Système solaire en UA réelles avec orbites de Kepler</string>
+    <string name="sol_scale_au">1 UA</string>
+    <string name="sol_light_min">%1$d min de lumière</string>
+    <string name="sol_perihelion">périhélie %1$s</string>
+    <string name="sol_aphelion">aphélie %1$s</string>
+
     <string name="astro_solar_event_title">Événement Solaire</string>
     <string name="astro_lunar_event_title">Événement Lunaire</string>
     <string name="astro_zodiac_event_title">Transition Solaire Zodiacale</string>
@@ -114,10 +137,23 @@
     <string name="astro_tab_alarms">Alarmes</string>
     <string name="astro_tab_clock_wheel">Roue de l\'horloge</string>
     <string name="astro_tab_3d_clock">Horloge 3D</string>
+    <string name="astro_tab_daily_2d">Quotidien 2D</string>
+    <string name="astro_tab_daily_3d">Quotidien 3D</string>
+    <string name="astro_tab_daily">Quotidien</string>
+    <string name="astro_tab_2d">2D</string>
+    <string name="astro_tab_3d">3D</string>
+    <string name="astro_tab_yearly">Annuel</string>
+    <string name="astro_tab_sol">Sol</string>
+    <string name="astro_tab_seasonal">Saisonnier</string>
+    <string name="astro_tab_planet">Planète</string>
+
     <string name="astro_swipe_hint">Glissez pour l\'horloge 24h →</string>
     <string name="astro_add_widget_btn">Ajouter le widget à l\'écran d\'accueil</string>
-    <string name="astro_add_3d_widget_btn">Ajouter le widget 3D à l\'écran d\'accueil</string>
-    <string name="astro_add_upcoming_widget_btn">Ajouter le widget d\'alarmes à l\'écran d\'accueil</string>
+    <string name="astro_add_widget_cd">Ajouter le widget d\'horloge à l\'écran d\'accueil</string>
+    <string name="astro_add_3d_widget_btn">Ajouter le widget à l\'écran d\'accueil</string>
+    <string name="astro_add_3d_widget_cd">Ajouter le widget 3D à l\'écran d\'accueil</string>
+    <string name="astro_add_upcoming_widget_btn">Ajouter le widget à l\'écran d\'accueil</string>
+    <string name="astro_add_upcoming_widget_cd">Ajouter le widget d\'alarmes à l\'écran d\'accueil</string>
     <string name="astro_widget_3d_name">Horloge 3D</string>
     <string name="astro_widget_3d_desc">Sphère d\'horloge céleste 3D avec globe terrestre et Soleil orbital</string>
     <string name="astro_3d_observer_pos">Emplacement de l\'observateur</string>
@@ -206,10 +242,10 @@
     <string name="astro_math_settings_title">Défi mathématique d\'arrêt</string>
     <string name="astro_math_settings_desc">Nécessite de résoudre des équations arithmétiques aléatoires avant de pouvoir couper l\'alarme.</string>
     <string name="astro_math_difficulty_title">Niveau de difficulté</string>
+    <string name="astro_math_diff_elementary">Élémentaire</string>
     <string name="astro_math_diff_easy">Facile</string>
     <string name="astro_math_diff_medium">Moyen</string>
     <string name="astro_math_diff_hard">Difficile</string>
-    <string name="astro_math_diff_genius">Génie</string>
     <string name="astro_math_count_title">Équations à résoudre</string>
     <string name="astro_math_preview_title">Exemple de problème en direct</string>
     <string name="astro_math_test_btn">Nouvel exemple</string>

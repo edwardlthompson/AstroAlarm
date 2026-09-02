@@ -132,4 +132,47 @@ fun LazyListScope.renderGroupedAlarms(
             )
         }
     }
+
+    item {
+        SectionHeader(title = "🍃 " + stringResource(R.string.astro_section_seasonal))
+    }
+    val seasonalAlarms = alarms.filter { it.target is AlarmTarget.SolarTerm }
+        .sortedBy { AstroNextFire.nextInstant(it, place)?.toEpochMilli() ?: Long.MAX_VALUE }
+    if (seasonalAlarms.isEmpty()) {
+        item { EmptySectionNote(stringResource(R.string.astro_empty_seasonal)) }
+    } else {
+        items(seasonalAlarms, key = { it.id }) { alarm ->
+            val nextInstant = AstroNextFire.nextInstant(alarm, place)
+            val formatted = nextInstant?.let { formatInstant(it, place) }
+            AstroAlarmRow(
+                alarm = alarm,
+                nextFireFormatted = formatted,
+                onToggle = { onToggle(alarm, it) },
+                onEdit = { onEdit(alarm) },
+                onDelete = { onDelete(alarm) }
+            )
+        }
+    }
+
+    item {
+        SectionHeader(title = "🪐 " + stringResource(R.string.astro_section_planet))
+    }
+    val planetAlarms = alarms.filter {
+        it.target is AlarmTarget.Planet || it.target is AlarmTarget.PlanetAlign || it.target is AlarmTarget.AllPlanetsAlign
+    }.sortedBy { AstroNextFire.nextInstant(it, place)?.toEpochMilli() ?: Long.MAX_VALUE }
+    if (planetAlarms.isEmpty()) {
+        item { EmptySectionNote(stringResource(R.string.astro_empty_planet)) }
+    } else {
+        items(planetAlarms, key = { it.id }) { alarm ->
+            val nextInstant = AstroNextFire.nextInstant(alarm, place)
+            val formatted = nextInstant?.let { formatInstant(it, place) }
+            AstroAlarmRow(
+                alarm = alarm,
+                nextFireFormatted = formatted,
+                onToggle = { onToggle(alarm, it) },
+                onEdit = { onEdit(alarm) },
+                onDelete = { onDelete(alarm) }
+            )
+        }
+    }
 }

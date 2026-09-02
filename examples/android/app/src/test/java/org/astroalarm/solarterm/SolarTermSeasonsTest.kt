@@ -7,25 +7,18 @@ import org.junit.Test
 class SolarTermSeasonsTest {
 
     @Test
-    fun southernLocalSeasonsRemapNamesByHalfYear() {
-        assertEquals(SolarTerm.LIQIU, SolarTerm.LICHUN.localAlias(localSeasons = true, southern = true))
-        assertEquals(SolarTerm.LICHUN, SolarTerm.LICHUN.localAlias(localSeasons = false, southern = true))
-        assertEquals(SolarTerm.LICHUN, SolarTerm.LICHUN.localAlias(localSeasons = true, southern = false))
+    fun southernRemapNamesByHalfYear() {
+        assertEquals(SolarTerm.LIQIU, SolarTerm.LICHUN.localAlias(southern = true))
+        assertEquals(SolarTerm.LICHUN, SolarTerm.LICHUN.localAlias(southern = false))
     }
 
     @Test
-    fun southernLocalSeasonsFlipPaletteSeason() {
-        assertEquals(
-            SolarSeason.AUTUMN,
-            SolarTermPalette.displaySeason(SolarSeason.SPRING, localSeasons = true, southern = true),
-        )
-        assertEquals(
-            SolarSeason.SPRING,
-            SolarTermPalette.displaySeason(SolarSeason.SPRING, localSeasons = true, southern = false),
-        )
+    fun southernFlipPaletteSeason() {
+        assertEquals(SolarSeason.AUTUMN, SolarTermPalette.displaySeason(SolarSeason.SPRING, southern = true))
+        assertEquals(SolarSeason.SPRING, SolarTermPalette.displaySeason(SolarSeason.SPRING, southern = false))
         assertNotEquals(
-            SolarTermPalette.sectorColor(SolarTerm.LICHUN, localSeasons = false, southern = false, dark = true),
-            SolarTermPalette.sectorColor(SolarTerm.LICHUN, localSeasons = true, southern = true, dark = true),
+            SolarTermPalette.sectorColor(SolarTerm.LICHUN, southern = false, dark = true),
+            SolarTermPalette.sectorColor(SolarTerm.LICHUN, southern = true, dark = true),
         )
     }
 

@@ -49,19 +49,13 @@
     <string name="solar_term_dahan">Grand froid</string>
     <string name="solar_term_desc_dahan">Les jours les plus froids de l’année.</string>
     <string name="solar_term_tab_year">Année</string>
-    <string name="solar_term_section_title">24 termes solaires</string>
-    <string name="solar_term_section_desc">Roue annuelle optionnelle des 24 jieqi. Désactivée par défaut pour ne pas changer les horloges quotidiennes.</string>
-    <string name="solar_term_toggle_year">Afficher les 24 termes solaires dans la vue annuelle</string>
-    <string name="solar_term_toggle_traditional">Caractères chinois traditionnels</string>
-    <string name="solar_term_toggle_local_seasons">Saisons locales (noms et couleurs de l’hémisphère sud)</string>
-    <string name="solar_term_view_2d">Roue 2D</string>
-    <string name="solar_term_view_3d">Anneau 3D</string>
+    <string name="solar_term_toggle_compact">Roue compacte (couleur et emoji seulement)</string>
     <string name="solar_term_next_in_days">Prochain terme dans %1$d jours</string>
     <string name="solar_term_next_in_hours">Prochain terme dans %1$d heures</string>
     <string name="solar_term_next_today">Prochain terme plus tard aujourd’hui</string>
     <string name="solar_term_next_label">Suivant : %1$s le %2$s</string>
-    <string name="solar_term_at_location">à votre position · %1$s</string>
-    <string name="solar_term_at_coords">à votre position · %1$.2f, %2$.2f</string>
+    <string name="solar_term_at_location">%1$s</string>
+    <string name="solar_term_at_coords">%1$.2f, %2$.2f</string>
     <string name="solar_term_device_zone">fuseau horaire de l’appareil</string>
     <string name="solar_term_widget_name">24 termes solaires</string>
     <string name="solar_term_widget_desc">Termes solaires actuel et suivants avec l’heure locale</string>
@@ -71,8 +65,6 @@
     <string name="solar_term_longitude">Longitude solaire %1$.0f°</string>
     <string name="solar_term_phenology">Note saisonnière</string>
     <string name="solar_term_timeline">Jour de l’année</string>
-    <string name="solar_term_pin_widget">Ajouter le widget des termes solaires</string>
-    <string name="solar_term_now">Maintenant</string>
-    <string name="solar_term_settings_title">Vue annuelle</string>
-    <string name="solar_term_fallback_2d">La vue 3D est indisponible ; affichage de la roue 2D.</string>
+    <string name="solar_term_pin_widget">Ajouter le widget à l’écran d’accueil</string>
+    <string name="solar_term_pin_widget_cd">Ajouter le widget des termes solaires</string>
 </resources>

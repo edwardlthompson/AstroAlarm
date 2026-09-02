@@ -93,6 +93,11 @@
     <string name="astro_empty_lunar">No lunar alarms configured.</string>
     <string name="astro_section_zodiac">Zodiac &amp; Astrological Alarms</string>
     <string name="astro_empty_zodiac">No zodiac alarms configured.</string>
+    <string name="astro_section_seasonal">Seasonal Alarms</string>
+    <string name="astro_empty_seasonal">No seasonal alarms configured.</string>
+    <string name="astro_section_planet">Planet Alarms</string>
+    <string name="astro_empty_planet">No planet alarms configured.</string>
+
     <string name="astro_action_add">Add</string>
     <string name="astro_action_edit">Edit</string>
     <string name="astro_action_delete">Delete</string>
@@ -104,6 +109,24 @@
     <string name="astro_dialog_select_solar">Select Solar Event</string>
     <string name="astro_dialog_select_lunar">Select Lunar Event</string>
     <string name="astro_dialog_select_zodiac">Select Zodiac Event</string>
+    <string name="astro_dialog_select_seasonal">Select solar term</string>
+    <string name="astro_seasonal_event_title">Solar term</string>
+    <string name="astro_planet_body_title">Planet</string>
+    <string name="astro_planet_event_title">Planet event</string>
+    <string name="astro_planet_align_with">Align with…</string>
+    <string name="astro_planet_all_align">All planets align</string>
+    <string name="sol_caption">True-AU heliocentric view · pinch to zoom · no moons · yellow + is perihelion</string>
+    <string name="sol_hint">Tap a planet · pinch to reach Neptune</string>
+    <string name="sol_cd">Solar system map, planets to scale in AU</string>
+    <string name="sol_pin_widget">Add Widget to Home Screen</string>
+    <string name="sol_pin_widget_cd">Add Sol widget to Home Screen</string>
+    <string name="sol_widget_name">Sol</string>
+    <string name="sol_widget_desc">True-AU solar system with Kepler orbits</string>
+    <string name="sol_scale_au">1 AU</string>
+    <string name="sol_light_min">%1$d min light</string>
+    <string name="sol_perihelion">perihelion %1$s</string>
+    <string name="sol_aphelion">aphelion %1$s</string>
+
     <string name="astro_solar_event_title">Solar Event</string>
     <string name="astro_lunar_event_title">Lunar Event</string>
     <string name="astro_zodiac_event_title">Zodiac Sun Transition</string>
@@ -114,10 +137,23 @@
     <string name="astro_tab_alarms">Alarms</string>
     <string name="astro_tab_clock_wheel">Clock Wheel</string>
     <string name="astro_tab_3d_clock">3D Clock</string>
+    <string name="astro_tab_daily_2d">Daily 2D</string>
+    <string name="astro_tab_daily_3d">Daily 3D</string>
+    <string name="astro_tab_daily">Daily</string>
+    <string name="astro_tab_2d">2D</string>
+    <string name="astro_tab_3d">3D</string>
+    <string name="astro_tab_yearly">Yearly</string>
+    <string name="astro_tab_sol">Sol</string>
+    <string name="astro_tab_seasonal">Seasonal</string>
+    <string name="astro_tab_planet">Planet</string>
+
     <string name="astro_swipe_hint">Swipe for 24h Clock →</string>
-    <string name="astro_add_widget_btn">Add Clock Widget to Home Screen</string>
-    <string name="astro_add_3d_widget_btn">Add 3D Clock Widget to Home Screen</string>
-    <string name="astro_add_upcoming_widget_btn">Add Alarms Widget to Home Screen</string>
+    <string name="astro_add_widget_btn">Add Widget to Home Screen</string>
+    <string name="astro_add_widget_cd">Add Clock Widget to Home Screen</string>
+    <string name="astro_add_3d_widget_btn">Add Widget to Home Screen</string>
+    <string name="astro_add_3d_widget_cd">Add 3D Clock Widget to Home Screen</string>
+    <string name="astro_add_upcoming_widget_btn">Add Widget to Home Screen</string>
+    <string name="astro_add_upcoming_widget_cd">Add Alarms Widget to Home Screen</string>
     <string name="astro_widget_3d_name">3D Clock</string>
     <string name="astro_widget_3d_desc">3D celestial sphere clock with Earth globe and orbiting Sun</string>
     <string name="astro_3d_observer_pos">Observer Location</string>
@@ -149,7 +185,7 @@
     <string name="astro_repeat_weekdays">Mon-Fri</string>
     <string name="astro_repeat_weekends">Sat-Sun</string>
     <string name="astro_repeat_yearly">Yearly</string>
-    <string name="astro_repeat_yearly_desc">Repeats annually on the exact equinox or solstice date.</string>
+    <string name="astro_repeat_yearly_desc">Repeats annually on the exact event date.</string>
     <string name="astro_sort_next_due">Next Due</string>
     <string name="astro_sort_grouped">Grouped</string>
     <string name="astro_empty_all">No alarms configured. Tap + to add one.</string>
@@ -206,10 +242,10 @@
     <string name="astro_math_settings_title">Math Alarm Stop Challenge</string>
     <string name="astro_math_settings_desc">Requires solving randomized arithmetic equations before the alarm can be silenced.</string>
     <string name="astro_math_difficulty_title">Difficulty Level</string>
+    <string name="astro_math_diff_elementary">Elementary</string>
     <string name="astro_math_diff_easy">Easy</string>
     <string name="astro_math_diff_medium">Medium</string>
     <string name="astro_math_diff_hard">Hard</string>
-    <string name="astro_math_diff_genius">Genius</string>
     <string name="astro_math_count_title">Equations to Solve</string>
     <string name="astro_math_preview_title">Live Example Problem</string>
     <string name="astro_math_test_btn">New Example</string>

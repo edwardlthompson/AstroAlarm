@@ -29,13 +29,11 @@ import org.astroalarm.astro.alarm.AstroAlarmScheduler
 import org.astroalarm.astro.place.AstroPlace
 import org.astroalarm.astro.place.AstroPlaceFinder
 import org.astroalarm.astro.place.AstroPlaceStore
-import org.astroalarm.astro.settings.AstroDisplayPreferences
 import org.astroalarm.math.MathPreferences
 import org.astroalarm.tts.TtsPreferences
 import org.astroalarm.ui.LocationCard
 import org.astroalarm.ui.math.MathSettingsSection
 import org.astroalarm.ui.onboard.OnboardingScreen
-import org.astroalarm.ui.solarterm.SolarTermSettingsSection
 import org.astroalarm.ui.tts.TtsVoicePicker
 
 @OptIn(ExperimentalLayoutApi::class)
@@ -63,7 +61,6 @@ fun SettingsScreen(
     val ttsPrefs = remember { TtsPreferences(context) }
     val voice by ttsPrefs.voice.collectAsState()
     val mathPrefs = remember { MathPreferences(context) }
-    val displayPrefs = remember { AstroDisplayPreferences(context) }
 
     fun triggerLocate() {
         scope.launch {
@@ -154,10 +151,6 @@ fun SettingsScreen(
         HorizontalDivider()
 
         MathSettingsSection(mathPrefs = mathPrefs)
-
-        HorizontalDivider()
-
-        SolarTermSettingsSection(prefs = displayPrefs)
 
         HorizontalDivider()
 

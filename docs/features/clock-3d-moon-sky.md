@@ -2,7 +2,7 @@
 
 Scientific sun and moon positions and event times for the 2D/3D clocks and alarms.
 
-The 3D view stays an Earth-centered transit clock (observer pin, schematic rings), not a planetarium. Fake background stars and tropical zodiac bubbles are still schematic.
+The 3D view stays an Earth-centered transit clock (observer pin, schematic rings). The globe, geographic axis, and ground tracks nod by the current solar declination around that pin so the planet leans toward the Sun in June and away in December. Fake background stars and tropical zodiac bubbles are still schematic.
 
 ## Acceptance criteria
 
@@ -25,7 +25,6 @@ The 3D view stays an Earth-centered transit clock (observer pin, schematic rings
 | View | `Astro3DRenderer.kt`, `AstroDiskRenderer.kt`, `TransitTicks.kt`, `GlobeGroundTracks.kt` |
 | Tests | `BodySkyTest.kt`, `SkyBodiesTest.kt`, `TransitTicksTest.kt`, `AstroNextFireTest.kt` |
 | Wiring | existing renderer calls only |
-
 ## Tests
 
 - ✅ Automated: yes — `SkyBodiesTest.kt` (NH/SH, polar, DST Instant, leap day, year boundary, dateline, moon transit, Tokyo golden, seasons, moon age), `BodySkyTest.kt`, `AstroNextFireTest.kt`
@@ -38,4 +37,5 @@ The 3D view stays an Earth-centered transit clock (observer pin, schematic rings
 ## Notes
 
 - Civil rise/set use suncalc apparent horizon; ring geometry uses unrefracted true altitude
+- Rings stay local-sky after the globe nod; the gold sun glyph need not sit on the rotated subsolar dot.
 - 3D is not a sky map: star field is decorative; zodiac bubbles are tropical longitude, not IAU constellations

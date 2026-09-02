@@ -8,6 +8,7 @@ import org.astroalarm.astro.place.AstroPlaceStore
 import org.astroalarm.widget.Astro3DClockWidgetProvider
 import org.astroalarm.widget.AstroClockWidgetProvider
 import org.astroalarm.widget.AstroUpcomingWidgetProvider
+import org.astroalarm.widget.SolWidgetProvider
 import java.time.Instant
 
 object AstroAlarmScheduler {
@@ -26,6 +27,7 @@ object AstroAlarmScheduler {
             AstroClockWidgetProvider.updateAll(context)
             AstroUpcomingWidgetProvider.updateAll(context)
             Astro3DClockWidgetProvider.updateAll(context)
+            SolWidgetProvider.updateAll(context)
         }
 
         val nextPairs = alarms.mapNotNull { alarm ->
@@ -76,6 +78,7 @@ object AstroAlarmScheduler {
             AstroClockWidgetProvider.updateAll(context)
             AstroUpcomingWidgetProvider.updateAll(context)
             Astro3DClockWidgetProvider.updateAll(context)
+            SolWidgetProvider.updateAll(context)
         }
     }
 }

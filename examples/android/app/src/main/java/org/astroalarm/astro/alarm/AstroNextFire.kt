@@ -6,6 +6,8 @@ import org.astroalarm.astro.model.SolarEventType
 import org.astroalarm.astro.moon.LunarCalculator
 import org.astroalarm.astro.place.AstroPlace
 import org.astroalarm.astro.sun.SolarCalculator
+import org.astroalarm.sol.PlanetNext
+import org.astroalarm.solarterm.SolarTermCalculator
 import org.astroalarm.astro.zodiac.ZodiacCalculator
 import java.time.*
 
@@ -25,6 +27,15 @@ object AstroNextFire {
             is AlarmTarget.Solar -> nextSolar(alarm, target, place, nowZdt, now)
             is AlarmTarget.Lunar -> nextLunar(alarm, target, place, nowZdt, now)
             is AlarmTarget.Zodiac -> nextZodiac(alarm, target, now)
+            is AlarmTarget.SolarTerm -> (now.atZone(ZoneOffset.UTC).year..(now.atZone(ZoneOffset.UTC).year + 2))
+                .map { SolarTermCalculator.instant(it, target.term).plusSeconds(target.offsetMinutes * 60L) }
+                .firstOrNull { it.isAfter(now) }
+            is AlarmTarget.Planet -> PlanetNext.nextPlanetEvent(target.body, target.event, place, now)
+                ?.plusSeconds(target.offsetMinutes * 60L)
+            is AlarmTarget.PlanetAlign -> PlanetNext.nextAlign(target.bodyA, target.bodyB, now)
+                ?.plusSeconds(target.offsetMinutes * 60L)
+            is AlarmTarget.AllPlanetsAlign -> PlanetNext.nextAllAlign(now)
+                ?.plusSeconds(target.offsetMinutes * 60L)
         }
     }
 

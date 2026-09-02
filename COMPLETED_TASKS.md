@@ -2,6 +2,40 @@
 
 > Archive of finished BUILD_PLAN items.
 
+## Yearly/Sol/math/celestial (2026-09-01)
+
+- ✅ [AGENT] Copy `docs/features/_template.md` → `docs/features/solar-terms.md`; refine acceptance criteria
+- ✅ [AGENT] Scaffold `org.astroalarm.solarterm` + `ui/solarterm` + widget (public API locked)
+- ✅ [AGENT] Unit tests for feature pure logic
+- ✅ [AGENT] Wire Year tab + Settings section + widget receiver (composition root unchanged)
+- ✅ [AGENT] Copy `docs/features/_template.md` → `docs/features/math-difficulty.md`
+- ✅ [AGENT] `commit()` prefs, ELEMENTARY, drop GENIUS
+- ✅ [AGENT] Unit tests (`MathPreferencesTest`)
+- ✅ [AGENT] Copy `docs/features/_template.md` → `docs/features/yearly-globe.md`
+- ✅ [AGENT] Upright labels, overlay switches, compact pref, Earth+Moon hub, tab rename
+- ✅ [AGENT] Unit tests (compact persist, no-place Yearly render)
+- ✅ [AGENT] Copy `docs/features/_template.md` → `docs/features/sol-system.md`
+- ✅ [AGENT] Kepler API + 2D true-AU Sol tab (planets only)
+- ✅ [AGENT] Unit tests (AU order, retrograde window, Sol bitmap)
+- ✅ [AGENT] Copy `docs/features/_template.md` → `docs/features/celestial-alarms.md`
+- ✅ [AGENT] AlarmTarget SolarTerm / Planet / PlanetAlign / AllPlanetsAlign + JSON + pickers
+- ✅ [AGENT] Unit tests (JSON, Lìchūn, pair orb, span)
+- ✅ [AGENT] Copy `docs/features/_template.md` → `docs/features/yearly-sol-polish.md`
+- ✅ [AGENT] Stacked Daily tabs, locale+zh names, auto-southern, compact hub, Earth at 12 o’clock, Sol rings/dots
+- ✅ [AGENT] Unit tests (stamp, Earth −90°, pole pin, zh pack, Sol/Yearly alarm bitmaps)
+- ✅ [AGENT] Copy `docs/features/_template.md` → `docs/features/yearly-orbit-chrome.md`
+- ✅ [AGENT] Frozen CCW ring, midline glyphs, tab chrome, Daily 3D N–S axis, Yearly tilt+spiral
+- ✅ [AGENT] Unit tests (layout winding, sector hits, axis sunward, spiral in/out, globe pole y)
+- ✅ [AGENT] Copy `docs/features/_template.md` → `docs/features/yearly-sol-learn.md`
+- ✅ [AGENT] Top-align squares; Yearly crosshairs/traces/radial labels; Sol Kepler widget; wakes
+- ✅ [AGENT] Unit tests (city label, south spiral, Mercury span, OrbitWake gap/width)
+- ✅ [AGENT] Copy `docs/features/_template.md` → `docs/features/yearly-sol-align.md`
+- ✅ [AGENT] DiskChrome reserve; 3D nod; compact band; N/S on traces; PrimaryTabRow; Sol perihelion caption
+- ✅ [AGENT] Unit tests (GlobeObliquity roll, north farther at December, compact emoji band)
+- ✅ [AGENT] Copy `docs/features/_template.md` → `docs/features/yearly-sol-labels.md`
+- ✅ [AGENT] Unified pin copy; Yearly Moon ecliptic; larger N/S off traces; jieqi inset edges; Sol spokes/AU/opposition/date/tap
+- ✅ [AGENT] Unit tests (full/new moon elongation, N/S pad, radial angles, opposition geoLon)
+
 ## M43 leftover — Android SDK + devices (2026-09-01)
 
 - ✅ [ADB] Optional: Android SDK licenses + first AVD (`/emulator` or `just android-instrumented`)

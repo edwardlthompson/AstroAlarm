@@ -59,27 +59,45 @@ object Astro3DRenderer {
         val moonRy = moonRx * 0.42f
         val moonCy = cy - ringR * sin(Math.toRadians(moonDec)).toFloat() * sinT * 0.5f
 
-        drawTiltedRingHalf(canvas, cx, moonCy, moonRx, moonRy, true, Color.argb(80, 240, 245, 255))
-        drawTiltedRingHalf(canvas, cx, sunCy, sunRx, sunRy, true, Color.argb(120, 255, 215, 0))
+        val sunW = (sunRx * 0.055f).coerceIn(2.2f, 6.5f)
+        val moonW = (moonRx * 0.050f).coerceIn(2.0f, 5.5f)
+        Astro3DRingWake.draw(canvas, cx, moonCy, moonRx, moonRy, moonAng, lat, true, Color.argb(80, 240, 245, 255), moonW)
+        Astro3DRingWake.draw(canvas, cx, sunCy, sunRx, sunRy, sunAng, lat, true, Color.argb(120, 255, 215, 0), sunW)
         val zodiacRx = ringR * 1.08f
         val zodiacRy = ringR * 0.46f * cos(tiltRad - Math.toRadians(23.44)).toFloat()
-        if (showZodiac) drawTiltedRingHalf(canvas, cx, cy, zodiacRx, zodiacRy, true, Color.argb(60, 140, 190, 255))
+        if (showZodiac) Astro3DRingWake.drawZodiacHalf(canvas, cx, cy, zodiacRx, zodiacRy, true, Color.argb(60, 140, 190, 255))
 
-        EarthGlobeRenderer.drawGlobe(canvas, globeCx, globeCy, size * 0.16f, lat, lon, earth, true)
+        val globeR = size * 0.16f
+        val subLon = GlobeGroundTracks.subLongitude(lon, sunEq?.haRad ?: 0.0)
+        val roll = if (sunEq == null) {
+            0f
+        } else {
+            GlobeObliquity.rollDeg(
+                sunDec,
+                GlobeAxis.poleDisk(lat, lon, north = true),
+                SphereProjection.latLonToDisk(sunDec, subLon, lat, lon),
+            )
+        }
+        canvas.save()
+        canvas.clipPath(Path().apply { addCircle(globeCx, globeCy, globeR * 1.22f, Path.Direction.CW) })
+        canvas.rotate(roll, globeCx, globeCy)
+        EarthGlobeRenderer.drawGlobe(canvas, globeCx, globeCy, globeR, lat, lon, earth, true)
+        GlobeAxis.draw(canvas, globeCx, globeCy, globeR, lat, lon)
         GlobeGroundTracks.draw(
-            canvas, globeCx, globeCy, size * 0.16f, lat, lon, sunDec, moonDec,
-            GlobeGroundTracks.subLongitude(lon, sunEq?.haRad ?: 0.0),
+            canvas, globeCx, globeCy, globeR, lat, lon, sunDec, moonDec,
+            subLon,
             GlobeGroundTracks.subLongitude(lon, moonEq?.haRad ?: 0.0),
         )
+        canvas.restore()
 
-        drawTiltedRingHalf(canvas, cx, moonCy, moonRx, moonRy, false, Color.rgb(240, 245, 255))
-        drawTiltedRingHalf(canvas, cx, sunCy, sunRx, sunRy, false, Color.rgb(255, 215, 0))
+        Astro3DRingWake.draw(canvas, cx, moonCy, moonRx, moonRy, moonAng, lat, false, Color.rgb(240, 245, 255), moonW)
+        Astro3DRingWake.draw(canvas, cx, sunCy, sunRx, sunRy, sunAng, lat, false, Color.rgb(255, 215, 0), sunW)
         Astro3DTransitOverlay.draw(
             canvas, TransitTicks.marks(place, now),
             cx, sunCy, sunRx, sunRy, moonCy, moonRx, moonRy, size,
         )
         if (showZodiac) {
-            drawTiltedRingHalf(canvas, cx, cy, zodiacRx, zodiacRy, false, Color.argb(175, 140, 190, 255))
+            Astro3DRingWake.drawZodiacHalf(canvas, cx, cy, zodiacRx, zodiacRy, false, Color.argb(175, 140, 190, 255))
             val sunLon = ZodiacCalculator.sunLongitudeAt(now)
             ZodiacGlyph.drawRing(canvas, cx, cy, zodiacRx, zodiacRy, sunLon, ZodiacSign.fromEclipticLongitude(sunLon), size)
         }
@@ -115,10 +133,5 @@ object Astro3DRenderer {
         listOf(0.12f to 0.18f, 0.85f to 0.14f, 0.22f to 0.78f, 0.88f to 0.82f, 0.08f to 0.45f, 0.92f to 0.48f, 0.35f to 0.12f, 0.65f to 0.88f).forEach { (rx, ry) ->
             sp.alpha = (120 + (rx * 135).toInt()); canvas.drawCircle(rx * size + px, ry * size + py, 1.3f, sp)
         }
-    }
-
-    private fun drawTiltedRingHalf(canvas: Canvas, cx: Float, cy: Float, rx: Float, ry: Float, isBack: Boolean, color: Int) {
-        val p = Paint(Paint.ANTI_ALIAS_FLAG).apply { style = Paint.Style.STROKE; strokeWidth = (rx * 0.016f).coerceIn(1.8f, 3.5f); this.color = color }
-        canvas.drawArc(RectF(cx - rx, cy - ry, cx + rx, cy + ry), if (isBack) 180f else 0f, 180f, false, p)
     }
 }

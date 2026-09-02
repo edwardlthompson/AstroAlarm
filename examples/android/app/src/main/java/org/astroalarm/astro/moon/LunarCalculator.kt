@@ -2,6 +2,7 @@ package org.astroalarm.astro.moon
 
 import org.astroalarm.astro.model.LunarEventType
 import org.astroalarm.astro.sky.SkyBodies
+import org.astroalarm.astro.sun.SolarSeasons
 import org.shredzone.commons.suncalc.MoonIllumination
 import org.shredzone.commons.suncalc.MoonPhase
 import org.shredzone.commons.suncalc.MoonTimes
@@ -67,5 +68,22 @@ object LunarCalculator {
             prevHa = ha
         }
         return null
+    }
+
+    fun eclipticLon(instant: Instant): Double = runCatching {
+        wrap360(SolarSeasons.apparentLon(instant) + elongationDeg(instant))
+    }.getOrElse {
+        val d = (instant.epochSecond - 946728000.0) / 86400.0
+        wrap360(218.316 + 13.176396 * d)
+    }
+
+    fun elongationDeg(instant: Instant): Double = runCatching {
+        wrap360(180.0 + MoonIllumination.compute().on(instant).execute().phase)
+    }.getOrDefault(0.0)
+
+    private fun wrap360(deg: Double): Double {
+        var d = deg % 360.0
+        if (d < 0.0) d += 360.0
+        return d
     }
 }

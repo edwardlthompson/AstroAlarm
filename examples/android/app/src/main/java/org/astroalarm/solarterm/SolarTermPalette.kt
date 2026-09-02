@@ -2,8 +2,8 @@ package org.astroalarm.solarterm
 
 /** Packed ARGB ints, same layout as android.graphics.Color, so JVM tests need no Robolectric. */
 object SolarTermPalette {
-    fun displaySeason(season: SolarSeason, localSeasons: Boolean, southern: Boolean): SolarSeason {
-        if (!localSeasons || !southern) return season
+    fun displaySeason(season: SolarSeason, southern: Boolean): SolarSeason {
+        if (!southern) return season
         return when (season) {
             SolarSeason.SPRING -> SolarSeason.AUTUMN
             SolarSeason.SUMMER -> SolarSeason.WINTER
@@ -12,8 +12,8 @@ object SolarTermPalette {
         }
     }
 
-    fun sectorColor(term: SolarTerm, localSeasons: Boolean, southern: Boolean, dark: Boolean): Int {
-        val season = displaySeason(term.season, localSeasons, southern)
+    fun sectorColor(term: SolarTerm, southern: Boolean, dark: Boolean): Int {
+        val season = displaySeason(term.season, southern)
         val phase = term.ordinal % 6
         return when (season) {
             SolarSeason.SPRING -> lerpRgb(rgb(46, 160, 120), rgb(90, 200, 170), phase, dark)

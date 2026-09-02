@@ -19,6 +19,8 @@ import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalUriHandler
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.semantics.contentDescription
+import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -73,6 +75,60 @@ fun AstroClockScreen(
         horizontalAlignment = Alignment.CenterHorizontally,
         verticalArrangement = Arrangement.spacedBy(8.dp)
     ) {
+        BoxWithConstraints(
+            modifier = Modifier.fillMaxWidth().weight(1f),
+            contentAlignment = Alignment.TopCenter
+        ) {
+            val side = minOf(maxWidth, (maxHeight - DiskChrome.Reserve).coerceAtLeast(0.dp))
+            val sizePx = ClockRenderSize.fromMinDp(side.value.toInt().coerceAtLeast(80))
+            val diskBitmap = remember(place, alarms, now.epochSecond / 10, sizePx, showZodiac, showEventTimes, showMonthTicks) {
+                AstroDiskRenderer.renderDisk(place, alarms, now, sizePx, showZodiac, showEventTimes, showMonthTicks)
+            }
+            val zodiacHits = remember(place, now.epochSecond / 10, sizePx, showZodiac) {
+                if (showZodiac) ZodiacRingLayout.diskHits(place, now, sizePx) else emptyList()
+            }
+            val uriHandler = LocalUriHandler.current
+            Column(
+                Modifier.fillMaxWidth().align(Alignment.TopCenter),
+                horizontalAlignment = Alignment.CenterHorizontally,
+                verticalArrangement = Arrangement.spacedBy(8.dp)
+            ) {
+                Image(
+                    bitmap = diskBitmap.asImageBitmap(),
+                    contentDescription = stringResource(R.string.astro_widget_desc),
+                    modifier = Modifier.size(side).pointerInput(zodiacHits, sizePx) {
+                        detectTapGestures { tap ->
+                            val bx = tap.x * sizePx / size.width
+                            val by = tap.y * sizePx / size.height
+                            ZodiacRingLayout.at(zodiacHits, bx, by)?.let { sign ->
+                                runCatching { uriHandler.openUri(ZodiacRingLayout.wikipediaUrl(sign)) }
+                            }
+                        }
+                    }
+                )
+                Button(
+                    onClick = { pinClockWidget(context) },
+                    modifier = Modifier.fillMaxWidth().semantics {
+                        contentDescription = context.getString(R.string.astro_add_widget_cd)
+                    },
+                    shape = RoundedCornerShape(12.dp)
+                ) {
+                    Icon(Icons.Default.AddCircle, contentDescription = null)
+                    Spacer(modifier = Modifier.width(8.dp))
+                    Text(stringResource(R.string.astro_add_widget_btn))
+                }
+                Text(
+                    text = "☀️ ${solarNoon?.let { ZonedDateTime.ofInstant(it, zone).format(fmt) } ?: "--:--"}   " +
+                        "${middayZodiac.symbol} ${middayZodiac.englishName}   " +
+                        "🌙 ${solarMidnight?.let { ZonedDateTime.ofInstant(it, zone).format(fmt) } ?: "--:--"}   " +
+                        "${midnightZodiac.symbol} ${midnightZodiac.englishName}",
+                    fontSize = 13.sp,
+                    fontWeight = FontWeight.Medium,
+                    maxLines = 2
+                )
+            }
+        }
+
         ClockOverlayToggles(
             showZodiac = showZodiac,
             onShowZodiacChange = { displayPrefs.setShowZodiac2D(it) },
@@ -84,54 +140,6 @@ fun AstroClockScreen(
             eventTimesTitle = stringResource(R.string.astro_toggle_show_event_times),
             monthTicksTitle = stringResource(R.string.astro_toggle_show_month_ticks),
         )
-
-        BoxWithConstraints(
-            modifier = Modifier.fillMaxWidth().weight(1f),
-            contentAlignment = Alignment.Center
-        ) {
-            val side = minOf(maxWidth, maxHeight)
-            val sizePx = ClockRenderSize.fromMinDp(side.value.toInt().coerceAtLeast(80))
-            val diskBitmap = remember(place, alarms, now.epochSecond / 10, sizePx, showZodiac, showEventTimes, showMonthTicks) {
-                AstroDiskRenderer.renderDisk(place, alarms, now, sizePx, showZodiac, showEventTimes, showMonthTicks)
-            }
-            val zodiacHits = remember(place, now.epochSecond / 10, sizePx, showZodiac) {
-                if (showZodiac) ZodiacRingLayout.diskHits(place, now, sizePx) else emptyList()
-            }
-            val uriHandler = LocalUriHandler.current
-            Image(
-                bitmap = diskBitmap.asImageBitmap(),
-                contentDescription = stringResource(R.string.astro_widget_desc),
-                modifier = Modifier.size(side).pointerInput(zodiacHits, sizePx) {
-                    detectTapGestures { tap ->
-                        val bx = tap.x * sizePx / size.width
-                        val by = tap.y * sizePx / size.height
-                        ZodiacRingLayout.at(zodiacHits, bx, by)?.let { sign ->
-                            runCatching { uriHandler.openUri(ZodiacRingLayout.wikipediaUrl(sign)) }
-                        }
-                    }
-                }
-            )
-        }
-
-        Text(
-            text = "☀️ ${solarNoon?.let { ZonedDateTime.ofInstant(it, zone).format(fmt) } ?: "--:--"}   " +
-                "${middayZodiac.symbol} ${middayZodiac.englishName}   " +
-                "🌙 ${solarMidnight?.let { ZonedDateTime.ofInstant(it, zone).format(fmt) } ?: "--:--"}   " +
-                "${midnightZodiac.symbol} ${midnightZodiac.englishName}",
-            fontSize = 13.sp,
-            fontWeight = FontWeight.Medium,
-            maxLines = 2
-        )
-
-        Button(
-            onClick = { pinClockWidget(context) },
-            modifier = Modifier.fillMaxWidth(),
-            shape = RoundedCornerShape(12.dp)
-        ) {
-            Icon(Icons.Default.AddCircle, contentDescription = null)
-            Spacer(modifier = Modifier.width(8.dp))
-            Text(stringResource(R.string.astro_add_widget_btn))
-        }
     }
 }
 

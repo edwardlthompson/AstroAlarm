@@ -3,10 +3,10 @@ package org.astroalarm.math
 import kotlin.random.Random
 
 enum class MathDifficulty {
+    ELEMENTARY,
     EASY,
     MEDIUM,
     HARD,
-    GENIUS
 }
 
 data class MathProblem(
@@ -15,12 +15,23 @@ data class MathProblem(
 )
 
 object MathProblemGenerator {
-    fun generate(difficulty: MathDifficulty): MathProblem {
+    fun generate(difficulty: MathDifficulty, rng: Random = Random.Default): MathProblem {
         return when (difficulty) {
+            MathDifficulty.ELEMENTARY -> {
+                val a = rng.nextInt(0, 10)
+                val b = rng.nextInt(0, 10)
+                if (rng.nextBoolean()) {
+                    MathProblem("$a + $b", a + b)
+                } else {
+                    val maxVal = maxOf(a, b)
+                    val minVal = minOf(a, b)
+                    MathProblem("$maxVal - $minVal", maxVal - minVal)
+                }
+            }
             MathDifficulty.EASY -> {
-                val a = Random.nextInt(4, 25)
-                val b = Random.nextInt(3, 20)
-                if (Random.nextBoolean()) {
+                val a = rng.nextInt(4, 25)
+                val b = rng.nextInt(3, 20)
+                if (rng.nextBoolean()) {
                     MathProblem("$a + $b", a + b)
                 } else {
                     val maxVal = maxOf(a, b)
@@ -29,9 +40,9 @@ object MathProblemGenerator {
                 }
             }
             MathDifficulty.MEDIUM -> {
-                val a = Random.nextInt(18, 75)
-                val b = Random.nextInt(15, 65)
-                if (Random.nextBoolean()) {
+                val a = rng.nextInt(18, 75)
+                val b = rng.nextInt(15, 65)
+                if (rng.nextBoolean()) {
                     MathProblem("$a + $b", a + b)
                 } else {
                     val maxVal = maxOf(a, b)
@@ -40,26 +51,14 @@ object MathProblemGenerator {
                 }
             }
             MathDifficulty.HARD -> {
-                val a = Random.nextInt(6, 15)
-                val b = Random.nextInt(4, 12)
-                val c = Random.nextInt(10, 40)
+                val a = rng.nextInt(6, 15)
+                val b = rng.nextInt(4, 12)
+                val c = rng.nextInt(10, 40)
                 val product = a * b
-                if (Random.nextBoolean()) {
+                if (rng.nextBoolean()) {
                     MathProblem("$a × $b + $c", product + c)
                 } else {
                     MathProblem("$a × $b - $c", product - c)
-                }
-            }
-            MathDifficulty.GENIUS -> {
-                val a = Random.nextInt(11, 22)
-                val b = Random.nextInt(8, 16)
-                val c = Random.nextInt(25, 80)
-                val product = a * b
-                if (Random.nextBoolean()) {
-                    MathProblem("($a × $b) - $c", product - c)
-                } else {
-                    val d = Random.nextInt(12, 35)
-                    MathProblem("($a + $d) × $b", (a + d) * b)
                 }
             }
         }

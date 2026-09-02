@@ -23,4 +23,17 @@ class GlobeGroundTracksTest {
         val (_, _, z) = SphereProjection.latLonToDisk(0.0, 180.0, 40.0, -74.0)
         assertTrue(z < 0.0)
     }
+
+    @Test
+    fun nycNorthPoleProjectsAboveDiskCenter() {
+        val (_, ny, _) = GlobeAxis.poleDisk(40.0, -74.0, north = true)
+        assertTrue(ny > 0.0)
+    }
+
+    @Test
+    fun juneSunDecParallelSitsOnPlusLatSideOfEquator() {
+        val eqY = SphereProjection.latLonToDisk(0.0, -74.0, 40.0, -74.0).second
+        val junY = SphereProjection.latLonToDisk(23.44, -74.0, 40.0, -74.0).second
+        assertTrue(junY > eqY)
+    }
 }

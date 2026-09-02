@@ -42,12 +42,7 @@ fun AstroAlarmRow(
                     horizontalArrangement = Arrangement.spacedBy(10.dp),
                     verticalAlignment = Alignment.CenterVertically
                 ) {
-                    val icon = when (val t = alarm.target) {
-                        is AlarmTarget.Solar -> "☀️"
-                        is AlarmTarget.Lunar -> "🌙"
-                        is AlarmTarget.Zodiac -> t.sign.symbol
-                        is AlarmTarget.CustomClock -> "⏰"
-                    }
+                    val icon = org.astroalarm.astro.alarm.AlarmTargetCopy.icon(alarm.target).trim()
                     Text(text = icon, fontSize = 24.sp)
                     Column {
                         Text(
@@ -115,7 +110,11 @@ fun AstroAlarmRow(
 
 @Composable
 fun DaysChipRow(target: AlarmTarget, selectedDays: Set<DayOfWeek>) {
-    val isSeasonal = (target is AlarmTarget.Solar && AstroEventLabels.isSeasonal(target.event)) || target is AlarmTarget.Zodiac
+    val isSeasonal = (target is AlarmTarget.Solar && AstroEventLabels.isSeasonal(target.event)) ||
+        target is AlarmTarget.Zodiac || target is AlarmTarget.SolarTerm ||
+        target is AlarmTarget.PlanetAlign || target is AlarmTarget.AllPlanetsAlign ||
+        (target is AlarmTarget.Planet && target.event != org.astroalarm.sol.PlanetEventType.Rise &&
+            target.event != org.astroalarm.sol.PlanetEventType.Set)
     Row(horizontalArrangement = Arrangement.spacedBy(4.dp)) {
         if (isSeasonal) {
             BadgeText(stringResource(R.string.astro_repeat_yearly))

@@ -51,17 +51,12 @@ class AstroDisplayPreferencesTest {
     }
 
     @Test
-    fun solarTermsYearDefaultOffAndPersist() = runBlocking {
+    fun solarTermCompactPersists() = runBlocking {
         val prefs = AstroDisplayPreferences(context)
-        assertFalse(prefs.isShowSolarTermsYear())
-        assertFalse(prefs.isSolarTermTraditional())
-        assertFalse(prefs.isSolarTermLocalSeasons())
-        prefs.setShowSolarTermsYear(true)
-        prefs.setSolarTermTraditional(true)
-        prefs.setSolarTermLocalSeasons(true)
+        assertFalse(prefs.isSolarTermCompact())
+        prefs.setSolarTermCompact(true)
         val reader = AstroDisplayPreferences(context)
-        assertTrue(reader.isShowSolarTermsYear())
-        assertTrue(reader.isSolarTermTraditional())
-        assertTrue(reader.isSolarTermLocalSeasons())
+        assertTrue(reader.isSolarTermCompact())
+        assertTrue(reader.solarTermCompact.first())
     }
 }

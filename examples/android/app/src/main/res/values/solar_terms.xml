@@ -49,19 +49,13 @@
     <string name="solar_term_dahan">Great Cold</string>
     <string name="solar_term_desc_dahan">Coldest days of the year.</string>
     <string name="solar_term_tab_year">Year</string>
-    <string name="solar_term_section_title">24 Solar Terms</string>
-    <string name="solar_term_section_desc">Optional year wheel of the 24 jieqi. Off by default so daily clocks stay unchanged.</string>
-    <string name="solar_term_toggle_year">Show 24 Solar Terms in Year View</string>
-    <string name="solar_term_toggle_traditional">Traditional Chinese characters</string>
-    <string name="solar_term_toggle_local_seasons">Local seasons (southern hemisphere names and colors)</string>
-    <string name="solar_term_view_2d">2D wheel</string>
-    <string name="solar_term_view_3d">3D ring</string>
+    <string name="solar_term_toggle_compact">Compact wheel (color and emoji only)</string>
     <string name="solar_term_next_in_days">Next term in %1$d days</string>
     <string name="solar_term_next_in_hours">Next term in %1$d hours</string>
     <string name="solar_term_next_today">Next term later today</string>
     <string name="solar_term_next_label">Next: %1$s on %2$s</string>
-    <string name="solar_term_at_location">at your location · %1$s</string>
-    <string name="solar_term_at_coords">at your location · %1$.2f, %2$.2f</string>
+    <string name="solar_term_at_location">%1$s</string>
+    <string name="solar_term_at_coords">%1$.2f, %2$.2f</string>
     <string name="solar_term_device_zone">using device timezone</string>
     <string name="solar_term_widget_name">24 Solar Terms</string>
     <string name="solar_term_widget_desc">Current and next solar terms with local times</string>
@@ -71,8 +65,6 @@
     <string name="solar_term_longitude">Sun longitude %1$.0f°</string>
     <string name="solar_term_phenology">Season note</string>
     <string name="solar_term_timeline">Day of year</string>
-    <string name="solar_term_pin_widget">Add solar terms widget</string>
-    <string name="solar_term_now">Now</string>
-    <string name="solar_term_settings_title">Year view</string>
-    <string name="solar_term_fallback_2d">3D view is unavailable; showing the 2D wheel.</string>
+    <string name="solar_term_pin_widget">Add Widget to Home Screen</string>
+    <string name="solar_term_pin_widget_cd">Add solar terms widget</string>
 </resources>

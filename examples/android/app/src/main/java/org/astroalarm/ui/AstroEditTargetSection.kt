@@ -1,9 +1,8 @@
 package org.astroalarm.ui
 
 import androidx.compose.runtime.Composable
+import org.astroalarm.astro.alarm.AlarmTargetCopy
 import org.astroalarm.astro.model.AlarmTarget
-import org.astroalarm.astro.zodiac.ZodiacPoint
-import org.astroalarm.astro.zodiac.ZodiacSign
 
 @Composable
 fun AstroEditTargetSection(
@@ -50,6 +49,39 @@ fun AstroEditTargetSection(
                 hour = target.hour,
                 minute = target.minute,
                 onTimeChange = { h, m -> onTargetChange(AlarmTarget.CustomClock(h, m)) }
+            )
+        }
+        is AlarmTarget.SolarTerm -> {
+            SeasonalTermPicker(
+                selected = target.term,
+                onSelect = { onTargetChange(target.copy(term = it)) }
+            )
+            OffsetSelector(
+                offsetMinutes = target.offsetMinutes,
+                eventName = target.term.pinyin,
+                onOffsetChange = { onTargetChange(target.copy(offsetMinutes = it)) }
+            )
+        }
+        is AlarmTarget.Planet, is AlarmTarget.PlanetAlign, is AlarmTarget.AllPlanetsAlign -> {
+            PlanetTargetPicker(target = target, onTargetChange = onTargetChange)
+            val name = AlarmTargetCopy.fallback(target)
+            val offset = when (target) {
+                is AlarmTarget.Planet -> target.offsetMinutes
+                is AlarmTarget.PlanetAlign -> target.offsetMinutes
+                is AlarmTarget.AllPlanetsAlign -> target.offsetMinutes
+            }
+            OffsetSelector(
+                offsetMinutes = offset,
+                eventName = name,
+                onOffsetChange = { m ->
+                    onTargetChange(
+                        when (target) {
+                            is AlarmTarget.Planet -> target.copy(offsetMinutes = m)
+                            is AlarmTarget.PlanetAlign -> target.copy(offsetMinutes = m)
+                            is AlarmTarget.AllPlanetsAlign -> target.copy(offsetMinutes = m)
+                        }
+                    )
+                }
             )
         }
     }

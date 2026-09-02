@@ -60,7 +60,7 @@ fun ClockOverlayToggles(
 }
 
 @Composable
-private fun OverlayToggleLine(
+fun OverlayToggleLine(
     title: String,
     checked: Boolean,
     onCheckedChange: (Boolean) -> Unit,
