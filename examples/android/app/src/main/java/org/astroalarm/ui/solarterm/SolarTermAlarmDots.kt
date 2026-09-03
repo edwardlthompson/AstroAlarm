@@ -5,26 +5,39 @@ import android.graphics.Paint
 import kotlin.math.cos
 import kotlin.math.sin
 
+/** Red armed-jieqi marks on the term ray (solstice/equinox spokes), inside the hub. */
 object SolarTermAlarmDots {
+    fun lineDeg(ord: Int): Float = SolarTermWheelRenderer.startDeg(ord)
+
+    fun ringR(hubFill: Float): Float = hubFill * 0.92f
+
+    fun dotRad(size: Int): Float = (size * 0.018f).coerceIn(4f, 10f)
+
+    fun xy(cx: Float, cy: Float, hubFill: Float, rot: Float, ord: Int): Pair<Float, Float> {
+        val ang = Math.toRadians(lineDeg(ord).toDouble())
+        val rotR = Math.toRadians(rot.toDouble())
+        val r = ringR(hubFill)
+        val lx = r * cos(ang)
+        val ly = r * sin(ang)
+        val x = cx + (lx * cos(rotR) - ly * sin(rotR)).toFloat()
+        val y = cy + (lx * sin(rotR) + ly * cos(rotR)).toFloat()
+        return x to y
+    }
+
     fun draw(
         canvas: Canvas,
         cx: Float,
         cy: Float,
-        r: Float,
+        hubFill: Float,
         rot: Float,
         alarmOrds: Set<Int>,
         size: Int,
     ) {
         if (alarmOrds.isEmpty()) return
         val p = Paint(Paint.ANTI_ALIAS_FLAG).apply { color = 0xFFE53935.toInt() }
-        val rotR = Math.toRadians(rot.toDouble())
-        val rad = (size * 0.018f).coerceIn(4f, 10f)
+        val rad = dotRad(size)
         alarmOrds.forEach { ord ->
-            val mid = Math.toRadians(SolarTermWheelRenderer.midDeg(ord).toDouble())
-            val lx = r * cos(mid)
-            val ly = r * sin(mid)
-            val x = cx + (lx * cos(rotR) - ly * sin(rotR)).toFloat()
-            val y = cy + (lx * sin(rotR) + ly * cos(rotR)).toFloat()
+            val (x, y) = xy(cx, cy, hubFill, rot, ord)
             canvas.drawCircle(x, y, rad, p)
         }
     }
