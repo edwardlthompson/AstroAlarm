@@ -27,7 +27,6 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import dev.foss.goldenpath.R
 import kotlinx.coroutines.delay
-import org.astroalarm.astro.model.AlarmTarget
 import org.astroalarm.astro.model.AstroAlarm
 import org.astroalarm.astro.place.AstroPlace
 import org.astroalarm.astro.settings.AstroDisplayPreferences
@@ -54,9 +53,7 @@ fun SolarTermScreen(
     val dark = isSystemInDarkTheme()
     val earth = remember { EarthTexture.get(context) }
     val moon = remember { MoonTexture.get(context) }
-    val alarmOrds = remember(alarms) {
-        alarms.filter { it.enabled }.mapNotNull { (it.target as? AlarmTarget.SolarTerm)?.term?.ordinal }.toSet()
-    }
+    val alarmOrds = remember(alarms) { SolarTermAlarmDots.ordsOf(alarms) }
 
     LaunchedEffect(Unit) {
         while (true) {

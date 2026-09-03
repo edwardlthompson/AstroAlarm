@@ -1,5 +1,7 @@
 package org.astroalarm.ui.solarterm
 
+import org.astroalarm.astro.model.AlarmTarget
+import org.astroalarm.astro.model.SolarEventType
 import org.astroalarm.solarterm.SolarTerm
 import org.astroalarm.solarterm.SolarTermLayout
 import org.junit.Assert.assertEquals
@@ -53,5 +55,22 @@ class SolarTermAlarmDotsTest {
         assertTrue(dist > SolarTermAlarmDots.dotRad(size) + size * 0.02f)
         val got = Math.toDegrees(atan2((dy - cy).toDouble(), (dx - cx).toDouble())).toFloat()
         assertTrue(SolarTermRadialLabels.angDist(got, SolarTermAlarmDots.lineDeg(SolarTerm.XIAZHI.ordinal)) < 1f)
+    }
+
+    @Test
+    fun solarSolsticeAlarmsUseSeasonLines() {
+        assertEquals(
+            SolarTerm.XIAZHI.ordinal,
+            SolarTermAlarmDots.ordOf(AlarmTarget.Solar(SolarEventType.JuneSolstice)),
+        )
+        assertEquals(
+            SolarTerm.DONGZHI.ordinal,
+            SolarTermAlarmDots.ordOf(AlarmTarget.Solar(SolarEventType.DecemberSolstice)),
+        )
+        assertEquals(
+            SolarTerm.CHUNFEN.ordinal,
+            SolarTermAlarmDots.ordOf(AlarmTarget.Solar(SolarEventType.MarchEquinox)),
+        )
+        assertEquals(null, SolarTermAlarmDots.ordOf(AlarmTarget.Solar(SolarEventType.Sunrise)))
     }
 }
