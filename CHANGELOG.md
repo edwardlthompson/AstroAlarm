@@ -8,6 +8,13 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [1.5.0](https://github.com/edwardlthompson/AstroAlarm/compare/v1.4.1...v1.5.0) (2026-09-04)
+
+
+### Added
+
+* **android:** one fire for seasonal peers and Sol Earth marks ([80759ea](https://github.com/edwardlthompson/AstroAlarm/commit/80759eafee4741f039e4429d97314b0635ea7d42))
+
 ## [1.4.1](https://github.com/edwardlthompson/AstroAlarm/compare/v1.4.0...v1.4.1) (2026-09-04)
 
 ### Fixed
