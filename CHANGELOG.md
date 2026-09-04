@@ -8,14 +8,6 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
-### Added
-
-* **android:** show Yearly solstice and equinox alarms on Earth's Sol path with fire times
-
-### Fixed
-
-* **android:** treat overlapping Sun and Yearly seasonal calendars as one fire
-
 ## [1.4.1](https://github.com/edwardlthompson/AstroAlarm/compare/v1.4.0...v1.4.1) (2026-09-04)
 
 ### Fixed
