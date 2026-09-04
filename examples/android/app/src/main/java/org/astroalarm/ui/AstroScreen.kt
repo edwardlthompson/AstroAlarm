@@ -259,6 +259,7 @@ fun AstroScreen(
             initialAlarm = null,
             defaultTarget = showAddDialogWithTarget!!,
             place = place,
+            existingAlarms = alarms,
             onDismiss = { showAddDialogWithTarget = null },
             onSave = { newAlarm ->
                 alarmStore.save(newAlarm)
@@ -273,6 +274,7 @@ fun AstroScreen(
             initialAlarm = editingAlarm,
             defaultTarget = editingAlarm!!.target,
             place = place,
+            existingAlarms = alarms,
             onDismiss = { editingAlarm = null },
             onSave = { updated ->
                 alarmStore.save(updated)

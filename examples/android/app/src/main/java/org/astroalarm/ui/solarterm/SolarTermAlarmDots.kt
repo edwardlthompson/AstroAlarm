@@ -2,6 +2,7 @@ package org.astroalarm.ui.solarterm
 
 import android.graphics.Canvas
 import android.graphics.Paint
+import org.astroalarm.astro.alarm.AlarmWidgetScope
 import org.astroalarm.astro.model.AlarmTarget
 import org.astroalarm.astro.model.AstroAlarm
 import org.astroalarm.astro.model.SolarEventType
@@ -13,7 +14,10 @@ import kotlin.math.sin
 object SolarTermAlarmDots {
     fun ordsOf(alarms: List<AstroAlarm>, show: Boolean = true): Set<Int> {
         if (!show) return emptySet()
-        return alarms.asSequence().filter { it.enabled }.mapNotNull { ordOf(it.target) }.toSet()
+        return alarms.asSequence()
+            .filter { it.enabled && AlarmWidgetScope.onYearly(it.target) }
+            .mapNotNull { ordOf(it.target) }
+            .toSet()
     }
 
     fun ordOf(target: AlarmTarget): Int? = when (target) {

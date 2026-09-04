@@ -35,6 +35,7 @@ fun AstroEditDialog(
     initialAlarm: AstroAlarm?,
     defaultTarget: AlarmTarget,
     place: AstroPlace?,
+    existingAlarms: List<AstroAlarm> = emptyList(),
     onDismiss: () -> Unit,
     onSave: (AstroAlarm) -> Unit
 ) {
@@ -119,6 +120,18 @@ fun AstroEditDialog(
                     }
 
                     AstroEditTargetSection(target = target, onTargetChange = { target = it })
+
+                    val peer = org.astroalarm.astro.alarm.AlarmFireIdentity.otherPeer(
+                        target, initialAlarm?.id, existingAlarms,
+                    )
+                    if (peer != null) {
+                        val peerName = peer.label.ifBlank { org.astroalarm.astro.alarm.AlarmTargetCopy.fallback(peer.target) }
+                        Text(
+                            text = stringResource(R.string.astro_alarm_duplicate_calendar, peerName),
+                            style = MaterialTheme.typography.bodySmall,
+                            color = MaterialTheme.colorScheme.tertiary,
+                        )
+                    }
 
                     OutlinedTextField(
                         value = label,

@@ -119,20 +119,24 @@ class AstroAlarmActivity : ComponentActivity(), TextToSpeech.OnInitListener {
     private fun onSnoozeClicked() {
         stopAlarmOutput()
         AlarmNotificationChannel.cancel(this)
-        AstroAlarmScheduler.rescheduleAll(this)
+        consumePeersAndReschedule()
         finish()
     }
 
     private fun onStopClicked() {
         stopAlarmOutput()
         AlarmNotificationChannel.cancel(this)
-        activeAlarm?.let { alarm ->
-            val store = AstroAlarmStore(this)
-            val updated = if (alarm.isOnce) alarm.copy(enabled = false, lastFiredEpochMs = System.currentTimeMillis()) else alarm.copy(lastFiredEpochMs = System.currentTimeMillis())
-            store.save(updated)
-            AstroAlarmScheduler.rescheduleAll(this)
-        }
+        consumePeersAndReschedule()
         finish()
+    }
+
+    private fun consumePeersAndReschedule() {
+        val ringing = activeAlarm ?: return
+        val store = AstroAlarmStore(this)
+        val firedAt = System.currentTimeMillis()
+        val marked = if (ringing.isOnce) ringing.copy(enabled = false, lastFiredEpochMs = firedAt) else ringing
+        store.saveAll(AlarmFireIdentity.consumeOccurrence(store.getAll(), marked, firedAt))
+        AstroAlarmScheduler.rescheduleAll(this)
     }
 
     override fun onDestroy() {

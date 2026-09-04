@@ -18,18 +18,21 @@ object AstroNextFire {
         place: AstroPlace?,
         now: Instant = Instant.now(),
         zone: ZoneId = place?.zone ?: ZoneId.systemDefault(),
+        all: List<AstroAlarm> = emptyList(),
     ): Instant? {
         if (!alarm.enabled) return null
         val nowZdt = ZonedDateTime.ofInstant(now, zone)
+        fun open(instant: Instant) = instant.isAfter(now) &&
+            !AlarmFireIdentity.occurrenceConsumed(instant, alarm, all)
 
         return when (val target = alarm.target) {
             is AlarmTarget.CustomClock -> nextCustomClock(alarm, target, nowZdt)
-            is AlarmTarget.Solar -> nextSolar(alarm, target, place, nowZdt, now)
+            is AlarmTarget.Solar -> nextSolar(alarm, target, place, nowZdt, now, all)
             is AlarmTarget.Lunar -> nextLunar(alarm, target, place, nowZdt, now)
-            is AlarmTarget.Zodiac -> nextZodiac(alarm, target, now)
+            is AlarmTarget.Zodiac -> nextZodiac(alarm, target, now, all)
             is AlarmTarget.SolarTerm -> (now.atZone(ZoneOffset.UTC).year..(now.atZone(ZoneOffset.UTC).year + 2))
                 .map { SolarTermCalculator.instant(it, target.term).plusSeconds(target.offsetMinutes * 60L) }
-                .firstOrNull { it.isAfter(now) }
+                .firstOrNull(::open)
             is AlarmTarget.Planet -> PlanetNext.nextPlanetEvent(target.body, target.event, place, now)
                 ?.plusSeconds(target.offsetMinutes * 60L)
             is AlarmTarget.PlanetAlign -> PlanetNext.nextAlign(target.bodyA, target.bodyB, now)
@@ -65,7 +68,8 @@ object AstroNextFire {
         target: AlarmTarget.Solar,
         place: AstroPlace?,
         nowZdt: ZonedDateTime,
-        now: Instant
+        now: Instant,
+        all: List<AstroAlarm>,
     ): Instant? {
         if (place == null || !place.isValid) return null
         val today = nowZdt.toLocalDate()
@@ -82,7 +86,7 @@ object AstroNextFire {
                 val base = SolarCalculator.calculate(target.event, date, place.latitude, place.longitude, place.zone)
                     ?: continue
                 val fireInstant = base.plusSeconds(target.offsetMinutes * 60L)
-                if (fireInstant.isAfter(now)) {
+                if (fireInstant.isAfter(now) && !AlarmFireIdentity.occurrenceConsumed(fireInstant, alarm, all)) {
                     return fireInstant
                 }
             }
@@ -127,18 +131,9 @@ object AstroNextFire {
         return null
     }
 
-    private fun nextZodiac(
-        alarm: AstroAlarm,
-        target: AlarmTarget.Zodiac,
-        now: Instant
-    ): Instant {
-        val base = ZodiacCalculator.nextInstant(target.sign, target.point, now)
-        val fireInstant = base.plusSeconds(target.offsetMinutes * 60L)
-        return if (fireInstant.isAfter(now)) {
-            fireInstant
-        } else {
-            val nextBase = ZodiacCalculator.nextInstant(target.sign, target.point, now.plusSeconds(86400L * 2))
-            nextBase.plusSeconds(target.offsetMinutes * 60L)
-        }
+    private fun nextZodiac(alarm: AstroAlarm, target: AlarmTarget.Zodiac, now: Instant, all: List<AstroAlarm>): Instant? {
+        val first = ZodiacCalculator.nextInstant(target.sign, target.point, now).plusSeconds(target.offsetMinutes * 60L)
+        val later = ZodiacCalculator.nextInstant(target.sign, target.point, first.plusSeconds(1)).plusSeconds(target.offsetMinutes * 60L)
+        return listOf(first, later).firstOrNull { it.isAfter(now) && !AlarmFireIdentity.occurrenceConsumed(it, alarm, all) }
     }
 }

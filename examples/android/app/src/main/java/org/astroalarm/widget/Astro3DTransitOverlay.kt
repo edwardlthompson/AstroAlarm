@@ -3,7 +3,7 @@ package org.astroalarm.widget
 import android.graphics.Canvas
 import android.graphics.Color
 import android.graphics.Paint
-import org.astroalarm.astro.alarm.AstroNextFire
+import org.astroalarm.astro.alarm.AlarmWidgetScope
 import org.astroalarm.astro.model.AstroAlarm
 import org.astroalarm.astro.place.AstroPlace
 import org.astroalarm.astro.sky.BodySky
@@ -58,20 +58,16 @@ object Astro3DTransitOverlay {
         val horizon = now.plusSeconds(86400L)
         val lat = place?.latitude ?: 40.0
         val lon = place?.longitude ?: -74.0
-        alarms.filter { it.enabled }.forEach { alarm ->
-            AstroNextFire.nextInstant(alarm, place, now)?.let { next ->
-                if (next.isAfter(now) && !next.isAfter(horizon)) {
-                    val ang = SkyBodies.sun(next, lat, lon)?.let {
-                        BodySky.ringAngle(it.haRad, lat)
-                    } ?: return@let
-                    canvas.drawCircle(
-                        cx + rx * cos(ang).toFloat(),
-                        cy + ry * sin(ang).toFloat(),
-                        (size * 0.024f).coerceIn(4f, 9f),
-                        nodePaint,
-                    )
-                }
-            }
+        AlarmWidgetScope.dailyMarks(alarms, place, now, horizon).forEach { (_, next) ->
+            val ang = SkyBodies.sun(next, lat, lon)?.let {
+                BodySky.ringAngle(it.haRad, lat)
+            } ?: return@forEach
+            canvas.drawCircle(
+                cx + rx * cos(ang).toFloat(),
+                cy + ry * sin(ang).toFloat(),
+                (size * 0.024f).coerceIn(4f, 9f),
+                nodePaint,
+            )
         }
     }
 

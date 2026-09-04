@@ -107,6 +107,16 @@ When **Sprint 0** ends: stop re-reading `docs/INITIALIZATION_PROMPT.md` as the d
 
 > **Yearly/Sol/math/celestial** slices archived in COMPLETED_TASKS.md (2026-09-01). Next named feature starts here.
 
+### Feature: alarm-calendar-peers
+
+1. ✅ [AGENT] Feature spec `docs/features/alarm-calendar-peers.md`
+2. ✅ [AGENT] One-fire identity, saveAll, next-fire skip, widget scope, editor warning, tests
+
+### Feature: sol-yearly-alarms
+
+1. ✅ [AGENT] Feature spec `docs/features/sol-yearly-alarms.md`
+2. ✅ [AGENT] Earth-path yearly marks + fire times on Sol; tests
+
 > One vertical slice at a time. See `docs/FEATURE_MODULES.md`. Reference exemplars: `docs/features/settings.md` (Sprint 2), About (Sprint 1).
 
 ### Critique

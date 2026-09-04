@@ -11,12 +11,9 @@ import android.widget.RemoteViews
 import dev.foss.goldenpath.MainActivity
 import dev.foss.goldenpath.R
 import org.astroalarm.astro.alarm.AlarmTargetCopy
-import org.astroalarm.astro.alarm.AstroAlarmScheduler
+import org.astroalarm.astro.alarm.AlarmWidgetScope
 import org.astroalarm.astro.alarm.AstroAlarmStore
-import org.astroalarm.astro.alarm.AstroNextFire
 import org.astroalarm.astro.place.AstroPlaceStore
-import org.astroalarm.astro.settings.AstroDisplayPreferences
-import org.astroalarm.ui.AlarmViewMode
 import java.time.Instant
 import java.time.ZonedDateTime
 import java.time.format.DateTimeFormatter
@@ -27,41 +24,18 @@ class AstroUpcomingWidgetProvider : AppWidgetProvider() {
     override fun onUpdate(context: Context, appWidgetManager: AppWidgetManager, appWidgetIds: IntArray) {
         val placeStore = AstroPlaceStore(context)
         val alarmStore = AstroAlarmStore(context)
-        val displayPrefs = AstroDisplayPreferences(context)
         val place = placeStore.get()
         val alarms = alarmStore.getAll().filter { it.enabled }
-        val viewMode = displayPrefs.getAlarmViewMode()
         val now = Instant.now()
         val zone = place?.zone ?: java.time.ZoneId.systemDefault()
         val horizon = now.plusSeconds(86400L * 2)
         val timeFmt = DateTimeFormatter.ofPattern("EEE HH:mm", Locale.getDefault())
 
-        val formattedItems: List<String> = if (viewMode == AlarmViewMode.Grouped) {
-            // Grouped by Category
-            val list = mutableListOf<String>()
-            alarms.mapNotNull { a -> AstroNextFire.nextInstant(a, place, now)?.let { a to it } }.forEach { (alarm, next) ->
-                if (next.isAfter(now) && !next.isAfter(horizon)) {
-                    val zdt = ZonedDateTime.ofInstant(next, zone)
-                    val icon = AlarmTargetCopy.icon(alarm.target)
-                    val label = alarm.label.ifBlank { AlarmTargetCopy.fallback(alarm.target) }
-                    list.add("$icon${zdt.format(timeFmt)} - $label")
-                }
-            }
-            list
-        } else {
-            // Sorted Strictly Next Due
-            val upcomingItems = mutableListOf<Pair<Instant, String>>()
-            alarms.forEach { alarm ->
-                AstroNextFire.nextInstant(alarm, place, now)?.let { next ->
-                    if (next.isAfter(now) && !next.isAfter(horizon)) {
-                        val zdt = ZonedDateTime.ofInstant(next, zone)
-                        val icon = AlarmTargetCopy.icon(alarm.target)
-                        val label = alarm.label.ifBlank { AlarmTargetCopy.fallback(alarm.target) }
-                        upcomingItems.add(next to "$icon${zdt.format(timeFmt)} - $label")
-                    }
-                }
-            }
-            upcomingItems.sortedBy { it.first.toEpochMilli() }.map { it.second }
+        val formattedItems: List<String> = AlarmWidgetScope.upcomingLines(alarms, place, now, horizon).map { (alarm, next) ->
+            val zdt = ZonedDateTime.ofInstant(next, zone)
+            val icon = AlarmTargetCopy.icon(alarm.target)
+            val label = alarm.label.ifBlank { AlarmTargetCopy.fallback(alarm.target) }
+            "$icon${zdt.format(timeFmt)} - $label"
         }
 
         val launchIntent = Intent(context, MainActivity::class.java)

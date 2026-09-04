@@ -33,11 +33,10 @@ object AstroAlarmScheduler {
         }
 
         val nextPairs = alarms.mapNotNull { alarm ->
-            val instant = AstroNextFire.nextInstant(alarm, place, now) ?: return@mapNotNull null
+            val instant = AstroNextFire.nextInstant(alarm, place, now, all = alarms) ?: return@mapNotNull null
             alarm to instant
-        }.sortedBy { it.second }
-
-        val earliest = nextPairs.firstOrNull()
+        }
+        val earliest = AlarmFireIdentity.armedPair(nextPairs)
         val alarmManager = context.getSystemService(Context.ALARM_SERVICE) as? AlarmManager ?: return
 
         if (earliest == null) {

@@ -97,6 +97,8 @@
     <string name="astro_empty_seasonal">No seasonal alarms configured.</string>
     <string name="astro_section_planet">Planet Alarms</string>
     <string name="astro_empty_planet">No planet alarms configured.</string>
+    <string name="astro_alarm_duplicate_calendar">Same moment as %1$s</string>
+    <string name="astro_alarm_also_listed">Also listed as %1$s</string>
 
     <string name="astro_action_add">Add</string>
     <string name="astro_action_edit">Edit</string>

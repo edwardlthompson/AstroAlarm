@@ -17,6 +17,20 @@
 
 ## Entries
 
+### 2026-09-04 — One fire for overlapping Sun and Yearly calendars
+- **Status:** Accepted
+- **Context:** Sun seasonal events and cardinal jieqi (plus zodiac Beginning of Aries/Cancer/Libra/Capricorn) share NOAA apparent-longitude instants. Two list rows could double-ring when solvers differed by ~1s. `lastFired` was written on Stop and never read.
+- **Decision:** Keep both rows. Group by tropical longitude bucket + `offsetMinutes` (no place). Arm the primary (lowest enabled id). Stamp all peers on Stop and Snooze via `saveAll`. Warn in the editor and list; do not block save. Route marks with `AlarmWidgetScope`.
+- **Alternatives considered:** Merging or deleting types (rejected: user keeps both catalogs). Blocking save of the second calendar (rejected: warn only). Implementing snooze-until delay in this slice (deferred: after T the next fire is already next year).
+- **Consequences:** Feature `docs/features/alarm-calendar-peers.md`. Local `feature-gate --stack android` passed (hygiene, encoding, file-limits, android-test, android-fdroid). F-Droid `versionCode` still 10104.
+
+### 2026-09-04 — v1.4.1 /ship
+- **Status:** Accepted
+- **Context:** Yearly solstice dots sat on emoji midpoints, Compact widgets auto-expanded, and 3D/Yearly/Sol lacked Show event times. Local `/prerelease` passed after reverting invalid CodeQL bundle tags.
+- **Decision:** Empty Unreleased; land PR #13; Release Please cuts **1.4.1** (PR #14, admin-merge). Keep both `AlarmTarget.Solar` seasonal events and `AlarmTarget.SolarTerm` jieqi as separate user-created alarms. `versionCode` stays **10104**. Skip `codeql-action@vcodeql-bundle-*`. Codex skipped (no key/CLI).
+- **Alternatives considered:** Applying `vcodeql-bundle-*` (rejected: known invalid). Merging sun/jieqi alarm types in this ship (rejected: needs a dedicated UX plan).
+- **Consequences:** GitHub Release **v1.4.1** should carry SBOM + OpenVEX. Sideload replaces 1.4.0 in place (same upload cert and versionCode). F-Droid needs a later versionCode bump.
+
 ### 2026-09-02 — v1.4.0 /ship
 - **Status:** Accepted
 - **Context:** Yearly hub, Sol Kepler map, celestial alarms, and Elementary math were ready to publish after local `/prerelease`.

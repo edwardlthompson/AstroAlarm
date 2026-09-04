@@ -7,7 +7,7 @@
 
 | Layer | Technology | Version | Notes |
 |-------|-----------|---------|-------|
-| Platform | Android (Kotlin, Jetpack Compose, Material 3) | 1.4.0 | Child of agent-project-bootstrap; GitHub Releases APK `astroalarm-X.Y.Z-foss.apk` |
+| Platform | Android (Kotlin, Jetpack Compose, Material 3) | 1.4.1 | Child of agent-project-bootstrap; GitHub Releases APK `astroalarm-X.Y.Z-foss.apk` |
 | Persistence | JSON SharedPreferences + DataStore | - | Room/Hilt on classpath for later stores |
 | Ephemeris | commons-suncalc 3.11 + NOAA tropical longitude + on-device Kepler | on-device | Sun/moon times; NOAA for seasons/zodiac/jieqi; Kepler for Sol tab and planet alarms |
 | License | MIT | - | Pure FOSS; no Play Services / Firebase |
@@ -44,6 +44,9 @@ FOSS Android astronomical alarm clock: on-device suncalc sun/moon ephemeris, sol
 
 ## Session Retrospectives
 
+| 2026-09-04 | sol-yearly-alarms | Jieqi and solstice/equinox marks on Earth's Sol path with MMM d HH:mm | Related planet is Earth; Show event times still hides dots |
+| 2026-09-04 | alarm-calendar-peers | Keep Sun + Yearly rows; one fire via lon+offset key; consume on Stop/Snooze; widget scope | Do not merge types; snooze-until delay is a later row; versionCode stays 10104 |
+| 2026-09-04 | v1.4.1 /ship | Yearly dots on jieqi rays; Compact widgets; Show event times on 3D/Yearly/Sol; RP #14; ruff 0.16.6 | Do not apply `vcodeql-bundle-*` tags; versionCode stays 10104; sun vs jieqi seasonal alarms still overlap |
 | 2026-09-02 | v1.4.0 /ship | Yearly hub + Sol Kepler + celestial alarms; RP #12; Moon anti-sunward at full; jieqi wrap; sideload PC upload key | Do not apply `vcodeql-bundle-*` tags; Yearly Moon offset is `canvasDeg + 180`; versionCode 10104 is not auto-bumped |
 | 2026-09-01 | Yearly Sol labels | Shared pin copy; Yearly Moon ecliptic; N/S off traces; jieqi inset edges; Sol teaching chrome | Daily 3D tracks stay on Earth; do not un-rotate them onto the sun ring |
 | 2026-09-01 | Yearly Sol align | Shared pin Y; 3D globe nod by sunDec; compact emoji band; N/S on traces; non-scrolling tabs | Do not rotate 3D rings with the globe; green stays north |

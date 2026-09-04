@@ -27,7 +27,11 @@ class AstroAlarmStore(context: Context) {
         } else {
             current.add(alarm)
         }
-        persist(current)
+        saveAll(current)
+    }
+
+    fun saveAll(alarms: List<AstroAlarm>) {
+        persist(alarms)
     }
 
     fun delete(id: String) {

@@ -24,7 +24,8 @@ fun AstroAlarmRow(
     onToggle: (Boolean) -> Unit,
     onEdit: () -> Unit,
     onDelete: () -> Unit,
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
+    peerNote: String? = null,
 ) {
     Card(
         modifier = modifier.fillMaxWidth(),
@@ -63,6 +64,13 @@ fun AstroAlarmRow(
                                 text = stringResource(R.string.astro_status_disabled),
                                 fontSize = 12.sp,
                                 color = MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.6f)
+                            )
+                        }
+                        if (peerNote != null) {
+                            Text(
+                                text = peerNote,
+                                fontSize = 12.sp,
+                                color = MaterialTheme.colorScheme.tertiary
                             )
                         }
                     }

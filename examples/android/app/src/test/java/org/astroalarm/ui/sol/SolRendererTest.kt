@@ -1,9 +1,11 @@
 package org.astroalarm.ui.sol
 
+import org.astroalarm.astro.alarm.AstroNextFire
 import org.astroalarm.astro.model.AlarmTarget
 import org.astroalarm.astro.model.AstroAlarm
 import org.astroalarm.sol.PlanetBody
 import org.astroalarm.sol.PlanetEventType
+import org.astroalarm.solarterm.SolarTerm
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertTrue
 import org.junit.Test
@@ -11,6 +13,7 @@ import org.junit.runner.RunWith
 import org.robolectric.RobolectricTestRunner
 import org.robolectric.annotation.Config
 import java.time.Instant
+import java.time.ZoneOffset
 
 @RunWith(RobolectricTestRunner::class)
 @Config(sdk = [26])
@@ -24,6 +27,22 @@ class SolRendererTest {
         assertEquals(128, bmp.height)
         val body = SolRenderer.bodyAt(64f, 64f, 128, now, 1f)
         assertTrue(body == null || body in PlanetBody.entries)
+    }
+
+    @Test
+    fun yearlyAlarmRendersOnEarthPath() {
+        val now = Instant.parse("2026-01-15T00:00:00Z")
+        val jieqi = AstroAlarm(id = "x", label = "Xiazhi", target = AlarmTarget.SolarTerm(SolarTerm.XIAZHI))
+        val bmp = SolRenderer.render(96, now, 1f, true, emptyMap(), listOf(jieqi), null)
+        assertEquals(96, bmp.width)
+        val hidden = SolRenderer.render(
+            96, now, 1f, true, emptyMap(), listOf(jieqi), null, showEventTimes = false,
+        )
+        assertEquals(96, hidden.width)
+        val next = AstroNextFire.nextInstant(jieqi, null, now)!!
+        val label = SolAlarmOverlay.labelOf(next, ZoneOffset.UTC, "🍃 ")
+        assertTrue(label.contains("🍃"))
+        assertTrue(label.length > 6)
     }
 
     @Test
