@@ -73,4 +73,15 @@ class SolarTermAlarmDotsTest {
         )
         assertEquals(null, SolarTermAlarmDots.ordOf(AlarmTarget.Solar(SolarEventType.Sunrise)))
     }
+
+    @Test
+    fun eventTimesOffYieldsNoYearlyOrds() {
+        val alarm = org.astroalarm.astro.model.AstroAlarm(
+            id = "s",
+            label = "xiazhi",
+            target = AlarmTarget.Solar(SolarEventType.JuneSolstice),
+        )
+        assertEquals(emptySet<Int>(), SolarTermAlarmDots.ordsOf(listOf(alarm), show = false))
+        assertEquals(setOf(SolarTerm.XIAZHI.ordinal), SolarTermAlarmDots.ordsOf(listOf(alarm), show = true))
+    }
 }

@@ -12,6 +12,7 @@ import dev.foss.goldenpath.MainActivity
 import dev.foss.goldenpath.R
 import org.astroalarm.astro.alarm.AstroAlarmStore
 import org.astroalarm.astro.place.AstroPlaceStore
+import org.astroalarm.astro.settings.AstroDisplayPreferences
 import org.astroalarm.sol.PlanetBody
 import org.astroalarm.ui.sol.SolRenderer
 import java.time.Instant
@@ -21,6 +22,7 @@ class SolWidgetProvider : AppWidgetProvider() {
     override fun onUpdate(context: Context, appWidgetManager: AppWidgetManager, appWidgetIds: IntArray) {
         val place = AstroPlaceStore(context).get()
         val alarms = AstroAlarmStore(context).getAll()
+        val showEventTimes = AstroDisplayPreferences(context).isShowEventTimesSol()
         val now = Instant.now()
         val dark = isNightUi(context)
         val textures = PlanetBody.entries.associateWith { PlanetTextures.get(context, it) }
@@ -37,6 +39,7 @@ class SolWidgetProvider : AppWidgetProvider() {
             val bitmap = SolRenderer.render(
                 sizePx, now, 1f, dark, textures, alarms, place,
                 context.getString(R.string.sol_scale_au),
+                showEventTimes,
             )
             val views = RemoteViews(context.packageName, R.layout.widget_astro).apply {
                 setImageViewBitmap(R.id.widget_astro_disk, bitmap)

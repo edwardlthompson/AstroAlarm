@@ -11,8 +11,10 @@ import kotlin.math.sin
 
 /** Red armed-jieqi marks on the term ray (solstice/equinox spokes), inside the hub. */
 object SolarTermAlarmDots {
-    fun ordsOf(alarms: List<AstroAlarm>): Set<Int> =
-        alarms.asSequence().filter { it.enabled }.mapNotNull { ordOf(it.target) }.toSet()
+    fun ordsOf(alarms: List<AstroAlarm>, show: Boolean = true): Set<Int> {
+        if (!show) return emptySet()
+        return alarms.asSequence().filter { it.enabled }.mapNotNull { ordOf(it.target) }.toSet()
+    }
 
     fun ordOf(target: AlarmTarget): Int? = when (target) {
         is AlarmTarget.SolarTerm -> target.term.ordinal

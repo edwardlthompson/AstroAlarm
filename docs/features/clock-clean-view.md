@@ -4,10 +4,10 @@ Toggle on the 2D clock that hides alarm, sunrise, and sunset time labels so the 
 
 ## Acceptance criteria
 
-- 🔲 User-visible behavior: 2D clock has a switch that hides sunrise/sunset time badges, alarm dots, and alarm time callouts; day/night bands, sun/moon, and the current-time hand stay
-- 🔲 Offline/error behavior: preference is local SharedPreferences; default is times shown; missing place still renders the dial
-- 🔲 Accessibility: switch uses localized title and description; state persists across restarts
-- 🔲 i18n: `astro_toggle_show_event_times` and `astro_toggle_show_event_times_desc` in en/es/fr
+- ✅ User-visible behavior: 2D, 3D, Yearly, and Sol each have **Show event times**; off hides that disk’s alarm markers (2D also hides sunrise/sunset badges and callouts). Home widgets follow the matching tab pref. Zodiac, compact, month ticks, and the current-time hand stay.
+- ✅ Offline/error behavior: each pref is local SharedPreferences; default is times shown; missing place still renders the dial
+- ✅ Accessibility: each switch uses `astro_toggle_show_event_times` as TalkBack; state persists across restarts
+- ✅ i18n: `astro_toggle_show_event_times` and `astro_toggle_show_event_times_desc` in en/es/fr
 
 ## Smoke scenario
 
@@ -24,7 +24,6 @@ Toggle on the 2D clock that hides alarm, sunrise, and sunset time labels so the 
 | Prefs | `examples/android/.../settings/AstroDisplayPreferences.kt` |
 | Tests | `examples/android/app/src/test/.../widget/DiskEventTimeLayersTest.kt` |
 | Wiring | `AstroClockWidgetProvider` reads the same pref |
-
 ## Tests
 
 - Automated: yes — `DiskEventTimeLayersTest.kt`, `AstroDisplayPreferencesTest.kt`
@@ -41,4 +40,5 @@ See `docs/FEATURE_MODULES.md` per-feature checklist.
 ## Notes
 
 - Zodiac ring stays on its own existing toggle
-- Home-screen 2D widget follows the same event-times preference
+- Home-screen 2D / 3D / Yearly / Sol widgets follow their tab’s event-times preference
+- Yearly off hides jieqi/solstice alarm dots so they do not cover the S pole letter

@@ -24,6 +24,7 @@ object SolRenderer {
         alarms: List<AstroAlarm> = emptyList(),
         place: AstroPlace? = null,
         scaleLabel: String = "1 AU",
+        showEventTimes: Boolean = true,
     ): Bitmap {
         val bmp = Bitmap.createBitmap(size, size, Bitmap.Config.ARGB_8888)
         val canvas = Canvas(bmp)
@@ -42,7 +43,7 @@ object SolRenderer {
             val r = max(4f, (0.018f * size * zoom / (1f + st.au.toFloat() * 0.15f)))
             EarthGlobeRenderer.drawGlobe(canvas, x, y, r, 0.0, st.helioLon, textures[body], highlightUser = false)
         }
-        drawAlarmDots(canvas, cx, cy, pxPerAu, now, alarms, place, size)
+        if (showEventTimes) drawAlarmDots(canvas, cx, cy, pxPerAu, now, alarms, place, size)
         SolChrome.drawScaleBar(canvas, pxPerAu, size, scaleLabel)
         return bmp
     }

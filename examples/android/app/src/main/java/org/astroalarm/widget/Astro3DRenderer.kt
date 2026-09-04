@@ -20,6 +20,7 @@ object Astro3DRenderer {
         now: Instant = Instant.now(),
         size: Int = 400,
         showZodiac: Boolean = true,
+        showEventTimes: Boolean = true,
         parallaxX: Float = 0f,
         parallaxY: Float = 0f,
         earth: Bitmap? = null,
@@ -108,7 +109,9 @@ object Astro3DRenderer {
         val (mx, my) = ellipsePoint(cx, moonCy, moonRx, moonRy, moonAng)
         drawBody(canvas, mx, my, size * 0.065f, Color.rgb(200, 220, 255), moonPhaseEmoji(moonAge), size)
 
-        Astro3DTransitOverlay.drawAlarms(canvas, alarms, place, now, cx, sunCy, sunRx, sunRy, size)
+        if (showEventTimes) {
+            Astro3DTransitOverlay.drawAlarms(canvas, alarms, place, now, cx, sunCy, sunRx, sunRy, size)
+        }
         return bitmap
     }
 

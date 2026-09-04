@@ -69,4 +69,19 @@ class AstroDisplayPreferencesTest {
         assertTrue(SolarTermWidgetProvider.drawCompact(true))
         assertFalse(SolarTermWidgetProvider.drawCompact(false))
     }
+
+    @Test
+    fun diskEventTimesDefaultOnAndPersist() = runBlocking {
+        val prefs = AstroDisplayPreferences(context)
+        assertTrue(prefs.isShowEventTimes3D())
+        assertTrue(prefs.isShowEventTimesYearly())
+        assertTrue(prefs.isShowEventTimesSol())
+        prefs.setShowEventTimes3D(false)
+        prefs.setShowEventTimesYearly(false)
+        prefs.setShowEventTimesSol(false)
+        val reader = AstroDisplayPreferences(context)
+        assertFalse(reader.isShowEventTimes3D())
+        assertFalse(reader.isShowEventTimesYearly())
+        assertFalse(reader.isShowEventTimesSol())
+    }
 }

@@ -24,12 +24,13 @@ class SolarTermWidgetProvider : AppWidgetProvider() {
     override fun onUpdate(context: Context, appWidgetManager: AppWidgetManager, appWidgetIds: IntArray) {
         val place = AstroPlaceStore(context).get()
         val alarms = AstroAlarmStore(context).getAll()
-        val compact = drawCompact(AstroDisplayPreferences(context).isSolarTermCompact())
+        val displayPrefs = AstroDisplayPreferences(context)
+        val compact = drawCompact(displayPrefs.isSolarTermCompact())
         val now = Instant.now()
         val dark = isNightUi(context)
         val (snap, req) = SolarTermDrawFactory.request(
             context.resources, place, now, dark = dark, compact = compact,
-            SolarTermAlarmDots.ordsOf(alarms),
+            SolarTermAlarmDots.ordsOf(alarms, displayPrefs.isShowEventTimesYearly()),
         )
         val zone = SolarTermFormat.zoneOf(place)
         val desc = SolarTermFormat.nextGlance(
