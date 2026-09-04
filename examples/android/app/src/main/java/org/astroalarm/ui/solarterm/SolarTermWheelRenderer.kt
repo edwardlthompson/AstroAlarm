@@ -67,8 +67,7 @@ object SolarTermWheelRenderer {
             canvas, cx, cy, inner, req.nowLon, req.perihelionLon, req.dark, rot,
             req.now, earth, moon, req.userLat, req.userLon,
         )
-        val labelR = (inner + outer) * 0.5f
-        SolarTermAlarmDots.draw(canvas, cx, cy, labelR, rot, req.alarmOrds, size)
+        SolarTermAlarmDots.draw(canvas, cx, cy, hubFill, rot, req.alarmOrds, size)
         needleAt(canvas, cx, cy, inner, outer, req.dark, SolarTermLayout.canvasDeg(req.nowLon))
         return bmp
     }

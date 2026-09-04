@@ -27,7 +27,6 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import dev.foss.goldenpath.R
 import kotlinx.coroutines.delay
-import org.astroalarm.astro.model.AlarmTarget
 import org.astroalarm.astro.model.AstroAlarm
 import org.astroalarm.astro.place.AstroPlace
 import org.astroalarm.astro.settings.AstroDisplayPreferences
@@ -48,14 +47,15 @@ fun SolarTermScreen(
     val context = LocalContext.current
     val prefs = remember { AstroDisplayPreferences(context) }
     val compact by prefs.solarTermCompact.collectAsState()
+    val showEventTimes by prefs.showEventTimesYearly.collectAsState()
     var now by remember { mutableStateOf(Instant.now()) }
     var scale by remember { mutableFloatStateOf(1f) }
     var selected by remember { mutableStateOf<SolarTerm?>(null) }
     val dark = isSystemInDarkTheme()
     val earth = remember { EarthTexture.get(context) }
     val moon = remember { MoonTexture.get(context) }
-    val alarmOrds = remember(alarms) {
-        alarms.filter { it.enabled }.mapNotNull { (it.target as? AlarmTarget.SolarTerm)?.term?.ordinal }.toSet()
+    val alarmOrds = remember(alarms, showEventTimes) {
+        SolarTermAlarmDots.ordsOf(alarms, showEventTimes)
     }
 
     LaunchedEffect(Unit) {
@@ -134,6 +134,11 @@ fun SolarTermScreen(
                     stringResource(R.string.solar_term_toggle_compact),
                     compact,
                     { prefs.setSolarTermCompact(it) },
+                )
+                OverlayToggleLine(
+                    stringResource(R.string.astro_toggle_show_event_times),
+                    showEventTimes,
+                    { prefs.setShowEventTimesYearly(it) },
                 )
             }
         }

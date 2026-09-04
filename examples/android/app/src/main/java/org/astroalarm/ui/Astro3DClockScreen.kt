@@ -47,6 +47,7 @@ fun Astro3DClockScreen(
     val context = LocalContext.current
     val displayPrefs = remember { AstroDisplayPreferences(context) }
     val showZodiac by displayPrefs.showZodiac3D.collectAsState()
+    val showEventTimes by displayPrefs.showEventTimes3D.collectAsState()
     val earth = remember { EarthTexture.get(context) }
     var now by remember { mutableStateOf(Instant.now()) }
     var tiltX by remember { mutableFloatStateOf(0f) }
@@ -93,7 +94,7 @@ fun Astro3DClockScreen(
             val side = minOf(maxWidth, (maxHeight - DiskChrome.Reserve).coerceAtLeast(0.dp))
             val sizePx = ClockRenderSize.fromMinDp(side.value.toInt().coerceAtLeast(80))
             val bitmap3D = remember(
-                place, alarms, now.epochSecond, sizePx, showZodiac,
+                place, alarms, now.epochSecond, sizePx, showZodiac, showEventTimes,
                 (tiltX / 2f).toInt(), (tiltY / 2f).toInt(), earth
             ) {
                 Astro3DRenderer.render3D(
@@ -102,6 +103,7 @@ fun Astro3DClockScreen(
                     now = now,
                     size = sizePx,
                     showZodiac = showZodiac,
+                    showEventTimes = showEventTimes,
                     parallaxX = tiltX,
                     parallaxY = tiltY,
                     earth = earth,
@@ -147,10 +149,23 @@ fun Astro3DClockScreen(
             }
         }
 
-        ZodiacToggleRow(
-            title = stringResource(R.string.astro_toggle_show_zodiac_3d),
-            checked = showZodiac,
-            onCheckedChange = { displayPrefs.setShowZodiac3D(it) }
-        )
+        Surface(
+            modifier = Modifier.fillMaxWidth(),
+            shape = RoundedCornerShape(12.dp),
+            color = MaterialTheme.colorScheme.surfaceVariant.copy(alpha = 0.85f)
+        ) {
+            Column(Modifier.padding(horizontal = 12.dp, vertical = 2.dp)) {
+                OverlayToggleLine(
+                    stringResource(R.string.astro_toggle_show_zodiac_3d),
+                    showZodiac,
+                    { displayPrefs.setShowZodiac3D(it) },
+                )
+                OverlayToggleLine(
+                    stringResource(R.string.astro_toggle_show_event_times),
+                    showEventTimes,
+                    { displayPrefs.setShowEventTimes3D(it) },
+                )
+            }
+        }
     }
 }

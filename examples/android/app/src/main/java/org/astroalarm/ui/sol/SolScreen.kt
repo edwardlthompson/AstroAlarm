@@ -30,7 +30,9 @@ import org.astroalarm.sol.PlanetBody
 import org.astroalarm.sol.PlanetKepler
 import org.astroalarm.astro.model.AstroAlarm
 import org.astroalarm.astro.place.AstroPlace
+import org.astroalarm.astro.settings.AstroDisplayPreferences
 import org.astroalarm.ui.DiskChrome
+import org.astroalarm.ui.OverlayToggleLine
 import org.astroalarm.widget.ClockRenderSize
 import org.astroalarm.widget.PlanetTextures
 import org.astroalarm.widget.SolWidgetProvider
@@ -46,6 +48,8 @@ fun SolScreen(
     modifier: Modifier = Modifier,
 ) {
     val context = LocalContext.current
+    val displayPrefs = remember { AstroDisplayPreferences(context) }
+    val showEventTimes by displayPrefs.showEventTimesSol.collectAsState()
     var now by remember { mutableStateOf(Instant.now()) }
     var zoom by remember { mutableFloatStateOf(1f) }
     var selected by remember { mutableStateOf<PlanetBody?>(null) }
@@ -70,8 +74,8 @@ fun SolScreen(
         BoxWithConstraints(Modifier.fillMaxWidth().weight(1f), contentAlignment = Alignment.TopCenter) {
             val side = minOf(maxWidth, (maxHeight - DiskChrome.Reserve).coerceAtLeast(0.dp))
             val sizePx = ClockRenderSize.fromMinDp(side.value.toInt().coerceAtLeast(80))
-            val bmp = remember(now.epochSecond / 60, zoom, dark, sizePx, alarms, place, scaleLabel) {
-                SolRenderer.render(sizePx, now, zoom, dark, textures, alarms, place, scaleLabel)
+            val bmp = remember(now.epochSecond / 60, zoom, dark, sizePx, alarms, place, scaleLabel, showEventTimes) {
+                SolRenderer.render(sizePx, now, zoom, dark, textures, alarms, place, scaleLabel, showEventTimes)
             }
             Column(
                 Modifier.fillMaxWidth().align(Alignment.TopCenter),
@@ -115,6 +119,18 @@ fun SolScreen(
             selected?.let { tapLine(context, it, now) } ?: stringResource(R.string.sol_hint),
             fontSize = 13.sp
         )
+        Surface(
+            modifier = Modifier.fillMaxWidth(),
+            shape = RoundedCornerShape(12.dp),
+            color = MaterialTheme.colorScheme.surfaceVariant.copy(alpha = 0.85f)
+        ) {
+            OverlayToggleLine(
+                stringResource(R.string.astro_toggle_show_event_times),
+                showEventTimes,
+                { displayPrefs.setShowEventTimesSol(it) },
+                modifier = Modifier.padding(horizontal = 12.dp, vertical = 2.dp),
+            )
+        }
     }
 }
 

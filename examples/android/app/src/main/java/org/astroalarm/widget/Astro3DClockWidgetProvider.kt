@@ -24,6 +24,7 @@ class Astro3DClockWidgetProvider : AppWidgetProvider() {
         val place = placeStore.get()
         val alarms = alarmStore.getAll()
         val showZodiac = displayPrefs.isShowZodiac3D()
+        val showEventTimes = displayPrefs.isShowEventTimes3D()
         val now = Instant.now()
 
         val launchIntent = Intent(context, MainActivity::class.java)
@@ -40,6 +41,7 @@ class Astro3DClockWidgetProvider : AppWidgetProvider() {
             val bitmap = Astro3DRenderer.render3D(
                 place, alarms, now, sizePx,
                 showZodiac = showZodiac,
+                showEventTimes = showEventTimes,
                 earth = EarthTexture.get(context),
             )
 

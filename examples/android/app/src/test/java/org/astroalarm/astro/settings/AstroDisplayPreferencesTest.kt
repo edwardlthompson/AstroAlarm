@@ -4,6 +4,7 @@ import android.content.Context
 import androidx.test.core.app.ApplicationProvider
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.runBlocking
+import org.astroalarm.widget.SolarTermWidgetProvider
 import org.junit.Assert.assertFalse
 import org.junit.Assert.assertTrue
 import org.junit.Before
@@ -58,5 +59,29 @@ class AstroDisplayPreferencesTest {
         val reader = AstroDisplayPreferences(context)
         assertTrue(reader.isSolarTermCompact())
         assertTrue(reader.solarTermCompact.first())
+        assertTrue(SolarTermWidgetProvider.drawCompact(reader.isSolarTermCompact()))
+        prefs.setSolarTermCompact(false)
+        assertFalse(SolarTermWidgetProvider.drawCompact(prefs.isSolarTermCompact()))
+    }
+
+    @Test
+    fun yearlyWidgetKeepsCompactOnFullscreenTile() {
+        assertTrue(SolarTermWidgetProvider.drawCompact(true))
+        assertFalse(SolarTermWidgetProvider.drawCompact(false))
+    }
+
+    @Test
+    fun diskEventTimesDefaultOnAndPersist() = runBlocking {
+        val prefs = AstroDisplayPreferences(context)
+        assertTrue(prefs.isShowEventTimes3D())
+        assertTrue(prefs.isShowEventTimesYearly())
+        assertTrue(prefs.isShowEventTimesSol())
+        prefs.setShowEventTimes3D(false)
+        prefs.setShowEventTimesYearly(false)
+        prefs.setShowEventTimesSol(false)
+        val reader = AstroDisplayPreferences(context)
+        assertFalse(reader.isShowEventTimes3D())
+        assertFalse(reader.isShowEventTimesYearly())
+        assertFalse(reader.isShowEventTimesSol())
     }
 }

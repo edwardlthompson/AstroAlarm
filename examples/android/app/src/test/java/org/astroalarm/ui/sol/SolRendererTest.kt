@@ -37,6 +37,10 @@ class SolRendererTest {
         val bmp = SolRenderer.render(96, now, 1f, true, emptyMap(), listOf(alarm), null)
         assertEquals(96, bmp.width)
         assertEquals(96, bmp.height)
+        val clean = SolRenderer.render(
+            96, now, 1f, true, emptyMap(), listOf(alarm), null, showEventTimes = false,
+        )
+        assertEquals(96, clean.width)
     }
 
     @Test
