@@ -9,7 +9,7 @@
 <p align="center"><strong>{{tagline}}</strong></p>
 
 <p align="center">
-  <img src="https://img.shields.io/badge/template-1.4.0?style=flat-square" alt="Template" /> <!-- x-release-please-version -->
+  <img src="https://img.shields.io/badge/template-1.4.1?style=flat-square" alt="Template" /> <!-- x-release-please-version -->
   <img src="https://img.shields.io/badge/license-MIT-{{badge_license}}?style=flat-square" alt="MIT" />
   <img src="https://img.shields.io/badge/FOSS-no_tracking-{{badge_foss}}?style=flat-square" alt="FOSS" />
   <img src="https://img.shields.io/badge/status-active-{{badge_primary}}?style=flat-square" alt="status" />
