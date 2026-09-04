@@ -17,6 +17,13 @@
 
 ## Entries
 
+### 2026-09-04 — v1.5.0 /ship
+- **Status:** Accepted
+- **Context:** Overlapping Sun seasonal and Yearly jieqi calendars could double-ring. Yearly events were missing from Sol. Local `/prerelease` passed after reverting invalid CodeQL bundle tags.
+- **Decision:** Empty Unreleased; `feat(android)` so Release Please cuts **1.5.0** (PR #15, admin-merge). Keep both catalog rows; one notification via fire key. Yearly marks sit on Earth's Sol path with fire times. `versionCode` stays **10104**. Skip `codeql-action@vcodeql-bundle-*`. Codex skipped (no key/CLI).
+- **Alternatives considered:** Applying `vcodeql-bundle-*` (rejected: known invalid). Merging or deleting alarm types (rejected: warn only). Implementing snooze-until in this ship (deferred).
+- **Consequences:** GitHub Release **v1.5.0** should carry SBOM + OpenVEX. Sideload replaces 1.4.1 in place (same upload cert and versionCode). F-Droid needs a later versionCode bump.
+
 ### 2026-09-04 — One fire for overlapping Sun and Yearly calendars
 - **Status:** Accepted
 - **Context:** Sun seasonal events and cardinal jieqi (plus zodiac Beginning of Aries/Cancer/Libra/Capricorn) share NOAA apparent-longitude instants. Two list rows could double-ring when solvers differed by ~1s. `lastFired` was written on Stop and never read.

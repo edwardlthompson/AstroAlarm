@@ -105,17 +105,7 @@ When **Sprint 0** ends: stop re-reading `docs/INITIALIZATION_PROMPT.md` as the d
 | *Archived — see COMPLETED_TASKS.md* | — | — |
 ### Sprint 2+ — Incremental Features
 
-> **Yearly/Sol/math/celestial** slices archived in COMPLETED_TASKS.md (2026-09-01). Next named feature starts here.
-
-### Feature: alarm-calendar-peers
-
-1. ✅ [AGENT] Feature spec `docs/features/alarm-calendar-peers.md`
-2. ✅ [AGENT] One-fire identity, saveAll, next-fire skip, widget scope, editor warning, tests
-
-### Feature: sol-yearly-alarms
-
-1. ✅ [AGENT] Feature spec `docs/features/sol-yearly-alarms.md`
-2. ✅ [AGENT] Earth-path yearly marks + fire times on Sol; tests
+> **Yearly/Sol/math/celestial** slices archived in COMPLETED_TASKS.md (2026-09-01). **alarm-calendar-peers** and **sol-yearly-alarms** archived in COMPLETED_TASKS.md (2026-09-04) @ `e66986d`. Next named feature starts here.
 
 > One vertical slice at a time. See `docs/FEATURE_MODULES.md`. Reference exemplars: `docs/features/settings.md` (Sprint 2), About (Sprint 1).
 
@@ -192,6 +182,7 @@ When **Sprint 0** ends: stop re-reading `docs/INITIALIZATION_PROMPT.md` as the d
 
 | Sprint                                                            | Status   | Archive                          |
 | ----------------------------------------------------------------- | -------- | -------------------------------- |
+| alarm-calendar-peers + sol-yearly-alarms                          | Complete | `COMPLETED_TASKS.md` @ `e66986d` |
 | Yearly/Sol/math/celestial                                         | Complete | `COMPLETED_TASKS.md`             |
 | M43 leftover — Android SDK + devices                              | Complete | `COMPLETED_TASKS.md`             |
 | clock-3d-moon-sky                                                 | Complete | `COMPLETED_TASKS.md`             |

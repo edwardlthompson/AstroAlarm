@@ -2,6 +2,13 @@
 
 > Archive of finished BUILD_PLAN items.
 
+## alarm-calendar-peers + sol-yearly-alarms (2026-09-04)
+
+- ✅ [AGENT] Feature spec `docs/features/alarm-calendar-peers.md`
+- ✅ [AGENT] One-fire identity, saveAll, next-fire skip, widget scope, editor warning, tests
+- ✅ [AGENT] Feature spec `docs/features/sol-yearly-alarms.md`
+- ✅ [AGENT] Earth-path yearly marks + fire times on Sol; tests
+
 ## Yearly/Sol/math/celestial (2026-09-01)
 
 - ✅ [AGENT] Copy `docs/features/_template.md` → `docs/features/solar-terms.md`; refine acceptance criteria
