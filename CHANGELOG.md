@@ -6,6 +6,8 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [Unreleased]
+
 ## [1.4.1](https://github.com/edwardlthompson/AstroAlarm/compare/v1.4.0...v1.4.1) (2026-09-04)
 
 
@@ -16,8 +18,6 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 * **android:** map solar solstice alarms onto Yearly rays ([4ff8be1](https://github.com/edwardlthompson/AstroAlarm/commit/4ff8be19990fe4b2a1e6a12a6f4ab25519df7840))
 * **android:** place Yearly alarm dots on solstice rays ([b3bb9da](https://github.com/edwardlthompson/AstroAlarm/commit/b3bb9dacea1c21f8469251e948a49c8ad3f1345b))
 * **android:** Yearly dots, Compact widgets, and event-times toggles ([2862334](https://github.com/edwardlthompson/AstroAlarm/commit/286233489c23632e966d7f97182314a77272dcc6))
-
-## [Unreleased]
 
 ## [1.4.0](https://github.com/edwardlthompson/AstroAlarm/compare/v1.3.1...v1.4.0) (2026-09-02)
 
