@@ -4,16 +4,16 @@
 
 ## Acceptance criteria
 
-- ✅ User-visible behavior: Year tab is always present; Compact is last after disk and pin; locale names (zh pack when the device is zh); southern latitudes remap names and colors automatically; Lìchūn stays at 12 o’clock; Earth and the needle travel CCW; widget pin button on the tab
+- ✅ User-visible behavior: Year tab is always present; Compact is last after disk and pin; locale names (zh pack when the device is zh); southern latitudes remap names and colors automatically; Lìchūn stays at 12 o’clock; Earth and the needle travel CCW; widget pin button on the tab; pinch zooms toward the gesture (not only the hub) and drag pans so any ring sector can be read
 - ✅ Offline/error behavior: Times are computed on-device from NOAA apparent longitude (`SolarMath` / `SolarSeasons.apparentLon`) and cached for the current and next tropical year
-- ✅ Accessibility: TalkBack reads pinyin + locale name + local time via content descriptions on the wheel and widget
+- ✅ Accessibility: TalkBack reads pinyin + locale name + local time via content descriptions on the wheel and widget; wheel CD mentions pinch-zoom and drag-to-pan
 - ✅ i18n: keys under `solar_term_*` in `res/values/solar_terms.xml` (plus `values-es` / `values-fr` / `values-zh`)
 
 ## Smoke scenario
 
 1. _Given_ AstroAlarm is running with a saved city
-2. _When_ the user opens the Year tab
-3. _Then_ Lìchūn is at the top, Earth is at the current longitude, countdown text, Compact switch last, and a pin-widget button, with no logcat crash
+2. _When_ the user opens the Year tab, pinches toward a rim label, and drags
+3. _Then_ Lìchūn is at the top at 1×, that rim sector stays under the fingers while zooming, pan reveals other sectors, countdown text / Compact / pin remain usable, with no logcat crash
 
 ## Container map
 
@@ -26,7 +26,7 @@
 | Widget | `org.astroalarm.widget.SolarTermWidgetProvider` |
 ## Tests
 
-- Automated: yes — `examples/android/app/src/test/java/org/astroalarm/solarterm/` (equinox windows, January wrap, leap year, DST offset, polar timezone identity, southern remap, cache, frozen-ring layout, perihelion AU) plus wheel bitmap smoke
+- Automated: yes — `examples/android/app/src/test/java/org/astroalarm/solarterm/` (equinox windows, January wrap, leap year, DST offset, polar timezone identity, southern remap, cache, frozen-ring layout, perihelion AU) plus wheel bitmap smoke and `WheelZoomPanTest` (pinch focal pan + clamp)
 
 ## Fallback validation
 

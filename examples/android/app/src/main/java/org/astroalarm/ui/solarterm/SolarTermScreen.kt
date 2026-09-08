@@ -16,6 +16,7 @@ import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clipToBounds
 import androidx.compose.ui.graphics.asImageBitmap
 import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.input.pointer.pointerInput
@@ -49,7 +50,8 @@ fun SolarTermScreen(
     val compact by prefs.solarTermCompact.collectAsState()
     val showEventTimes by prefs.showEventTimesYearly.collectAsState()
     var now by remember { mutableStateOf(Instant.now()) }
-    var scale by remember { mutableFloatStateOf(1f) }
+    var viewport by remember { mutableStateOf(WheelZoomPan()) }
+    val viewportLatest = rememberUpdatedState(viewport)
     var selected by remember { mutableStateOf<SolarTerm?>(null) }
     val dark = isSystemInDarkTheme()
     val earth = remember { EarthTexture.get(context) }
@@ -92,21 +94,36 @@ fun SolarTermScreen(
                     contentDescription = talk,
                     modifier = Modifier
                         .size(side)
-                        .graphicsLayer { scaleX = scale; scaleY = scale }
-                        .semantics { contentDescription = talk }
+                        .clipToBounds()
+                        .pointerInput(Unit) {
+                            detectTransformGestures { centroid, pan, zoom, _ ->
+                                viewport = WheelZoomPanMath.apply(
+                                    viewportLatest.value,
+                                    centroid.x, centroid.y,
+                                    pan.x, pan.y, zoom,
+                                    size.width.toFloat(), size.height.toFloat(),
+                                )
+                            }
+                        }
                         .pointerInput(sizePx, req.nowLon, compact) {
                             detectTapGestures { tap ->
-                                val bx = tap.x * sizePx / size.width
-                                val by = tap.y * sizePx / size.height
+                                val (lx, ly) = WheelZoomPanMath.contentPoint(
+                                    tap.x, tap.y, viewportLatest.value,
+                                    size.width.toFloat(), size.height.toFloat(),
+                                )
+                                val bx = lx * sizePx / size.width
+                                val by = ly * sizePx / size.height
                                 val idx = SolarTermWheelRenderer.sectorAt(bx, by, sizePx, req.nowLon, compact)
                                 if (idx != null) selected = SolarTerm.entries[idx]
                             }
                         }
-                        .pointerInput(Unit) {
-                            detectTransformGestures { _, _, zoom, _ ->
-                                scale = (scale * zoom).coerceIn(1f, 2.4f)
-                            }
+                        .graphicsLayer {
+                            scaleX = viewport.scale
+                            scaleY = viewport.scale
+                            translationX = viewport.offsetX
+                            translationY = viewport.offsetY
                         }
+                        .semantics { contentDescription = talk }
                 )
                 Button(
                     onClick = { pinWidget(context) },
