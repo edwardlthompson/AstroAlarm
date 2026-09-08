@@ -17,6 +17,13 @@
 
 ## Entries
 
+### 2026-09-08 — v1.6.0 /ship
+- **Status:** Accepted
+- **Context:** Yearly zoom stretched a 600px bitmap. Yearly froze Lìchūn at 12 while Sol already used the north-ecliptic-pole frame. Local `/prerelease` passed; CodeQL patch tags stayed invalid.
+- **Decision:** Empty Unreleased; `feat(android)` so Release Please cuts **1.6.0** (PR #16, admin-merge). Draw Sol and Yearly on Compose `Canvas`. `SolarTermLayout.canvasDeg(λ) = −(λ+180)`. `versionCode` stays **10104**. Skip `codeql-action@vcodeql-bundle-*`. Codex skipped (no key/CLI).
+- **Alternatives considered:** Applying `vcodeql-bundle-*` (rejected: known invalid). Waiting for Dependabot Gradle PRs before push (rejected: weekly backup only). Putting June Earth at 12 (rejected: 180° from Sol).
+- **Consequences:** GitHub Release **v1.6.0** should carry SBOM + OpenVEX. Sideload replaces 1.5.0 in place (same upload cert and versionCode). F-Droid needs a later versionCode bump. Rotate the leaked `gh` token from Release Please dry-run.
+
 ### 2026-09-08 — Yearly shares Sol’s north-ecliptic-pole frame
 - **Status:** Accepted
 - **Context:** Yearly froze Lìchūn at 12 o’clock (`canvasDeg = −90 − (λ − 315)`). Sol already plots J2000 ecliptic with ♈ on +X and λ = 90° up (`sx = cx + x`, `sy = cy − y`). Zoom was stretching a 600px bitmap.
