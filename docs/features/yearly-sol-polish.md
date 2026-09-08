@@ -13,7 +13,7 @@
 
 1. _Given_ a saved city (north or south) and at least one Seasonal and one Planet alarm
 2. _When_ the user opens Yearly then Sol
-3. _Then_ Lìchūn is at 12 o’clock, Compact still works, and red dots appear on the armed jieqi sector and planet orbits
+3. _Then_ Dōngzhì is at 12 o’clock (matching Sol), Compact still works, and red dots appear on the armed jieqi sector and planet orbits
 
 ## Container map
 
@@ -23,7 +23,6 @@
 | View | `examples/android/app/src/main/java/org/astroalarm/ui/solarterm/`, `.../ui/sol/` |
 | Tests | `SolarTermWheelRenderTest`, `SolarTermFormatTest`, `EarthGlobePinTest`, `SolRendererTest` |
 | Wiring | `AstroScreen.kt` pages 1–4 |
-
 ## Tests
 
 - Automated: yes — stamp has no four-digit year; Earth canvas angle −90°; NH noon pin sunward; SH `lat0 = -90`; zh pack; Sol alarm bitmap

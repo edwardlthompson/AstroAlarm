@@ -17,6 +17,13 @@
 
 ## Entries
 
+### 2026-09-08 — Yearly shares Sol’s north-ecliptic-pole frame
+- **Status:** Accepted
+- **Context:** Yearly froze Lìchūn at 12 o’clock (`canvasDeg = −90 − (λ − 315)`). Sol already plots J2000 ecliptic with ♈ on +X and λ = 90° up (`sx = cx + x`, `sy = cy − y`). Zoom was stretching a 600px bitmap.
+- **Decision:** `SolarTermLayout.canvasDeg(λ) = −(λ+180)` so the jieqi ring stays glued to Earth and both sit at Sol’s heliocentric Earth (March left, June bottom, ♈ / September right, December top). Draw Yearly and Sol through a Compose `Canvas` at device pixels. Widgets still rasterize via `render()`.
+- **Alternatives considered:** Keeping Lìchūn at 12 (rejected: disagrees with Sol). `canvasDeg = −λ` (rejected: puts June Earth at 12, 180° from Sol). Putting ♈ at 12 o’clock (rejected: Sol documents ♈ on +X). Huge zoomed bitmaps (rejected: live canvas stays sharp).
+- **Consequences:** Tests and feature copy no longer claim Lìchūn at 12. Home Yearly widgets rotate with the tab.
+
 ### 2026-09-04 — v1.5.0 /ship
 - **Status:** Accepted
 - **Context:** Overlapping Sun seasonal and Yearly jieqi calendars could double-ring. Yearly events were missing from Sol. Local `/prerelease` passed after reverting invalid CodeQL bundle tags.

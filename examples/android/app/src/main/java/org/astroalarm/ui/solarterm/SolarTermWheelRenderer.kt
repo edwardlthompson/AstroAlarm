@@ -43,7 +43,11 @@ object SolarTermWheelRenderer {
 
     fun render(req: SolarTermDrawRequest, size: Int, earth: Bitmap? = null, moon: Bitmap? = null): Bitmap {
         val bmp = Bitmap.createBitmap(size, size, Bitmap.Config.ARGB_8888)
-        val canvas = Canvas(bmp)
+        draw(Canvas(bmp), req, size, earth, moon)
+        return bmp
+    }
+
+    fun draw(canvas: Canvas, req: SolarTermDrawRequest, size: Int, earth: Bitmap? = null, moon: Bitmap? = null) {
         val cx = size / 2f
         val cy = size / 2f
         val outer = size * outerFrac()
@@ -69,7 +73,6 @@ object SolarTermWheelRenderer {
         )
         SolarTermAlarmDots.draw(canvas, cx, cy, hubFill, rot, req.alarmOrds, size)
         needleAt(canvas, cx, cy, inner, outer, req.dark, SolarTermLayout.canvasDeg(req.nowLon))
-        return bmp
     }
 
     fun sectorAt(x: Float, y: Float, size: Int, @Suppress("UNUSED_PARAMETER") nowLon: Double, compact: Boolean = false): Int? {
@@ -82,10 +85,12 @@ object SolarTermWheelRenderer {
         val inner = size * innerFrac(compact)
         if (r < inner || r > outer) return null
         val deg = Math.toDegrees(atan2(dy.toDouble(), dx.toDouble()))
-        return (wrap360(-90.0 - deg) / 15.0).toInt().coerceIn(0, 23)
+        val lon = SolarTermLayout.lonFromCanvasDeg(deg)
+        return (wrap360(lon - SolarTerm.LICHUN.longitudeDeg) / 15.0).toInt().coerceIn(0, 23)
     }
 
-    internal fun startDeg(index: Int): Float = -90f - index * 15f
+    internal fun startDeg(index: Int): Float =
+        SolarTermLayout.canvasDeg(SolarTerm.entries[index].longitudeDeg)
 
     internal fun midDeg(index: Int): Float = startDeg(index) + SWEEP / 2f
 

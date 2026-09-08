@@ -61,4 +61,13 @@ class WheelZoomPanTest {
         assertEquals(100f, lx, 1e-3f)
         assertEquals(100f, ly, 1e-3f)
     }
+
+    @Test
+    fun mapContentToViewInvertsContentPoint() {
+        val vp = WheelZoomPan(scale = 2.5f, offsetX = -30f, offsetY = 16f)
+        val (sx, sy) = WheelZoomPanMath.mapContentToView(40f, 160f, vp, 200f, 200f)
+        val (lx, ly) = WheelZoomPanMath.contentPoint(sx, sy, vp, 200f, 200f)
+        assertEquals(40f, lx, 1e-3f)
+        assertEquals(160f, ly, 1e-3f)
+    }
 }

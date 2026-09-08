@@ -4,7 +4,7 @@
 
 ## Acceptance criteria
 
-- ✅ User-visible behavior: Lìchūn stays at 12 o’clock; Earth and the needle walk CCW; January AU still closer than July; compact glyphs sit on the color-band midline; Daily 2D/3D/Yearly/Sol squares top-align with pin and first caption sharing Y; Alarms pin at top, list, Next due/Grouped last; Daily 3D nods globe+axis+tracks by solar declination around the pin; Yearly green north / red south traces with N/S at the solstices (no stick through Earth)
+- ✅ User-visible behavior: Yearly matches Sol’s north-ecliptic-pole frame (Dōngzhì at 12 o’clock, ♈ at 3 o’clock, Xiàzhì at 6); Earth and the needle walk CCW; January AU still closer than July; compact glyphs sit on the color-band midline; Daily 2D/3D/Yearly/Sol squares top-align with pin and first caption sharing Y; Alarms pin at top, list, Next due/Grouped last; Daily 3D nods globe+axis+tracks by solar declination around the pin; Yearly green north / red south traces with N/S at the solstices (no stick through Earth)
 - ✅ Offline/error behavior: Invalid place skips the Yearly user pin; Daily 3D still defaults NYC-ish lat/lon for the globe camera
 - ✅ Accessibility: existing Yearly TalkBack and 3D content descriptions unchanged
 - ✅ i18n: N/A — chrome order only; N/S ticks are letters
@@ -23,7 +23,6 @@
 | View | `SolarTermWheelRenderer.kt`, `Astro3DRenderer.kt`, tab screens |
 | Tests | `SolarTermLayoutTest`, `SolarTermWheelRenderTest`, `SolarTermAxisOverlayTest`, `GlobeGroundTracksTest` |
 | Wiring | renderer calls only |
-
 ## Tests
 
 - Automated: yes — frozen ring, Yǔshuǐ CCW, June Earth not at 12, January AU, NYC north pole y, June sunDec vs equator, NH June/December sunward, spiral in/out at ν=90/270; existing noon/west track tests

@@ -4,7 +4,7 @@
 
 ## Acceptance criteria
 
-- ✅ User-visible behavior: Year tab is always present; Compact is last after disk and pin; locale names (zh pack when the device is zh); southern latitudes remap names and colors automatically; Lìchūn stays at 12 o’clock; Earth and the needle travel CCW; widget pin button on the tab; pinch zooms toward the gesture (not only the hub) and drag pans so any ring sector can be read
+- ✅ User-visible behavior: Year tab is always present; Compact is last after disk and pin; locale names (zh pack when the device is zh); southern latitudes remap names and colors automatically; the ring uses the same north-ecliptic-pole frame as Sol (♈ at 3 o’clock, Dōngzhì / December Earth at 12 o’clock, Xiàzhì at 6); Earth and the needle travel CCW; widget pin button on the tab; pinch zooms toward the gesture (not only the hub) and drag pans so any ring sector can be read; zoom redraws the wheel at screen resolution so sectors stay sharp
 - ✅ Offline/error behavior: Times are computed on-device from NOAA apparent longitude (`SolarMath` / `SolarSeasons.apparentLon`) and cached for the current and next tropical year
 - ✅ Accessibility: TalkBack reads pinyin + locale name + local time via content descriptions on the wheel and widget; wheel CD mentions pinch-zoom and drag-to-pan
 - ✅ i18n: keys under `solar_term_*` in `res/values/solar_terms.xml` (plus `values-es` / `values-fr` / `values-zh`)
@@ -13,7 +13,7 @@
 
 1. _Given_ AstroAlarm is running with a saved city
 2. _When_ the user opens the Year tab, pinches toward a rim label, and drags
-3. _Then_ Lìchūn is at the top at 1×, that rim sector stays under the fingers while zooming, pan reveals other sectors, countdown text / Compact / pin remain usable, with no logcat crash
+3. _Then_ Dōngzhì is at the top and Xiàzhì at the bottom at 1× (♈ at the right, matching Sol), that rim sector stays under the fingers while zooming, pan reveals other sectors, countdown text / Compact / pin remain usable, with no logcat crash
 
 ## Container map
 

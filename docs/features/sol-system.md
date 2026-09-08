@@ -4,7 +4,7 @@
 
 ## Acceptance criteria
 
-- ✅ User-visible behavior: Sol tab shows Mercury–Neptune at Kepler positions on a true-AU plane; projected Kepler polylines (real *e*) with perihelion ticks and comet wakes; ♈ / vernal tick on +X (J2000); pinch zoom reaches Neptune; each body is at least ~4 px; Sun is a bright disk; no moons; pin + home widget; enabled Planet / PlanetAlign / AllPlanetsAlign alarms draw red dots at `nextInstant`
+- ✅ User-visible behavior: Sol tab shows Mercury–Neptune at Kepler positions on a true-AU plane; projected Kepler polylines (real *e*) with perihelion ticks and comet wakes; ♈ / vernal tick on +X (J2000 north-ecliptic-pole view); pinch zoom redraws on a Canvas at screen resolution and reaches Neptune; each body is at least ~4 px; Sun is a bright disk; no moons; pin + home widget; enabled Planet / PlanetAlign / AllPlanetsAlign alarms draw red dots at `nextInstant`
 - ✅ Offline/error behavior: Missing textures fall back to `EarthGlobeRenderer` colored disks; Kepler is on-device (no network); rise/set dots omit when `nextInstant` is null
 - ✅ Accessibility: content description `sol_cd`; caption explains true-AU, no moons, and that yellow + is perihelion
 - ✅ i18n: `astro_tab_sol`, `sol_caption`, `sol_hint`, `sol_cd`, `sol_pin_widget`, `sol_widget_name`, `sol_widget_desc` (en/es/fr)
@@ -23,7 +23,6 @@
 | View | `examples/android/app/src/main/java/org/astroalarm/ui/sol/` |
 | Tests | `PlanetKeplerTest`, `SolRendererTest` |
 | Wiring | `AstroScreen.kt` page 4 |
-
 ## Tests
 
 - Automated: yes — Mercury AU < Earth < Jupiter; Sol bitmap smoke; planet-alarm render; Mercury retrograde sign flip; Mercury orbit span exceeds Earth; January Earth AU < July

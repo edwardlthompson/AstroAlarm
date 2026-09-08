@@ -4,7 +4,7 @@ import android.appwidget.AppWidgetManager
 import android.content.ComponentName
 import android.os.Build
 import android.widget.Toast
-import androidx.compose.foundation.Image
+import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.gestures.detectTapGestures
 import androidx.compose.foundation.gestures.detectTransformGestures
 import androidx.compose.foundation.isSystemInDarkTheme
@@ -16,9 +16,12 @@ import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.asImageBitmap
+import androidx.compose.ui.draw.clipToBounds
+import androidx.compose.ui.graphics.drawscope.drawIntoCanvas
+import androidx.compose.ui.graphics.nativeCanvas
 import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.semantics.contentDescription
 import androidx.compose.ui.semantics.semantics
@@ -33,7 +36,6 @@ import org.astroalarm.astro.place.AstroPlace
 import org.astroalarm.astro.settings.AstroDisplayPreferences
 import org.astroalarm.ui.DiskChrome
 import org.astroalarm.ui.OverlayToggleLine
-import org.astroalarm.widget.ClockRenderSize
 import org.astroalarm.widget.PlanetTextures
 import org.astroalarm.widget.SolWidgetProvider
 import java.time.Instant
@@ -73,25 +75,21 @@ fun SolScreen(
     ) {
         BoxWithConstraints(Modifier.fillMaxWidth().weight(1f), contentAlignment = Alignment.TopCenter) {
             val side = minOf(maxWidth, (maxHeight - DiskChrome.Reserve).coerceAtLeast(0.dp))
-            val sizePx = ClockRenderSize.fromMinDp(side.value.toInt().coerceAtLeast(80))
-            val bmp = remember(now.epochSecond / 60, zoom, dark, sizePx, alarms, place, scaleLabel, showEventTimes) {
-                SolRenderer.render(sizePx, now, zoom, dark, textures, alarms, place, scaleLabel, showEventTimes)
-            }
+            val layoutPx = with(LocalDensity.current) { side.roundToPx() }.coerceAtLeast(80)
             Column(
                 Modifier.fillMaxWidth().align(Alignment.TopCenter),
                 horizontalAlignment = Alignment.CenterHorizontally,
                 verticalArrangement = Arrangement.spacedBy(8.dp)
             ) {
-                Image(
-                    bitmap = bmp.asImageBitmap(),
-                    contentDescription = stringResource(R.string.sol_cd),
+                Canvas(
                     modifier = Modifier
                         .size(side)
-                        .pointerInput(sizePx, zoom, now) {
+                        .clipToBounds()
+                        .pointerInput(layoutPx, zoom, now) {
                             detectTapGestures { tap ->
-                                val bx = tap.x * sizePx / size.width
-                                val by = tap.y * sizePx / size.height
-                                selected = SolRenderer.bodyAt(bx, by, sizePx, now, zoom)
+                                val bx = tap.x * layoutPx / size.width
+                                val by = tap.y * layoutPx / size.height
+                                selected = SolRenderer.bodyAt(bx, by, layoutPx, now, zoom)
                             }
                         }
                         .pointerInput(Unit) {
@@ -99,7 +97,16 @@ fun SolScreen(
                                 zoom = (zoom * z).coerceIn(0.05f, 8f)
                             }
                         }
-                )
+                        .semantics { contentDescription = context.getString(R.string.sol_cd) }
+                ) {
+                    val px = size.width.toInt().coerceAtLeast(1)
+                    drawIntoCanvas { gc ->
+                        SolRenderer.draw(
+                            gc.nativeCanvas, px, now, zoom, dark, textures,
+                            alarms, place, scaleLabel, showEventTimes,
+                        )
+                    }
+                }
                 Button(
                     onClick = { pinWidget(context) },
                     modifier = Modifier.fillMaxWidth().semantics {

@@ -8,8 +8,15 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
-## [1.5.0](https://github.com/edwardlthompson/AstroAlarm/compare/v1.4.1...v1.5.0) (2026-09-04)
+### Changed
 
+* **android:** draw Sol on a Canvas at screen resolution, and rotate Yearly to the same north-ecliptic-pole frame (♈ at +X, December Earth at 12 o’clock, June Earth at 6)
+
+### Fixed
+
+* **android:** redraw the Yearly wheel at screen resolution while zoomed instead of stretching a 600px bitmap
+
+## [1.5.0](https://github.com/edwardlthompson/AstroAlarm/compare/v1.4.1...v1.5.0) (2026-09-04)
 
 ### Added
 

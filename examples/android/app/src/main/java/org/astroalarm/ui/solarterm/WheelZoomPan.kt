@@ -57,4 +57,26 @@ object WheelZoomPanMath {
         val ly = (tapY - cy - viewport.offsetY) / viewport.scale + cy
         return lx to ly
     }
+
+    /** Screen point of a content pixel; inverse of [contentPoint]. */
+    fun mapContentToView(
+        contentX: Float,
+        contentY: Float,
+        viewport: WheelZoomPan,
+        width: Float,
+        height: Float,
+    ): Pair<Float, Float> {
+        val cx = width / 2f
+        val cy = height / 2f
+        val sx = (contentX - cx) * viewport.scale + cx + viewport.offsetX
+        val sy = (contentY - cy) * viewport.scale + cy + viewport.offsetY
+        return sx to sy
+    }
+
+    /** Same transform as Compose graphicsLayer (scale about center, then translation). */
+    fun concat(canvas: android.graphics.Canvas, viewport: WheelZoomPan, size: Float) {
+        val mid = size / 2f
+        canvas.translate(viewport.offsetX, viewport.offsetY)
+        canvas.scale(viewport.scale, viewport.scale, mid, mid)
+    }
 }

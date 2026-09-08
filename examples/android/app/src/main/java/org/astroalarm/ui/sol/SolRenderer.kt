@@ -25,7 +25,22 @@ object SolRenderer {
         showEventTimes: Boolean = true,
     ): Bitmap {
         val bmp = Bitmap.createBitmap(size, size, Bitmap.Config.ARGB_8888)
-        val canvas = Canvas(bmp)
+        draw(Canvas(bmp), size, now, zoom, dark, textures, alarms, place, scaleLabel, showEventTimes)
+        return bmp
+    }
+
+    fun draw(
+        canvas: Canvas,
+        size: Int,
+        now: Instant,
+        zoom: Float,
+        dark: Boolean,
+        textures: Map<PlanetBody, Bitmap?>,
+        alarms: List<AstroAlarm> = emptyList(),
+        place: AstroPlace? = null,
+        scaleLabel: String = "1 AU",
+        showEventTimes: Boolean = true,
+    ) {
         canvas.drawColor(if (dark) 0xFF070B16.toInt() else 0xFF0B1020.toInt())
         val cx = size / 2f
         val cy = size / 2f
@@ -43,7 +58,6 @@ object SolRenderer {
         }
         if (showEventTimes) SolAlarmOverlay.draw(canvas, cx, cy, pxPerAu, now, alarms, place, size)
         SolChrome.drawScaleBar(canvas, pxPerAu, size, scaleLabel)
-        return bmp
     }
 
     fun bodyAt(x: Float, y: Float, size: Int, now: Instant, zoom: Float): PlanetBody? {
