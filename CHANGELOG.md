@@ -6,14 +6,14 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [Unreleased]
+
 ## [1.7.0](https://github.com/edwardlthompson/AstroAlarm/compare/v1.6.0...v1.7.0) (2026-09-09)
 
 
 ### Added
 
 * **android:** shade Earth and Moon on Daily clocks ([274d246](https://github.com/edwardlthompson/AstroAlarm/commit/274d2467e8a579f92952e80b4663a114e47cd657))
-
-## [Unreleased]
 
 ## [1.6.0](https://github.com/edwardlthompson/AstroAlarm/compare/v1.5.0...v1.6.0) (2026-09-08)
 
