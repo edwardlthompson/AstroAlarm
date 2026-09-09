@@ -4,8 +4,10 @@ import android.graphics.*
 import kotlin.math.sqrt
 
 object EarthGlobeRenderer {
-    private var cacheKey: String? = null
-    private var cacheBmp: Bitmap? = null
+    private var earthKey: String? = null
+    private var earthBmp: Bitmap? = null
+    private var moonKey: String? = null
+    private var moonBmp: Bitmap? = null
 
     fun drawGlobe(
         canvas: Canvas,
@@ -16,10 +18,13 @@ object EarthGlobeRenderer {
         lon: Double,
         texture: Bitmap?,
         highlightUser: Boolean = true,
+        sunDecDeg: Double? = null,
+        subsolarLonDeg: Double? = null,
+        body: String = "earth",
     ) {
         if (r <= 2f) return
         if (texture != null) {
-            val globe = rasterize(texture, r, lat, lon)
+            val globe = rasterize(texture, r, lat, lon, sunDecDeg, subsolarLonDeg, body)
             canvas.drawBitmap(globe, cx - r, cy - r, null)
         } else {
             canvas.drawCircle(cx, cy, r, Paint(Paint.ANTI_ALIAS_FLAG).apply { color = Color.rgb(16, 52, 116) })
@@ -50,32 +55,39 @@ object EarthGlobeRenderer {
         userLat: Double?,
         userLon: Double?,
         sunwardDeg: Float,
+        sunDecDeg: Double? = null,
+        subsolarLonDeg: Double? = null,
+        body: String = "earth",
     ) {
         if (r <= 2f) return
         val noonScreen = if (lat0 < 0.0) -90f else 90f
         canvas.save()
         canvas.rotate(sunwardDeg - noonScreen, cx, cy)
-        runCatching { drawGlobe(canvas, cx, cy, r, lat0, lon0, texture, highlightUser = false) }
-            .onFailure {
-                canvas.drawCircle(cx, cy, r, Paint(Paint.ANTI_ALIAS_FLAG).apply { color = Color.rgb(16, 52, 116) })
-            }
+        runCatching {
+            drawGlobe(canvas, cx, cy, r, lat0, lon0, texture, false, sunDecDeg, subsolarLonDeg, body)
+        }.onFailure {
+            canvas.drawCircle(cx, cy, r, Paint(Paint.ANTI_ALIAS_FLAG).apply { color = Color.rgb(16, 52, 116) })
+        }
         if (userLat != null && userLon != null) {
             val (x, y, z) = SphereProjection.latLonToDisk(userLat, userLon, lat0, lon0)
             if (z >= 0.0) {
-                val px = cx + x.toFloat() * r
-                val py = cy - y.toFloat() * r
                 val pinR = (r * 0.14f).coerceIn(2.0f, 5.0f)
-                canvas.drawCircle(px, py, pinR, Paint(Paint.ANTI_ALIAS_FLAG).apply { color = Color.argb(200, 255, 68, 68) })
-                canvas.drawCircle(px, py, pinR * 0.42f, Paint(Paint.ANTI_ALIAS_FLAG).apply { color = Color.rgb(255, 235, 59) })
+                canvas.drawCircle(cx + x.toFloat() * r, cy - y.toFloat() * r, pinR, Paint(Paint.ANTI_ALIAS_FLAG).apply { color = Color.argb(200, 255, 68, 68) })
+                canvas.drawCircle(cx + x.toFloat() * r, cy - y.toFloat() * r, pinR * 0.42f, Paint(Paint.ANTI_ALIAS_FLAG).apply { color = Color.rgb(255, 235, 59) })
             }
         }
         canvas.restore()
     }
 
-    private fun rasterize(texture: Bitmap, r: Float, lat: Double, lon: Double): Bitmap {
+    private fun rasterize(
+        texture: Bitmap, r: Float, lat: Double, lon: Double,
+        sunDecDeg: Double?, subsolarLonDeg: Double?, body: String,
+    ): Bitmap {
         val d = (r * 2f).toInt().coerceAtLeast(4)
-        val key = "${(lat * 4).toInt()}|${(lon * 4).toInt()}|$d"
-        cacheBmp?.let { if (cacheKey == key && !it.isRecycled) return it }
+        val qDec = sunDecDeg?.div(2.0)?.toInt()?.toString() ?: "_"
+        val qLon = subsolarLonDeg?.div(2.0)?.toInt()?.toString() ?: "_"
+        val key = "$body|${(lat * 4).toInt()}|${(lon * 4).toInt()}|$d|$qDec|$qLon"
+        cached(body, key)?.let { return it }
         val tw = texture.width
         val th = texture.height
         val tex = IntArray(tw * th)
@@ -92,15 +104,36 @@ object EarthGlobeRenderer {
                 val tx = (u * tw).toInt().coerceIn(0, tw - 1)
                 val ty = (v * th).toInt().coerceIn(0, th - 1)
                 val z = sqrt((1.0 - x * x - y * y).coerceAtLeast(0.0))
-                out[py * d + px] = shade(tex[ty * tw + tx], (0.52 + 0.48 * z).toFloat())
+                val limb = (0.52 + 0.48 * z).toFloat()
+                val day = if (sunDecDeg != null && subsolarLonDeg != null) {
+                    GlobeIllumination.dayFactor(ll.first, ll.second, sunDecDeg, subsolarLonDeg)
+                } else {
+                    1f
+                }
+                out[py * d + px] = shade(tex[ty * tw + tx], GlobeIllumination.shade(limb, day))
             }
         }
         val bmp = Bitmap.createBitmap(d, d, Bitmap.Config.ARGB_8888)
         bmp.setPixels(out, 0, d, 0, 0, d, d)
-        cacheBmp?.recycle()
-        cacheBmp = bmp
-        cacheKey = key
+        store(body, key, bmp)
         return bmp
+    }
+
+    private fun cached(body: String, key: String): Bitmap? {
+        val slot = if (body == "moon") moonBmp to moonKey else earthBmp to earthKey
+        return slot.first?.takeIf { slot.second == key && !it.isRecycled }
+    }
+
+    private fun store(body: String, key: String, bmp: Bitmap) {
+        if (body == "moon") {
+            moonBmp?.takeIf { it != bmp && !it.isRecycled }?.recycle()
+            moonBmp = bmp
+            moonKey = key
+        } else {
+            earthBmp?.takeIf { it != bmp && !it.isRecycled }?.recycle()
+            earthBmp = bmp
+            earthKey = key
+        }
     }
 
     private fun shade(argb: Int, s: Float): Int {

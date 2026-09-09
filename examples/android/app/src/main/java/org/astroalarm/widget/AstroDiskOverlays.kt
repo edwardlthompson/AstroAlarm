@@ -26,7 +26,7 @@ object AstroDiskOverlays {
         val cosR = cos(rad).toFloat(); val sinR = sin(rad).toFloat()
 
         val tp = Paint(Paint.ANTI_ALIAS_FLAG).apply { this.textSize = textSize; typeface = Typeface.DEFAULT_BOLD; textAlign = Paint.Align.CENTER; color = Color.WHITE }
-        val tDist = radius * 0.68f
+        val tDist = radius
         val tx = center + tDist * cosR
         val ty = center + tDist * sinR + textSize * 0.35f
         val pillW = tp.measureText(timeStr) + 16f
@@ -99,7 +99,7 @@ object AstroDiskOverlays {
         drawRimTicks(canvas, center, radius, size, marks.map { it.tickDeg }, Color.rgb(220, 228, 240))
         val tp = Paint(Paint.ANTI_ALIAS_FLAG).apply {
             color = Color.rgb(230, 236, 245)
-            textSize = (size * 0.038f).coerceIn(9f, 14f)
+            textSize = DiskLabelFit.textSize(size, radius + tickLen, 12, "Sep")
             typeface = Typeface.DEFAULT_BOLD
             textAlign = Paint.Align.CENTER
         }

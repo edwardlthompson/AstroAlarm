@@ -8,6 +8,7 @@ import org.astroalarm.astro.sun.SolarMath
 import org.astroalarm.solarterm.SolarTermLayout
 import org.astroalarm.solarterm.wrap360
 import org.astroalarm.widget.EarthGlobeRenderer
+import org.astroalarm.widget.LunarHub
 import org.astroalarm.widget.OrbitWake
 import java.time.Instant
 import kotlin.math.atan2
@@ -45,10 +46,11 @@ object SolarTermHubRenderer {
         val er = inner * 0.10f
         val lat0 = EarthGlobeRenderer.poleLat(userLat)
         val lon0 = runCatching { SolarMath.subsolarLongitude(now) }.getOrDefault(0.0)
+        val sunDec = runCatching { SolarMath.sunDeclination(now) }.getOrDefault(0.0)
         val sunward = Math.toDegrees(atan2((cy - ey).toDouble(), (cx - ex).toDouble())).toFloat()
-        EarthGlobeRenderer.drawPoleGlobe(canvas, ex, ey, er, lat0, lon0, earth, userLat, userLon, sunward)
+        EarthGlobeRenderer.drawPoleGlobe(canvas, ex, ey, er, lat0, lon0, earth, userLat, userLon, sunward, sunDec, lon0, "earth")
         SolarTermPoleLabels.draw(canvas, cx, cy, inner, perihelionLon, rot, dark, ex, ey, er)
-        drawMoon(canvas, inner, ex, ey, now, moon, rot, dark)
+        drawMoon(canvas, inner, ex, ey, now, moon, rot, sunward)
     }
 
     fun earthCanvasDeg(nowLon: Double, rot: Float): Float = SolarTermLayout.canvasDeg(nowLon) + rot
@@ -81,19 +83,12 @@ object SolarTermHubRenderer {
 
     private fun drawMoon(
         canvas: Canvas, inner: Float, ex: Float, ey: Float,
-        now: Instant, moon: Bitmap?, rot: Float, dark: Boolean,
+        now: Instant, moon: Bitmap?, rot: Float, sunward: Float,
     ) {
         val moonLon = LunarCalculator.eclipticLon(now)
         val moonAng = moonAroundEarthDeg(moonLon, rot)
         val mr = inner * 0.20f
-        val mrad = Math.toRadians(moonAng.toDouble()).toFloat()
-        canvas.drawCircle(ex, ey, mr, Paint(Paint.ANTI_ALIAS_FLAG).apply {
-            style = Paint.Style.STROKE
-            strokeWidth = inner * 0.008f
-            color = if (dark) 0x66B0BEC5.toInt() else 0x6690A4AE.toInt()
-        })
-        EarthGlobeRenderer.drawGlobe(
-            canvas, ex + mr * cos(mrad), ey + mr * sin(mrad), inner * 0.035f, 0.0, moonLon, moon, highlightUser = false
-        )
+        LunarHub.drawCircularWake(canvas, ex, ey, mr, moonAng, 0xAAB0BEC5.toInt(), inner * 0.018f)
+        LunarHub.drawMoonTopDown(canvas, ex, ey, mr, inner * 0.035f, moonAng, sunward, moon)
     }
 }

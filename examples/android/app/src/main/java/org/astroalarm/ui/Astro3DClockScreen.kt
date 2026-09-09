@@ -9,7 +9,8 @@ import android.hardware.SensorEventListener
 import android.hardware.SensorManager
 import android.os.Build
 import android.widget.Toast
-import androidx.compose.foundation.Image
+import androidx.compose.foundation.Canvas
+import androidx.compose.foundation.gestures.detectTransformGestures
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
@@ -18,7 +19,10 @@ import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.asImageBitmap
+import androidx.compose.ui.draw.clipToBounds
+import androidx.compose.ui.graphics.drawscope.drawIntoCanvas
+import androidx.compose.ui.graphics.nativeCanvas
+import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.semantics.contentDescription
@@ -31,11 +35,13 @@ import org.astroalarm.astro.model.AstroAlarm
 import org.astroalarm.astro.place.AstroPlace
 import org.astroalarm.astro.settings.AstroDisplayPreferences
 import org.astroalarm.astro.zodiac.ZodiacCalculator
+import org.astroalarm.ui.solarterm.WheelZoomPan
+import org.astroalarm.ui.solarterm.WheelZoomPanMath
 import org.astroalarm.widget.Astro3DClockWidgetProvider
 import org.astroalarm.widget.Astro3DRenderer
 import org.astroalarm.widget.ClockParallax
-import org.astroalarm.widget.ClockRenderSize
 import org.astroalarm.widget.EarthTexture
+import org.astroalarm.widget.MoonTexture
 import java.time.Instant
 
 @Composable
@@ -49,7 +55,10 @@ fun Astro3DClockScreen(
     val showZodiac by displayPrefs.showZodiac3D.collectAsState()
     val showEventTimes by displayPrefs.showEventTimes3D.collectAsState()
     val earth = remember { EarthTexture.get(context) }
+    val moon = remember { MoonTexture.get(context) }
     var now by remember { mutableStateOf(Instant.now()) }
+    var viewport by remember { mutableStateOf(WheelZoomPan()) }
+    val viewportLatest = rememberUpdatedState(viewport)
     var tiltX by remember { mutableFloatStateOf(0f) }
     var tiltY by remember { mutableFloatStateOf(0f) }
 
@@ -92,33 +101,37 @@ fun Astro3DClockScreen(
             contentAlignment = Alignment.TopCenter
         ) {
             val side = minOf(maxWidth, (maxHeight - DiskChrome.Reserve).coerceAtLeast(0.dp))
-            val sizePx = ClockRenderSize.fromMinDp(side.value.toInt().coerceAtLeast(80))
-            val bitmap3D = remember(
-                place, alarms, now.epochSecond, sizePx, showZodiac, showEventTimes,
-                (tiltX / 2f).toInt(), (tiltY / 2f).toInt(), earth
-            ) {
-                Astro3DRenderer.render3D(
-                    place = place,
-                    alarms = alarms,
-                    now = now,
-                    size = sizePx,
-                    showZodiac = showZodiac,
-                    showEventTimes = showEventTimes,
-                    parallaxX = tiltX,
-                    parallaxY = tiltY,
-                    earth = earth,
-                )
-            }
             Column(
                 Modifier.fillMaxWidth().align(Alignment.TopCenter),
                 horizontalAlignment = Alignment.CenterHorizontally,
                 verticalArrangement = Arrangement.spacedBy(8.dp)
             ) {
-                Image(
-                    bitmap = bitmap3D.asImageBitmap(),
-                    contentDescription = stringResource(R.string.astro_widget_3d_desc),
-                    modifier = Modifier.size(side)
-                )
+                Canvas(
+                    modifier = Modifier
+                        .size(side)
+                        .clipToBounds()
+                        .pointerInput(Unit) {
+                            detectTransformGestures { centroid, pan, zoom, _ ->
+                                viewport = WheelZoomPanMath.apply(
+                                    viewportLatest.value,
+                                    centroid.x, centroid.y, pan.x, pan.y, zoom,
+                                    size.width.toFloat(), size.height.toFloat(),
+                                )
+                            }
+                        }
+                        .semantics { contentDescription = context.getString(R.string.astro_widget_3d_desc) }
+                ) {
+                    val px = size.width.toInt().coerceAtLeast(1)
+                    drawIntoCanvas { gc ->
+                        val native = gc.nativeCanvas
+                        native.save()
+                        WheelZoomPanMath.concat(native, viewport, size.width)
+                        Astro3DRenderer.draw(
+                            native, place, alarms, now, px, showZodiac, showEventTimes, tiltX, tiltY, earth, moon,
+                        )
+                        native.restore()
+                    }
+                }
                 Button(
                     onClick = {
                         val mgr = context.getSystemService(AppWidgetManager::class.java)
@@ -156,14 +169,14 @@ fun Astro3DClockScreen(
         ) {
             Column(Modifier.padding(horizontal = 12.dp, vertical = 2.dp)) {
                 OverlayToggleLine(
-                    stringResource(R.string.astro_toggle_show_zodiac_3d),
-                    showZodiac,
-                    { displayPrefs.setShowZodiac3D(it) },
-                )
-                OverlayToggleLine(
                     stringResource(R.string.astro_toggle_show_event_times),
                     showEventTimes,
                     { displayPrefs.setShowEventTimes3D(it) },
+                )
+                OverlayToggleLine(
+                    stringResource(R.string.astro_toggle_show_zodiac_3d),
+                    showZodiac,
+                    { displayPrefs.setShowZodiac3D(it) },
                 )
             }
         }

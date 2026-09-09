@@ -29,9 +29,9 @@ object ZodiacRingLayout {
         }
     }
 
-    fun diskHits(place: AstroPlace?, now: Instant, size: Int): List<Hit> {
+    fun diskHits(place: AstroPlace?, now: Instant, size: Int, showMonths: Boolean = false): List<Hit> {
         val center = size / 2f
-        val dist = ZodiacGlyph.ringDistance(center, size)
+        val dist = DiskRingLayout.of(size, showMonths, true).zodiacR
         val zone = place?.zone ?: java.time.ZoneId.systemDefault()
         val nowZdt = now.atZone(zone)
         val nowAngle = (nowZdt.hour * 60 + nowZdt.minute + nowZdt.second / 60f) / 1440f * 360f

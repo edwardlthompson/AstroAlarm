@@ -10,7 +10,6 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [1.6.0](https://github.com/edwardlthompson/AstroAlarm/compare/v1.5.0...v1.6.0) (2026-09-08)
 
-
 ### Added
 
 * **android:** Canvas Sol/Yearly maps and ecliptic Yearly frame ([ee81fbb](https://github.com/edwardlthompson/AstroAlarm/commit/ee81fbbd5770d981b2ad225584137f48213614a8))

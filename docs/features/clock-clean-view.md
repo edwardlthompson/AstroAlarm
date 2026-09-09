@@ -4,7 +4,7 @@ Toggle on the 2D clock that hides alarm, sunrise, and sunset time labels so the 
 
 ## Acceptance criteria
 
-- ✅ User-visible behavior: 2D, 3D, Yearly, and Sol each have **Show event times**; off hides that disk’s alarm markers (2D also hides sunrise/sunset badges and callouts). Home widgets follow the matching tab pref. Zodiac, compact, month ticks, and the current-time hand stay.
+- ✅ User-visible behavior: 2D, 3D, Yearly, and Sol each have **Show event times**; off hides that disk’s alarm markers (2D also hides sunrise/sunset/noon/midnight badges and callouts). Home widgets follow the matching tab pref. Zodiac, compact, month ticks, and the current-time hand stay.
 - ✅ Offline/error behavior: each pref is local SharedPreferences; default is times shown; missing place still renders the dial
 - ✅ Accessibility: each switch uses `astro_toggle_show_event_times` as TalkBack; state persists across restarts
 - ✅ i18n: `astro_toggle_show_event_times` and `astro_toggle_show_event_times_desc` in en/es/fr
@@ -41,4 +41,6 @@ See `docs/FEATURE_MODULES.md` per-feature checklist.
 
 - Zodiac ring stays on its own existing toggle
 - Home-screen 2D / 3D / Yearly / Sol widgets follow their tab’s event-times preference
+- 2D hour marks stay on their own toggle; they use civil clock time, not solar noon
+- 2D event times also tag solar noon and solar midnight
 - Yearly off hides jieqi/solstice alarm dots so they do not cover the S pole letter

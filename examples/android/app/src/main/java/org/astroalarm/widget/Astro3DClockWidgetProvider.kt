@@ -43,6 +43,7 @@ class Astro3DClockWidgetProvider : AppWidgetProvider() {
                 showZodiac = showZodiac,
                 showEventTimes = showEventTimes,
                 earth = EarthTexture.get(context),
+                moon = MoonTexture.get(context),
             )
 
             val views = RemoteViews(context.packageName, R.layout.widget_astro).apply {

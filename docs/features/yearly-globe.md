@@ -34,7 +34,8 @@
 
 ## Notes
 
-- Earth’s Moon stays on Yearly only. The lunar path is visually enlarged; true 0.0026 AU is unreadable in the hub.
+- Earth’s Moon also appears on Daily 2D (same top-down hub). The lunar path is visually enlarged; true 0.0026 AU is unreadable.
+- Moon uses the NASA SVS color map with a solar terminator (top-down half-lit) and a comet wake. Libration is omitted.
 - Compact mode still opens the detail sheet on sector tap.
 - Hub refresh is every 60 seconds.
 - Traditional/Local-seasons switches were removed; southern remap is automatic from latitude.

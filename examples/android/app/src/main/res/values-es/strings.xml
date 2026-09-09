@@ -170,6 +170,8 @@
     <string name="astro_toggle_show_event_times_desc">Horas de alarmas, amanecer y atardecer en la esfera de 24h</string>
     <string name="astro_toggle_show_month_ticks">Mostrar meses</string>
     <string name="astro_toggle_show_month_ticks_desc">Inicio de cada mes (2 letras) en el borde</string>
+    <string name="astro_toggle_show_hour_marks">Mostrar horas</string>
+    <string name="astro_toggle_show_hour_marks_desc">Horas civiles en el disco de 24h, no el mediodía solar</string>
     <string name="astro_solar_noon">Mediodía solar</string>
     <string name="astro_solar_midnight">Medianoche solar</string>
     <string name="astro_zodiac_overhead_noon">Zodíaco cenital al mediodía</string>
