@@ -17,6 +17,13 @@
 
 ## Entries
 
+### 2026-09-09 — v1.7.0 /ship
+- **Status:** Accepted
+- **Context:** Daily 2D hours were hard to read, the now-hand ran through Earth, and Moon used phase emojis. Yearly already had a pole Earth+Moon hub. Local `/prerelease` passed; CodeQL patch tags stayed invalid.
+- **Decision:** Empty Unreleased; `feat(android)` so Release Please cuts **1.7.0** (PR #17, admin-merge). Daily 2D shares Yearly's Earth/Moon hub with rim hours, a solar-noon pointer, and a true terminator. Daily 3D Moon is an Earth-view shaded globe. NASA SVS 1k color Moon map. `versionCode` stays **10104**. Skip `codeql-action@vcodeql-bundle-*`. Codex skipped (no key/CLI).
+- **Alternatives considered:** Applying `vcodeql-bundle-*` (rejected: known invalid). Waiting for Dependabot Gradle PRs before push (rejected: weekly backup only). Bumping versionCode in this ship (rejected: F-Droid later).
+- **Consequences:** GitHub Release **v1.7.0** should carry SBOM + OpenVEX. Sideload replaces 1.6.0 in place (same upload cert and versionCode). F-Droid needs a later versionCode bump. Rotate the leaked `gh` token from Release Please dry-run.
+
 ### 2026-09-08 — v1.6.0 /ship
 - **Status:** Accepted
 - **Context:** Yearly zoom stretched a 600px bitmap. Yearly froze Lìchūn at 12 while Sol already used the north-ecliptic-pole frame. Local `/prerelease` passed; CodeQL patch tags stayed invalid.

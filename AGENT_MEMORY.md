@@ -7,7 +7,7 @@
 
 | Layer | Technology | Version | Notes |
 |-------|-----------|---------|-------|
-| Platform | Android (Kotlin, Jetpack Compose, Material 3) | 1.6.0 | Child of agent-project-bootstrap; GitHub Releases APK `astroalarm-X.Y.Z-foss.apk` |
+| Platform | Android (Kotlin, Jetpack Compose, Material 3) | 1.7.0 | Child of agent-project-bootstrap; GitHub Releases APK `astroalarm-X.Y.Z-foss.apk` |
 | Persistence | JSON SharedPreferences + DataStore | - | Room/Hilt on classpath for later stores |
 | Ephemeris | commons-suncalc 3.11 + NOAA tropical longitude + on-device Kepler | on-device | Sun/moon times; NOAA for seasons/zodiac/jieqi; Kepler for Sol tab and planet alarms |
 | License | MIT | - | Pure FOSS; no Play Services / Firebase |
@@ -34,7 +34,7 @@
 
 ### Project Purpose
 
-FOSS Android astronomical alarm clock: on-device suncalc sun/moon ephemeris, solar/lunar/seasonal/planet/custom alarms, Yearly Earth+Moon hub, Sol true-AU map, lockscreen math unlock, rotating day/night widget.
+FOSS Android astronomical alarm clock: on-device suncalc sun/moon ephemeris, solar/lunar/seasonal/planet/custom alarms, Daily and Yearly Earth+Moon hubs with solar terminator, Sol true-AU map, lockscreen math unlock, rotating day/night widget.
 
 ### Key Constraints
 
@@ -44,6 +44,7 @@ FOSS Android astronomical alarm clock: on-device suncalc sun/moon ephemeris, sol
 
 ## Session Retrospectives
 
+| 2026-09-09 | v1.7.0 /ship | Daily 2D Earth/Moon hub + terminator; rim hours; NASA Moon globe (no emoji); RP #17 | Do not apply `vcodeql-bundle-*` tags; versionCode stays 10104; rotate leaked `gh` token |
 | 2026-09-08 | v1.6.0 /ship | Canvas Sol/Yearly at screen px; Yearly north-ecliptic-pole frame; RP #16 | Do not apply `vcodeql-bundle-*` tags; versionCode stays 10104; rotate leaked `gh` token |
 | 2026-09-04 | v1.5.0 /ship | One fire for Sun/Yearly peers; Sol Earth-path marks + fire times; RP #15 | Do not apply `vcodeql-bundle-*` tags; versionCode stays 10104; rotate leaked `gh` token |
 | 2026-09-04 | sol-yearly-alarms | Jieqi and solstice/equinox marks on Earth's Sol path with MMM d HH:mm | Related planet is Earth; Show event times still hides dots |
