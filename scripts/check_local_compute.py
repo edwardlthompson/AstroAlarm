@@ -17,11 +17,11 @@ from local_resources import (  # noqa: E402
     InvalidJobs,
     cpu_count,
     env_jobs,
+    ollama_up,
     ram_gb_or_none,
     recommended_check_jobs,
     recommended_stack_slots,
 )
-from ollama_local import coder_models, fetch_tags, recommended_coder  # noqa: E402
 
 
 def _adb() -> str | None:
@@ -55,6 +55,32 @@ def _jobs_misconfig() -> str | None:
     return None
 
 
+def _inotify_watches() -> int | None:
+    if not sys.platform.startswith("linux"):
+        return None
+    path = Path("/proc/sys/fs/inotify/max_user_watches")
+    try:
+        return int(path.read_text(encoding="utf-8").strip())
+    except (OSError, ValueError):
+        return None
+
+
+def _avd_present(sdk: str | None) -> bool:
+    if not sdk:
+        return False
+    home = Path.home()
+    candidates = [
+        home / ".android" / "avd",
+        Path(sdk) / ".android" / "avd",
+    ]
+    for base in candidates:
+        if not base.is_dir():
+            continue
+        if any(base.glob("*.ini")) or any(base.iterdir()):
+            return True
+    return False
+
+
 def main() -> int:
     bad = _jobs_misconfig()
     if bad:
@@ -75,19 +101,29 @@ def main() -> int:
     except InvalidJobs as exc:
         print(f"FAIL: {exc}", file=sys.stderr)
         return 2
-    tags = fetch_tags()
-    ollama = "up" if tags is not None else "down"
+    ollama = "up" if ollama_up() else "down"
     sdk = _sdk() or "none"
     adb = "yes" if _adb() else "no"
+    kvm = _kvm()
     print(f"cpus={cpu} ram_gb={ram if ram is not None else 'unknown'} jobs={jobs} slots={slots}")
-    print(f"ollama={ollama} emulator_gpu=unknown sdk={sdk} adb={adb} kvm={_kvm()}")
-    if tags is None:
-        print("models=none")
-    elif not tags:
-        print("models=none (run ensure-local-model)")
-    else:
-        extra = f" coder={recommended_coder(tags)}" if coder_models(tags) else " coder=missing"
-        print(f"models={','.join(tags)}{extra}")
+    print(f"ollama={ollama} emulator_gpu=unknown sdk={sdk} adb={adb} kvm={kvm}")
+    if kvm == "no" and _avd_present(None if sdk == "none" else sdk):
+        print(
+            "WARN: AVD present but /dev/kvm missing — /emulator will skip; use a USB device "
+            "(docs/LINUX_DEV.md)",
+            file=sys.stderr,
+        )
+    watches = _inotify_watches()
+    if watches is not None:
+        print(f"inotify_max_user_watches={watches}")
+        if watches < 100_000:
+            print(
+                "HINT: low inotify watches; see docs/LINUX_DEV.md "
+                "(sudo sysctl -w fs.inotify.max_user_watches=524288)",
+                file=sys.stderr,
+            )
+    elif sys.platform.startswith("linux"):
+        print("HINT: Linux host — see docs/LINUX_DEV.md for SSD/caches/direnv/inotify", file=sys.stderr)
     mcp = ROOT / ".cursor" / "mcp.json"
     print(f"mcp.json={'yes' if mcp.is_file() else 'no (copy mcp.foss.example optional)'}")
     if ram is not None and ram < 16 and ollama == "up":

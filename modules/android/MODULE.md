@@ -14,14 +14,18 @@
 - 🔲 Pin Gradle wrapper (`gradlew`, `gradle-wrapper.jar`, `gradle-wrapper.properties`) and dependency versions
 - 🔲 Review `examples/android/` Golden Path stub
 - 🔲 Add [ADB] tasks to BUILD_PLAN for device/emulator verification
-- 🔲 Document F-Droid metadata path (Fastlane or manual) — validate with `bash scripts/verify-fdroid-metadata.sh`
+- 🔲 Document F-Droid recipe path `examples/android/metadata/` (or fdroiddata YAML) — validate with `bash scripts/verify-fdroid-metadata.sh`
+- 🔲 Fastlane listing under `examples/android/fastlane/metadata/android/` (or mirrored metadata)
+- 🔲 AntiFeatures template `examples/android/metadata/antifeatures.yml` (or recipe AntiFeatures)
+- 🔲 Signing runbook `docs/ANDROID_SIGNING.md` (keys outside git)
+- 🔲 UnifiedPush spec / FOSS push path (`docs/features/unifiedpush.md`, never FCM)
 
 ## Operations Checklist
 
 - 🔲 Crash reporting via FOSS channel only (no proprietary trackers)
 - 🔲 UnifiedPush or native OS notification provider configured
 - 🔲 Reproducible build verified locally (`bash scripts/verify-reproducible-apk.sh` or CI `android-release`)
-- 🔲 Signing keys stored outside repo; CI uses protected secrets
+- 🔲 Signing keys stored outside repo; CI uses protected secrets — see `docs/ANDROID_SIGNING.md`
 - 🔲 Rollback procedure documented in docs/RUNBOOK.md
 - 🔲 F-Droid submission checklist reviewed before release
 

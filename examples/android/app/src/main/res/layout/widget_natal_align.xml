@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/widget_natal_align_root"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:background="@drawable/bg_widget_upcoming"
+    android:padding="12dp">
+
+    <TextView
+        android:id="@+id/widget_natal_align_title"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="@string/astro_widget_natal_align_name"
+        android:textColor="#FFD54F"
+        android:textStyle="bold"
+        android:textSize="14sp"
+        android:paddingBottom="6dp" />
+
+    <TextView
+        android:id="@+id/widget_natal_align_profile"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:textColor="#FFFFFF"
+        android:textSize="13sp"
+        android:textStyle="bold"
+        android:visibility="gone" />
+
+    <TextView
+        android:id="@+id/widget_natal_align_double"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:textColor="#E0E0E0"
+        android:textSize="12sp"
+        android:paddingTop="4dp"
+        android:visibility="gone" />
+
+    <TextView
+        android:id="@+id/widget_natal_align_triple"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:textColor="#CFD8DC"
+        android:textSize="12sp"
+        android:paddingTop="2dp"
+        android:visibility="gone" />
+
+    <TextView
+        android:id="@+id/widget_natal_align_empty"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="@string/astro_widget_natal_align_empty"
+        android:textColor="#90A4AE"
+        android:textSize="13sp"
+        android:visibility="visible" />
+</LinearLayout>

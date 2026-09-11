@@ -1,10 +1,22 @@
 package org.astroalarm.astro.model
 
-import org.astroalarm.sol.PlanetBody
-import org.astroalarm.sol.PlanetEventType
+import org.astroalarm.astro.birth.NatalBody
 import org.astroalarm.astro.zodiac.ZodiacPoint
 import org.astroalarm.astro.zodiac.ZodiacSign
+import org.astroalarm.sol.PlanetBody
+import org.astroalarm.sol.PlanetEventType
 import java.time.DayOfWeek
+
+enum class NatalAspect(val degrees: Double) {
+    Conjunction(0.0),
+    Square(90.0),
+    Opposition(180.0),
+}
+
+enum class MercuryStationKind {
+    RetrogradeStart,
+    DirectStart,
+}
 
 enum class SolarEventType {
     Sunrise,
@@ -50,6 +62,36 @@ sealed interface AlarmTarget {
     data class Planet(val body: PlanetBody, val event: PlanetEventType, val offsetMinutes: Int = 0) : AlarmTarget
     data class PlanetAlign(val bodyA: PlanetBody, val bodyB: PlanetBody, val offsetMinutes: Int = 0) : AlarmTarget
     data class AllPlanetsAlign(val offsetMinutes: Int = 0) : AlarmTarget
+    data class NatalAscAspect(
+        val body: NatalBody,
+        val aspect: NatalAspect,
+        val profileId: String,
+        val offsetMinutes: Int = 0,
+    ) : AlarmTarget
+    data class NatalMcAspect(
+        val body: NatalBody,
+        val aspect: NatalAspect,
+        val profileId: String,
+        val offsetMinutes: Int = 0,
+    ) : AlarmTarget
+    data class MoonReturn(val profileId: String, val offsetMinutes: Int = 0) : AlarmTarget
+    data class SolarReturn(val profileId: String, val offsetMinutes: Int = 0) : AlarmTarget
+    data class MercuryStation(
+        val kind: MercuryStationKind,
+        val offsetMinutes: Int = 0,
+    ) : AlarmTarget
+    data class MoonSignIngress(val sign: ZodiacSign, val offsetMinutes: Int = 0) : AlarmTarget
+    /** Specific double/triple of natal story events (2 or 3 kinds). */
+    data class NatalCompoundSpecific(
+        val kinds: List<String>,
+        val profileId: String,
+        val offsetMinutes: Int = 0,
+    ) : AlarmTarget
+    data class NatalCompoundAny(
+        val arity: Int,
+        val profileId: String,
+        val offsetMinutes: Int = 0,
+    ) : AlarmTarget
 }
 
 data class AstroAlarm(

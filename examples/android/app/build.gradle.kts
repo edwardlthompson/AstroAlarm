@@ -11,6 +11,13 @@ kotlin {
     }
 }
 
+fun readGoldenPathAppVersion(): String {
+    val file = rootProject.file("../../schemas/golden-path/app-version.json")
+    val version = Regex("\"version\"\\s*:\\s*\"([^\"]+)\"").find(file.readText())?.groupValues?.get(1).orEmpty()
+    check(version.isNotEmpty()) { "schemas/golden-path/app-version.json missing version" }
+    return version
+}
+
 android {
     namespace = "dev.foss.goldenpath"
     compileSdk = 37
@@ -20,7 +27,7 @@ android {
         minSdk = 26
         targetSdk = 37
         versionCode = 10104
-        versionName = "1.7.0" // x-release-please-version
+        versionName = readGoldenPathAppVersion() // synced via schemas/golden-path/app-version.json
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
     }
 
@@ -31,19 +38,31 @@ android {
 
     signingConfigs {
         create("release") {
-            val ksPath = System.getenv("ANDROID_KEYSTORE_FILE")
+            val ksPath = System.getenv("GOLDENPATH_UPLOAD_STORE_FILE")
+                ?: System.getenv("ANDROID_KEYSTORE_FILE")
             if (!ksPath.isNullOrBlank()) {
                 storeFile = file(ksPath)
-                storePassword = System.getenv("ANDROID_KEYSTORE_PASSWORD") ?: ""
-                keyAlias = System.getenv("ANDROID_KEY_ALIAS") ?: "upload"
-                keyPassword = System.getenv("ANDROID_KEY_PASSWORD") ?: ""
+                storePassword = System.getenv("GOLDENPATH_UPLOAD_STORE_PASSWORD")
+                    ?: System.getenv("ANDROID_KEYSTORE_PASSWORD")
+                    ?: ""
+                keyAlias = System.getenv("GOLDENPATH_UPLOAD_KEY_ALIAS")
+                    ?: System.getenv("ANDROID_KEY_ALIAS")
+                    ?: "upload"
+                keyPassword = System.getenv("GOLDENPATH_UPLOAD_KEY_PASSWORD")
+                    ?: System.getenv("ANDROID_KEY_PASSWORD")
+                    ?: ""
             }
         }
     }
 
     buildTypes {
         release {
-            isMinifyEnabled = false
+            isMinifyEnabled = true
+            isShrinkResources = true
+            proguardFiles(
+                getDefaultProguardFile("proguard-android-optimize.txt"),
+                "proguard-rules.pro",
+            )
             val rel = signingConfigs.getByName("release")
             if (rel.storeFile != null && rel.storeFile!!.exists()) {
                 signingConfig = rel
@@ -108,6 +127,7 @@ dependencies {
     androidTestImplementation("androidx.test.ext:junit:1.3.0")
     androidTestImplementation("androidx.test:runner:1.7.0")
     androidTestImplementation("androidx.test:rules:1.7.0")
+    androidTestImplementation("androidx.test.espresso:espresso-core:3.7.0")
     androidTestImplementation("androidx.compose.ui:ui-test-junit4")
 
     debugImplementation("androidx.compose.ui:ui-tooling")

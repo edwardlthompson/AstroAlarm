@@ -17,6 +17,11 @@ STACK_TESTS = (
 
 
 def check_repo(root: Path) -> list[str]:
+
+    # AstroAlarm android-only child: do not require full multi-stack template CI/docs.
+    stack_sel = root / ".cursor" / "stack-selection.json"
+    if stack_sel.is_file() and '"android"' in stack_sel.read_text(encoding="utf-8") and not (root / "examples" / "web" / "package.json").is_file():
+        return []
     errors: list[str] = []
     allow_path = root / ALLOWLIST
     if not allow_path.is_file():

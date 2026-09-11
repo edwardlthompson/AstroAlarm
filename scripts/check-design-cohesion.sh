@@ -113,7 +113,7 @@ fi
 
 # Generated outputs should exist when tokens present and stack is active
 REQUIRED_OUTPUTS=(branding/official-colors.css)
-if [ -d examples/web ]; then
+if [ -f examples/web/package.json ]; then
   REQUIRED_OUTPUTS+=(
     examples/web/src/design-tokens.css
     examples/web/src/theme-meta.json
@@ -133,6 +133,11 @@ for out in "${REQUIRED_OUTPUTS[@]}"; do
     fail "missing generated output $out (run scripts/sync-design-tokens.py)"
   fi
 done
+
+# Home chrome is Settings-only; theme is a dropdown, not chips (docs/DESIGN_GUIDE.md)
+if ! python3 scripts/lib/design_chrome_gate.py "$ROOT"; then
+  fail "chrome/chip regression (Settings-only header; no FilterChip theme)"
+fi
 
 if [ "$ERRORS" -gt 0 ]; then
   echo "$ERRORS design cohesion check(s) failed"

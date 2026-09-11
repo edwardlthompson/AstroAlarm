@@ -1,5 +1,5 @@
 {
-  "template_version": "1.7.0",
+  "template_version": "1.8.0",
   "entry_points": {
     "bootstrap": "docs/START_HERE.md",
     "reference": "docs/FOR_AGENTS.md",
@@ -15,7 +15,8 @@
     "allideas": "docs/help/ALLIDEAS.md",
     "upgrade": "docs/help/UPGRADE.md",
     "adr": "docs/help/ADR.md",
-    "batch_commands_print": "docs/help/batch-commands-print.html"
+    "batch_commands_print": "docs/help/batch-commands-print.html",
+    "donations": "docs/help/DONATIONS.md"
   },
   "files": [
     {
@@ -2390,6 +2391,170 @@
       "read_when": "milestone_boundary",
       "update_when": "milestone_boundary",
       "owner": "maintainer"
+    },
+    {
+      "path": "scripts/check-adr-architecture.sh",
+      "role": "template-catchup-v1.4.0"
+    },
+    {
+      "path": "scripts/check-android-r8.sh",
+      "role": "template-catchup-v1.4.0"
+    },
+    {
+      "path": "scripts/check-android-sdk-licenses.sh",
+      "role": "template-catchup-v1.4.0"
+    },
+    {
+      "path": "scripts/check-android-sdk-secrets.sh",
+      "role": "template-catchup-v1.4.0"
+    },
+    {
+      "path": "scripts/check-android-signing-runbook.sh",
+      "role": "template-catchup-v1.4.0"
+    },
+    {
+      "path": "scripts/check-build-plan-tally.sh",
+      "role": "template-catchup-v1.4.0"
+    },
+    {
+      "path": "scripts/check-ci-gaps.sh",
+      "role": "template-catchup-v1.4.0"
+    },
+    {
+      "path": "scripts/check-ci-refs.sh",
+      "role": "template-catchup-v1.4.0"
+    },
+    {
+      "path": "scripts/check-compose-a11y-lint.sh",
+      "role": "template-catchup-v1.4.0"
+    },
+    {
+      "path": "scripts/check-crash-inbox.sh",
+      "role": "template-catchup-v1.4.0"
+    },
+    {
+      "path": "scripts/check-cursor-automations.sh",
+      "role": "template-catchup-v1.4.0"
+    },
+    {
+      "path": "scripts/check-cursor-canvas.sh",
+      "role": "template-catchup-v1.4.0"
+    },
+    {
+      "path": "scripts/check-cursor-cli.sh",
+      "role": "template-catchup-v1.4.0"
+    },
+    {
+      "path": "scripts/check-cursor-cloud-hooks.sh",
+      "role": "template-catchup-v1.4.0"
+    },
+    {
+      "path": "scripts/check-cursor-marketplace.sh",
+      "role": "template-catchup-v1.4.0"
+    },
+    {
+      "path": "scripts/check-espresso-android16.sh",
+      "role": "template-catchup-v1.4.0"
+    },
+    {
+      "path": "scripts/check-fdroid-metadata-links.sh",
+      "role": "template-catchup-v1.4.0"
+    },
+    {
+      "path": "scripts/check-golden-path-app-version.sh",
+      "role": "template-catchup-v1.4.0"
+    },
+    {
+      "path": "scripts/check-lighthouse-floors.sh",
+      "role": "template-catchup-v1.4.0"
+    },
+    {
+      "path": "scripts/check-lightroom-lua.sh",
+      "role": "template-catchup-v1.4.0"
+    },
+    {
+      "path": "scripts/check-lightroom-sdk-playbook.sh",
+      "role": "template-catchup-v1.4.0"
+    },
+    {
+      "path": "scripts/check-lightroom-tagset-fuzz.sh",
+      "role": "template-catchup-v1.4.0"
+    },
+    {
+      "path": "scripts/check-locale-pack-budget.sh",
+      "role": "template-catchup-v1.4.0"
+    },
+    {
+      "path": "scripts/check-pages-demo-link.sh",
+      "role": "template-catchup-v1.4.0"
+    },
+    {
+      "path": "scripts/check-project-card-index.sh",
+      "role": "template-catchup-v1.4.0"
+    },
+    {
+      "path": "scripts/check-reproducible-apk.sh",
+      "role": "template-catchup-v1.4.0"
+    },
+    {
+      "path": "scripts/check-sanitize-fixtures.sh",
+      "role": "template-catchup-v1.4.0"
+    },
+    {
+      "path": "scripts/check-scorecard-sarif-classifier.sh",
+      "role": "template-catchup-v1.4.0"
+    },
+    {
+      "path": "scripts/check-sw-cache-budget.sh",
+      "role": "template-catchup-v1.4.0"
+    },
+    {
+      "path": "scripts/check-tour-coach-chrome.sh",
+      "role": "template-catchup-v1.4.0"
+    },
+    {
+      "path": "scripts/check-web-import-hygiene.sh",
+      "role": "template-catchup-v1.4.0"
+    },
+    {
+      "path": "scripts/gen-feature-spec.sh",
+      "role": "template-catchup-v1.4.0"
+    },
+    {
+      "path": "scripts/refresh-build-plan-tally.sh",
+      "role": "template-catchup-v1.4.0"
+    },
+    {
+      "path": "scripts/resume-handoff.sh",
+      "role": "template-catchup-v1.4.0"
+    },
+    {
+      "path": "scripts/run-python-mypy.sh",
+      "role": "template-catchup-v1.4.0"
+    },
+    {
+      "path": "scripts/smoke-sprint.sh",
+      "role": "template-catchup-v1.4.0"
+    },
+    {
+      "path": "scripts/sync-open-prs-build-plan.sh",
+      "role": "template-catchup-v1.4.0"
+    },
+    {
+      "path": "scripts/sync-template-gaps-build-plan.sh",
+      "role": "template-catchup-v1.4.0"
+    },
+    {
+      "path": "scripts/winget-publish-loop.sh",
+      "role": "template-catchup-v1.4.0"
+    },
+    {
+      "path": ".github/workflows/sbom-diff-dependabot.yml",
+      "role": "template-catchup-v1.4.0"
+    },
+    {
+      "path": ".github/workflows/sync-open-prs-build-plan.yml",
+      "role": "template-catchup-v1.4.0"
     }
   ],
   "modules": {
@@ -2438,5 +2603,11 @@
       "examples/web/src/appBootstrap.ts",
       "examples/web/public/sw.js"
     ]
+  },
+  "upstream_bootstrap_tag": "v1.4.0",
+  "project": {
+    "name": "AstroAlarm",
+    "purpose": "FOSS Android astronomical and solar/lunar clock alarm app with on-device Meeus/NOAA ephemeris, custom clock wheels, lockscreen snooze/stop with math unlock challenge, and rotating day/night home widgets.",
+    "stack": "android"
   }
 }

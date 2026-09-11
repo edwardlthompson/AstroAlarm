@@ -37,6 +37,7 @@ fun GoldenPathApp(
     themePreferences: ThemePreferences,
     appUpdatePreferences: AppUpdatePreferences,
     networkStatusMonitor: NetworkStatusMonitor,
+    initialFeedbackKind: String? = null,
 ) {
     val themeMode by themePreferences.themeMode.collectAsStateWithLifecycle(initialValue = ThemeMode.System)
     val isOnline by networkStatusMonitor.isOnline.collectAsStateWithLifecycle(initialValue = true)
@@ -47,7 +48,12 @@ fun GoldenPathApp(
     var openedAboutFromSettings by remember { mutableStateOf(false) }
     val feedbackPrefs = remember { FeedbackPrefs(context) }
     var saveCrashes by remember { mutableStateOf(feedbackPrefs.saveCrashes()) }
-    var showFeedback by remember { mutableStateOf<String?>(if (PendingCrashStore(context).read() != null) "bug" else null) }
+    var showFeedback by remember {
+        mutableStateOf<String?>(
+            initialFeedbackKind
+                ?: if (PendingCrashStore(context).read() != null) "bug" else null,
+        )
+    }
     var updateStatus by remember { mutableStateOf(context.getString(R.string.about_update_current)) }
     var launchPrompt by remember { mutableStateOf<AppUpdates.LaunchPrompt?>(null) }
     val donations = remember { DonationsLoader.load(context) }

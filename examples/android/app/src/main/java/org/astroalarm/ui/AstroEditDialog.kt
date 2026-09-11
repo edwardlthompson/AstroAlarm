@@ -36,6 +36,8 @@ fun AstroEditDialog(
     defaultTarget: AlarmTarget,
     place: AstroPlace?,
     existingAlarms: List<AstroAlarm> = emptyList(),
+    natalProfileId: String? = null,
+    natalAscOk: Boolean = false,
     onDismiss: () -> Unit,
     onSave: (AstroAlarm) -> Unit
 ) {
@@ -108,7 +110,12 @@ fun AstroEditDialog(
                     modifier = Modifier.weight(1f).verticalScroll(rememberScrollState()),
                     verticalArrangement = Arrangement.spacedBy(16.dp)
                 ) {
-                    TargetTypeSelector(currentTarget = target, onTargetChange = { target = it })
+                    TargetTypeSelector(
+                        currentTarget = target,
+                        onTargetChange = { target = it },
+                        natalProfileId = natalProfileId,
+                        natalAscOk = natalAscOk,
+                    )
 
                     if (isAstroTarget && !hasLocation) {
                         Card(colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.errorContainer), shape = RoundedCornerShape(10.dp)) {
@@ -119,7 +126,12 @@ fun AstroEditDialog(
                         }
                     }
 
-                    AstroEditTargetSection(target = target, onTargetChange = { target = it })
+                    AstroEditTargetSection(
+                        target = target,
+                        onTargetChange = { target = it },
+                        natalProfileId = natalProfileId,
+                        timeUnknown = !natalAscOk,
+                    )
 
                     val peer = org.astroalarm.astro.alarm.AlarmFireIdentity.otherPeer(
                         target, initialAlarm?.id, existingAlarms,
