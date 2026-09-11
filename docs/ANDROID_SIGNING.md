@@ -10,21 +10,24 @@ Play App Signing (optional commercial store) keeps the *app signing* key on Goog
 
 ## Environment variables
 
-Copy `.env.example` → `.env` (gitignored). For a local signed release:
+Copy `.env.example` → `.env` (gitignored). For a local signed release, prefer the Golden Path names; AstroAlarm also accepts legacy `ANDROID_*` fallbacks:
 
-| Variable | Role |
-|----------|------|
-| `GOLDENPATH_UPLOAD_STORE_FILE` | Absolute path to the upload keystore |
-| `GOLDENPATH_UPLOAD_STORE_PASSWORD` | Keystore password |
-| `GOLDENPATH_UPLOAD_KEY_ALIAS` | Key alias (default `upload` in Gradle) |
-| `GOLDENPATH_UPLOAD_KEY_PASSWORD` | Key password |
-`examples/android/app/build.gradle.kts` applies the `upload` signing config only when `GOLDENPATH_UPLOAD_STORE_FILE` is set. Empty or missing → release stays debug-signed (CI hash compare).
+| Variable (preferred) | Fallback | Role |
+|----------|----------|------|
+| `GOLDENPATH_UPLOAD_STORE_FILE` | `ANDROID_KEYSTORE_FILE` | Absolute path to the upload keystore |
+| `GOLDENPATH_UPLOAD_STORE_PASSWORD` | `ANDROID_KEYSTORE_PASSWORD` | Keystore password |
+| `GOLDENPATH_UPLOAD_KEY_ALIAS` | `ANDROID_KEY_ALIAS` | Key alias (default `upload` in Gradle) |
+| `GOLDENPATH_UPLOAD_KEY_PASSWORD` | `ANDROID_KEY_PASSWORD` | Key password |
+`examples/android/app/build.gradle.kts` applies the release signing config only when a store path env is set and the file exists. Empty or missing → release stays debug-signed (CI hash compare).
+
+**AstroAlarm maintainer path:** keep secrets outside git in `~/.config/astroalarm/signing.env` (source before Gradle), never under the repo tree.
 
 ## Local signed release
 
 ```bash
+# optional: set -a && source ~/.config/astroalarm/signing.env && set +a
 export SOURCE_DATE_EPOCH=1700000000
-export GOLDENPATH_UPLOAD_STORE_FILE="$HOME/keys/goldenpath-upload.jks"
+export GOLDENPATH_UPLOAD_STORE_FILE="$HOME/keys/astroalarm-upload.jks"
 # plus the three password/alias variables
 cd examples/android && ./gradlew assembleRelease
 

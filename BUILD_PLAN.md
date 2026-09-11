@@ -1,7 +1,7 @@
 # Build Plan
 
 <!-- remaining-tally -->
-**Remaining:** AGENT 0 · AUTO 0 · HUMAN 1 · ADB 0 · **1 open**
+**Remaining:** AGENT 0 · AUTO 2 · HUMAN 0 · ADB 0 · **2 open**
 <!-- /remaining-tally -->
 > Done work: [`COMPLETED_TASKS.md`](COMPLETED_TASKS.md). Feature protocol: [`docs/FEATURE_MODULES.md`](docs/FEATURE_MODULES.md).
 
@@ -9,22 +9,32 @@
 
 Sequential `[AGENT]` first, then Parallel. After each AGENT step: `python3 scripts/agent-run.py watch-agent-gates --once --autofix --scope auto`.
 
+> **Sprint 2+ Golden Path 1–11** archived in COMPLETED_TASKS.md (signing, F-Droid MODULE, R8 budget, UnifiedPush, crash-inbox, Settings chrome, feedback deep link, resume, emulator/ADR skills, OpenSSF, sanitize).
+
 ---
 
 ## Child Repo Playbook
 
 ### Sprint 2+ — Incremental Features
 
-<!-- parallel_exception: board empty after natal archive; only HUMAN CII row remains -->
+<!-- parallel_exception: board empty after Golden Path archive; Open PRs AUTO stay synced -->
 
-> Natal chart disk widget archived in COMPLETED_TASKS.md.
+> Natal chart disk widget archived in COMPLETED_TASKS.md. Template catch-up from agent-project-bootstrap v1.4.0 on `chore/template-catchup-v1.4.0`.
 
 ### Parallel
 
 | ID | Owner | Task | Scope |
 |----|-------|------|-------|
 | — | — | _(none open)_ | — |
-
 #### Human & device (after automation)
 
-1. 🔲 [HUMAN] P2: CII Best Practices checklist (login + public badge)
+_(none open)_
+
+### Open PRs (synced)
+
+> Auto-managed. Do not hand-edit rows inside the markers.
+
+<!-- open-prs-sync:begin -->
+- 🔲 [AUTO] Merge Dependabot [#18](https://github.com/edwardlthompson/AstroAlarm/pull/18) (chore(deps): bump the android-dependencies group across 1 directory with 3 updates)
+- 🔲 [AUTO] Merge Dependabot [#4](https://github.com/edwardlthompson/AstroAlarm/pull/4) (chore(deps): bump the github-actions group across 1 directory with 6 updates)
+<!-- open-prs-sync:end -->

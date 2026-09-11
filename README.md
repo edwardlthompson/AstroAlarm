@@ -15,6 +15,7 @@
   <img src="https://img.shields.io/badge/status-active-C9A227?style=flat-square" alt="status" />
   <a href="https://github.com/edwardlthompson/AstroAlarm/actions/workflows/ci.yml"><img src="https://img.shields.io/github/actions/workflow/status/edwardlthompson/AstroAlarm/ci.yml?style=flat-square&label=CI" alt="CI" /></a>
   <img src="https://api.securityscorecards.dev/projects/github.com/edwardlthompson/AstroAlarm/badge" alt="OpenSSF Scorecard" />
+  <a href="https://www.bestpractices.dev/projects/14564"><img src="https://www.bestpractices.dev/projects/14564/badge" alt="OpenSSF Best Practices" /></a>
   <a href="https://codespaces.new/edwardlthompson/AstroAlarm"><img src="https://img.shields.io/badge/Codespaces-Open-181717?style=flat-square&logo=github" alt="Open in GitHub Codespaces" /></a>
   <img src="https://img.shields.io/badge/AGENT-owner-2ea043?style=flat-square" alt="AGENT" />
   <img src="https://img.shields.io/badge/HUMAN-owner-0969da?style=flat-square" alt="HUMAN" />

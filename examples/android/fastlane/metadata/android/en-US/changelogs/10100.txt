@@ -1,0 +1,1 @@
+AstroAlarm 1.x production line: 24-hour clock wheel, 3D celestial clock, NASA Blue Marble globe, upcoming-alarms widget, zodiac and math settings, and signed FOSS APKs on GitHub Releases (`astroalarm-X.Y.Z-foss.apk`).

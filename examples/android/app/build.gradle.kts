@@ -57,7 +57,12 @@ android {
 
     buildTypes {
         release {
-            isMinifyEnabled = false
+            isMinifyEnabled = true
+            isShrinkResources = true
+            proguardFiles(
+                getDefaultProguardFile("proguard-android-optimize.txt"),
+                "proguard-rules.pro",
+            )
             val rel = signingConfigs.getByName("release")
             if (rel.storeFile != null && rel.storeFile!!.exists()) {
                 signingConfig = rel

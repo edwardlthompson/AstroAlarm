@@ -65,12 +65,23 @@ class AlarmNotificationChannelTest {
             android.content.Intent(context, AstroAlarmActivity::class.java),
             android.app.PendingIntent.FLAG_IMMUTABLE,
         )
-        val notif = AlarmNotificationChannel.buildRinging(context, pending)
+        val notif = AlarmNotificationChannel.buildRinging(
+            context,
+            pending,
+            alarmId = "alarm-1",
+            snoozeMinutes = 7,
+        )
         assertEquals(NotificationCompat.CATEGORY_ALARM, notif.category)
         assertEquals(Notification.VISIBILITY_PUBLIC, notif.visibility)
         assertTrue(notif.flags and Notification.FLAG_ONGOING_EVENT != 0)
         assertNotNull(notif.fullScreenIntent)
         assertEquals(AlarmNotificationChannel.ID, notif.channelId)
         assertNull(notif.sound)
+        assertEquals(2, notif.actions.size)
+        assertEquals(context.getString(dev.foss.goldenpath.R.string.astro_action_stop), notif.actions[0].title.toString())
+        assertEquals(
+            context.getString(dev.foss.goldenpath.R.string.astro_action_snooze, 7),
+            notif.actions[1].title.toString(),
+        )
     }
 }

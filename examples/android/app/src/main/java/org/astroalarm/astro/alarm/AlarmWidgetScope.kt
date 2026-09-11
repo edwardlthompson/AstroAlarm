@@ -11,12 +11,14 @@ object AlarmWidgetScope {
     fun onYearly(target: AlarmTarget): Boolean = when (target) {
         is AlarmTarget.SolarTerm -> true
         is AlarmTarget.Solar -> AlarmFireIdentity.keyOf(target) != null
+        is AlarmTarget.SolarReturn, is AlarmTarget.NatalAscAspect, is AlarmTarget.NatalMcAspect -> true
         else -> false
     }
 
     fun onSol(target: AlarmTarget): Boolean = target is AlarmTarget.Planet ||
         target is AlarmTarget.PlanetAlign ||
         target is AlarmTarget.AllPlanetsAlign ||
+        target is AlarmTarget.MercuryStation ||
         onYearly(target) ||
         AlarmFireIdentity.keyOf(target) != null
 
@@ -24,6 +26,7 @@ object AlarmWidgetScope {
         is AlarmTarget.Planet -> listOf(target.body)
         is AlarmTarget.PlanetAlign -> listOf(target.bodyA, target.bodyB)
         is AlarmTarget.AllPlanetsAlign -> PlanetBody.entries.toList()
+        is AlarmTarget.MercuryStation -> listOf(PlanetBody.MERCURY)
         else -> if (onSol(target)) listOf(PlanetBody.EARTH) else emptyList()
     }
 
@@ -47,6 +50,7 @@ object AlarmWidgetScope {
             target.event == LunarEventType.MoonTransit
         is AlarmTarget.SolarTerm -> true
         is AlarmTarget.Zodiac -> AlarmFireIdentity.keyOf(target) != null
+        is AlarmTarget.MoonReturn, is AlarmTarget.MoonSignIngress -> true
         else -> false
     }
 

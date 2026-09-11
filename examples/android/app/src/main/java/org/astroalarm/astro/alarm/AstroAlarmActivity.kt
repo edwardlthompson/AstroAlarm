@@ -1,5 +1,6 @@
 package org.astroalarm.astro.alarm
 
+import android.content.BroadcastReceiver
 import android.content.Context
 import android.media.Ringtone
 import android.media.RingtoneManager
@@ -29,10 +30,15 @@ class AstroAlarmActivity : ComponentActivity(), TextToSpeech.OnInitListener {
     private var tts: TextToSpeech? = null
     private var ttsSession: AlarmTtsSession? = null
     private var activeAlarm: AstroAlarm? = null
+    private var uiDismissReceiver: BroadcastReceiver? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         turnOnScreenAndShowWhenLocked()
+        uiDismissReceiver = AlarmUiDismissBridge.register(this) {
+            stopAlarmOutput()
+            finish()
+        }
 
         val alarmId = intent.getStringExtra(AstroAlarmScheduler.EXTRA_ALARM_ID) ?: ""
         val store = AstroAlarmStore(this)
@@ -119,27 +125,20 @@ class AstroAlarmActivity : ComponentActivity(), TextToSpeech.OnInitListener {
     private fun onSnoozeClicked() {
         stopAlarmOutput()
         AlarmNotificationChannel.cancel(this)
-        consumePeersAndReschedule()
+        activeAlarm?.let { AlarmDismissActions.snooze(this, it) }
         finish()
     }
 
     private fun onStopClicked() {
         stopAlarmOutput()
         AlarmNotificationChannel.cancel(this)
-        consumePeersAndReschedule()
+        activeAlarm?.let { AlarmDismissActions.stop(this, it) }
         finish()
     }
 
-    private fun consumePeersAndReschedule() {
-        val ringing = activeAlarm ?: return
-        val store = AstroAlarmStore(this)
-        val firedAt = System.currentTimeMillis()
-        val marked = if (ringing.isOnce) ringing.copy(enabled = false, lastFiredEpochMs = firedAt) else ringing
-        store.saveAll(AlarmFireIdentity.consumeOccurrence(store.getAll(), marked, firedAt))
-        AstroAlarmScheduler.rescheduleAll(this)
-    }
-
     override fun onDestroy() {
+        AlarmUiDismissBridge.unregister(this, uiDismissReceiver)
+        uiDismissReceiver = null
         stopAlarmOutput()
         super.onDestroy()
     }

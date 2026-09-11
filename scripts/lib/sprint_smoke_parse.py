@@ -55,8 +55,8 @@ def parse_sprints(text: str) -> list[SmokeSprint]:
             if match:
                 current = SmokeSprint(title=match.group("title").strip())
                 blocks.append(current)
-            else:
-                current = None
+            # Non-sprint ### headers (Sequential / Parallel / Open PRs) stay in the
+            # current Sprint/M* block so numbered rows still smoke.
             continue
         if current is None:
             continue

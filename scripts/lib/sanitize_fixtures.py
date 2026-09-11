@@ -24,7 +24,23 @@ CI_SNIPPETS = (
 
 def _stack_present(root: Path, rel: Path) -> bool:
     parts = rel.parts
-    return len(parts) >= 2 and parts[0] == "examples" and (root / parts[0] / parts[1]).is_dir()
+    if len(parts) < 2 or parts[0] != "examples":
+        return False
+    stack = root / parts[0] / parts[1]
+    if not stack.is_dir():
+        return False
+    # Stub leftover dirs (e.g. pruned web with only README) are not active stacks.
+    if parts[1] == "web":
+        return (stack / "package.json").is_file()
+    if parts[1] == "android":
+        return (stack / "app").is_dir()
+    if parts[1] == "python":
+        return (stack / "pyproject.toml").is_file()
+    if parts[1] == "node":
+        return (stack / "package.json").is_file()
+    if parts[1] in {"rust", "go"}:
+        return (stack / "Cargo.toml").is_file() or (stack / "go.mod").is_file()
+    return True
 
 
 def check_repo(root: Path) -> list[str]:

@@ -9,6 +9,12 @@ cd "$ROOT"
 # shellcheck source=lib/resolve-python.sh
 . "$(cd "$(dirname "$0")" && pwd)/lib/resolve-python.sh"
 
+# Child android-only (or web-pruned) repos have no web About slice to lego-test.
+if [ ! -f "$ROOT/examples/web/package.json" ]; then
+  echo "SKIP: examples/web pruned — About feature gate N/A"
+  exit 0
+fi
+
 WEB_SRC="$ROOT/examples/web/src"
 WEB_E2E="$ROOT/examples/web/e2e"
 BACKUP="$(mktemp -d)"

@@ -185,6 +185,36 @@ fun LazyListScope.renderGroupedAlarms(
             )
         }
     }
+
+    item {
+        SectionHeader(title = "✨ " + stringResource(R.string.astro_tab_natal))
+    }
+    val natalAlarms = alarms.filter {
+        it.target is AlarmTarget.NatalAscAspect ||
+            it.target is AlarmTarget.NatalMcAspect ||
+            it.target is AlarmTarget.MoonReturn ||
+            it.target is AlarmTarget.SolarReturn ||
+            it.target is AlarmTarget.MercuryStation ||
+            it.target is AlarmTarget.MoonSignIngress ||
+            it.target is AlarmTarget.NatalCompoundSpecific ||
+            it.target is AlarmTarget.NatalCompoundAny
+    }.sortedBy { AstroNextFire.nextInstant(it, place)?.toEpochMilli() ?: Long.MAX_VALUE }
+    if (natalAlarms.isEmpty()) {
+        item { EmptySectionNote(stringResource(R.string.astro_birth_empty)) }
+    } else {
+        items(natalAlarms, key = { it.id }) { alarm ->
+            val nextInstant = AstroNextFire.nextInstant(alarm, place, all = alarms)
+            val formatted = nextInstant?.let { formatInstant(it, place) }
+            AstroAlarmRow(
+                alarm = alarm,
+                nextFireFormatted = formatted,
+                onToggle = { onToggle(alarm, it) },
+                onEdit = { onEdit(alarm) },
+                onDelete = { onDelete(alarm) },
+                peerNote = alarmPeerNote(alarm, alarms),
+            )
+        }
+    }
 }
 
 @Composable
