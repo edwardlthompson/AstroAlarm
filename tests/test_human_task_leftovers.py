@@ -44,9 +44,20 @@ class HumanTaskLeftoversTests(unittest.TestCase):
         self.assertEqual(automate_crash_proxy_off(ROOT, {}).exit_code, 0)
 
     def test_cii_stays_human_without_badge(self) -> None:
+        with tempfile.TemporaryDirectory() as tmp:
+            root = Path(tmp)
+            (root / "README.md").write_text("# no badge\n", encoding="utf-8")
+            result = automate_cii_badge(root, {})
+            self.assertEqual(result.exit_code, 1)
+            self.assertTrue(result.backlog)
+
+    def test_cii_passes_when_readme_has_badge(self) -> None:
         result = automate_cii_badge(ROOT, {})
-        self.assertEqual(result.exit_code, 1)
-        self.assertTrue(result.backlog)
+        readme = (ROOT / "README.md").read_text(encoding="utf-8")
+        if "bestpractices.dev" in readme:
+            self.assertEqual(result.exit_code, 0)
+        else:
+            self.assertEqual(result.exit_code, 1)
 
     def test_mcp_copy_in_temp(self) -> None:
         with tempfile.TemporaryDirectory() as tmp:

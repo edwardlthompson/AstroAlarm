@@ -6,9 +6,9 @@ import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
 import androidx.lifecycle.lifecycleScope
 import dagger.hilt.android.AndroidEntryPoint
-import dev.foss.goldenpath.crashcapture.CrashCapture
 import dev.foss.goldenpath.about.AppUpdatePreferences
 import dev.foss.goldenpath.display.WindowRefresh
+import dev.foss.goldenpath.feedback.FeedbackDeepLink
 import dev.foss.goldenpath.network.NetworkStatusMonitor
 import dev.foss.goldenpath.ui.GoldenPathApp
 import dev.foss.goldenpath.ui.theme.ThemePreferences
@@ -21,10 +21,10 @@ class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
-        CrashCapture.install(applicationContext)
         val themePreferences = ThemePreferences(applicationContext)
         val appUpdatePreferences = AppUpdatePreferences(applicationContext)
         networkStatusMonitor = NetworkStatusMonitor(applicationContext).also { it.start() }
+        val deepLink = FeedbackDeepLink.parse(intent?.data?.toString())
 
         lifecycleScope.launch {
             appUpdatePreferences.clearPendingRestart()
@@ -38,6 +38,7 @@ class MainActivity : ComponentActivity() {
                 themePreferences = themePreferences,
                 appUpdatePreferences = appUpdatePreferences,
                 networkStatusMonitor = networkStatusMonitor!!,
+                initialFeedbackKind = deepLink?.kind,
             )
         }
     }

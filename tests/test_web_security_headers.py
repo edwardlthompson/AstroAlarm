@@ -24,6 +24,8 @@ class WebSecurityHeaderTests(unittest.TestCase):
         self.assertNotIn("Content-Security-Policy", html)
 
     def test_vite_preview_headers(self) -> None:
+        if not (ROOT / "examples/web/package.json").is_file():
+            self.skipTest("examples/web pruned")
         vite = (WEB / "vite.config.ts").read_text(encoding="utf-8")
         self.assertIn("injectCspMeta", vite)
         self.assertIn("Referrer-Policy", vite)

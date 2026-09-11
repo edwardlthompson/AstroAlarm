@@ -1,13 +1,20 @@
 package org.astroalarm.ui
 
+import androidx.compose.material3.Text
+import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
+import androidx.compose.ui.res.stringResource
+import dev.foss.goldenpath.R
 import org.astroalarm.astro.alarm.AlarmTargetCopy
 import org.astroalarm.astro.model.AlarmTarget
+import org.astroalarm.ui.birth.NatalCompoundPicker
 
 @Composable
 fun AstroEditTargetSection(
     target: AlarmTarget,
-    onTargetChange: (AlarmTarget) -> Unit
+    onTargetChange: (AlarmTarget) -> Unit,
+    natalProfileId: String? = null,
+    timeUnknown: Boolean = false,
 ) {
     when (target) {
         is AlarmTarget.Solar -> {
@@ -82,6 +89,86 @@ fun AstroEditTargetSection(
                         }
                     )
                 }
+            )
+        }
+        is AlarmTarget.NatalCompoundSpecific,
+        is AlarmTarget.NatalCompoundAny -> {
+            val pid = when (target) {
+                is AlarmTarget.NatalCompoundSpecific -> target.profileId
+                is AlarmTarget.NatalCompoundAny -> target.profileId
+            }
+            if (pid.isNotBlank()) {
+                NatalCompoundPicker(
+                    target = target,
+                    profileId = pid,
+                    timeUnknown = timeUnknown,
+                    onTargetChange = onTargetChange,
+                )
+            }
+            val offset = when (target) {
+                is AlarmTarget.NatalCompoundSpecific -> target.offsetMinutes
+                is AlarmTarget.NatalCompoundAny -> target.offsetMinutes
+            }
+            OffsetSelector(
+                offsetMinutes = offset,
+                eventName = AlarmTargetCopy.fallback(target),
+                onOffsetChange = { m ->
+                    onTargetChange(
+                        when (target) {
+                            is AlarmTarget.NatalCompoundSpecific -> target.copy(offsetMinutes = m)
+                            is AlarmTarget.NatalCompoundAny -> target.copy(offsetMinutes = m)
+                        },
+                    )
+                },
+            )
+        }
+        is AlarmTarget.NatalAscAspect,
+        is AlarmTarget.NatalMcAspect,
+        is AlarmTarget.MoonReturn,
+        is AlarmTarget.SolarReturn,
+        is AlarmTarget.MercuryStation,
+        is AlarmTarget.MoonSignIngress -> {
+            val pid = natalProfileId ?: when (target) {
+                is AlarmTarget.NatalAscAspect -> target.profileId
+                is AlarmTarget.NatalMcAspect -> target.profileId
+                is AlarmTarget.MoonReturn -> target.profileId
+                is AlarmTarget.SolarReturn -> target.profileId
+                else -> null
+            }
+            if (pid != null) {
+                TextButton(
+                    onClick = {
+                        onTargetChange(
+                            AlarmTarget.NatalCompoundAny(2, pid),
+                        )
+                    },
+                ) {
+                    Text(stringResource(R.string.astro_natal_compound_combine))
+                }
+            }
+            val offset = when (target) {
+                is AlarmTarget.NatalAscAspect -> target.offsetMinutes
+                is AlarmTarget.NatalMcAspect -> target.offsetMinutes
+                is AlarmTarget.MoonReturn -> target.offsetMinutes
+                is AlarmTarget.SolarReturn -> target.offsetMinutes
+                is AlarmTarget.MercuryStation -> target.offsetMinutes
+                is AlarmTarget.MoonSignIngress -> target.offsetMinutes
+            }
+            OffsetSelector(
+                offsetMinutes = offset,
+                eventName = AlarmTargetCopy.fallback(target),
+                onOffsetChange = { m ->
+                    onTargetChange(
+                        when (target) {
+                            is AlarmTarget.NatalAscAspect -> target.copy(offsetMinutes = m)
+                            is AlarmTarget.NatalMcAspect -> target.copy(offsetMinutes = m)
+                            is AlarmTarget.MoonReturn -> target.copy(offsetMinutes = m)
+                            is AlarmTarget.SolarReturn -> target.copy(offsetMinutes = m)
+                            is AlarmTarget.MercuryStation -> target.copy(offsetMinutes = m)
+                            is AlarmTarget.MoonSignIngress -> target.copy(offsetMinutes = m)
+                        },
+                    )
+                },
             )
         }
     }

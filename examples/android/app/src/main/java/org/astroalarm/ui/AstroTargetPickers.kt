@@ -139,7 +139,6 @@ fun LunarEventPicker(
     }
 }
 
-@OptIn(ExperimentalLayoutApi::class)
 @Composable
 fun OffsetSelector(
     offsetMinutes: Int,
@@ -168,33 +167,37 @@ fun OffsetSelector(
                 color = MaterialTheme.colorScheme.primary
             )
 
-            FlowRow(
-                modifier = Modifier.fillMaxWidth(),
-                horizontalArrangement = Arrangement.spacedBy(8.dp),
-                verticalArrangement = Arrangement.spacedBy(8.dp)
-            ) {
-                FilterChip(
-                    selected = isBefore,
-                    onClick = {
-                        val currentAbs = if (totalAbsMinutes == 0) 15 else totalAbsMinutes
-                        onOffsetChange(-currentAbs)
-                    },
-                    label = { Text(stringResource(R.string.astro_offset_direction_before)) }
-                )
-                FilterChip(
-                    selected = isExact,
-                    onClick = { onOffsetChange(0) },
-                    label = { Text(stringResource(R.string.astro_offset_direction_exact)) }
-                )
-                FilterChip(
-                    selected = !isBefore && !isExact,
-                    onClick = {
-                        val currentAbs = if (totalAbsMinutes == 0) 15 else totalAbsMinutes
-                        onOffsetChange(currentAbs)
-                    },
-                    label = { Text(stringResource(R.string.astro_offset_direction_after)) }
-                )
+            val dir = when {
+                isExact -> "exact"
+                isBefore -> "before"
+                else -> "after"
             }
+            AstroMenuDropdown(
+                label = stringResource(R.string.astro_offset_direction_exact),
+                selectedText = when (dir) {
+                    "before" -> stringResource(R.string.astro_offset_direction_before)
+                    "after" -> stringResource(R.string.astro_offset_direction_after)
+                    else -> stringResource(R.string.astro_offset_direction_exact)
+                },
+                options = listOf(
+                    "before" to stringResource(R.string.astro_offset_direction_before),
+                    "exact" to stringResource(R.string.astro_offset_direction_exact),
+                    "after" to stringResource(R.string.astro_offset_direction_after),
+                ),
+                onSelect = { next ->
+                    when (next) {
+                        "exact" -> onOffsetChange(0)
+                        "before" -> {
+                            val currentAbs = if (totalAbsMinutes == 0) 15 else totalAbsMinutes
+                            onOffsetChange(-currentAbs)
+                        }
+                        else -> {
+                            val currentAbs = if (totalAbsMinutes == 0) 15 else totalAbsMinutes
+                            onOffsetChange(currentAbs)
+                        }
+                    }
+                },
+            )
 
             if (!isExact) {
                 Row(

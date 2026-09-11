@@ -106,3 +106,11 @@ CODE_REVIEW.md
 RELEASE_NOTES.md
 scratchpad.md
 .cursor/handoff-*.md
+
+# --- from agent-project-bootstrap v1.4.0 ---
+.cursor/sprint-smoke.json
+.cursor/automations.yaml
+CURSOR_RADAR_BUILD_PLAN_DRAFT.md
+.envrc
+!.envrc.example
+*.p12

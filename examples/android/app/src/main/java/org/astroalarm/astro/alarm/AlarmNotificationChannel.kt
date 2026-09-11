@@ -45,7 +45,12 @@ object AlarmNotificationChannel {
         nm.deleteNotificationChannel(LEGACY_ID)
     }
 
-    fun buildRinging(context: Context, fullScreen: PendingIntent): Notification {
+    fun buildRinging(
+        context: Context,
+        fullScreen: PendingIntent,
+        alarmId: String = "",
+        snoozeMinutes: Int = 5,
+    ): Notification {
         return NotificationCompat.Builder(context, ID)
             .setSmallIcon(R.drawable.ic_brand_mark)
             .setContentTitle(context.getString(R.string.astro_alarm_ringing))
@@ -57,6 +62,8 @@ object AlarmNotificationChannel {
             .setAutoCancel(false)
             .setContentIntent(fullScreen)
             .setFullScreenIntent(fullScreen, true)
+            .addAction(AlarmNotificationActions.stopAction(context, alarmId))
+            .addAction(AlarmNotificationActions.snoozeAction(context, alarmId, snoozeMinutes))
             .build()
     }
 
