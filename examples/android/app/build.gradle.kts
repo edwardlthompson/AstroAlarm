@@ -26,7 +26,7 @@ android {
         applicationId = "org.astroalarm"
         minSdk = 26
         targetSdk = 37
-        versionCode = 10104
+        versionCode = 10105
         versionName = readGoldenPathAppVersion() // synced via schemas/golden-path/app-version.json
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
     }
