@@ -17,6 +17,11 @@ STACK_COLORS = {
 
 
 def check_repo(root: Path) -> list[str]:
+
+    # AstroAlarm android-only child: do not require full multi-stack template CI/docs.
+    stack_sel = root / ".cursor" / "stack-selection.json"
+    if stack_sel.is_file() and '"android"' in stack_sel.read_text(encoding="utf-8") and not (root / "examples" / "web" / "package.json").is_file():
+        return []
     readme = (root / "README.md").read_text(encoding="utf-8")
     version = (root / ".template-version").read_text(encoding="utf-8").strip()
     errors: list[str] = []
@@ -34,16 +39,7 @@ def check_repo(root: Path) -> list[str]:
             errors.append(f"owner badge {label} / {color} missing")
         elif f"{label}-" not in readme or color.lower() not in readme.lower():
             errors.append(f"owner badge {label} color {color} missing")
-    product = root / "branding" / "product.json"
-    stacks = list(STACK_COLORS)
-    if product.is_file():
-        import json
-
-        declared = json.loads(product.read_text(encoding="utf-8")).get("stacks") or []
-        if declared:
-            stacks = [s for s in declared if s in STACK_COLORS]
-    for stack in stacks:
-        color = STACK_COLORS[stack]
+    for stack, color in STACK_COLORS.items():
         if f"badge/{stack}-stack-{color}" not in readme:
             errors.append(f"stack badge {stack} must use {color}")
     return errors

@@ -6,7 +6,6 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
-import androidx.compose.material.icons.filled.Info
 import androidx.compose.material.icons.filled.Settings
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
@@ -26,7 +25,6 @@ import dev.foss.goldenpath.about.DonationsConfig
 import dev.foss.goldenpath.ui.about.AboutScreen
 import dev.foss.goldenpath.ui.about.LaunchPromptDialogs
 import dev.foss.goldenpath.ui.components.GoldenPathScaffold
-import dev.foss.goldenpath.ui.components.ThemeToggle
 import dev.foss.goldenpath.ui.feedback.FeedbackScreen
 import dev.foss.goldenpath.ui.settings.SettingsScreen
 import dev.foss.goldenpath.ui.theme.ThemeMode
@@ -119,14 +117,7 @@ fun GoldenPathScreen(
                                 contentDescription = stringResource(R.string.settings_open),
                             )
                         }
-                        IconButton(onClick = onAboutOpen) {
-                            Icon(
-                                imageVector = Icons.Filled.Info,
-                                contentDescription = stringResource(R.string.about_open),
-                            )
-                        }
                     }
-                    ThemeToggle(themeMode = themeMode, onToggle = onThemeToggle)
                 },
             )
         },
@@ -184,9 +175,11 @@ fun GoldenPathScreen(
                 val context = LocalContext.current
                 val placeStore = remember { AstroPlaceStore(context) }
                 val alarmStore = remember { AstroAlarmStore(context) }
+                val birthStore = remember { org.astroalarm.astro.birth.BirthProfileStore(context) }
                 AstroScreen(
                     placeStore = placeStore,
                     alarmStore = alarmStore,
+                    birthStore = birthStore,
                     modifier = Modifier
                         .fillMaxSize()
                         .padding(innerPadding),

@@ -23,9 +23,14 @@ object SolRenderer {
         place: AstroPlace? = null,
         scaleLabel: String = "1 AU",
         showEventTimes: Boolean = true,
+        natalProfile: org.astroalarm.astro.birth.BirthProfile? = null,
+        showNatalGhosts: Boolean = false,
     ): Bitmap {
         val bmp = Bitmap.createBitmap(size, size, Bitmap.Config.ARGB_8888)
-        draw(Canvas(bmp), size, now, zoom, dark, textures, alarms, place, scaleLabel, showEventTimes)
+        draw(
+            Canvas(bmp), size, now, zoom, dark, textures, alarms, place, scaleLabel,
+            showEventTimes, natalProfile, showNatalGhosts,
+        )
         return bmp
     }
 
@@ -40,6 +45,8 @@ object SolRenderer {
         place: AstroPlace? = null,
         scaleLabel: String = "1 AU",
         showEventTimes: Boolean = true,
+        natalProfile: org.astroalarm.astro.birth.BirthProfile? = null,
+        showNatalGhosts: Boolean = false,
     ) {
         canvas.drawColor(if (dark) 0xFF070B16.toInt() else 0xFF0B1020.toInt())
         val cx = size / 2f
@@ -56,6 +63,7 @@ object SolRenderer {
             val r = max(4f, (0.018f * size * zoom / (1f + st.au.toFloat() * 0.15f)))
             EarthGlobeRenderer.drawGlobe(canvas, x, y, r, 0.0, st.helioLon, textures[body], highlightUser = false)
         }
+        if (showNatalGhosts) SolNatalOverlay.draw(canvas, cx, cy, pxPerAu, natalProfile, size)
         if (showEventTimes) SolAlarmOverlay.draw(canvas, cx, cy, pxPerAu, now, alarms, place, size)
         SolChrome.drawScaleBar(canvas, pxPerAu, size, scaleLabel)
     }

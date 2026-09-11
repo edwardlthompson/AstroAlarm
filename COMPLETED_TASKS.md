@@ -2,6 +2,64 @@
 
 > Archive of finished BUILD_PLAN items.
 
+## Sprint 2+ Golden Path 1–11 (2026-09-11)
+
+- ✅ [AGENT] `android-signing` — port upload-keystore / rollback patterns into product runbook usage (`docs/features/android-signing.md`)
+- ✅ [AGENT] `android-module-fdroid` — tighten F-Droid metadata/recipe vs Golden Path stub (`docs/features/android-module-fdroid.md`)
+- ✅ [AGENT] `android-runtime-budget` — on-device runtime budget slice (`docs/features/android-runtime-budget.md`)
+- ✅ [AGENT] `unifiedpush` — FOSS push provider path if product wants it (`docs/features/unifiedpush.md`)
+- ✅ [AGENT] `crash-inbox` — crash inbox Golden Path (opt-in, FOSS) (`docs/features/crash-inbox.md`)
+- ✅ [AGENT] `settings-chrome` — Settings-only chrome vs template Settings rules (`docs/features/settings-chrome.md`)
+- ✅ [AGENT] `deep-link-feedback` — feedback deep-link slice (`docs/features/deep-link-feedback.md`)
+- ✅ [AGENT] `resume-handoff` — `/resume` handoff skill/docs wiring (`docs/features/resume-handoff.md`)
+- ✅ [AGENT] `emulator-adr-skills` — formalize emulator + ADR skill slice (`docs/features/emulator-adr-skills.md`)
+- ✅ [AGENT] `openssf-best-practices` — OpenSSF / CII Best Practices prep (coords with HUMAN badge) (`docs/features/openssf-best-practices.md`)
+- ✅ [AGENT] `sanitize-fixtures` — sanitizer fixture parity only if privacy-report path is revived (`docs/features/sanitize-fixtures.md`)
+- ✅ [HUMAN] P2: CII Best Practices checklist (login + public badge) — pairs with Sequential row 10
+
+## natal-glyph-colors (2026-09-11)
+
+- ✅ [AGENT] Distinct natal-wheel palette (planets/zodiac/violet MC; live body hues) (`NatalGlyphPalette.kt`)
+
+## natal-glyph-explain (2026-09-11)
+
+- ✅ [AGENT] Tap Asc/MC/planets/zodiac/houses/live marks → plain-language sheet (`docs/features/natal-glyph-explain.md`)
+
+## natal-chart-disk-widget (2026-09-11)
+
+- ✅ [AGENT] `natal-chart-wheel` — house numbers mid-ring, MC, stellium, aspect size gate (`docs/features/natal-chart-wheel.md`)
+- ✅ [AGENT] `natal-chart-widget` — bitmap homescreen disk (`docs/features/natal-chart-widget.md`)
+
+## natal-wheel-compound-sol (2026-09-11)
+
+- ✅ [AGENT] `natal-chart-wheel` — natal aspects + muted chords + Canvas (`docs/features/natal-chart-wheel.md`)
+- ✅ [AGENT] `natal-sky-overlay` — live Sun/Moon/Mercury + lit chords + tap-to-focus + caption (`docs/features/natal-sky-overlay.md`)
+- ✅ [AGENT] `natal-compound-alarm` — specific + any double/triple + editor (`docs/features/natal-compound-alarm.md`)
+- ✅ [AGENT] `natal-align-widget` — next double/triple home widget (`docs/features/natal-align-widget.md`)
+- ✅ [AGENT] `sol-natal-overlay` — birth-epoch ghost planets + toggle (`docs/features/sol-natal-overlay.md`)
+
+## alarm-notification-actions (2026-09-10)
+
+- ✅ [AGENT] Copy `docs/features/_template.md` → `docs/features/alarm-notification-actions.md`; refine acceptance criteria
+- ✅ [AGENT] Scaffold feature container (public API boundary only)
+- ✅ [AGENT] Unit tests for feature pure logic (skip if Parallel agent completed)
+- ✅ [AGENT] Wire view/adapter; composition root ≤10 lines
+
+## whole-sign-houses (2026-09-10)
+
+- ✅ [AGENT] Copy `docs/features/_template.md` → `docs/features/whole-sign-houses.md`; refine acceptance criteria
+- ✅ [AGENT] Scaffold feature container (public API boundary only)
+- ✅ [AGENT] Unit tests for feature pure logic (skip if Parallel agent completed)
+- ✅ [AGENT] Wire view/adapter; composition root ≤10 lines
+- ✅ [HUMAN] Optional product smoke after gates pass
+
+## Birth Chart (2026-09-10)
+
+- ✅ [AGENT] `birth-profile` — store, AscendantMath, Chart tab form (`docs/features/birth-profile.md`)
+- ✅ [AGENT] `birth-chart-summary` — Sun/Rising/Moon summary (`docs/features/birth-chart-summary.md`)
+- ✅ [AGENT] `natal-alarms` — Natal* AlarmTargets + AstroNextFire (`docs/features/natal-alarms.md`)
+- ✅ [AGENT] `astro-alarm-templates` — Chart tab templates (`docs/features/astro-alarm-templates.md`)
+
 ## alarm-calendar-peers + sol-yearly-alarms (2026-09-04)
 
 - ✅ [AGENT] Feature spec `docs/features/alarm-calendar-peers.md`

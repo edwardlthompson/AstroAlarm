@@ -13,12 +13,17 @@
     <uses-permission android:name="android.permission.USE_FULL_SCREEN_INTENT" />
     <uses-permission android:name="android.permission.REQUEST_IGNORE_BATTERY_OPTIMIZATIONS" />
     <uses-permission android:name="android.permission.VIBRATE" />
+    <uses-permission android:name="${applicationId}.DYNAMIC_RECEIVER_NOT_EXPORTED_PERMISSION" />
 
     <queries>
         <intent>
             <action android:name="android.intent.action.VIEW" />
             <data android:scheme="https" />
         </intent>
+        <intent>
+            <action android:name="org.unifiedpush.android.distributor.REGISTER" />
+        </intent>
+        <package android:name="io.heckel.ntfy" />
     </queries>
 
     <application
@@ -36,6 +41,15 @@
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
                 <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+            <intent-filter>
+                <action android:name="android.intent.action.VIEW" />
+                <category android:name="android.intent.category.DEFAULT" />
+                <category android:name="android.intent.category.BROWSABLE" />
+                <data
+                    android:scheme="goldenpath"
+                    android:host="settings"
+                    android:pathPrefix="/about/feedback" />
             </intent-filter>
         </activity>
         <activity
@@ -135,6 +149,40 @@
             <meta-data
                 android:name="android.appwidget.provider"
                 android:resource="@xml/astro_sol_widget_info" />
+        </receiver>
+        <receiver
+            android:name="org.astroalarm.widget.NatalAlignWidgetProvider"
+            android:label="@string/astro_widget_natal_align_name"
+            android:exported="true">
+            <intent-filter>
+                <action android:name="android.appwidget.action.APPWIDGET_UPDATE" />
+                <action android:name="android.intent.action.TIMEZONE_CHANGED" />
+                <action android:name="android.intent.action.TIME_SET" />
+            </intent-filter>
+            <meta-data
+                android:name="android.appwidget.provider"
+                android:resource="@xml/astro_natal_align_widget_info" />
+        </receiver>
+        <receiver
+            android:name="org.astroalarm.widget.NatalChartWidgetProvider"
+            android:label="@string/astro_widget_natal_chart_name"
+            android:exported="true">
+            <intent-filter>
+                <action android:name="android.appwidget.action.APPWIDGET_UPDATE" />
+                <action android:name="android.intent.action.TIME_TICK" />
+                <action android:name="android.intent.action.TIMEZONE_CHANGED" />
+                <action android:name="android.intent.action.TIME_SET" />
+            </intent-filter>
+            <meta-data
+                android:name="android.appwidget.provider"
+                android:resource="@xml/astro_natal_chart_widget_info" />
+        </receiver>
+        <receiver
+            android:name="dev.foss.goldenpath.push.UnifiedPushMessageReceiver"
+            android:exported="true">
+            <intent-filter>
+                <action android:name="org.unifiedpush.android.connector.MESSAGE" />
+            </intent-filter>
         </receiver>
     </application>
 

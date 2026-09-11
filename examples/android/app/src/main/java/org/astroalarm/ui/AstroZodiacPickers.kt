@@ -123,29 +123,30 @@ fun ZodiacEventListDialog(
                                     text = "${sign.symbol} ${sign.englishName} (${sign.startLongitudeDeg.toInt()}° - ${(sign.startLongitudeDeg + 30).toInt() % 360}°)",
                                     fontWeight = FontWeight.Bold,
                                     fontSize = 15.sp,
-                                    color = MaterialTheme.colorScheme.primary
+                                    color = MaterialTheme.colorScheme.primary,
+                                    modifier = Modifier.clickable { activeSign = sign },
                                 )
                                 Spacer(modifier = Modifier.height(6.dp))
-                                Row(
-                                    modifier = Modifier.fillMaxWidth(),
-                                    horizontalArrangement = Arrangement.spacedBy(6.dp)
-                                ) {
-                                    ZodiacPoint.entries.forEach { point ->
-                                        val isSelected = sign == currentSign && point == currentPoint
-                                        FilterChip(
-                                            selected = isSelected,
-                                            onClick = { onSelect(sign, point) },
-                                            label = {
-                                                val label = when (point) {
-                                                    ZodiacPoint.Beginning -> stringResource(R.string.astro_zodiac_point_begin)
-                                                    ZodiacPoint.Middle -> stringResource(R.string.astro_zodiac_point_mid)
-                                                    ZodiacPoint.End -> stringResource(R.string.astro_zodiac_point_end)
-                                                }
-                                                Text(label, fontSize = 11.sp)
-                                            }
-                                        )
-                                    }
-                                }
+                                AstroMenuDropdown(
+                                    label = stringResource(R.string.astro_zodiac_event_title),
+                                    selectedText = if (sign == currentSign) {
+                                        when (currentPoint) {
+                                            ZodiacPoint.Beginning -> stringResource(R.string.astro_zodiac_point_begin)
+                                            ZodiacPoint.Middle -> stringResource(R.string.astro_zodiac_point_mid)
+                                            ZodiacPoint.End -> stringResource(R.string.astro_zodiac_point_end)
+                                        }
+                                    } else {
+                                        stringResource(R.string.astro_action_change)
+                                    },
+                                    options = ZodiacPoint.entries.map { point ->
+                                        point to when (point) {
+                                            ZodiacPoint.Beginning -> stringResource(R.string.astro_zodiac_point_begin)
+                                            ZodiacPoint.Middle -> stringResource(R.string.astro_zodiac_point_mid)
+                                            ZodiacPoint.End -> stringResource(R.string.astro_zodiac_point_end)
+                                        }
+                                    },
+                                    onSelect = { point -> onSelect(sign, point) },
+                                )
                             }
                         }
                     }

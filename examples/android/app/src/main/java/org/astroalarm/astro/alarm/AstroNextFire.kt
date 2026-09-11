@@ -1,14 +1,16 @@
 package org.astroalarm.astro.alarm
 
+import org.astroalarm.astro.birth.BirthProfile
+import org.astroalarm.astro.birth.NatalAlarmFire
 import org.astroalarm.astro.model.AlarmTarget
 import org.astroalarm.astro.model.AstroAlarm
 import org.astroalarm.astro.model.SolarEventType
 import org.astroalarm.astro.moon.LunarCalculator
 import org.astroalarm.astro.place.AstroPlace
 import org.astroalarm.astro.sun.SolarCalculator
+import org.astroalarm.astro.zodiac.ZodiacCalculator
 import org.astroalarm.sol.PlanetNext
 import org.astroalarm.solarterm.SolarTermCalculator
-import org.astroalarm.astro.zodiac.ZodiacCalculator
 import java.time.*
 
 object AstroNextFire {
@@ -19,6 +21,7 @@ object AstroNextFire {
         now: Instant = Instant.now(),
         zone: ZoneId = place?.zone ?: ZoneId.systemDefault(),
         all: List<AstroAlarm> = emptyList(),
+        birthProfiles: List<BirthProfile> = emptyList(),
     ): Instant? {
         if (!alarm.enabled) return null
         val nowZdt = ZonedDateTime.ofInstant(now, zone)
@@ -39,6 +42,14 @@ object AstroNextFire {
                 ?.plusSeconds(target.offsetMinutes * 60L)
             is AlarmTarget.AllPlanetsAlign -> PlanetNext.nextAllAlign(now)
                 ?.plusSeconds(target.offsetMinutes * 60L)
+            is AlarmTarget.NatalAscAspect,
+            is AlarmTarget.NatalMcAspect,
+            is AlarmTarget.MoonReturn,
+            is AlarmTarget.SolarReturn,
+            is AlarmTarget.MercuryStation,
+            is AlarmTarget.MoonSignIngress,
+            is AlarmTarget.NatalCompoundSpecific,
+            is AlarmTarget.NatalCompoundAny -> NatalAlarmFire.nextInstant(target, birthProfiles, now)
         }
     }
 

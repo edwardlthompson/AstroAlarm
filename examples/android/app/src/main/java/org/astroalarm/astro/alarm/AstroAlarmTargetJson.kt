@@ -13,6 +13,7 @@ import org.astroalarm.astro.zodiac.ZodiacSign
 internal object AstroAlarmTargetJson {
     fun write(target: AlarmTarget): JSONObject {
         val obj = JSONObject()
+        if (AstroAlarmNatalTargetJson.write(target, obj)) return obj
         when (target) {
             is AlarmTarget.CustomClock -> {
                 obj.put("kind", "clock"); obj.put("hour", target.hour); obj.put("minute", target.minute)
@@ -41,43 +42,51 @@ internal object AstroAlarmTargetJson {
             is AlarmTarget.AllPlanetsAlign -> {
                 obj.put("kind", "all_planets_align"); obj.put("offset", target.offsetMinutes)
             }
+            else -> Unit
         }
         return obj
     }
 
-    fun read(obj: JSONObject): AlarmTarget? = when (obj.optString("kind")) {
-        "clock" -> AlarmTarget.CustomClock(obj.optInt("hour", 7), obj.optInt("minute", 0))
-        "solar" -> {
-            val name = when (val ev = obj.optString("event")) {
-                "Dawn" -> "CivilDawn"; "Dusk" -> "CivilDusk"; else -> ev
+    fun read(obj: JSONObject): AlarmTarget? {
+        val kind = obj.optString("kind")
+        AstroAlarmNatalTargetJson.read(kind, obj)?.let { return it }
+        return when (kind) {
+            "clock" -> AlarmTarget.CustomClock(obj.optInt("hour", 7), obj.optInt("minute", 0))
+            "solar" -> {
+                val name = when (val ev = obj.optString("event")) {
+                    "Dawn" -> "CivilDawn"; "Dusk" -> "CivilDusk"; else -> ev
+                }
+                val ev = runCatching { SolarEventType.valueOf(name) }.getOrDefault(SolarEventType.Sunrise)
+                AlarmTarget.Solar(ev, obj.optInt("offset", 0))
             }
-            val ev = runCatching { SolarEventType.valueOf(name) }.getOrDefault(SolarEventType.Sunrise)
-            AlarmTarget.Solar(ev, obj.optInt("offset", 0))
+            "lunar" -> {
+                val ev = runCatching { LunarEventType.valueOf(obj.optString("event")) }
+                    .getOrDefault(LunarEventType.Moonrise)
+                AlarmTarget.Lunar(ev, obj.optInt("offset", 0))
+            }
+            "zodiac" -> {
+                val sign = runCatching { ZodiacSign.valueOf(obj.optString("sign")) }.getOrDefault(ZodiacSign.Aries)
+                val point = runCatching { ZodiacPoint.valueOf(obj.optString("point")) }
+                    .getOrDefault(ZodiacPoint.Beginning)
+                AlarmTarget.Zodiac(sign, point, obj.optInt("offset", 0))
+            }
+            "solarterm" -> {
+                val term = runCatching { SolarTerm.valueOf(obj.optString("term")) }.getOrDefault(SolarTerm.LICHUN)
+                AlarmTarget.SolarTerm(term, obj.optInt("offset", 0))
+            }
+            "planet" -> {
+                val body = runCatching { PlanetBody.valueOf(obj.optString("body")) }.getOrDefault(PlanetBody.MARS)
+                val ev = runCatching { PlanetEventType.valueOf(obj.optString("event")) }
+                    .getOrDefault(PlanetEventType.Rise)
+                AlarmTarget.Planet(body, ev, obj.optInt("offset", 0))
+            }
+            "planet_align" -> {
+                val a = runCatching { PlanetBody.valueOf(obj.optString("bodyA")) }.getOrDefault(PlanetBody.VENUS)
+                val b = runCatching { PlanetBody.valueOf(obj.optString("bodyB")) }.getOrDefault(PlanetBody.MARS)
+                AlarmTarget.PlanetAlign(a, b, obj.optInt("offset", 0))
+            }
+            "all_planets_align" -> AlarmTarget.AllPlanetsAlign(obj.optInt("offset", 0))
+            else -> null
         }
-        "lunar" -> {
-            val ev = runCatching { LunarEventType.valueOf(obj.optString("event")) }.getOrDefault(LunarEventType.Moonrise)
-            AlarmTarget.Lunar(ev, obj.optInt("offset", 0))
-        }
-        "zodiac" -> {
-            val sign = runCatching { ZodiacSign.valueOf(obj.optString("sign")) }.getOrDefault(ZodiacSign.Aries)
-            val point = runCatching { ZodiacPoint.valueOf(obj.optString("point")) }.getOrDefault(ZodiacPoint.Beginning)
-            AlarmTarget.Zodiac(sign, point, obj.optInt("offset", 0))
-        }
-        "solarterm" -> {
-            val term = runCatching { SolarTerm.valueOf(obj.optString("term")) }.getOrDefault(SolarTerm.LICHUN)
-            AlarmTarget.SolarTerm(term, obj.optInt("offset", 0))
-        }
-        "planet" -> {
-            val body = runCatching { PlanetBody.valueOf(obj.optString("body")) }.getOrDefault(PlanetBody.MARS)
-            val ev = runCatching { PlanetEventType.valueOf(obj.optString("event")) }.getOrDefault(PlanetEventType.Rise)
-            AlarmTarget.Planet(body, ev, obj.optInt("offset", 0))
-        }
-        "planet_align" -> {
-            val a = runCatching { PlanetBody.valueOf(obj.optString("bodyA")) }.getOrDefault(PlanetBody.VENUS)
-            val b = runCatching { PlanetBody.valueOf(obj.optString("bodyB")) }.getOrDefault(PlanetBody.MARS)
-            AlarmTarget.PlanetAlign(a, b, obj.optInt("offset", 0))
-        }
-        "all_planets_align" -> AlarmTarget.AllPlanetsAlign(obj.optInt("offset", 0))
-        else -> null
     }
 }

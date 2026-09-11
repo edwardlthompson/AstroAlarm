@@ -16,6 +16,8 @@ class AstroAlarmReceiver : BroadcastReceiver() {
     override fun onReceive(context: Context, intent: Intent) {
         when (intent.action) {
             AstroAlarmScheduler.ACTION_ALARM_FIRE -> handleAlarmFire(context, intent)
+            AlarmNotificationActions.ACTION_SNOOZE -> handleNotificationSnooze(context, intent)
+            AlarmNotificationActions.ACTION_STOP -> handleNotificationStop(context, intent)
             Intent.ACTION_BOOT_COMPLETED,
             Intent.ACTION_TIMEZONE_CHANGED,
             Intent.ACTION_TIME_CHANGED -> AstroAlarmScheduler.rescheduleAll(context)
@@ -26,6 +28,8 @@ class AstroAlarmReceiver : BroadcastReceiver() {
 
     private fun handleAlarmFire(context: Context, intent: Intent) {
         val alarmId = intent.getStringExtra(AstroAlarmScheduler.EXTRA_ALARM_ID) ?: ""
+        val ringing = AstroAlarmStore(context).getById(alarmId)
+        val snoozeMinutes = ringing?.snoozeMinutes ?: 5
         val activityIntent = Intent(context, AstroAlarmActivity::class.java).apply {
             putExtra(AstroAlarmScheduler.EXTRA_ALARM_ID, alarmId)
             addFlags(
@@ -43,8 +47,41 @@ class AstroAlarmReceiver : BroadcastReceiver() {
         val nm = context.getSystemService(Context.NOTIFICATION_SERVICE) as? NotificationManager
         nm?.notify(
             AlarmNotificationChannel.NOTIFICATION_ID,
-            AlarmNotificationChannel.buildRinging(context, fullScreenPending),
+            AlarmNotificationChannel.buildRinging(
+                context,
+                fullScreenPending,
+                alarmId = alarmId,
+                snoozeMinutes = snoozeMinutes,
+            ),
         )
+    }
+
+    private fun handleNotificationSnooze(context: Context, intent: Intent) {
+        val ringing = resolveRinging(context, intent) ?: run {
+            AlarmNotificationChannel.cancel(context)
+            AlarmNotificationActions.notifyUiDismiss(context)
+            return
+        }
+        AlarmDismissActions.snooze(context, ringing)
+        AlarmNotificationChannel.cancel(context)
+        AlarmNotificationActions.notifyUiDismiss(context)
+    }
+
+    private fun handleNotificationStop(context: Context, intent: Intent) {
+        val ringing = resolveRinging(context, intent) ?: run {
+            AlarmNotificationChannel.cancel(context)
+            AlarmNotificationActions.notifyUiDismiss(context)
+            return
+        }
+        AlarmDismissActions.stop(context, ringing)
+        AlarmNotificationChannel.cancel(context)
+        AlarmNotificationActions.notifyUiDismiss(context)
+    }
+
+    private fun resolveRinging(context: Context, intent: Intent): AstroAlarm? {
+        val alarmId = intent.getStringExtra(AstroAlarmScheduler.EXTRA_ALARM_ID).orEmpty()
+        if (alarmId.isBlank() || alarmId == "unknown") return null
+        return AstroAlarmStore(context).getById(alarmId)
     }
 
     private fun handleActionSetAlarm(context: Context, intent: Intent) {

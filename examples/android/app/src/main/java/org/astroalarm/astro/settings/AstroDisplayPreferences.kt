@@ -40,6 +40,9 @@ class AstroDisplayPreferences(private val context: Context) {
     private val _showEventTimesSol = MutableStateFlow(prefs.getBoolean(KEY_SHOW_EVENT_TIMES_SOL, true))
     val showEventTimesSol: StateFlow<Boolean> = _showEventTimesSol.asStateFlow()
 
+    private val _showNatalGhostsSol = MutableStateFlow(prefs.getBoolean(KEY_SHOW_NATAL_GHOSTS_SOL, false))
+    val showNatalGhostsSol: StateFlow<Boolean> = _showNatalGhostsSol.asStateFlow()
+
     private val _solarTermCompact = MutableStateFlow(prefs.getBoolean(KEY_SOLAR_TERM_COMPACT, false))
     val solarTermCompact: StateFlow<Boolean> = _solarTermCompact.asStateFlow()
 
@@ -82,6 +85,12 @@ class AstroDisplayPreferences(private val context: Context) {
     fun setShowEventTimesSol(enabled: Boolean) {
         prefs.edit().putBoolean(KEY_SHOW_EVENT_TIMES_SOL, enabled).apply()
         _showEventTimesSol.value = enabled
+        SolWidgetProvider.updateAll(context)
+    }
+
+    fun setShowNatalGhostsSol(enabled: Boolean) {
+        prefs.edit().putBoolean(KEY_SHOW_NATAL_GHOSTS_SOL, enabled).apply()
+        _showNatalGhostsSol.value = enabled
         SolWidgetProvider.updateAll(context)
     }
 
@@ -128,6 +137,7 @@ class AstroDisplayPreferences(private val context: Context) {
         private const val KEY_SHOW_EVENT_TIMES_3D = "show_event_times_3d"
         private const val KEY_SHOW_EVENT_TIMES_YEARLY = "show_event_times_yearly"
         private const val KEY_SHOW_EVENT_TIMES_SOL = "show_event_times_sol"
+        private const val KEY_SHOW_NATAL_GHOSTS_SOL = "show_natal_ghosts_sol"
         private const val KEY_SHOW_MONTH_TICKS_2D = "show_month_ticks_2d"
         private const val KEY_SHOW_HOUR_MARKS_2D = "show_hour_marks_2d"
         private const val KEY_SOLAR_TERM_COMPACT = "solar_term_compact"

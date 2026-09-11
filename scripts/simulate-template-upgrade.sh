@@ -53,6 +53,39 @@ done
 child_quick
 bash scripts/validate-template-index.sh
 
+# Pruned product children (e.g. AstroAlarm android-only) cannot re-init as web
+# against a file:// clone that no longer contains pruned stacks.
+if [ -f .cursor/stack-selection.json ] && grep -Eq '"pruned"[[:space:]]*:[[:space:]]*true' .cursor/stack-selection.json; then
+  echo "==> Pruned child detected — Canon cherry-pick + Sacred AGENTS only (skip web re-init)"
+  SACRED_MARK="upgrade-sim-sacred-agents-md"
+  printf '\n<!-- %s -->\n' "$SACRED_MARK" >> AGENTS.md
+  for path in "${AREAS[@]}"; do
+    case "$path" in
+      AGENTS.md|docs/spec.md|docs/plan.md|docs/INITIALIZATION_PROMPT.md)
+        echo "FAIL: Sacred path $path must not be in upgrade AREAS"
+        exit 1
+        ;;
+    esac
+    if [ -f "$ROOT/$path" ]; then
+      mkdir -p "$(dirname "$path")"
+      cp "$ROOT/$path" "$path"
+    fi
+  done
+  if ! grep -q "$SACRED_MARK" AGENTS.md; then
+    echo "FAIL: Sacred AGENTS.md was overwritten during upgrade cherry-pick"
+    exit 1
+  fi
+  child_quick
+  if [ -f examples/android/app/build.gradle.kts ]; then
+    if ! grep -Eq 'espresso-core:3\.(7|[89]|[1-9][0-9])\.' examples/android/app/build.gradle.kts; then
+      echo "FAIL: espresso-core must be >= 3.7.0 after upgrade-sim"
+      exit 1
+    fi
+  fi
+  echo "Upgrade simulation passed (pruned child path)"
+  exit 0
+fi
+
 echo "==> Non-interactive init smoke (web stack, no prune)"
 bash scripts/init-project.sh \
   --non-interactive \
@@ -150,6 +183,11 @@ done
 child_quick
 echo "Prune-optional smoke passed"
 
+# After prune-optional, child must still be able to re-validate bootstrap (upgrade path).
+echo "==> Re-run child_quick on pruned optional stacks (upgrade-sim continuity)"
+child_quick
+echo "Pruned optional-stack upgrade continuity passed"
+
 echo "==> Non-interactive init smoke (PowerShell)"
 if ! command -v pwsh >/dev/null 2>&1; then
   echo "SKIP PowerShell init smoke (pwsh not on PATH)"
@@ -168,6 +206,14 @@ else
 
   child_quick
   echo "PowerShell init smoke passed"
+fi
+
+echo "==> Assert Espresso pin survives upgrade-sim tree"
+if [ -f examples/android/app/build.gradle.kts ]; then
+  if ! grep -Eq 'espresso-core:3\.(7|[89]|[1-9][0-9])\.' examples/android/app/build.gradle.kts; then
+    echo "FAIL: espresso-core must be >= 3.7.0 after upgrade-sim"
+    exit 1
+  fi
 fi
 
 echo "Upgrade simulation passed"

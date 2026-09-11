@@ -47,11 +47,13 @@ import java.util.Locale
 fun SolScreen(
     place: AstroPlace? = null,
     alarms: List<AstroAlarm> = emptyList(),
+    natalProfile: org.astroalarm.astro.birth.BirthProfile? = null,
     modifier: Modifier = Modifier,
 ) {
     val context = LocalContext.current
     val displayPrefs = remember { AstroDisplayPreferences(context) }
     val showEventTimes by displayPrefs.showEventTimesSol.collectAsState()
+    val showNatalGhosts by displayPrefs.showNatalGhostsSol.collectAsState()
     var now by remember { mutableStateOf(Instant.now()) }
     var zoom by remember { mutableFloatStateOf(1f) }
     var selected by remember { mutableStateOf<PlanetBody?>(null) }
@@ -104,6 +106,7 @@ fun SolScreen(
                         SolRenderer.draw(
                             gc.nativeCanvas, px, now, zoom, dark, textures,
                             alarms, place, scaleLabel, showEventTimes,
+                            natalProfile, showNatalGhosts,
                         )
                     }
                 }
@@ -131,12 +134,20 @@ fun SolScreen(
             shape = RoundedCornerShape(12.dp),
             color = MaterialTheme.colorScheme.surfaceVariant.copy(alpha = 0.85f)
         ) {
-            OverlayToggleLine(
-                stringResource(R.string.astro_toggle_show_event_times),
-                showEventTimes,
-                { displayPrefs.setShowEventTimesSol(it) },
-                modifier = Modifier.padding(horizontal = 12.dp, vertical = 2.dp),
-            )
+            Column(Modifier.padding(horizontal = 12.dp, vertical = 2.dp)) {
+                OverlayToggleLine(
+                    stringResource(R.string.astro_toggle_show_event_times),
+                    showEventTimes,
+                    { displayPrefs.setShowEventTimesSol(it) },
+                )
+                if (natalProfile != null) {
+                    OverlayToggleLine(
+                        stringResource(R.string.astro_sol_natal_overlay),
+                        showNatalGhosts,
+                        { displayPrefs.setShowNatalGhostsSol(it) },
+                    )
+                }
+            }
         }
     }
 }

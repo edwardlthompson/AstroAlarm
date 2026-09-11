@@ -8,8 +8,19 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
-## [1.7.0](https://github.com/edwardlthompson/AstroAlarm/compare/v1.6.0...v1.7.0) (2026-09-09)
+## [1.8.0](https://github.com/edwardlthompson/AstroAlarm/compare/v1.7.0...v1.8.0) (2026-09-11)
 
+
+### Added
+
+* **android:** natal chart suite and Golden Path catch-up ([0b67551](https://github.com/edwardlthompson/AstroAlarm/commit/0b6755114cecae182cdfc4db8512ef5e7cc9ddb4))
+
+
+### Fixed
+
+* **ci:** skip web re-init in upgrade-sim on pruned children ([16e3329](https://github.com/edwardlthompson/AstroAlarm/commit/16e3329718a839cece417e46284e0bc455f0b56c))
+
+## [1.7.0](https://github.com/edwardlthompson/AstroAlarm/compare/v1.6.0...v1.7.0) (2026-09-09)
 
 ### Added
 

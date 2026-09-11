@@ -24,7 +24,8 @@ class GoldenPathUiTest {
 
     @Test
     fun opensAboutPanelWithVersion() {
-        composeTestRule.onNodeWithContentDescription("About").performClick()
+        composeTestRule.onNodeWithContentDescription("Settings").performClick()
+        composeTestRule.onNodeWithText("About AstroAlarm & Support").performScrollTo().performClick()
         composeTestRule.onNodeWithText("About").assertIsDisplayed()
         composeTestRule.onNodeWithText("Installed format: apk").assertIsDisplayed()
     }

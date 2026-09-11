@@ -16,13 +16,13 @@ def write_adapters(root: Path, enabled: dict[str, bool] | None = None) -> list[P
             continue
         path = root / rel
         path.parent.mkdir(parents=True, exist_ok=True)
-        path.write_text(body.lstrip() + "\n", encoding="utf-8")
+        path.write_text(body.lstrip().rstrip() + "\n", encoding="utf-8")
         written.append(path)
     return written
 
 
 def expected_text(body: str) -> str:
-    return body.lstrip() + "\n"
+    return body.lstrip().rstrip() + "\n"
 
 
 def line_count(text: str) -> int:

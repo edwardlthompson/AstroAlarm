@@ -180,3 +180,12 @@
 | **Cause** | `OnboardingGate` shows the first-launch checklist before `GoldenPathScreen`, so instrumented smoke never sees the nav icons |
 | **Fix** | `OnboardingChecker.skipUiGate()` is true when `ActivityThread.getInstrumentation()` is non-null |
 | **Prevention** | Any full-screen first-run overlay must skip under instrumentation or mark complete in a test rule that runs before Activity launch |
+
+### KB-022 — Upgrade-sim web re-init fails on pruned android children
+
+| Field | Detail |
+|-------|--------|
+| **Symptom** | CI `Template Upgrade Simulation` fails after init `--stack web --no-prune` with missing Semgrep/Nix/web crash/README badge paths |
+| **Cause** | `file://` clone of a pruned product has no web/python stacks to reinstate; validate-bootstrap then expects multi-stack template artifacts |
+| **Fix** | `scripts/simulate-template-upgrade.sh` detects `.cursor/stack-selection.json` `"pruned": true` and runs Canon cherry-pick + Sacred AGENTS only |
+| **Prevention** | Do not re-init pruned children as web against self; keep full web path for unpruned template maintainer trees |

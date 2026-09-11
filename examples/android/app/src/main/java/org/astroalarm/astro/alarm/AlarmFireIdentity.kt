@@ -57,7 +57,12 @@ object AlarmFireIdentity {
         }
     }
 
-    fun consumeOccurrence(all: List<AstroAlarm>, ringing: AstroAlarm, firedAtMs: Long): List<AstroAlarm> {
+    fun consumeOccurrence(
+        all: List<AstroAlarm>,
+        ringing: AstroAlarm,
+        firedAtMs: Long,
+        disableOnce: Boolean = true,
+    ): List<AstroAlarm> {
         val key = keyOf(ringing.target)
         return all.map { alarm ->
             val match = alarm.id == ringing.id ||
@@ -67,7 +72,11 @@ object AlarmFireIdentity {
             } else {
                 alarm.copy(
                     lastFiredEpochMs = firedAtMs,
-                    enabled = if (alarm.id == ringing.id && ringing.isOnce) false else alarm.enabled,
+                    enabled = if (disableOnce && alarm.id == ringing.id && ringing.isOnce) {
+                        false
+                    } else {
+                        alarm.enabled
+                    },
                 )
             }
         }

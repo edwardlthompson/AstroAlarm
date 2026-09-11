@@ -23,7 +23,6 @@ Keep Sun seasonal and Yearly jieqi as separate list rows. Matching equinox/solst
 | View | `AstroEditDialog.kt`, `AstroAlarmList.kt`, widget overlays |
 | Tests | `AlarmFireIdentityTest.kt`, `AlarmWidgetScopeTest.kt`, `AstroNextFireTest.kt`, `AstroNextFirePeerTest.kt`, `AstroAlarmStoreSaveAllTest.kt` |
 | Wiring | `AstroAlarmScheduler`, `AstroAlarmActivity`, widget providers |
-
 ## Tests
 
 - Automated: yes — files above
@@ -48,4 +47,4 @@ See `docs/FEATURE_MODULES.md` per-feature checklist.
 ## Notes
 
 - Zodiac Beginning of Aries/Cancer/Libra/Capricorn shares the same fire key
-- Snooze-until delay is out of scope; this slice only stops the twin from stealing the slot
+- Delay snooze lives in `alarm-snooze.md`; this slice still stamps peers so twins do not steal the slot
