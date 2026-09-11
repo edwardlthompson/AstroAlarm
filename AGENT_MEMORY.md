@@ -104,5 +104,5 @@ FOSS Android astronomical alarm clock: on-device suncalc sun/moon ephemeris, sol
 ## Template Provenance
 
 - **Source template:** `edwardlthompson/agent-project-bootstrap` (self-maintained)
-- **Template version:** `1.7.0` (see `.template-version`)
+- **Template version:** `1.8.0` (see `.template-version`)
 - **Last update check:** See `.template-update.json`

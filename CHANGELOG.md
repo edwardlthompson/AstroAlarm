@@ -6,6 +6,8 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [Unreleased]
+
 ## [1.8.0](https://github.com/edwardlthompson/AstroAlarm/compare/v1.7.0...v1.8.0) (2026-09-11)
 
 
@@ -17,8 +19,6 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Fixed
 
 * **ci:** skip web re-init in upgrade-sim on pruned children ([16e3329](https://github.com/edwardlthompson/AstroAlarm/commit/16e3329718a839cece417e46284e0bc455f0b56c))
-
-## [Unreleased]
 
 ## [1.7.0](https://github.com/edwardlthompson/AstroAlarm/compare/v1.6.0...v1.7.0) (2026-09-09)
 
