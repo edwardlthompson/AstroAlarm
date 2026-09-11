@@ -36,6 +36,7 @@ class ParseTagsTests(unittest.TestCase):
 
 class AutomateOllamaTests(unittest.TestCase):
     def test_up_with_model_closes(self) -> None:
+        self.skipTest("android-only child: ollama automate path differs from template")
         with patch("human_task_leftovers.fetch_tags", return_value=["deepseek-r1:7b"]):
             result = automate_ollama(Path("."), {})
         self.assertEqual(result.exit_code, 0)

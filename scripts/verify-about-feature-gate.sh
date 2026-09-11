@@ -9,11 +9,6 @@ cd "$ROOT"
 # shellcheck source=lib/resolve-python.sh
 . "$(cd "$(dirname "$0")" && pwd)/lib/resolve-python.sh"
 
-if [ ! -d "$ROOT/examples/web/src" ]; then
-  echo "SKIP: About feature-gate (examples/web pruned)"
-  exit 0
-fi
-
 WEB_SRC="$ROOT/examples/web/src"
 WEB_E2E="$ROOT/examples/web/e2e"
 BACKUP="$(mktemp -d)"
@@ -22,17 +17,21 @@ CLI_TRACKED=(
   examples/rust/src/lib.rs
   examples/rust/src/main.rs
   examples/rust/src/about.rs
+  examples/rust/src/log.rs
   examples/go/main.go
+  examples/go/log.go
   examples/go/about.go
   examples/go/about_test.go
   examples/node/src/app.ts
   examples/node/src/about.ts
   examples/node/src/about.test.ts
   examples/node/src/app.test.ts
+  examples/node/src/openapi.test.ts
   examples/python/src/hello/cli.py
   examples/python/src/hello/about.py
   examples/python/tests/test_about.py
   examples/python/tests/test_cli.py
+  examples/python/tests/test_openapi.py
 )
 
 ABOUT_TRACKED=(
@@ -41,6 +40,7 @@ ABOUT_TRACKED=(
   examples/web/src/appBootstrap.ts
   examples/web/src/appBootstrap.test.ts
   examples/web/src/AppShell.ts
+  examples/web/src/AppShell.test.ts
   examples/web/src/components/AboutPanel.ts
   examples/web/src/settings/preferences.ts
   examples/web/e2e/app.spec.ts
@@ -68,7 +68,7 @@ PY
   if [ -d "$BACKUP/about" ]; then
     rm -rf "$WEB_SRC/about"
     cp -a "$BACKUP/about" "$WEB_SRC/about" || git checkout HEAD -- examples/web/src/about || true
-    for rel in main.ts appBootstrap.ts appBootstrap.test.ts AppShell.ts; do
+    for rel in main.ts appBootstrap.ts appBootstrap.test.ts AppShell.ts AppShell.test.ts; do
       if [ -f "$BACKUP/$rel" ]; then
         copy_retry "$BACKUP/$rel" "$WEB_SRC/$rel" || git checkout HEAD -- "examples/web/src/$rel" || true
       fi
@@ -117,6 +117,9 @@ cp -a "$WEB_SRC/main.ts" "$BACKUP/main.ts"
 cp -a "$WEB_SRC/appBootstrap.ts" "$BACKUP/appBootstrap.ts"
 cp -a "$WEB_SRC/appBootstrap.test.ts" "$BACKUP/appBootstrap.test.ts"
 cp -a "$WEB_SRC/AppShell.ts" "$BACKUP/AppShell.ts"
+if [ -f "$WEB_SRC/AppShell.test.ts" ]; then
+  cp -a "$WEB_SRC/AppShell.test.ts" "$BACKUP/AppShell.test.ts"
+fi
 cp -a "$WEB_SRC/components/AboutPanel.ts" "$BACKUP/components/AboutPanel.ts"
 cp -a "$WEB_SRC/settings/preferences.ts" "$BACKUP/settings/preferences.ts"
 cp -a "$WEB_E2E/app.spec.ts" "$BACKUP/app.spec.ts"
@@ -152,7 +155,6 @@ def write_lf(path: Path, text: str) -> None:
 write_lf(
     web.joinpath("main.ts"),
     """import "./style.css";
-import { createThemeToggle } from "./components/ThemeToggle";
 import { isOnline } from "./greet";
 import { t } from "./i18n";
 import { initTheme } from "./theme";
@@ -174,8 +176,6 @@ function render(): void {
       <p class="gp-body" data-testid="status">${t(statusKey)}</p>
     </main>
   `;
-  const actions = root.querySelector<HTMLDivElement>(".gp-header-actions");
-  if (actions) actions.insertBefore(createThemeToggle(), actions.firstChild);
 }
 
 initTheme();
@@ -192,6 +192,7 @@ for path in (
     web / "appBootstrap.ts",
     web / "appBootstrap.test.ts",
     web / "AppShell.ts",
+    web / "AppShell.test.ts",
     web / "components" / "AboutPanel.ts",
 ):
     if path.is_dir():

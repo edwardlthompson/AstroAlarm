@@ -66,3 +66,7 @@ Local host-GPU path (skips if SDK missing): `python3 scripts/agent-run.py run-an
 ## F-Droid notes
 
 Document dependency hashes and reproducible build verification steps in your project's `AGENT_MEMORY.md` when activating module A.
+
+## Signing
+
+See [Android signing runbook](../../docs/ANDROID_SIGNING.md).

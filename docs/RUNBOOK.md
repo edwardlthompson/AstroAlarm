@@ -70,3 +70,7 @@ When credentials leak or a team member with access leaves:
 3. **`[AGENT]`** Update `.env.example` if variable names changed
 4. **`[AUTO]`** Re-run CI with new secrets; confirm deploy health checks pass
 5. **`[HUMAN]`** Log incident in `DECISION_LOG.md`; link advisory if CVE-related
+
+## Android signing
+
+See [ANDROID_SIGNING.md](ANDROID_SIGNING.md) for upload keystore env vars and rollback.

@@ -77,10 +77,12 @@ def render_list(items: list[str], *, ordered: bool = False) -> str:
 
 def stack_badges(product: dict) -> str:
     stacks = product.get("stacks") or []
-    colors = {"web": "646cff", "python": "3776AB", "android": "3DDC84"}
+    primary = product["badge"]["primary"]
+    secondary = product["badge"]["secondary"]
+    colors = [primary, secondary, "3DDC84", "3776AB", "646cff"]
     lines = []
-    for stack in stacks:
-        color = colors.get(str(stack), product["badge"]["primary"])
+    for i, stack in enumerate(stacks):
+        color = colors[i % len(colors)]
         lines.append(
             f'  <img src="https://img.shields.io/badge/{stack}-stack-{color}'
             f'?style=flat-square" alt="{stack}" />'
@@ -112,13 +114,9 @@ def render_readme(root: Path, product: dict, *, for_preview: bool = False) -> st
     if for_preview:
         hero_path = "../assets/readme-hero.svg"
         lockup_path = "../assets/logo-lockup.svg"
-        icon_path = "../assets/app-icon-512.svg"
-        splash_path = "../assets/splash.svg"
     else:
         hero_path = "branding/assets/readme-hero.svg"
         lockup_path = "branding/assets/logo-lockup.svg"
-        icon_path = "branding/assets/app-icon-512.svg"
-        splash_path = "branding/assets/splash.svg"
 
     replacements = {
         "{{name}}": product["name"],
@@ -130,8 +128,6 @@ def render_readme(root: Path, product: dict, *, for_preview: bool = False) -> st
         "{{usage}}": product["usage"],
         "{{hero_path}}": hero_path,
         "{{lockup_path}}": lockup_path,
-        "{{icon_path}}": icon_path,
-        "{{splash_path}}": splash_path,
         "{{badge_license}}": badge["license"],
         "{{badge_foss}}": badge["foss"],
         "{{badge_primary}}": badge["primary"],

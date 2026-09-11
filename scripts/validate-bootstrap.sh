@@ -19,6 +19,7 @@ REQUIRED=(
   SECURITY.md
   CODE_OF_CONDUCT.md
   BUILD_PLAN.md
+  BUILD_PLAN_TEMPLATE.md
   AGENTS.md
   AGENT_MEMORY.md
   docs/START_HERE.md
@@ -59,6 +60,8 @@ REQUIRED=(
   docs/FIRST_30_DAYS.md
   docs/first-30-days.json
   docs/WINGET.md
+  docs/GROK_BOTS.md
+  docs/CURSOR_MARKETPLACE.md
   docs/AGENT_PORTABILITY.md
   docs/help/TOUR.md
   docs/help/IDEAS.md
@@ -148,7 +151,6 @@ fi
 
 # Writes first (must stay sequential)
 run_check bash scripts/sync-exemplar-config.sh
-run_check bash scripts/check-cursor-hooks.sh
 
 # Independent read-only checks — use local CPU (BOOTSTRAP_CHECK_JOBS overrides)
 if ! python3 scripts/lib/run_checks_parallel.py \
@@ -158,9 +160,12 @@ if ! python3 scripts/lib/run_checks_parallel.py \
   check-changelog-unreleased.sh \
   check-repo-hygiene.sh \
   check-batch-commands.sh \
+  check-cursor-hooks.sh \
   check-build-plan-parallel.sh \
+  check-build-plan-tally.sh \
   check-template-version-sync.sh \
   validate-template-index.sh \
+  check-project-card-index.sh \
   check-bootstrap-engine.sh \
   check-agent-adapters.sh \
   check-env.sh \
@@ -182,24 +187,40 @@ if ! python3 scripts/lib/run_checks_parallel.py \
   check-github-settings-yml.sh \
   check-merge-queue-docs.sh \
   check-pages-analytics.sh \
+  check-pages-demo-link.sh \
+  check-web-import-hygiene.sh \
   check-readme-badges.sh \
   check-playwright-cache.sh \
   check-android-cmdline-tools.sh \
+  check-android-sdk-licenses.sh \
+  check-fdroid-metadata-links.sh \
   check-nix-flake.sh \
   check-auto-review.sh \
   check-gitleaks-baseline.sh \
+  check-android-sdk-secrets.sh \
   check-semgrep.sh \
   check-mcp-allowlist.sh \
   check-crash-payload-allowlist.sh \
+  check-crash-inbox.sh \
+  check-sanitize-fixtures.sh \
   check-first-30-days.sh \
   check-contributing-agent.sh \
   check-template-upgrade-form.sh \
   check-ideas-discussion.sh \
   check-adr-command.sh \
+  check-adr-architecture.sh \
+  check-ci-gaps.sh \
+  check-ci-refs.sh \
   check-readme-mermaid.sh \
   check-social-preview.sh \
   check-fdroid-screenshots.sh \
-  check-winget-runbook.sh
+  check-winget-runbook.sh \
+  check-cursor-marketplace.sh \
+  check-cursor-automations.sh \
+  check-cursor-cloud-hooks.sh \
+  check-cursor-canvas.sh \
+  check-cursor-cli.sh \
+  check-tour-coach-chrome.sh
 then
   ERRORS=$((ERRORS + 1))
 fi

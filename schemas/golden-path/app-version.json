@@ -1,0 +1,4 @@
+{
+  "version": "1.7.0",
+  "note": "AstroAlarm app version (About / versionName). Distinct from TEMPLATE_INDEX template_version; bump with Release Please."
+}
