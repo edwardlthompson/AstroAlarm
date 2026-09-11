@@ -1,7 +1,7 @@
 # Build Plan
 
 <!-- remaining-tally -->
-**Remaining:** AGENT 0 · AUTO 2 · HUMAN 0 · ADB 0 · **2 open**
+**Remaining:** AGENT 0 · AUTO 0 · HUMAN 0 · ADB 0 · **0 open**
 <!-- /remaining-tally -->
 > Done work: [`COMPLETED_TASKS.md`](COMPLETED_TASKS.md). Feature protocol: [`docs/FEATURE_MODULES.md`](docs/FEATURE_MODULES.md).
 
@@ -35,6 +35,5 @@ _(none open)_
 > Auto-managed. Do not hand-edit rows inside the markers.
 
 <!-- open-prs-sync:begin -->
-- 🔲 [AUTO] Merge Dependabot [#18](https://github.com/edwardlthompson/AstroAlarm/pull/18) (chore(deps): bump the android-dependencies group across 1 directory with 3 updates)
-- 🔲 [AUTO] Merge Dependabot [#4](https://github.com/edwardlthompson/AstroAlarm/pull/4) (chore(deps): bump the github-actions group across 1 directory with 6 updates)
+_No open Dependabot or Release Please PRs._
 <!-- open-prs-sync:end -->
