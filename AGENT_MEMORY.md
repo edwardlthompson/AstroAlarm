@@ -7,7 +7,7 @@
 
 | Layer | Technology | Version | Notes |
 |-------|-----------|---------|-------|
-| Platform | Android (Kotlin, Jetpack Compose, Material 3) | 1.7.0 | Child of agent-project-bootstrap; GitHub Releases APK `astroalarm-X.Y.Z-foss.apk` |
+| Platform | Android (Kotlin, Jetpack Compose, Material 3) | 1.8.0 | Child of agent-project-bootstrap; GitHub Releases APK `astroalarm-X.Y.Z-foss.apk` |
 | Persistence | JSON SharedPreferences + DataStore | - | Room/Hilt on classpath for later stores |
 | Ephemeris | commons-suncalc 3.11 + NOAA tropical longitude + on-device Kepler | on-device | Sun/moon times; NOAA for seasons/zodiac/jieqi; Kepler for Sol tab and planet alarms |
 | License | MIT | - | Pure FOSS; no Play Services / Firebase |
@@ -44,6 +44,7 @@ FOSS Android astronomical alarm clock: on-device suncalc sun/moon ephemeris, sol
 
 ## Session Retrospectives
 
+| 2026-09-11 | v1.8.0 /ship | Natal suite + Golden Path catch-up; pruned-child upgrade-sim skip; RP #19 | Do not apply `vcodeql-bundle-*`; attach `mapping.txt` on signed releases; Dependabot #4/#18 still need review merge |
 | 2026-09-11 | /build Golden Path 1–11 | Signing+R8+UP+Settings chrome+deep link+OpenSSF+sanitize; smoke parser keeps ### Sequential rows; Dependabot #4/#18 blocked by branch policy | Do not admin-merge Dependabot; attach `mapping.txt` on signed releases; project 14564 badge is README-linked |
 | 2026-09-09 | v1.7.0 /ship | Daily 2D Earth/Moon hub + terminator; rim hours; NASA Moon globe (no emoji); RP #17 | Do not apply `vcodeql-bundle-*` tags; versionCode stays 10104; rotate leaked `gh` token |
 | 2026-09-08 | v1.6.0 /ship | Canvas Sol/Yearly at screen px; Yearly north-ecliptic-pole frame; RP #16 | Do not apply `vcodeql-bundle-*` tags; versionCode stays 10104; rotate leaked `gh` token |

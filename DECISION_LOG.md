@@ -17,6 +17,13 @@
 
 ## Entries
 
+### 2026-09-11 — v1.8.0 /ship
+- **Status:** Accepted
+- **Context:** Natal chart suite + Golden Path template catch-up were ready on `chore/template-catchup-v1.4.0`. Local `/prerelease` needed About-gate skip for pruned web. First CI push failed upgrade-sim (web re-init on android-only clone).
+- **Decision:** Empty Unreleased; `feat(android)` + merge to main so Release Please cuts **1.8.0** (PR #19, admin-merge). Skip `codeql-action@vcodeql-bundle-*`. Pruned children take Canon cherry-pick upgrade-sim path (no web re-init). `versionCode` stays **10104**.
+- **Alternatives considered:** Applying `vcodeql-bundle-*` (rejected). Requiring full web re-init on pruned children (rejected: files not in clone). Waiting for Dependabot #4/#18 before ship (rejected: backlogged separately).
+- **Consequences:** GitHub Release **v1.8.0** should carry SBOM + OpenVEX. Sideload replaces 1.7.0 in place (same upload cert and versionCode). F-Droid needs a later versionCode bump. Attach `mapping.txt` with signed R8 builds.
+
 ### 2026-09-09 — v1.7.0 /ship
 - **Status:** Accepted
 - **Context:** Daily 2D hours were hard to read, the now-hand ran through Earth, and Moon used phase emojis. Yearly already had a pole Earth+Moon hub. Local `/prerelease` passed; CodeQL patch tags stayed invalid.
