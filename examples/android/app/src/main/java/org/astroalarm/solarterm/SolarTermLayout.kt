@@ -4,9 +4,16 @@ import org.astroalarm.astro.sun.SolarMath
 import org.astroalarm.astro.sun.SolarSeasons
 import java.time.Instant
 
-/** Year-wheel layout: Lìchūn (315°) at canvas −90° (12 o’clock); longitude increases CCW. */
+/**
+ * North-ecliptic-pole frame, same as Sol (`sx = cx + x`, `sy = cy − y`).
+ * Jieqi longitudes are geocentric solar λ; Earth is heliocentric at λ+180°,
+ * so `canvasDeg(λ) = −(λ+180)` puts March Earth at 9 o’clock, June at 6,
+ * September (toward ♈) at 3, and December at 12. Prograde is CCW.
+ */
 object SolarTermLayout {
-    fun canvasDeg(lonDeg: Double): Float = (-90.0 - wrap360(lonDeg - 315.0)).toFloat()
+    fun canvasDeg(lonDeg: Double): Float = (-wrap360(lonDeg + 180.0)).toFloat()
+
+    fun lonFromCanvasDeg(canvasDeg: Double): Double = wrap360(-canvasDeg - 180.0)
 
     fun nowUpRotation(@Suppress("UNUSED_PARAMETER") lonDeg: Double): Float = 0f
 

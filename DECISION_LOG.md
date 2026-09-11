@@ -17,6 +17,27 @@
 
 ## Entries
 
+### 2026-09-09 — v1.7.0 /ship
+- **Status:** Accepted
+- **Context:** Daily 2D hours were hard to read, the now-hand ran through Earth, and Moon used phase emojis. Yearly already had a pole Earth+Moon hub. Local `/prerelease` passed; CodeQL patch tags stayed invalid.
+- **Decision:** Empty Unreleased; `feat(android)` so Release Please cuts **1.7.0** (PR #17, admin-merge). Daily 2D shares Yearly's Earth/Moon hub with rim hours, a solar-noon pointer, and a true terminator. Daily 3D Moon is an Earth-view shaded globe. NASA SVS 1k color Moon map. `versionCode` stays **10104**. Skip `codeql-action@vcodeql-bundle-*`. Codex skipped (no key/CLI).
+- **Alternatives considered:** Applying `vcodeql-bundle-*` (rejected: known invalid). Waiting for Dependabot Gradle PRs before push (rejected: weekly backup only). Bumping versionCode in this ship (rejected: F-Droid later).
+- **Consequences:** GitHub Release **v1.7.0** should carry SBOM + OpenVEX. Sideload replaces 1.6.0 in place (same upload cert and versionCode). F-Droid needs a later versionCode bump. Rotate the leaked `gh` token from Release Please dry-run.
+
+### 2026-09-08 — v1.6.0 /ship
+- **Status:** Accepted
+- **Context:** Yearly zoom stretched a 600px bitmap. Yearly froze Lìchūn at 12 while Sol already used the north-ecliptic-pole frame. Local `/prerelease` passed; CodeQL patch tags stayed invalid.
+- **Decision:** Empty Unreleased; `feat(android)` so Release Please cuts **1.6.0** (PR #16, admin-merge). Draw Sol and Yearly on Compose `Canvas`. `SolarTermLayout.canvasDeg(λ) = −(λ+180)`. `versionCode` stays **10104**. Skip `codeql-action@vcodeql-bundle-*`. Codex skipped (no key/CLI).
+- **Alternatives considered:** Applying `vcodeql-bundle-*` (rejected: known invalid). Waiting for Dependabot Gradle PRs before push (rejected: weekly backup only). Putting June Earth at 12 (rejected: 180° from Sol).
+- **Consequences:** GitHub Release **v1.6.0** should carry SBOM + OpenVEX. Sideload replaces 1.5.0 in place (same upload cert and versionCode). F-Droid needs a later versionCode bump. Rotate the leaked `gh` token from Release Please dry-run.
+
+### 2026-09-08 — Yearly shares Sol’s north-ecliptic-pole frame
+- **Status:** Accepted
+- **Context:** Yearly froze Lìchūn at 12 o’clock (`canvasDeg = −90 − (λ − 315)`). Sol already plots J2000 ecliptic with ♈ on +X and λ = 90° up (`sx = cx + x`, `sy = cy − y`). Zoom was stretching a 600px bitmap.
+- **Decision:** `SolarTermLayout.canvasDeg(λ) = −(λ+180)` so the jieqi ring stays glued to Earth and both sit at Sol’s heliocentric Earth (March left, June bottom, ♈ / September right, December top). Draw Yearly and Sol through a Compose `Canvas` at device pixels. Widgets still rasterize via `render()`.
+- **Alternatives considered:** Keeping Lìchūn at 12 (rejected: disagrees with Sol). `canvasDeg = −λ` (rejected: puts June Earth at 12, 180° from Sol). Putting ♈ at 12 o’clock (rejected: Sol documents ♈ on +X). Huge zoomed bitmaps (rejected: live canvas stays sharp).
+- **Consequences:** Tests and feature copy no longer claim Lìchūn at 12. Home Yearly widgets rotate with the tab.
+
 ### 2026-09-04 — v1.5.0 /ship
 - **Status:** Accepted
 - **Context:** Overlapping Sun seasonal and Yearly jieqi calendars could double-ring. Yearly events were missing from Sol. Local `/prerelease` passed after reverting invalid CodeQL bundle tags.

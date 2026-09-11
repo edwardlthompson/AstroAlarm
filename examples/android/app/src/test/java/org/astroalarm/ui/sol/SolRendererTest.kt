@@ -63,6 +63,18 @@ class SolRendererTest {
     }
 
     @Test
+    fun northEclipticPolePutsJuneEarthUpAndMarchEarthRight() {
+        val june = org.astroalarm.sol.PlanetKepler.state(
+            PlanetBody.EARTH, Instant.parse("2026-06-21T08:00:00Z"),
+        )
+        val march = org.astroalarm.sol.PlanetKepler.state(
+            PlanetBody.EARTH, Instant.parse("2026-03-20T15:00:00Z"),
+        )
+        assertTrue("June Earth toward −Y (screen bottom) y=${june.y} lon=${june.helioLon}", june.y < 0.0 && june.helioLon in 240.0..300.0)
+        assertTrue("March Earth toward −X (screen left) x=${march.x} lon=${march.helioLon}", march.x < 0.0 && march.helioLon in 150.0..210.0)
+    }
+
+    @Test
     fun mercuryOrbitSpanExceedsEarth() {
         val now = Instant.parse("2026-01-04T00:00:00Z")
         assertTrue(SolOrbitPaths.mercurySpan(now) > SolOrbitPaths.earthSpan(now) * 2.0)

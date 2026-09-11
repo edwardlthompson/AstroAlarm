@@ -17,7 +17,7 @@
 | FR-2 | As a user I add solar, lunar, seasonal, planet, or custom clock alarms | Daily solar/lunar events, 24 jieqi, planet rise/set/stations/alignments, custom hour/minute; JSON store + exact `AlarmManager` |
 | FR-3 | As a user I stop a ringing alarm from the lockscreen | Snooze and Stop; math dialog when `mathUnlockEnabled` |
 | FR-4 | As a user I see the next alarm on the home screen | Rotating day/night widget bitmap + countdown preview |
-| FR-5 | As a user I can open the 24 Solar Terms year view | Always-on Yearly tab; frozen jieqi ring (Lìchūn at 12) with Earth+needle walking CCW + widget; Moon at ecliptic elongation; Compact last; locale names (zh pack); auto-southern from latitude; local times from `AstroPlace.zone` |
+| FR-5 | As a user I can open the 24 Solar Terms year view | Always-on Yearly tab; frozen jieqi ring in the Sol north-ecliptic-pole frame (♈ at +X, Dōngzhì at 12, Xiàzhì at 6) with Earth+needle walking CCW + widget; Moon at ecliptic elongation; Compact last; locale names (zh pack); auto-southern from latitude; local times from `AstroPlace.zone` |
 | FR-6 | As a user I can open a true-AU Sol map | Fifth tab; planets only (no moons); pinch-zoom; Kepler orbit polylines + wakes; spokes, 1 AU bar, opposition ticks; pin + home widget; planet-alarm dots; tap AU/ν/light; on-device Kepler |
 | FR-7 | As a user I set math-unlock difficulty that survives leaving Settings | Elementary–Hard chips; `commit()` persistence; stored Genius maps to Hard |
 ## Non-Functional Constraints

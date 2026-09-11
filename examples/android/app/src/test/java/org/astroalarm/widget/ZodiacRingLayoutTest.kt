@@ -39,4 +39,12 @@ class ZodiacRingLayoutTest {
         assertEquals(ZodiacSign.Aries, ZodiacRingLayout.at(hits, aries.x, aries.y))
         assertNull(ZodiacRingLayout.at(hits, 100f, 100f))
     }
+
+    @Test
+    fun monthsShrinkPieUnderOuterZodiac() {
+        val withMonths = DiskRingLayout.of(400, months = true, zodiac = true)
+        val zodiacOnly = DiskRingLayout.of(400, months = false, zodiac = true)
+        assertTrue(withMonths.innerR < zodiacOnly.innerR)
+        assertTrue(withMonths.zodiacR > withMonths.monthLabelR)
+    }
 }

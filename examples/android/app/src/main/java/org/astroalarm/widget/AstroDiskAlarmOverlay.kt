@@ -24,6 +24,7 @@ object AstroDiskAlarmOverlay {
         zone: ZoneId,
         center: Float,
         radius: Float,
+        dotR: Float,
         size: Int,
         nowAngle: Float,
         timeFmt: DateTimeFormatter,
@@ -34,8 +35,8 @@ object AstroDiskAlarmOverlay {
             val z = ZonedDateTime.ofInstant(next, zone)
             val rad = (((z.hour * 60 + z.minute) / 1440f * 360f - nowAngle - 90f)) * (Math.PI / 180.0)
             canvas.drawCircle(
-                center + radius * cos(rad).toFloat(),
-                center + radius * sin(rad).toFloat(),
+                center + dotR * cos(rad).toFloat(),
+                center + dotR * sin(rad).toFloat(),
                 (size * 0.026f).coerceIn(5f, 12f),
                 dotPaint,
             )

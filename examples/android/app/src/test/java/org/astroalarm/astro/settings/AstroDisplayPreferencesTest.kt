@@ -52,6 +52,16 @@ class AstroDisplayPreferencesTest {
     }
 
     @Test
+    fun hourMarksDefaultOffAndPersist() = runBlocking {
+        val prefs = AstroDisplayPreferences(context)
+        assertFalse(prefs.isShowHourMarks2D())
+        prefs.setShowHourMarks2D(true)
+        val reader = AstroDisplayPreferences(context)
+        assertTrue(reader.isShowHourMarks2D())
+        assertTrue(reader.showHourMarks2D.first())
+    }
+
+    @Test
     fun solarTermCompactPersists() = runBlocking {
         val prefs = AstroDisplayPreferences(context)
         assertFalse(prefs.isSolarTermCompact())

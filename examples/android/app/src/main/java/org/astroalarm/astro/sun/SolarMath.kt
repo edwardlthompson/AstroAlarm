@@ -126,4 +126,10 @@ object SolarMath {
         if (cosH > 1.0 || cosH < -1.0) return null
         return acos(cosH) * RAD_TO_DEG
     }
+
+    fun sunDeclination(instant: Instant): Double {
+        val t = julianCentury(julianDay(instant))
+        val l0 = geomMeanLongSun(t)
+        return sunDeclination(t, l0, sunEqOfCenter(t, geomMeanAnomSun(t)))
+    }
 }

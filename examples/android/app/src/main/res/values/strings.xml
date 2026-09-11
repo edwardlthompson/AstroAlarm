@@ -170,6 +170,8 @@
     <string name="astro_toggle_show_event_times_desc">Alarm, sunrise, and sunset times on the 24h dial</string>
     <string name="astro_toggle_show_month_ticks">Show month ticks</string>
     <string name="astro_toggle_show_month_ticks_desc">Two-letter month starts on the outer rim</string>
+    <string name="astro_toggle_show_hour_marks">Show hour marks</string>
+    <string name="astro_toggle_show_hour_marks_desc">Civil clock hours on the 24h dial, not solar noon</string>
     <string name="astro_solar_noon">Solar Noon</string>
     <string name="astro_solar_midnight">Solar Midnight</string>
     <string name="astro_zodiac_overhead_noon">Midday Overhead Zodiac</string>

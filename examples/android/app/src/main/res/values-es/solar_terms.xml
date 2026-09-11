@@ -59,7 +59,7 @@
     <string name="solar_term_device_zone">usando la zona horaria del dispositivo</string>
     <string name="solar_term_widget_name">24 términos solares</string>
     <string name="solar_term_widget_desc">Términos solares actual y siguientes con hora local</string>
-    <string name="solar_term_cd_wheel">Rueda anual de los 24 términos solares</string>
+    <string name="solar_term_cd_wheel">Rueda anual de los 24 términos solares. Pellizca para zoom, arrastra para desplazar</string>
     <string name="solar_term_cd_sector">%1$s, %2$s, %3$s</string>
     <string name="solar_term_local_datetime">Hora local</string>
     <string name="solar_term_longitude">Longitud solar %1$.0f°</string>

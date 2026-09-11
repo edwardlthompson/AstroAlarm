@@ -170,6 +170,8 @@
     <string name="astro_toggle_show_event_times_desc">Heures des alarmes, lever et coucher du soleil sur le cadran 24h</string>
     <string name="astro_toggle_show_month_ticks">Afficher les mois</string>
     <string name="astro_toggle_show_month_ticks_desc">Début de chaque mois (2 lettres) sur le bord</string>
+    <string name="astro_toggle_show_hour_marks">Afficher les heures</string>
+    <string name="astro_toggle_show_hour_marks_desc">Heures civiles sur le cadran 24h, pas le midi solaire</string>
     <string name="astro_solar_noon">Midi solaire</string>
     <string name="astro_solar_midnight">Minuit solaire</string>
     <string name="astro_zodiac_overhead_noon">Zodiaque au zénith à midi</string>

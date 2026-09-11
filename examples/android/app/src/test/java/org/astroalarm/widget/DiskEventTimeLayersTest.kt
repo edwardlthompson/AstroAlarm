@@ -10,6 +10,7 @@ class DiskEventTimeLayersTest {
     fun enabledToggleShowsSunriseSunsetAndAlarms() {
         val layers = DiskEventTimeLayers.fromToggle(true)
         assertTrue(layers.sunriseSunsetBadges)
+        assertTrue(layers.noonMidnightBadges)
         assertTrue(layers.alarmMarkers)
     }
 
@@ -17,6 +18,7 @@ class DiskEventTimeLayersTest {
     fun cleanViewHidesSunriseSunsetAndAlarms() {
         val layers = DiskEventTimeLayers.fromToggle(false)
         assertFalse(layers.sunriseSunsetBadges)
+        assertFalse(layers.noonMidnightBadges)
         assertFalse(layers.alarmMarkers)
     }
 }

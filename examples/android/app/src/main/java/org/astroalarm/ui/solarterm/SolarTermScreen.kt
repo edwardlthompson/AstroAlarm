@@ -4,7 +4,7 @@ import android.appwidget.AppWidgetManager
 import android.content.ComponentName
 import android.os.Build
 import android.widget.Toast
-import androidx.compose.foundation.Image
+import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.gestures.detectTapGestures
 import androidx.compose.foundation.gestures.detectTransformGestures
 import androidx.compose.foundation.isSystemInDarkTheme
@@ -16,10 +16,12 @@ import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.asImageBitmap
-import androidx.compose.ui.graphics.graphicsLayer
+import androidx.compose.ui.draw.clipToBounds
+import androidx.compose.ui.graphics.drawscope.drawIntoCanvas
+import androidx.compose.ui.graphics.nativeCanvas
 import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.semantics.contentDescription
 import androidx.compose.ui.semantics.semantics
@@ -49,7 +51,8 @@ fun SolarTermScreen(
     val compact by prefs.solarTermCompact.collectAsState()
     val showEventTimes by prefs.showEventTimesYearly.collectAsState()
     var now by remember { mutableStateOf(Instant.now()) }
-    var scale by remember { mutableFloatStateOf(1f) }
+    var viewport by remember { mutableStateOf(WheelZoomPan()) }
+    val viewportLatest = rememberUpdatedState(viewport)
     var selected by remember { mutableStateOf<SolarTerm?>(null) }
     val dark = isSystemInDarkTheme()
     val earth = remember { EarthTexture.get(context) }
@@ -78,36 +81,50 @@ fun SolarTermScreen(
     ) {
         BoxWithConstraints(Modifier.fillMaxWidth().weight(1f), contentAlignment = Alignment.TopCenter) {
             val side = minOf(maxWidth, (maxHeight - DiskChrome.Reserve).coerceAtLeast(0.dp))
-            val sizePx = org.astroalarm.widget.ClockRenderSize.fromMinDp(side.value.toInt().coerceAtLeast(80))
-            val bmp = remember(req, sizePx, earth, moon) {
-                SolarTermWheelRenderer.render(req, sizePx, earth, moon)
-            }
+            val layoutPx = with(LocalDensity.current) { side.roundToPx() }.coerceAtLeast(80)
             Column(
                 Modifier.fillMaxWidth().align(Alignment.TopCenter),
                 horizontalAlignment = Alignment.CenterHorizontally,
                 verticalArrangement = Arrangement.spacedBy(8.dp)
             ) {
-                Image(
-                    bitmap = bmp.asImageBitmap(),
-                    contentDescription = talk,
+                Canvas(
                     modifier = Modifier
                         .size(side)
-                        .graphicsLayer { scaleX = scale; scaleY = scale }
-                        .semantics { contentDescription = talk }
-                        .pointerInput(sizePx, req.nowLon, compact) {
+                        .clipToBounds()
+                        .pointerInput(Unit) {
+                            detectTransformGestures { centroid, pan, zoom, _ ->
+                                viewport = WheelZoomPanMath.apply(
+                                    viewportLatest.value,
+                                    centroid.x, centroid.y,
+                                    pan.x, pan.y, zoom,
+                                    size.width.toFloat(), size.height.toFloat(),
+                                )
+                            }
+                        }
+                        .pointerInput(layoutPx, req.nowLon, compact) {
                             detectTapGestures { tap ->
-                                val bx = tap.x * sizePx / size.width
-                                val by = tap.y * sizePx / size.height
-                                val idx = SolarTermWheelRenderer.sectorAt(bx, by, sizePx, req.nowLon, compact)
+                                val (lx, ly) = WheelZoomPanMath.contentPoint(
+                                    tap.x, tap.y, viewportLatest.value,
+                                    size.width.toFloat(), size.height.toFloat(),
+                                )
+                                val bx = lx * layoutPx / size.width
+                                val by = ly * layoutPx / size.height
+                                val idx = SolarTermWheelRenderer.sectorAt(bx, by, layoutPx, req.nowLon, compact)
                                 if (idx != null) selected = SolarTerm.entries[idx]
                             }
                         }
-                        .pointerInput(Unit) {
-                            detectTransformGestures { _, _, zoom, _ ->
-                                scale = (scale * zoom).coerceIn(1f, 2.4f)
-                            }
-                        }
-                )
+                        .semantics { contentDescription = talk }
+                ) {
+                    val px = size.width.toInt().coerceAtLeast(1)
+                    drawIntoCanvas { gc ->
+                        val native = gc.nativeCanvas
+                        native.drawColor(org.astroalarm.solarterm.SolarTermPalette.wheelBg(req.dark))
+                        native.save()
+                        WheelZoomPanMath.concat(native, viewport, size.width)
+                        SolarTermWheelRenderer.draw(native, req, px, earth, moon)
+                        native.restore()
+                    }
+                }
                 Button(
                     onClick = { pinWidget(context) },
                     modifier = Modifier.fillMaxWidth().semantics {

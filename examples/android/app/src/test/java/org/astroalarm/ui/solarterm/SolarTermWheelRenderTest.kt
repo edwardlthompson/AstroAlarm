@@ -22,7 +22,7 @@ import kotlin.math.sin
 class SolarTermWheelRenderTest {
 
     @Test
-    fun topHitIsLichunEvenInJuneAndEarthTravels() {
+    fun bottomHitIsXiazhiInJuneAndEarthTravels() {
         val ctx = RuntimeEnvironment.getApplication()
         val place = AstroPlace("Wellington", -41.2865, 174.7762, "Pacific/Auckland")
         val now = Instant.parse("2026-06-21T00:00:00Z")
@@ -33,23 +33,29 @@ class SolarTermWheelRenderTest {
         assertEquals(96, wheel.width)
         assertEquals(96, wheel.height)
         val midR = (SolarTermWheelRenderer.innerFrac(true) + SolarTermWheelRenderer.outerFrac()) / 2f * 96f
-        val idx = SolarTermWheelRenderer.sectorAt(48f, 48f - midR, 96, req.nowLon, compact = true)
+        val idx = SolarTermWheelRenderer.sectorAt(48f, 48f + midR, 96, req.nowLon, compact = true)
         assertNotNull(idx)
-        assertEquals(SolarTerm.LICHUN.ordinal, idx)
+        assertEquals(SolarTerm.XIAZHI.ordinal, idx)
         assertEquals(SolarTermLayout.canvasDeg(req.nowLon), SolarTermHubRenderer.earthCanvasDeg(req.nowLon, 0f), 0.5f)
-        assertTrue(abs(SolarTermHubRenderer.earthCanvasDeg(req.nowLon, 0f) + 90f) > 1f)
+        assertTrue(SolarTermRadialLabels.angDist(SolarTermHubRenderer.earthCanvasDeg(req.nowLon, 0f), -270f) < 8f)
         assertFalse(req.whenLocal.any { Regex("""\d{4}""").containsMatchIn(it) })
     }
 
     @Test
-    fun lichunSitsAtTopWhenLongitudeIs315() {
-        val idx = SolarTermWheelRenderer.sectorAt(48f, 12f, 96, 315.0)
-        assertEquals(SolarTerm.LICHUN.ordinal, idx)
+    fun dongzhiSitsAtTopWhenLongitudeIs270() {
+        val idx = SolarTermWheelRenderer.sectorAt(48f, 12f, 96, 270.0)
+        assertEquals(SolarTerm.DONGZHI.ordinal, idx)
     }
 
     @Test
-    fun yushuiIsCounterClockwiseNearEleven() {
-        val ang = Math.toRadians(-112.5)
+    fun qiufenSitsAtThreeOClockTowardAries() {
+        val idx = SolarTermWheelRenderer.sectorAt(84f, 48f, 96, 180.0)
+        assertEquals(SolarTerm.QIUFEN.ordinal, idx)
+    }
+
+    @Test
+    fun yushuiIsCounterClockwiseOfLichun() {
+        val ang = Math.toRadians(SolarTermWheelRenderer.midDeg(SolarTerm.YUSHUI.ordinal).toDouble())
         val x = (48.0 + 40.0 * cos(ang)).toFloat()
         val y = (48.0 + 40.0 * sin(ang)).toFloat()
         val idx = SolarTermWheelRenderer.sectorAt(x, y, 96, 315.0)

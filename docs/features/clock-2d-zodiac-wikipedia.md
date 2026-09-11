@@ -4,7 +4,7 @@ Tap a 2D in-app zodiac bubble to open that sign's English Wikipedia page.
 
 ## Acceptance criteria
 
-- ✅ User-visible behavior: with the zodiac ring on, tapping a 2D clock sign opens `https://en.wikipedia.org/wiki/{Sign}_(astrology)` in the browser; yellow rim ticks mark each sign cusp (beginning/end) and hide with the same toggle
+- ✅ User-visible behavior: with the zodiac ring on, tapping a 2D clock sign opens `https://en.wikipedia.org/wiki/{Sign}_(astrology)` in the browser; yellow ticks mark each sign cusp on the outer zodiac ring and hide with the same toggle
 - ✅ Offline/error behavior: missing browser is ignored (`runCatching`); taps miss when zodiac is hidden
 - ✅ Accessibility: existing 2D clock content description unchanged; switch still named
 - ✅ i18n: N/A — Wikipedia English astrology URLs
@@ -22,8 +22,7 @@ Tap a 2D in-app zodiac bubble to open that sign's English Wikipedia page.
 | Logic | `examples/android/.../widget/ZodiacRingLayout.kt` |
 | View | `AstroClockScreen.kt` |
 | Tests | `ZodiacRingLayoutTest.kt` |
-| Wiring | `pointerInput` on the 2D disk `Image` |
-
+| Wiring | `pointerInput` on the 2D disk `Canvas` |
 ## Tests
 
 - Automated: yes — `ZodiacRingLayoutTest.kt`

@@ -8,8 +8,21 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
-## [1.5.0](https://github.com/edwardlthompson/AstroAlarm/compare/v1.4.1...v1.5.0) (2026-09-04)
+## [1.7.0](https://github.com/edwardlthompson/AstroAlarm/compare/v1.6.0...v1.7.0) (2026-09-09)
 
+
+### Added
+
+* **android:** shade Earth and Moon on Daily clocks ([274d246](https://github.com/edwardlthompson/AstroAlarm/commit/274d2467e8a579f92952e80b4663a114e47cd657))
+
+## [1.6.0](https://github.com/edwardlthompson/AstroAlarm/compare/v1.5.0...v1.6.0) (2026-09-08)
+
+### Added
+
+* **android:** Canvas Sol/Yearly maps and ecliptic Yearly frame ([ee81fbb](https://github.com/edwardlthompson/AstroAlarm/commit/ee81fbbd5770d981b2ad225584137f48213614a8))
+* **android:** pan and pinch-focal zoom on Yearly wheel ([f18fd85](https://github.com/edwardlthompson/AstroAlarm/commit/f18fd850bb7325daafca1c498febf501594470c1))
+
+## [1.5.0](https://github.com/edwardlthompson/AstroAlarm/compare/v1.4.1...v1.5.0) (2026-09-04)
 
 ### Added
 

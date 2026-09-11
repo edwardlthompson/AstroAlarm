@@ -39,3 +39,4 @@ The 3D view stays an Earth-centered transit clock (observer pin, schematic rings
 - Civil rise/set use suncalc apparent horizon; ring geometry uses unrefracted true altitude
 - Rings stay local-sky after the globe nod; the gold sun glyph need not sit on the rotated subsolar dot.
 - 3D is not a sky map: star field is decorative; zodiac bubbles are tropical longitude, not IAU constellations
+- The Moon on the transit ring is a shaded NASA texture (Earth-view phase from elongation), not a phase emoji. See `clock-earth-moon-hub.md`.
