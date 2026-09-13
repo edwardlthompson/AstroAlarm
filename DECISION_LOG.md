@@ -17,6 +17,13 @@
 
 ## Entries
 
+### 2026-09-13 — v1.8.1 /ship
+- **Status:** Accepted
+- **Context:** OP13 sunrise/sunset announce failed with `POST_NOTIFICATIONS` denied (importance=NONE); TTS only ran inside `AstroAlarmActivity` reached via FSI. Sideload skipped onboarding so grants stayed missing.
+- **Decision:** AlarmManager `setAlarmClock` operation targets Activity (BAL-safe); receiver legacy path uses PendingIntent BAL opts. Non-dismissible `PermissionNagDialog` until all onboarding steps granted. App **1.8.1** / versionCode **10106**. Skip `codeql-action@vcodeql-bundle-*`. RP #20 admin-merge.
+- **Alternatives considered:** `startActivity` from broadcast only (BAL_BLOCK on adb/OEM without AlarmManager exemption). Banner with Later (rejected: not in-face enough).
+- **Consequences:** Announce works without notifications; shade actions still need notification permission. Users see blocking dialog until grants complete.
+
 ### 2026-09-11 — v1.8.0 /ship
 - **Status:** Accepted
 - **Context:** Natal chart suite + Golden Path template catch-up were ready on `chore/template-catchup-v1.4.0`. Local `/prerelease` needed About-gate skip for pruned web. First CI push failed upgrade-sim (web re-init on android-only clone).
