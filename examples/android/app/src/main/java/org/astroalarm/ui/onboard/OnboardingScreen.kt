@@ -39,7 +39,11 @@ import org.astroalarm.onboard.OnboardingPolicy
 import org.astroalarm.onboard.OnboardingStep
 
 @Composable
-fun OnboardingScreen(onDone: () -> Unit, modifier: Modifier = Modifier) {
+fun OnboardingScreen(
+    onDone: () -> Unit,
+    modifier: Modifier = Modifier,
+    requireAllGranted: Boolean = true,
+) {
     val context = LocalContext.current
     var epoch by remember { mutableIntStateOf(0) }
     val lifecycleOwner = LocalLifecycleOwner.current
@@ -51,6 +55,7 @@ fun OnboardingScreen(onDone: () -> Unit, modifier: Modifier = Modifier) {
         onDispose { lifecycleOwner.lifecycle.removeObserver(observer) }
     }
     val snapshot = remember(epoch) { OnboardingChecker.snapshot(context) }
+    val allGranted = remember(snapshot) { snapshot.values.all { it } }
     val notifLauncher = rememberLauncherForActivityResult(
         ActivityResultContracts.RequestPermission(),
     ) { epoch++ }
@@ -98,7 +103,18 @@ fun OnboardingScreen(onDone: () -> Unit, modifier: Modifier = Modifier) {
                 },
             )
         }
-        Button(onClick = onDone, modifier = Modifier.fillMaxWidth()) {
+        if (requireAllGranted && !allGranted) {
+            Text(
+                text = stringResource(R.string.onboard_continue_blocked),
+                style = MaterialTheme.typography.bodySmall,
+                color = MaterialTheme.colorScheme.error,
+            )
+        }
+        Button(
+            onClick = onDone,
+            enabled = !requireAllGranted || allGranted,
+            modifier = Modifier.fillMaxWidth(),
+        ) {
             Text(stringResource(R.string.onboard_continue))
         }
     }

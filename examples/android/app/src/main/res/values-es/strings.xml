@@ -265,6 +265,7 @@
     <string name="onboard_title">Permite que suenen las alarmas</string>
     <string name="onboard_body">AstroAlarm necesita esto para que las alarmas de amanecer, luna y reloj suenen a tiempo, sobre la pantalla de bloqueo, incluso con el teléfono dormido.</string>
     <string name="onboard_continue">Continuar</string>
+    <string name="onboard_continue_blocked">Activa todos los elementos de arriba para continuar.</string>
     <string name="onboard_grant">Permitir</string>
     <string name="onboard_granted">Permitido</string>
     <string name="onboard_settings_button">Permisos de alarma</string>
@@ -278,4 +279,14 @@
     <string name="onboard_fsi_body">Muestra Detener y Posponer sobre la pantalla de bloqueo.</string>
     <string name="onboard_battery_title">Ignorar optimización de batería</string>
     <string name="onboard_battery_body">Pon AstroAlarm en Sin restricciones para que OxygenOS no mate las alarmas con la pantalla apagada.</string>
+    <string name="settings_notifications_denied_title">Las notificaciones están desactivadas</string>
+    <string name="settings_notifications_denied_body">Activa las notificaciones para que la alarma a pantalla completa y el anuncio hablado aparezcan al sonar.</string>
+    <string name="settings_notifications_denied_action">Abrir ajustes de notificaciones</string>
+    <string name="permissions_nag_title">Se necesitan permisos de alarma</string>
+    <string name="permissions_nag_fix">Corregir permisos</string>
+    <string name="permissions_nag_later">Más tarde</string>
+    <plurals name="permissions_nag_body">
+        <item quantity="one">Falta %d ajuste obligatorio. Las alarmas pueden no sonar ni anunciarse hasta que lo actives.</item>
+        <item quantity="other">Faltan %d ajustes obligatorios. Las alarmas pueden no sonar ni anunciarse hasta que los actives.</item>
+    </plurals>
 </resources>

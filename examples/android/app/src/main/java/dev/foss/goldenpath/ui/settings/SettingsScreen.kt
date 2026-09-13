@@ -5,12 +5,34 @@ import android.widget.Toast
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.ScrollState
-import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.ExperimentalLayoutApi
+import androidx.compose.foundation.layout.FlowRow
+import androidx.compose.foundation.layout.PaddingValues
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
-import androidx.compose.material3.*
-import androidx.compose.runtime.*
+import androidx.compose.material3.Button
+import androidx.compose.material3.Card
+import androidx.compose.material3.CardDefaults
+import androidx.compose.material3.FilledTonalButton
+import androidx.compose.material3.FilterChip
+import androidx.compose.material3.HorizontalDivider
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Switch
+import androidx.compose.material3.Text
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.runtime.setValue
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
@@ -33,7 +55,7 @@ import org.astroalarm.math.MathPreferences
 import org.astroalarm.tts.TtsPreferences
 import org.astroalarm.ui.LocationCard
 import org.astroalarm.ui.math.MathSettingsSection
-import org.astroalarm.ui.onboard.OnboardingScreen
+import org.astroalarm.ui.onboard.PermissionNagDialog
 import org.astroalarm.ui.tts.TtsVoicePicker
 
 @OptIn(ExperimentalLayoutApi::class)
@@ -72,7 +94,11 @@ fun SettingsScreen(
             if (loc != null) {
                 placeStore.set(loc)
                 AstroAlarmScheduler.rescheduleAll(context)
-                Toast.makeText(context, context.getString(R.string.astro_toast_location_updated, loc.cityName), Toast.LENGTH_SHORT).show()
+                Toast.makeText(
+                    context,
+                    context.getString(R.string.astro_toast_location_updated, loc.cityName),
+                    Toast.LENGTH_SHORT,
+                ).show()
             } else {
                 Toast.makeText(context, context.getString(R.string.astro_toast_location_failed), Toast.LENGTH_LONG).show()
             }
@@ -80,7 +106,7 @@ fun SettingsScreen(
     }
 
     val permissionLauncher = rememberLauncherForActivityResult(
-        contract = ActivityResultContracts.RequestMultiplePermissions()
+        contract = ActivityResultContracts.RequestMultiplePermissions(),
     ) { perms ->
         val granted = perms[Manifest.permission.ACCESS_FINE_LOCATION] == true ||
             perms[Manifest.permission.ACCESS_COARSE_LOCATION] == true
@@ -102,8 +128,7 @@ fun SettingsScreen(
     }
 
     if (showOnboarding) {
-        OnboardingScreen(onDone = { showOnboarding = false }, modifier = modifier)
-        return
+        PermissionNagDialog(onComplete = { showOnboarding = false })
     }
 
     Column(
@@ -132,20 +157,18 @@ fun SettingsScreen(
                     permissionLauncher.launch(
                         arrayOf(
                             Manifest.permission.ACCESS_FINE_LOCATION,
-                            Manifest.permission.ACCESS_COARSE_LOCATION
-                        )
+                            Manifest.permission.ACCESS_COARSE_LOCATION,
+                        ),
                     )
                 }
-            }
+            },
         )
 
         HorizontalDivider()
 
         TtsVoicePicker(
             voice = voice,
-            onVoiceChange = { newVoice ->
-                ttsPrefs.setVoice(newVoice)
-            }
+            onVoiceChange = { newVoice -> ttsPrefs.setVoice(newVoice) },
         )
 
         HorizontalDivider()
@@ -157,23 +180,25 @@ fun SettingsScreen(
         Card(
             modifier = Modifier.fillMaxWidth(),
             shape = RoundedCornerShape(12.dp),
-            colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surfaceVariant.copy(alpha = 0.7f))
+            colors = CardDefaults.cardColors(
+                containerColor = MaterialTheme.colorScheme.surfaceVariant.copy(alpha = 0.7f),
+            ),
         ) {
             Column(modifier = Modifier.padding(14.dp), verticalArrangement = Arrangement.spacedBy(8.dp)) {
                 Text(
                     text = stringResource(R.string.openshouter_title),
                     style = MaterialTheme.typography.titleMedium,
                     fontWeight = FontWeight.Bold,
-                    color = MaterialTheme.colorScheme.primary
+                    color = MaterialTheme.colorScheme.primary,
                 )
                 Text(
                     text = stringResource(R.string.openshouter_desc),
                     style = MaterialTheme.typography.bodySmall,
-                    color = MaterialTheme.colorScheme.onSurfaceVariant
+                    color = MaterialTheme.colorScheme.onSurfaceVariant,
                 )
                 FilledTonalButton(
                     onClick = { onOpenUrl("https://github.com/edwardlthompson/OpenShouter") },
-                    contentPadding = PaddingValues(horizontal = 12.dp, vertical = 6.dp)
+                    contentPadding = PaddingValues(horizontal = 12.dp, vertical = 6.dp),
                 ) {
                     Text(stringResource(R.string.openshouter_btn), fontSize = 13.sp)
                 }
@@ -185,7 +210,7 @@ fun SettingsScreen(
         Text(
             text = stringResource(R.string.settings_theme_label),
             style = MaterialTheme.typography.titleMedium,
-            fontWeight = FontWeight.SemiBold
+            fontWeight = FontWeight.SemiBold,
         )
         FlowRow(horizontalArrangement = Arrangement.spacedBy(SpacingMd)) {
             ThemeMode.entries.forEach { mode ->
@@ -207,11 +232,11 @@ fun SettingsScreen(
 
         Row(
             modifier = Modifier.fillMaxWidth(),
-            horizontalArrangement = Arrangement.SpaceBetween
+            horizontalArrangement = Arrangement.SpaceBetween,
         ) {
             Text(
                 text = stringResource(R.string.settings_feedback_save_crashes),
-                modifier = Modifier.weight(1f)
+                modifier = Modifier.weight(1f),
             )
             Switch(checked = saveCrashes, onCheckedChange = onSaveCrashes)
         }

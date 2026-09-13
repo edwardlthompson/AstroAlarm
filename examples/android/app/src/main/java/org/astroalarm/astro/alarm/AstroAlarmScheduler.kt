@@ -73,17 +73,21 @@ object AstroAlarmScheduler {
         alarmId: String,
         triggerEpochMs: Long,
     ) {
-        val fireIntent = Intent(context, AstroAlarmReceiver::class.java).apply {
-            action = ACTION_ALARM_FIRE
-            putExtra(EXTRA_ALARM_ID, alarmId)
-        }
         val flags = PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE
-        val operation = PendingIntent.getBroadcast(context, REQUEST_CODE_ALARM, fireIntent, flags)
-
-        val showIntent = Intent(context, AstroAlarmActivity::class.java).apply {
-            putExtra(EXTRA_ALARM_ID, alarmId)
-        }
-        val showOperation = PendingIntent.getActivity(context, REQUEST_CODE_ALARM + 1, showIntent, flags)
+        // Fire the lockscreen Activity directly so BAL exemptions from AlarmManager apply
+        // even when notifications (and full-screen intents) are blocked.
+        val operation = PendingIntent.getActivity(
+            context,
+            REQUEST_CODE_ALARM,
+            AlarmRingPresenter.lockscreenIntent(context, alarmId),
+            flags,
+        )
+        val showOperation = PendingIntent.getActivity(
+            context,
+            REQUEST_CODE_ALARM + 1,
+            AlarmRingPresenter.lockscreenIntent(context, alarmId),
+            flags,
+        )
         val clockInfo = AlarmManager.AlarmClockInfo(triggerEpochMs, showOperation)
 
         runCatching {
@@ -105,13 +109,25 @@ object AstroAlarmScheduler {
 
     fun cancelAlarm(context: Context, alarmManager: AlarmManager? = null) {
         val am = alarmManager ?: (context.getSystemService(Context.ALARM_SERVICE) as? AlarmManager) ?: return
-        val fireIntent = Intent(context, AstroAlarmReceiver::class.java).apply {
-            action = ACTION_ALARM_FIRE
-        }
         val flags = PendingIntent.FLAG_NO_CREATE or PendingIntent.FLAG_IMMUTABLE
-        val operation = PendingIntent.getBroadcast(context, REQUEST_CODE_ALARM, fireIntent, flags)
+        val operation = PendingIntent.getActivity(
+            context,
+            REQUEST_CODE_ALARM,
+            AlarmRingPresenter.lockscreenIntent(context, ""),
+            flags,
+        )
         if (operation != null) {
             am.cancel(operation)
+        }
+        // Legacy broadcast fire PI from older builds.
+        val legacy = PendingIntent.getBroadcast(
+            context,
+            REQUEST_CODE_ALARM,
+            Intent(context, AstroAlarmReceiver::class.java).setAction(ACTION_ALARM_FIRE),
+            flags,
+        )
+        if (legacy != null) {
+            am.cancel(legacy)
         }
         refreshWidgets(context)
     }

@@ -13,7 +13,7 @@ object OnboardingChecker {
     fun isGranted(context: Context, step: OnboardingStep, sdk: Int = Build.VERSION.SDK_INT): Boolean {
         return when (step) {
             OnboardingStep.Notifications ->
-                sdk < OnboardingPolicy.NOTIFICATIONS_SDK || has(context, Manifest.permission.POST_NOTIFICATIONS)
+                sdk < OnboardingPolicy.NOTIFICATIONS_SDK || NotificationAccess.areEnabled(context)
             OnboardingStep.Location ->
                 has(context, Manifest.permission.ACCESS_FINE_LOCATION) ||
                     has(context, Manifest.permission.ACCESS_COARSE_LOCATION)
@@ -27,6 +27,13 @@ object OnboardingChecker {
 
     fun snapshot(context: Context, sdk: Int = Build.VERSION.SDK_INT): Map<OnboardingStep, Boolean> =
         OnboardingPolicy.steps(sdk).associateWith { isGranted(context, it, sdk) }
+
+    /** Steps that still block reliable alarms on this device. */
+    fun missingSteps(context: Context, sdk: Int = Build.VERSION.SDK_INT): List<OnboardingStep> =
+        OnboardingPolicy.steps(sdk).filterNot { isGranted(context, it, sdk) }
+
+    fun hasMissing(context: Context, sdk: Int = Build.VERSION.SDK_INT): Boolean =
+        missingSteps(context, sdk).isNotEmpty()
 
     /** Hide the first-launch gate under Espresso / Compose UI tests. */
     fun skipUiGate(): Boolean = runCatching {

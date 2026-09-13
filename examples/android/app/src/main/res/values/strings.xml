@@ -265,6 +265,7 @@
     <string name="onboard_title">Allow alarms to fire</string>
     <string name="onboard_body">AstroAlarm needs these so sunrise, moon, and clock alarms can ring on time, over the lock screen, even when the phone is asleep.</string>
     <string name="onboard_continue">Continue</string>
+    <string name="onboard_continue_blocked">Allow every item above before you can continue.</string>
     <string name="onboard_grant">Allow</string>
     <string name="onboard_granted">Allowed</string>
     <string name="onboard_settings_button">Alarm permissions</string>
@@ -278,4 +279,14 @@
     <string name="onboard_fsi_body">Shows Stop and Snooze over the lock screen.</string>
     <string name="onboard_battery_title">Ignore battery optimizations</string>
     <string name="onboard_battery_body">Set AstroAlarm to Unrestricted so OxygenOS does not kill alarms while the screen is off.</string>
+    <string name="settings_notifications_denied_title">Notifications are off</string>
+    <string name="settings_notifications_denied_body">Turn on notifications so the lock-screen alarm and spoken announce can appear when an alarm fires.</string>
+    <string name="settings_notifications_denied_action">Open notification settings</string>
+    <string name="permissions_nag_title">Alarm permissions needed</string>
+    <string name="permissions_nag_fix">Fix permissions</string>
+    <string name="permissions_nag_later">Later</string>
+    <plurals name="permissions_nag_body">
+        <item quantity="one">%d required setting is off. Alarms may not ring or announce until you fix it.</item>
+        <item quantity="other">%d required settings are off. Alarms may not ring or announce until you fix them.</item>
+    </plurals>
 </resources>

@@ -265,6 +265,7 @@
     <string name="onboard_title">Autoriser les alarmes à sonner</string>
     <string name="onboard_body">AstroAlarm en a besoin pour que les alarmes de lever, de lune et d\'horloge sonnent à l\'heure, au-dessus de l\'écran de verrouillage, même lorsque le téléphone dort.</string>
     <string name="onboard_continue">Continuer</string>
+    <string name="onboard_continue_blocked">Autorisez chaque élément ci-dessus pour continuer.</string>
     <string name="onboard_grant">Autoriser</string>
     <string name="onboard_granted">Autorisé</string>
     <string name="onboard_settings_button">Autorisations d\'alarme</string>
@@ -278,4 +279,14 @@
     <string name="onboard_fsi_body">Affiche Arrêter et Répéter au-dessus de l\'écran de verrouillage.</string>
     <string name="onboard_battery_title">Ignorer l\'optimisation de batterie</string>
     <string name="onboard_battery_body">Mettez AstroAlarm en Non restreint pour qu\'OxygenOS ne tue pas les alarmes écran éteint.</string>
+    <string name="settings_notifications_denied_title">Notifications désactivées</string>
+    <string name="settings_notifications_denied_body">Activez les notifications pour que l\'alarme plein écran et l\'annonce vocale apparaissent au déclenchement.</string>
+    <string name="settings_notifications_denied_action">Ouvrir les paramètres de notification</string>
+    <string name="permissions_nag_title">Autorisations d\'alarme requises</string>
+    <string name="permissions_nag_fix">Corriger les autorisations</string>
+    <string name="permissions_nag_later">Plus tard</string>
+    <plurals name="permissions_nag_body">
+        <item quantity="one">%d réglage requis est désactivé. Les alarmes peuvent ne pas sonner ni annoncer tant que ce n\'est pas corrigé.</item>
+        <item quantity="other">%d réglages requis sont désactivés. Les alarmes peuvent ne pas sonner ni annoncer tant que ce n\'est pas corrigé.</item>
+    </plurals>
 </resources>

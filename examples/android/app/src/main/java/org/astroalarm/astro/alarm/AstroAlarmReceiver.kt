@@ -1,10 +1,11 @@
 package org.astroalarm.astro.alarm
 
-import android.app.NotificationManager
+import android.app.ActivityOptions
 import android.app.PendingIntent
 import android.content.BroadcastReceiver
 import android.content.Context
 import android.content.Intent
+import android.os.Build
 import android.provider.AlarmClock
 import dev.foss.goldenpath.R
 import org.astroalarm.astro.model.AlarmTarget
@@ -30,30 +31,27 @@ class AstroAlarmReceiver : BroadcastReceiver() {
         val alarmId = intent.getStringExtra(AstroAlarmScheduler.EXTRA_ALARM_ID) ?: ""
         val ringing = AstroAlarmStore(context).getById(alarmId)
         val snoozeMinutes = ringing?.snoozeMinutes ?: 5
-        val activityIntent = Intent(context, AstroAlarmActivity::class.java).apply {
-            putExtra(AstroAlarmScheduler.EXTRA_ALARM_ID, alarmId)
-            addFlags(
-                Intent.FLAG_ACTIVITY_NEW_TASK or
-                    Intent.FLAG_ACTIVITY_CLEAR_TOP or
-                    Intent.FLAG_ACTIVITY_SINGLE_TOP or
-                    Intent.FLAG_ACTIVITY_EXCLUDE_FROM_RECENTS,
-            )
-        }
+        AlarmRingPresenter.postRinging(context, alarmId, snoozeMinutes)
+        launchLockscreen(context, alarmId)
+    }
 
+    private fun launchLockscreen(context: Context, alarmId: String) {
+        val activityIntent = AlarmRingPresenter.lockscreenIntent(context, alarmId)
         val flags = PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE
-        val fullScreenPending = PendingIntent.getActivity(context, 8802, activityIntent, flags)
-
-        AlarmNotificationChannel.ensure(context)
-        val nm = context.getSystemService(Context.NOTIFICATION_SERVICE) as? NotificationManager
-        nm?.notify(
-            AlarmNotificationChannel.NOTIFICATION_ID,
-            AlarmNotificationChannel.buildRinging(
-                context,
-                fullScreenPending,
-                alarmId = alarmId,
-                snoozeMinutes = snoozeMinutes,
-            ),
-        )
+        val pending = PendingIntent.getActivity(context, 8802, activityIntent, flags)
+        runCatching {
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.UPSIDE_DOWN_CAKE) {
+                @Suppress("DEPRECATION")
+                val opts = ActivityOptions.makeBasic().setPendingIntentBackgroundActivityStartMode(
+                    ActivityOptions.MODE_BACKGROUND_ACTIVITY_START_ALLOWED,
+                )
+                pending.send(context, 0, null, null, null, null, opts.toBundle())
+            } else {
+                pending.send()
+            }
+        }.recoverCatching {
+            context.startActivity(activityIntent)
+        }
     }
 
     private fun handleNotificationSnooze(context: Context, intent: Intent) {

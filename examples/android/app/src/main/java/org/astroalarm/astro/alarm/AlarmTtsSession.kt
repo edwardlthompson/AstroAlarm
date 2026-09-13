@@ -43,8 +43,17 @@ class AlarmTtsSession private constructor(
                 },
                 cancelScheduled = { handler.removeCallbacksAndMessages(null) },
                 speak = {
-                    Log.i(TAG, "speak")
-                    engine.speak(text, TextToSpeech.QUEUE_FLUSH, null, AlarmTtsRepeater.UTTERANCE_ID)
+                    val result = engine.speak(
+                        text,
+                        TextToSpeech.QUEUE_FLUSH,
+                        null,
+                        AlarmTtsRepeater.UTTERANCE_ID,
+                    )
+                    if (result == TextToSpeech.SUCCESS) {
+                        Log.i(TAG, "speak")
+                    } else {
+                        Log.w(TAG, "speak failed: $result")
+                    }
                 },
             )
             engine.setOnUtteranceProgressListener(object : UtteranceProgressListener() {
@@ -54,9 +63,11 @@ class AlarmTtsSession private constructor(
                 }
                 @Deprecated("Deprecated in Java")
                 override fun onError(utteranceId: String?) {
+                    Log.w(TAG, "utterance error")
                     if (utteranceId == AlarmTtsRepeater.UTTERANCE_ID) repeater.onUtteranceFinished()
                 }
                 override fun onError(utteranceId: String?, errorCode: Int) {
+                    Log.w(TAG, "utterance error: $errorCode")
                     if (utteranceId == AlarmTtsRepeater.UTTERANCE_ID) repeater.onUtteranceFinished()
                 }
             })

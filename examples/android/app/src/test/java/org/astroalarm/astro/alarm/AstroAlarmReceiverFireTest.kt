@@ -4,8 +4,8 @@ import android.app.Application
 import android.app.NotificationManager
 import android.content.Intent
 import androidx.test.core.app.ApplicationProvider
+import org.junit.Assert.assertEquals
 import org.junit.Assert.assertNotNull
-import org.junit.Assert.assertNull
 import org.junit.Test
 import org.junit.runner.RunWith
 import org.robolectric.RobolectricTestRunner
@@ -16,7 +16,7 @@ import org.robolectric.annotation.Config
 @Config(sdk = [26])
 class AstroAlarmReceiverFireTest {
     @Test
-    fun firePostsFullScreenNotificationWithoutStartingActivity() {
+    fun firePostsFullScreenNotificationAndStartsActivity() {
         val context = ApplicationProvider.getApplicationContext<Application>()
         val intent = Intent(AstroAlarmScheduler.ACTION_ALARM_FIRE).putExtra(
             AstroAlarmScheduler.EXTRA_ALARM_ID,
@@ -28,6 +28,9 @@ class AstroAlarmReceiverFireTest {
             .firstOrNull { it.id == AlarmNotificationChannel.NOTIFICATION_ID }
         assertNotNull(posted)
         assertNotNull(posted!!.notification.fullScreenIntent)
-        assertNull(shadowOf(context).nextStartedActivity)
+        val started = shadowOf(context).nextStartedActivity
+        assertNotNull(started)
+        assertEquals(AstroAlarmActivity::class.java.name, started!!.component?.className)
+        assertEquals("alarm-1", started.getStringExtra(AstroAlarmScheduler.EXTRA_ALARM_ID))
     }
 }

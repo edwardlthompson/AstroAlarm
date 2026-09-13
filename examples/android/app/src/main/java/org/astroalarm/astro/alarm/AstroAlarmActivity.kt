@@ -19,7 +19,6 @@ import androidx.activity.compose.setContent
 import dev.foss.goldenpath.R
 import org.astroalarm.astro.model.AlarmTarget
 import org.astroalarm.astro.model.AstroAlarm
-import org.astroalarm.tts.TtsPreferences
 import org.astroalarm.ui.AstroAlarmLockscreenView
 import java.time.LocalTime
 
@@ -48,6 +47,11 @@ class AstroAlarmActivity : ComponentActivity(), TextToSpeech.OnInitListener {
             ?: AstroAlarm("unknown", getString(R.string.astro_custom_alarm_title), target = AlarmTarget.CustomClock(LocalTime.now().hour, LocalTime.now().minute))
 
         startAlarmOutput(activeAlarm!!)
+        AlarmRingPresenter.postRinging(
+            this,
+            activeAlarm!!.id,
+            activeAlarm!!.snoozeMinutes,
+        )
         setContent {
             AstroAlarmLockscreenView(
                 alarm = activeAlarm!!,
@@ -98,20 +102,13 @@ class AstroAlarmActivity : ComponentActivity(), TextToSpeech.OnInitListener {
         }
 
         if (alarm.ttsEnabled) {
-            tts = TextToSpeech(this, this)
+            tts = AlarmTtsBootstrap.createEngine(this, this)
         }
     }
 
     override fun onInit(status: Int) {
-        val engine = tts ?: return
-        if (status != TextToSpeech.SUCCESS) return
         val text = activeAlarm?.label ?: getString(R.string.astro_custom_alarm_title)
-        ttsSession = AlarmTtsSession.bind(
-            engine,
-            ttsHandler,
-            text,
-            TtsPreferences(applicationContext).getVoice(),
-        )
+        ttsSession = AlarmTtsBootstrap.onInit(status, tts, ttsHandler, text, this)
     }
 
     private fun stopAlarmOutput() {
