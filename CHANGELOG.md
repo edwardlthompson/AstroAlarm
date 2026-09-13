@@ -6,6 +6,13 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.8.1](https://github.com/edwardlthompson/AstroAlarm/compare/v1.8.0...v1.8.1) (2026-09-13)
+
+
+### Fixed
+
+* **android:** announce without notifications and block until perms granted ([454e694](https://github.com/edwardlthompson/AstroAlarm/commit/454e69486f96a37fc4c78d15bd7ebca6aff685be))
+
 ## [Unreleased]
 
 ## [1.8.0](https://github.com/edwardlthompson/AstroAlarm/compare/v1.7.0...v1.8.0) (2026-09-11)
