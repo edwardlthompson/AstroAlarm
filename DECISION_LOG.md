@@ -17,6 +17,13 @@
 
 ## Entries
 
+### 2026-09-14 — v1.8.2 /ship
+- **Status:** Accepted
+- **Context:** targetSdk 37 BAL blocked AlarmClock Activity PendingIntents (`realCallingUid=1000`, `balAllowedByPiCreator: BSP.NONE`). Creator BAL on `getActivity` crashed (`pendingIntentBackgroundActivityStartMode must not be set when creating`). OP12 FSI suppressed while screen-on in HermesLauncher. CodeQL java-kotlin failed: `sdkmanager` `Failed to find package 'tools'`.
+- **Decision:** `setAlarmClock` delivers `ACTION_ALARM_FIRE` broadcast; receiver posts FSI on channel `astroalarm_alarm_v2`. Split creator vs sender BAL bundles. `setup-android@v4` installs `platform-tools` only. App **1.8.2** / versionCode **10107**. Skip `codeql-action@vcodeql-bundle-*`. RP #22 admin-merge.
+- **Alternatives considered:** Activity PI as AlarmClock operation with creator ALLOW (still BAL_BLOCK). `Context.startActivity` from receiver (BAL_BLOCK). Waiting for Dependabot Gradle PR #21 (rejected: weekly backup).
+- **Consequences:** SystemUI starts lockscreen when HUN/keyguard allow FSI. Do not force-stop the app after arm. GitHub Release **v1.8.2** should carry SBOM + OpenVEX. Sideload replaces 1.8.1 (versionCode 10107).
+
 ### 2026-09-13 — v1.8.1 /ship
 - **Status:** Accepted
 - **Context:** OP13 sunrise/sunset announce failed with `POST_NOTIFICATIONS` denied (importance=NONE); TTS only ran inside `AstroAlarmActivity` reached via FSI. Sideload skipped onboarding so grants stayed missing.
