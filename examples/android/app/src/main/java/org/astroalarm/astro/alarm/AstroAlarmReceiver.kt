@@ -1,11 +1,8 @@
 package org.astroalarm.astro.alarm
 
-import android.app.ActivityOptions
-import android.app.PendingIntent
 import android.content.BroadcastReceiver
 import android.content.Context
 import android.content.Intent
-import android.os.Build
 import android.provider.AlarmClock
 import dev.foss.goldenpath.R
 import org.astroalarm.astro.model.AlarmTarget
@@ -37,20 +34,21 @@ class AstroAlarmReceiver : BroadcastReceiver() {
 
     private fun launchLockscreen(context: Context, alarmId: String) {
         val activityIntent = AlarmRingPresenter.lockscreenIntent(context, alarmId)
-        val flags = PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE
-        val pending = PendingIntent.getActivity(context, 8802, activityIntent, flags)
+        val pending = AlarmRingPresenter.lockscreenPending(context, alarmId, requestCode = 8802)
+        val sendOpts = AlarmLaunchOptions.senderBundle()
         runCatching {
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.UPSIDE_DOWN_CAKE) {
-                @Suppress("DEPRECATION")
-                val opts = ActivityOptions.makeBasic().setPendingIntentBackgroundActivityStartMode(
-                    ActivityOptions.MODE_BACKGROUND_ACTIVITY_START_ALLOWED,
-                )
-                pending.send(context, 0, null, null, null, null, opts.toBundle())
+            if (sendOpts != null) {
+                context.startActivity(activityIntent, sendOpts)
+            } else {
+                context.startActivity(activityIntent)
+            }
+        }
+        runCatching {
+            if (sendOpts != null) {
+                pending.send(context, 0, null, null, null, null, sendOpts)
             } else {
                 pending.send()
             }
-        }.recoverCatching {
-            context.startActivity(activityIntent)
         }
     }
 

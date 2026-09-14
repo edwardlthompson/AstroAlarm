@@ -12,6 +12,6 @@ class AstroAlarmApp : GoldenPathApplication() {
         if (!UnifiedPushConfig.usesProprietaryPush() && UnifiedPushConfig.endpointUrl() == null) {
             android.util.Log.i("AstroAlarmApp", "no UnifiedPush distributor")
         }
-        AstroAlarmScheduler.rescheduleAll(this)
+        runCatching { AstroAlarmScheduler.rescheduleAll(this) }
     }
 }

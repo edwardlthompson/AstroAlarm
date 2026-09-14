@@ -1,0 +1,1 @@
+AlarmClock fire uses a broadcast plus full-screen notification so lockscreen TTS still rings on Android 16.

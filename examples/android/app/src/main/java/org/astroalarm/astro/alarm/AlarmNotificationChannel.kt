@@ -6,14 +6,16 @@ import android.app.NotificationManager
 import android.app.PendingIntent
 import android.content.Context
 import android.media.AudioAttributes
+import android.media.RingtoneManager
 import android.os.Build
 import androidx.core.app.NotificationCompat
 import dev.foss.goldenpath.R
 
 /** Alarm-grade channel so ringing can cover the lock screen without unlocking. */
 object AlarmNotificationChannel {
-    const val ID = "astroalarm_alarm"
+    const val ID = "astroalarm_alarm_v2"
     const val LEGACY_ID = "astroalarm_channel"
+    private const val LEGACY_ALARM_ID = "astroalarm_alarm"
     const val NOTIFICATION_ID = 8800
     const val IMPORTANCE = NotificationManager.IMPORTANCE_MAX
     const val AUDIO_USAGE = AudioAttributes.USAGE_ALARM
@@ -28,6 +30,7 @@ object AlarmNotificationChannel {
     fun ensure(context: Context) {
         if (Build.VERSION.SDK_INT < Build.VERSION_CODES.O) return
         val nm = context.getSystemService(Context.NOTIFICATION_SERVICE) as? NotificationManager ?: return
+        val sound = RingtoneManager.getDefaultUri(RingtoneManager.TYPE_ALARM)
         val channel = NotificationChannel(
             ID,
             context.getString(R.string.astro_channel_name),
@@ -36,13 +39,15 @@ object AlarmNotificationChannel {
             description = context.getString(R.string.astro_channel_desc)
             setBypassDnd(true)
             lockscreenVisibility = Notification.VISIBILITY_PUBLIC
-            enableVibration(false)
+            enableVibration(true)
             enableLights(true)
-            // Lock-screen activity owns tone/vibration so per-alarm mute and custom URIs work.
-            setSound(null, alarmAudioAttributes())
+            // Sound/vibrate so Android 16 still grants heads-up + FSI when the screen is on.
+            setSound(sound, alarmAudioAttributes())
+            vibrationPattern = longArrayOf(0, 400, 200, 400)
         }
         nm.createNotificationChannel(channel)
         nm.deleteNotificationChannel(LEGACY_ID)
+        nm.deleteNotificationChannel(LEGACY_ALARM_ID)
     }
 
     fun buildRinging(
@@ -51,6 +56,7 @@ object AlarmNotificationChannel {
         alarmId: String = "",
         snoozeMinutes: Int = 5,
     ): Notification {
+        val sound = RingtoneManager.getDefaultUri(RingtoneManager.TYPE_ALARM)
         return NotificationCompat.Builder(context, ID)
             .setSmallIcon(R.drawable.ic_brand_mark)
             .setContentTitle(context.getString(R.string.astro_alarm_ringing))
@@ -60,6 +66,8 @@ object AlarmNotificationChannel {
             .setVisibility(NotificationCompat.VISIBILITY_PUBLIC)
             .setOngoing(true)
             .setAutoCancel(false)
+            .setSound(sound)
+            .setVibrate(longArrayOf(0, 400, 200, 400))
             .setContentIntent(fullScreen)
             .setFullScreenIntent(fullScreen, true)
             .addAction(AlarmNotificationActions.stopAction(context, alarmId))

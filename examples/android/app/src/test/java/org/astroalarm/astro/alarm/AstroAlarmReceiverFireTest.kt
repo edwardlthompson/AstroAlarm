@@ -33,4 +33,19 @@ class AstroAlarmReceiverFireTest {
         assertEquals(AstroAlarmActivity::class.java.name, started!!.component?.className)
         assertEquals("alarm-1", started.getStringExtra(AstroAlarmScheduler.EXTRA_ALARM_ID))
     }
+
+    @Test
+    @Config(sdk = [34])
+    fun fireStartsActivityWhenLaunchOptionsBundleExists() {
+        val context = ApplicationProvider.getApplicationContext<Application>()
+        val intent = Intent(AstroAlarmScheduler.ACTION_ALARM_FIRE).putExtra(
+            AstroAlarmScheduler.EXTRA_ALARM_ID,
+            "alarm-1",
+        )
+        AstroAlarmReceiver().onReceive(context, intent)
+        val started = shadowOf(context).nextStartedActivity
+        assertNotNull(started)
+        assertEquals(AstroAlarmActivity::class.java.name, started!!.component?.className)
+        assertEquals("alarm-1", started.getStringExtra(AstroAlarmScheduler.EXTRA_ALARM_ID))
+    }
 }
