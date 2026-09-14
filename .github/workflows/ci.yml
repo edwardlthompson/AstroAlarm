@@ -151,6 +151,8 @@ jobs:
           java-version: "21"
           cache: gradle
       - uses: android-actions/setup-android@v4
+        with:
+          packages: platform-tools
         if: hashFiles('examples/android/gradlew') != ''
       - name: Install web dependencies
         if: hashFiles('examples/web/package-lock.json') != ''
@@ -371,6 +373,8 @@ jobs:
           distribution: temurin
           java-version: "17"
       - uses: android-actions/setup-android@v4
+        with:
+          packages: platform-tools
       - name: Accept Android SDK licenses
         run: yes | sdkmanager --licenses
       - name: assembleDebug
@@ -531,6 +535,8 @@ jobs:
           distribution: temurin
           java-version: "17"
       - uses: android-actions/setup-android@v4
+        with:
+          packages: platform-tools
       - name: Accept Android SDK licenses
         run: yes | sdkmanager --licenses
       - name: FOSS compliance grep
