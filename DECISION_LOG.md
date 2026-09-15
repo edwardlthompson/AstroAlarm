@@ -17,6 +17,13 @@
 
 ## Entries
 
+### 2026-09-15 — v1.9.0 /ship
+- **Status:** Accepted
+- **Context:** Alarms-first leftovers plus catalog/row polish were ready on main. upd offered only `codeql-action@vcodeql-bundle-*`. Remote already had Dependabot #21.
+- **Decision:** Empty Unreleased; `feat(android)` so Release Please cuts **1.9.0** (PR #23, admin-merge). App **1.9.0** / versionCode **10108**. Skip `codeql-action@vcodeql-bundle-*`. Sideload with `adb install -r`.
+- **Alternatives considered:** Applying `vcodeql-bundle-*` (rejected: known invalid). Uninstalling before sideload (rejected: wipes alarms and place).
+- **Consequences:** Type menu is the full catalog; Edit/Delete are icons. GitHub Release **v1.9.0** should carry SBOM + OpenVEX. Fastlane/F-Droid phoneScreenshots shipped.
+
 ### 2026-09-15 — restore full add-alarm catalog + icon row actions
 - **Status:** Accepted
 - **Context:** UX-16 hid Moon/Zodiac/Seasonal/Planet behind More events. Delete on the alarm row wrapped as text. User asked to restore the catalog and stop wrapping Delete.

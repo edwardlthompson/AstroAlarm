@@ -44,6 +44,7 @@ FOSS Android astronomical alarm clock: on-device suncalc sun/moon ephemeris, sol
 
 ## Session Retrospectives
 
+| 2026-09-15 | v1.9.0 /ship | Leftover alarms-first UX; full add-alarm catalog; icon Edit/Delete; RP #23; versionCode **10108** | Do not apply `vcodeql-bundle-*`; sideload with `adb install -r`; skip More events |
 | 2026-09-15 | /build leftover UX-6…17 | Sunrise offer, ring banner, GPS skeleton, lockscreen polish, empty mark, overlay a11y, chips, motion, sky-hand tick, canvas tokens, progressive add, brand store copy; UX-1…17 archived | ADB screenshots/TalkBack need one `adb` device; Dependabot #21 is behind main (do not admin-merge); canvas colors stay out of M3 `color` |
 | 2026-09-14 | alarms-first UX | Chrome, optional GPS onboard, 2160 PNG share, 3 tabs, TalkBack/reduce-motion; UX-1…5 ✅ | Do not share the Alarms list; DiskLabelFit 28px cap is widgets-only; location still required to save solar/lunar |
 | 2026-09-14 | v1.8.2 /ship | AlarmClock broadcast + FSI lockscreen; skip SDK `tools`; RP #22; versionCode **10107** | Do not apply `vcodeql-bundle-*`; do not force-stop after SET_ALARM; OP12 FSI may need screen off |
