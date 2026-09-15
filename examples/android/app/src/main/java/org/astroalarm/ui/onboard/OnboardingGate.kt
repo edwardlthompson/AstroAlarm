@@ -18,8 +18,8 @@ import org.astroalarm.onboard.OnboardingChecker
 import org.astroalarm.onboard.OnboardingPreferences
 
 /**
- * First-run and ongoing: a non-dismissible dialog blocks the main UI until every
- * required alarm permission is granted (sideload / skipped / revoked later).
+ * First-run and ongoing: a non-dismissible dialog blocks the main UI until ring
+ * permissions are granted (location is optional; sideload / skipped / revoked).
  */
 @Composable
 fun OnboardingGate(content: @Composable () -> Unit) {
@@ -36,7 +36,7 @@ fun OnboardingGate(content: @Composable () -> Unit) {
     }
     val suppress = OnboardingChecker.skipUiGate()
     val missing = remember(epoch) {
-        if (suppress) emptyList() else OnboardingChecker.missingSteps(context)
+        if (suppress) emptyList() else OnboardingChecker.missingRingSteps(context)
     }
     val needsGate = !suppress && (missing.isNotEmpty() || !prefs.isComplete())
 

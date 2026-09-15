@@ -1,21 +1,10 @@
 package org.astroalarm.ui.birth
 
-import android.appwidget.AppWidgetManager
-import android.content.ComponentName
-import android.os.Build
-import android.widget.Toast
 import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.gestures.detectTapGestures
 import androidx.compose.foundation.gestures.detectTransformGestures
 import androidx.compose.foundation.isSystemInDarkTheme
-import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.BoxWithConstraints
-import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.AddCircle
@@ -23,13 +12,13 @@ import androidx.compose.material3.Button
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedButton
-import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.rememberUpdatedState
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
@@ -58,9 +47,13 @@ import org.astroalarm.astro.birth.NatalStoryKind
 import org.astroalarm.astro.birth.NatalWheelHit
 import org.astroalarm.astro.birth.NatalWheelHitTest
 import org.astroalarm.astro.birth.NatalWheelRenderer
+import org.astroalarm.share.SkyShareButton
+import org.astroalarm.share.SkySharePaint
 import org.astroalarm.ui.AstroMenuDropdown
 import org.astroalarm.ui.DiskChrome
-import org.astroalarm.ui.OverlayToggleLine
+import org.astroalarm.ui.NatalLiveToggles
+import org.astroalarm.ui.NextEventA11y
+import org.astroalarm.ui.wheelTalkBack
 import org.astroalarm.ui.solarterm.WheelZoomPan
 import org.astroalarm.ui.solarterm.WheelZoomPanMath
 import org.astroalarm.widget.NatalChartWidgetProvider
@@ -79,6 +72,7 @@ fun NatalWheelSection(
     modifier: Modifier = Modifier,
 ) {
     val context = LocalContext.current
+    val shareScope = rememberCoroutineScope()
     val dark = isSystemInDarkTheme()
     var showSun by remember { mutableStateOf(true) }
     var showMoon by remember { mutableStateOf(true) }
@@ -154,9 +148,10 @@ fun NatalWheelSection(
                 horizontalAlignment = Alignment.CenterHorizontally,
                 verticalArrangement = Arrangement.spacedBy(8.dp),
             ) {
+                Box(Modifier.size(side)) {
                 Canvas(
                     modifier = Modifier
-                        .size(side)
+                        .fillMaxSize()
                         .clipToBounds()
                         .pointerInput(Unit) {
                             detectTransformGestures { centroid, pan, zoom, _ ->
@@ -185,7 +180,20 @@ fun NatalWheelSection(
                                 }
                             }
                         }
-                        .semantics { contentDescription = context.getString(R.string.astro_natal_wheel_cd) },
+                        .wheelTalkBack(
+                            description = context.getString(R.string.astro_natal_wheel_cd),
+                            nextLabel = stringResource(R.string.a11y_next_event),
+                            resetLabel = stringResource(R.string.a11y_reset_zoom),
+                            shareLabel = stringResource(R.string.sky_share_cd),
+                            onNext = { NextEventA11y.announce(context, emptyList(), null) },
+                            onReset = { viewport = WheelZoomPan(); true },
+                            onShare = {
+                                natalShare(
+                                    context, shareScope, chart, viewport, sky, dark,
+                                    showSun, showMoon, showMercury,
+                                )
+                            },
+                        ),
                 ) {
                     val px = size.width.toInt().coerceAtLeast(1)
                     drawIntoCanvas { gc ->
@@ -209,6 +217,25 @@ fun NatalWheelSection(
                             native.restore()
                         }
                     }
+                }
+                SkyShareButton(
+                    modifier = Modifier.align(Alignment.TopEnd),
+                    enabled = chart != null,
+                    emptyMessage = stringResource(R.string.sky_share_natal_empty),
+                    paint = {
+                        val c = chart
+                        val v = viewport
+                        val d = dark
+                        val sun = showSun
+                        val moon = showMoon
+                        val mer = showMercury
+                        { size ->
+                            SkySharePaint.chart(
+                                size, c!!, v, sky, sun, moon, mer, d,
+                            )
+                        }
+                    },
+                )
                 }
                 Text(
                     stringResource(R.string.astro_explain_tap_hint),
@@ -255,27 +282,15 @@ fun NatalWheelSection(
             Text(stringResource(R.string.astro_birth_details))
         }
         if (chart != null) {
-            Surface(
-                modifier = Modifier.fillMaxWidth(),
-                shape = RoundedCornerShape(12.dp),
-                color = MaterialTheme.colorScheme.surfaceVariant.copy(alpha = 0.85f),
-            ) {
-                Column {
-                    OverlayToggleLine("☉ Live Sun", showSun, onCheckedChange = { showSun = it })
-                    OverlayToggleLine("☽ Live Moon", showMoon, onCheckedChange = { showMoon = it })
-                    OverlayToggleLine("☿ Live Mercury", showMercury, onCheckedChange = { showMercury = it })
-                }
-            }
+            NatalLiveToggles(
+                showSun, { showSun = it },
+                showMoon, { showMoon = it },
+                showMercury, { showMercury = it },
+            )
         }
     }
 }
 
 private fun pinNatalWidget(context: android.content.Context) {
-    val mgr = context.getSystemService(AppWidgetManager::class.java)
-    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O && mgr != null && mgr.isRequestPinAppWidgetSupported) {
-        mgr.requestPinAppWidget(ComponentName(context, NatalChartWidgetProvider::class.java), null, null)
-        Toast.makeText(context, context.getString(R.string.astro_widget_pinned_success), Toast.LENGTH_SHORT).show()
-    } else {
-        Toast.makeText(context, context.getString(R.string.astro_widget_pin_manual_guide), Toast.LENGTH_LONG).show()
-    }
+    org.astroalarm.widget.WidgetPin.request(context, NatalChartWidgetProvider::class.java)
 }

@@ -1,0 +1,5 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="ring_will_not_fire_title">This alarm will not ring</string>
+    <string name="ring_will_not_fire_action">Fix</string>
+</resources>

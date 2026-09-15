@@ -17,6 +17,27 @@
 
 ## Entries
 
+### 2026-09-15 — restore full add-alarm catalog + icon row actions
+- **Status:** Accepted
+- **Context:** UX-16 hid Moon/Zodiac/Seasonal/Planet behind More events. Delete on the alarm row wrapped as text. User asked to restore the catalog and stop wrapping Delete.
+- **Decision:** `ProgressiveAdd.kinds` lists the full catalog again (alignments stay under Planet). Tone/TTS/Vibrate/Math chips share the Daily line and wrap; Edit/Delete are icon buttons.
+- **Alternatives considered:** Keeping More events (rejected). Wrapping the Delete label (rejected).
+- **Consequences:** Types were never removed from the engine. Sideload with `adb install -r` so alarms and place prefs survive.
+
+### 2026-09-15 — leftover alarms-first UX-6…17
+- **Status:** Accepted
+- **Context:** After UX-1…5, the audit leftovers were still on Sequential: sunrise offer, Exact in the ring banner, GPS skeleton, lockscreen polish, empty mark, overlay a11y, Daily/Sky chips, motion, sky-hand tick, canvas tokens, progressive add, brand/store copy.
+- **Decision:** Ship the leftovers as one Sequential android stack. Canvas `night`/`gold` live under `design-tokens.json` `canvas` (not M3 `color`). Add-alarm shows Clock+Sunrise first. Fastlane/F-Droid en-US copy comes from `product.json`.
+- **Alternatives considered:** Putting astro colors into `color` (rejected: breaks `lightColorScheme`). Merging Dependabot #21 with `--admin` while the branch is behind (rejected).
+- **Consequences:** UX-1…17 archived. Device smoke on CPH2655: clock add 10.9s, London city + sunrise offer, TalkBack `Add alarm`, share sheet. Fastlane/F-Droid `phoneScreenshots` captured. Dependabot #21 squash-merged after update-branch.
+
+### 2026-09-14 — alarms-first UX (chrome, onboard, share, nav, a11y)
+- **Status:** Accepted
+- **Context:** UX audit: six 11sp tabs, GPS as onboarding blocker, no square share, Toast GPS, English event catalogs, Fastlane title still Golden Path Android.
+- **Decision:** Three tabs Alarms | Daily | Sky with chips; location optional on Continue (ring four still required); 2160 PNG share via FileProvider with 1080 OOM fallback; TalkBack customActions + reduce-motion; `event_strings.xml` / `a11y_strings.xml`.
+- **Alternatives considered:** Alarms-list share and Compose screenshot (rejected). Bottom-nav rewrite (rejected). JPEG / WRITE_EXTERNAL_STORAGE (rejected).
+- **Consequences:** BUILD_PLAN UX-1…UX-5 ✅. Share uses existing `*.render(size)` paths. DiskLabelFit widget cap 28px stays; export lifts cap via `withExportCap`.
+
 ### 2026-09-14 — v1.8.2 /ship
 - **Status:** Accepted
 - **Context:** targetSdk 37 BAL blocked AlarmClock Activity PendingIntents (`realCallingUid=1000`, `balAllowedByPiCreator: BSP.NONE`). Creator BAL on `getActivity` crashed (`pendingIntentBackgroundActivityStartMode must not be set when creating`). OP12 FSI suppressed while screen-on in HermesLauncher. CodeQL java-kotlin failed: `sdkmanager` `Failed to find package 'tools'`.

@@ -35,4 +35,22 @@ class OnboardingPolicyTest {
             OnboardingPolicy.steps(34),
         )
     }
+
+    @Test
+    fun api26RingIsBatteryOnly() {
+        assertEquals(listOf(OnboardingStep.Battery), OnboardingPolicy.ringSteps(26))
+    }
+
+    @Test
+    fun api34RingOmitsLocation() {
+        assertEquals(
+            listOf(
+                OnboardingStep.Notifications,
+                OnboardingStep.ExactAlarms,
+                OnboardingStep.FullScreenIntent,
+                OnboardingStep.Battery,
+            ),
+            OnboardingPolicy.ringSteps(34),
+        )
+    }
 }

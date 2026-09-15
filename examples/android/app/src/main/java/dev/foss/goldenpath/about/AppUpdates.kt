@@ -19,8 +19,11 @@ object AppUpdates {
         release: GithubRelease.Parsed?,
         prefix: String,
         fallbackUrl: String,
+        hasEnabledAlarm: Boolean = false,
     ): LaunchPrompt? {
-        if (ProductUpdate.shouldNudgeDonate(lastSeen, current)) return LaunchPrompt.Donate
+        if (ProductUpdate.shouldNudgeDonate(lastSeen, current, hasEnabledAlarm)) {
+            return LaunchPrompt.Donate
+        }
         if (!ProductUpdate.shouldCheckDaily(lastCheckAt, now)) return null
         if (release == null) return null
         val asset = ProductUpdate.selectProductAsset(release.assets, prefix, apk = true)
@@ -34,9 +37,10 @@ object AppUpdates {
         context: Context,
         current: String,
         now: Long = System.currentTimeMillis(),
+        hasEnabledAlarm: Boolean = false,
     ): LaunchPrompt? {
         val prefs = UpdateLaunchPrefs(context)
-        if (ProductUpdate.shouldNudgeDonate(prefs.lastSeenVersion(), current)) {
+        if (ProductUpdate.shouldNudgeDonate(prefs.lastSeenVersion(), current, hasEnabledAlarm)) {
             return LaunchPrompt.Donate
         }
         prefs.markVersionSeen(current)
@@ -63,6 +67,7 @@ object AppUpdates {
             release = release,
             prefix = prefix,
             fallbackUrl = "https://github.com/$repo/releases/latest",
+            hasEnabledAlarm = hasEnabledAlarm,
         )
     }
 }

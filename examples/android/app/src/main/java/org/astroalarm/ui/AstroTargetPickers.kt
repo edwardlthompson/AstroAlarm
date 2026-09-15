@@ -7,6 +7,7 @@ import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
@@ -20,6 +21,7 @@ fun SolarEventPicker(
     selectedEvent: SolarEventType,
     onSelectEvent: (SolarEventType) -> Unit
 ) {
+    val res = LocalContext.current.resources
     var showDialog by remember { mutableStateOf(false) }
 
     OutlinedCard(
@@ -42,12 +44,12 @@ fun SolarEventPicker(
                     color = MaterialTheme.colorScheme.primary
                 )
                 Text(
-                    text = AstroEventLabels.solarLabel(selectedEvent),
+                    text = AstroEventLabels.solarLabel(res,selectedEvent),
                     style = MaterialTheme.typography.titleMedium,
                     fontWeight = FontWeight.Bold
                 )
                 Text(
-                    text = AstroEventLabels.solarDescription(selectedEvent),
+                    text = AstroEventLabels.solarDescription(res,selectedEvent),
                     style = MaterialTheme.typography.bodySmall,
                     color = MaterialTheme.colorScheme.onSurfaceVariant
                 )
@@ -82,6 +84,7 @@ fun LunarEventPicker(
     selectedEvent: LunarEventType,
     onSelectEvent: (LunarEventType) -> Unit
 ) {
+    val res = LocalContext.current.resources
     var showDialog by remember { mutableStateOf(false) }
 
     OutlinedCard(
@@ -104,12 +107,12 @@ fun LunarEventPicker(
                     color = MaterialTheme.colorScheme.primary
                 )
                 Text(
-                    text = AstroEventLabels.lunarLabel(selectedEvent),
+                    text = AstroEventLabels.lunarLabel(res,selectedEvent),
                     style = MaterialTheme.typography.titleMedium,
                     fontWeight = FontWeight.Bold
                 )
                 Text(
-                    text = AstroEventLabels.lunarDescription(selectedEvent),
+                    text = AstroEventLabels.lunarDescription(res,selectedEvent),
                     style = MaterialTheme.typography.bodySmall,
                     color = MaterialTheme.colorScheme.onSurfaceVariant
                 )
@@ -145,6 +148,7 @@ fun OffsetSelector(
     eventName: String,
     onOffsetChange: (Int) -> Unit
 ) {
+    val res = LocalContext.current.resources
     val totalAbsMinutes = abs(offsetMinutes)
     val hours = totalAbsMinutes / 60
     val minutes = totalAbsMinutes % 60
@@ -161,7 +165,7 @@ fun OffsetSelector(
             verticalArrangement = Arrangement.spacedBy(12.dp)
         ) {
             Text(
-                text = AstroEventLabels.offsetSummary(offsetMinutes, eventName),
+                text = AstroEventLabels.offsetSummary(res,offsetMinutes, eventName),
                 style = MaterialTheme.typography.titleMedium,
                 fontWeight = FontWeight.Bold,
                 color = MaterialTheme.colorScheme.primary

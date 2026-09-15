@@ -16,8 +16,15 @@ import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
+import androidx.compose.runtime.DisposableEffect
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.platform.LocalContext
-import androidx.compose.ui.platform.LocalUriHandler
+import android.content.IntentFilter
+import androidx.core.content.ContextCompat
+import org.astroalarm.widget.AppSnackbar
+import org.astroalarm.widget.WidgetPin
+import org.astroalarm.widget.WidgetPinEvents
+import org.astroalarm.widget.WidgetPinReceiver
 import androidx.compose.ui.res.stringResource
 import dev.foss.goldenpath.R
 import dev.foss.goldenpath.about.AppUpdates
@@ -68,6 +75,28 @@ fun GoldenPathScreen(
 ) {
     val isSubScreen = showSettings || showAbout || showFeedback != null
     val settingsScrollState = rememberScrollState()
+    val context = LocalContext.current
+
+    DisposableEffect(context) {
+        val receiver = WidgetPinReceiver()
+        ContextCompat.registerReceiver(
+            context,
+            receiver,
+            IntentFilter(WidgetPin.ACTION),
+            ContextCompat.RECEIVER_NOT_EXPORTED,
+        )
+        onDispose { context.unregisterReceiver(receiver) }
+    }
+    LaunchedEffect(snackbarHostState) {
+        WidgetPinEvents.messages.collect { resId ->
+            snackbarHostState.showSnackbar(context.getString(resId))
+        }
+    }
+    LaunchedEffect(snackbarHostState) {
+        AppSnackbar.messages.collect { text ->
+            snackbarHostState.showSnackbar(text)
+        }
+    }
 
     BackHandler(enabled = isSubScreen) {
         when {
@@ -141,7 +170,6 @@ fun GoldenPathScreen(
             )
             showSettings -> {
                 val context = LocalContext.current
-                val uriHandler = LocalUriHandler.current
                 val placeStore = remember { AstroPlaceStore(context) }
                 SettingsScreen(
                     themeMode = themeMode,
@@ -150,7 +178,6 @@ fun GoldenPathScreen(
                     onSaveCrashes = onSaveCrashes,
                     placeStore = placeStore,
                     onOpenAbout = onAboutOpenFromSettings,
-                    onOpenUrl = { url -> uriHandler.openUri(url) },
                     scrollState = settingsScrollState,
                     modifier = Modifier
                         .fillMaxSize()

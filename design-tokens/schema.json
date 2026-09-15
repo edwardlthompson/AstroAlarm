@@ -28,6 +28,17 @@
     "typography": { "type": "object" },
     "spacing": { "type": "object", "additionalProperties": { "type": "number" } },
     "radius": { "type": "object", "additionalProperties": { "type": "number" } },
-    "elevation": { "type": "object", "additionalProperties": { "type": "number" } }
+    "elevation": { "type": "object", "additionalProperties": { "type": "number" } },
+    "canvas": {
+      "type": "object",
+      "additionalProperties": {
+        "type": "object",
+        "required": ["light", "dark"],
+        "properties": {
+          "light": { "type": "string", "pattern": "^#[0-9A-Fa-f]{6}$" },
+          "dark": { "type": "string", "pattern": "^#[0-9A-Fa-f]{6}$" }
+        }
+      }
+    }
   }
 }

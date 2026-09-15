@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="sky_share_cd">Share square image</string>
+    <string name="sky_share_chooser">Share sky image</string>
+    <string name="sky_share_failed">Could not share this image.</string>
+    <string name="sky_share_oom">Shared a smaller image to save memory.</string>
+    <string name="sky_share_natal_empty">Add a birth chart before sharing.</string>
+</resources>

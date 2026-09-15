@@ -6,11 +6,13 @@ import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.semantics.contentDescription
 import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import dev.foss.goldenpath.R
 
 @Composable
 fun ZodiacToggleRow(
@@ -71,7 +73,10 @@ fun OverlayToggleLine(
     modifier: Modifier = Modifier,
 ) {
     Row(
-        modifier = modifier.fillMaxWidth().padding(vertical = 0.dp),
+        modifier = modifier
+            .fillMaxWidth()
+            .heightIn(min = OverlayToggle.MIN_DP.dp)
+            .padding(vertical = 0.dp),
         verticalAlignment = Alignment.CenterVertically
     ) {
         Text(
@@ -85,5 +90,27 @@ fun OverlayToggleLine(
             onCheckedChange = onCheckedChange,
             modifier = Modifier.semantics { contentDescription = title },
         )
+    }
+}
+
+@Composable
+fun NatalLiveToggles(
+    showSun: Boolean,
+    onSun: (Boolean) -> Unit,
+    showMoon: Boolean,
+    onMoon: (Boolean) -> Unit,
+    showMercury: Boolean,
+    onMercury: (Boolean) -> Unit,
+) {
+    Surface(
+        modifier = Modifier.fillMaxWidth(),
+        shape = RoundedCornerShape(12.dp),
+        color = MaterialTheme.colorScheme.surfaceVariant.copy(alpha = 0.85f),
+    ) {
+        Column {
+            OverlayToggleLine(stringResource(R.string.overlay_live_sun), showSun, onSun)
+            OverlayToggleLine(stringResource(R.string.overlay_live_moon), showMoon, onMoon)
+            OverlayToggleLine(stringResource(R.string.overlay_live_mercury), showMercury, onMercury)
+        }
     }
 }

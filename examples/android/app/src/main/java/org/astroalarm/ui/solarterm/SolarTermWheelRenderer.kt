@@ -30,6 +30,7 @@ data class SolarTermDrawRequest(
     val userLon: Double?,
     val now: Instant,
     val alarmOrds: Set<Int> = emptySet(),
+    val tapHighlight: Int? = null,
 )
 
 object SolarTermWheelRenderer {
@@ -66,6 +67,7 @@ object SolarTermWheelRenderer {
         })
         SolarTermCrosshairs.draw(canvas, cx, cy, hubFill, req.dark)
         highlight(canvas, oval, req.snapshot.current.term.ordinal, req.dark)
+        req.tapHighlight?.let { highlight(canvas, oval, it, req.dark) }
         SolarTermRadialLabels.draw(canvas, cx, cy, inner, outer, req, size)
         SolarTermHubRenderer.draw(
             canvas, cx, cy, inner, req.nowLon, req.perihelionLon, req.dark, rot,

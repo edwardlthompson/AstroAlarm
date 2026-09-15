@@ -55,7 +55,9 @@ fun OnboardingScreen(
         onDispose { lifecycleOwner.lifecycle.removeObserver(observer) }
     }
     val snapshot = remember(epoch) { OnboardingChecker.snapshot(context) }
-    val allGranted = remember(snapshot) { snapshot.values.all { it } }
+    val ringGranted = remember(snapshot) {
+        OnboardingPolicy.ringSteps(Build.VERSION.SDK_INT).all { snapshot[it] == true }
+    }
     val notifLauncher = rememberLauncherForActivityResult(
         ActivityResultContracts.RequestPermission(),
     ) { epoch++ }
@@ -103,7 +105,7 @@ fun OnboardingScreen(
                 },
             )
         }
-        if (requireAllGranted && !allGranted) {
+        if (requireAllGranted && !ringGranted) {
             Text(
                 text = stringResource(R.string.onboard_continue_blocked),
                 style = MaterialTheme.typography.bodySmall,
@@ -112,7 +114,7 @@ fun OnboardingScreen(
         }
         Button(
             onClick = onDone,
-            enabled = !requireAllGranted || allGranted,
+            enabled = !requireAllGranted || ringGranted,
             modifier = Modifier.fillMaxWidth(),
         ) {
             Text(stringResource(R.string.onboard_continue))

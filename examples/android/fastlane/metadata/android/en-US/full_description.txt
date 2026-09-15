@@ -1,5 +1,12 @@
-Golden Path Android is a minimal FOSS application stub shipped with agent-project-bootstrap.
+AstroAlarm is a FOSS Android astronomical alarm clock. It calculates sunrise, sunset, twilight, golden hour, moonrise, moon phases, solstices, and equinoxes on the device with Apache-2.0 commons-suncalc (sun and moon) and NOAA apparent longitude for seasons — no cloud, no Play Services, no trackers.
 
-It demonstrates Gradle structure, assembleDebug CI, and Fastlane metadata patterns without proprietary SDKs.
+Set alarms for a solar or lunar event, offset them before or after, or pick a custom time on tactile hour and minute wheels. When the alarm rings it can speak the event, vibrate, and require a math puzzle before you can stop it.
 
-Replace this text with your application description before F-Droid submission.
+In-app 2D and 3D clocks show the solar disk, Earth globe, and transit rings. Home widgets rotate through day and night. Location comes from an offline city list or the system location provider. MIT licensed. GitHub Releases only.
+
+• On-device suncalc sun/moon ephemeris — no network required for calculations
+• Eighteen solar events and eleven lunar events, plus custom clock alarms
+• 2D 24-hour solar disk and 3D Earth-globe transit clocks (in-app and widgets)
+• Lockscreen snooze and stop with an optional math unlock challenge
+• Material You wheels for time and event offsets, with Spanish and French translations
+• 100% FOSS: no Google Play Services, Firebase, or proprietary telemetry

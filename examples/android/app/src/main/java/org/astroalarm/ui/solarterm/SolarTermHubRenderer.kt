@@ -7,6 +7,7 @@ import org.astroalarm.astro.moon.LunarCalculator
 import org.astroalarm.astro.sun.SolarMath
 import org.astroalarm.solarterm.SolarTermLayout
 import org.astroalarm.solarterm.wrap360
+import org.astroalarm.ui.AstroCanvas
 import org.astroalarm.widget.EarthGlobeRenderer
 import org.astroalarm.widget.LunarHub
 import org.astroalarm.widget.OrbitWake
@@ -35,7 +36,7 @@ object SolarTermHubRenderer {
         drawEarthWake(canvas, cx, cy, a, nowLon, perihelionLon, rot, dark, inner)
         SolarTermAxisOverlay.drawSpiral(canvas, cx, cy, inner, perihelionLon, rot, dark)
         canvas.drawCircle(cx, cy, inner * 0.12f, Paint(Paint.ANTI_ALIAS_FLAG).apply {
-            color = if (dark) 0xFFFFD54F.toInt() else 0xFFFFB300.toInt()
+            color = AstroCanvas.gold
         })
         val nuNow = wrap360(nowLon - perihelionLon)
         val earthAng = earthCanvasDeg(nowLon, rot)

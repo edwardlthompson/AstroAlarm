@@ -19,6 +19,8 @@ import androidx.activity.compose.setContent
 import dev.foss.goldenpath.R
 import org.astroalarm.astro.model.AlarmTarget
 import org.astroalarm.astro.model.AstroAlarm
+import dev.foss.goldenpath.ui.theme.GoldenPathTheme
+import dev.foss.goldenpath.ui.theme.ThemeMode
 import org.astroalarm.ui.AstroAlarmLockscreenView
 import java.time.LocalTime
 
@@ -53,11 +55,13 @@ class AstroAlarmActivity : ComponentActivity(), TextToSpeech.OnInitListener {
             activeAlarm!!.snoozeMinutes,
         )
         setContent {
-            AstroAlarmLockscreenView(
-                alarm = activeAlarm!!,
-                onSnooze = { onSnoozeClicked() },
-                onStop = { onStopClicked() }
-            )
+            GoldenPathTheme(themeMode = ThemeMode.Dark) {
+                AstroAlarmLockscreenView(
+                    alarm = activeAlarm!!,
+                    onSnooze = { onSnoozeClicked() },
+                    onStop = { onStopClicked() }
+                )
+            }
         }
     }
 

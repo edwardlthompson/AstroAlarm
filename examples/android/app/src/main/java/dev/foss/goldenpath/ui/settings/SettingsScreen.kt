@@ -1,7 +1,6 @@
 package dev.foss.goldenpath.ui.settings
 
 import android.Manifest
-import android.widget.Toast
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.ScrollState
@@ -9,17 +8,12 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.ExperimentalLayoutApi
 import androidx.compose.foundation.layout.FlowRow
-import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.rememberScrollState
-import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.Button
-import androidx.compose.material3.Card
-import androidx.compose.material3.CardDefaults
-import androidx.compose.material3.FilledTonalButton
 import androidx.compose.material3.FilterChip
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.MaterialTheme
@@ -38,7 +32,6 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
 import dev.foss.goldenpath.R
 import dev.foss.goldenpath.display.highRefreshScroll
 import dev.foss.goldenpath.ui.insets.bottomInsetPadding
@@ -48,6 +41,7 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import org.astroalarm.astro.alarm.AstroAlarmScheduler
+import org.astroalarm.astro.alarm.SunriseOfferStore
 import org.astroalarm.astro.place.AstroPlace
 import org.astroalarm.astro.place.AstroPlaceFinder
 import org.astroalarm.astro.place.AstroPlaceStore
@@ -57,6 +51,7 @@ import org.astroalarm.ui.LocationCard
 import org.astroalarm.ui.math.MathSettingsSection
 import org.astroalarm.ui.onboard.PermissionNagDialog
 import org.astroalarm.ui.tts.TtsVoicePicker
+import org.astroalarm.widget.AppSnackbar
 
 @OptIn(ExperimentalLayoutApi::class)
 @Composable
@@ -67,7 +62,6 @@ fun SettingsScreen(
     onSaveCrashes: (Boolean) -> Unit,
     placeStore: AstroPlaceStore,
     onOpenAbout: () -> Unit,
-    onOpenUrl: (String) -> Unit,
     scrollState: ScrollState = rememberScrollState(),
     modifier: Modifier = Modifier,
 ) {
@@ -79,10 +73,18 @@ fun SettingsScreen(
     var citySuggestions by remember { mutableStateOf<List<AstroPlace>>(emptyList()) }
     var isLocating by remember { mutableStateOf(false) }
     var showOnboarding by remember { mutableStateOf(false) }
+    var expandCitySearch by remember { mutableStateOf(0) }
 
     val ttsPrefs = remember { TtsPreferences(context) }
     val voice by ttsPrefs.voice.collectAsState()
     val mathPrefs = remember { MathPreferences(context) }
+    val sunriseOfferStore = remember { SunriseOfferStore(context) }
+    fun savePlace(next: AstroPlace) {
+        val hadPlace = placeStore.get() != null
+        placeStore.set(next)
+        sunriseOfferStore.markPendingIfFirstCity(hadPlace)
+        AstroAlarmScheduler.rescheduleAll(context)
+    }
 
     fun triggerLocate() {
         scope.launch {
@@ -92,15 +94,11 @@ fun SettingsScreen(
             }
             isLocating = false
             if (loc != null) {
-                placeStore.set(loc)
-                AstroAlarmScheduler.rescheduleAll(context)
-                Toast.makeText(
-                    context,
-                    context.getString(R.string.astro_toast_location_updated, loc.cityName),
-                    Toast.LENGTH_SHORT,
-                ).show()
+                savePlace(loc)
+                AppSnackbar.emit(context.getString(R.string.astro_toast_location_updated, loc.cityName))
             } else {
-                Toast.makeText(context, context.getString(R.string.astro_toast_location_failed), Toast.LENGTH_LONG).show()
+                expandCitySearch++
+                AppSnackbar.emit(context.getString(R.string.astro_toast_location_failed))
             }
         }
     }
@@ -113,7 +111,8 @@ fun SettingsScreen(
         if (granted) {
             triggerLocate()
         } else {
-            Toast.makeText(context, context.getString(R.string.astro_toast_location_permission), Toast.LENGTH_LONG).show()
+            expandCitySearch++
+            AppSnackbar.emit(context.getString(R.string.astro_toast_location_permission))
         }
     }
 
@@ -144,11 +143,11 @@ fun SettingsScreen(
             onSearchQueryChange = { searchQuery = it },
             suggestions = citySuggestions,
             isLocating = isLocating,
+            expandEpoch = expandCitySearch,
             onSelectCity = { selected ->
-                placeStore.set(selected)
+                savePlace(selected)
                 searchQuery = ""
                 citySuggestions = emptyList()
-                AstroAlarmScheduler.rescheduleAll(context)
             },
             onUseGps = {
                 if (AstroPlaceFinder.hasLocationPermission(context)) {
@@ -174,36 +173,6 @@ fun SettingsScreen(
         HorizontalDivider()
 
         MathSettingsSection(mathPrefs = mathPrefs)
-
-        HorizontalDivider()
-
-        Card(
-            modifier = Modifier.fillMaxWidth(),
-            shape = RoundedCornerShape(12.dp),
-            colors = CardDefaults.cardColors(
-                containerColor = MaterialTheme.colorScheme.surfaceVariant.copy(alpha = 0.7f),
-            ),
-        ) {
-            Column(modifier = Modifier.padding(14.dp), verticalArrangement = Arrangement.spacedBy(8.dp)) {
-                Text(
-                    text = stringResource(R.string.openshouter_title),
-                    style = MaterialTheme.typography.titleMedium,
-                    fontWeight = FontWeight.Bold,
-                    color = MaterialTheme.colorScheme.primary,
-                )
-                Text(
-                    text = stringResource(R.string.openshouter_desc),
-                    style = MaterialTheme.typography.bodySmall,
-                    color = MaterialTheme.colorScheme.onSurfaceVariant,
-                )
-                FilledTonalButton(
-                    onClick = { onOpenUrl("https://github.com/edwardlthompson/OpenShouter") },
-                    contentPadding = PaddingValues(horizontal = 12.dp, vertical = 6.dp),
-                ) {
-                    Text(stringResource(R.string.openshouter_btn), fontSize = 13.sp)
-                }
-            }
-        }
 
         HorizontalDivider()
 

@@ -10,13 +10,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [1.8.2](https://github.com/edwardlthompson/AstroAlarm/compare/v1.8.1...v1.8.2) (2026-09-14)
 
-
 ### Fixed
 
 * **android:** ring lockscreen via AlarmClock broadcast and FSI ([8348752](https://github.com/edwardlthompson/AstroAlarm/commit/83487520d3c98f7b0ac92a4b8f2ba25ec89973ba))
 
 ## [1.8.1](https://github.com/edwardlthompson/AstroAlarm/compare/v1.8.0...v1.8.1) (2026-09-13)
-
 
 ### Fixed
 
@@ -24,11 +22,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [1.8.0](https://github.com/edwardlthompson/AstroAlarm/compare/v1.7.0...v1.8.0) (2026-09-11)
 
-
 ### Added
 
 * **android:** natal chart suite and Golden Path catch-up ([0b67551](https://github.com/edwardlthompson/AstroAlarm/commit/0b6755114cecae182cdfc4db8512ef5e7cc9ddb4))
-
 
 ### Fixed
 

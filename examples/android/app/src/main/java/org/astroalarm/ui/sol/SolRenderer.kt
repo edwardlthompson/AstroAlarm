@@ -7,6 +7,7 @@ import org.astroalarm.astro.model.AstroAlarm
 import org.astroalarm.astro.place.AstroPlace
 import org.astroalarm.sol.PlanetBody
 import org.astroalarm.sol.PlanetKepler
+import org.astroalarm.ui.AstroCanvas
 import org.astroalarm.widget.EarthGlobeRenderer
 import java.time.Instant
 import kotlin.math.hypot
@@ -48,13 +49,13 @@ object SolRenderer {
         natalProfile: org.astroalarm.astro.birth.BirthProfile? = null,
         showNatalGhosts: Boolean = false,
     ) {
-        canvas.drawColor(if (dark) 0xFF070B16.toInt() else 0xFF0B1020.toInt())
+        canvas.drawColor(AstroCanvas.night)
         val cx = size / 2f
         val cy = size / 2f
         val pxPerAu = (size * 0.22f) * zoom
         SolOrbitPaths.draw(canvas, cx, cy, pxPerAu, now, size)
         canvas.drawCircle(cx, cy, max(6f, 8f * zoom), Paint(Paint.ANTI_ALIAS_FLAG).apply {
-            color = 0xFFFFD54F.toInt()
+            color = AstroCanvas.gold
         })
         PlanetBody.entries.forEach { body ->
             val st = PlanetKepler.state(body, now)

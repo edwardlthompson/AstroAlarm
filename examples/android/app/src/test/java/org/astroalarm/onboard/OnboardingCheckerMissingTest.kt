@@ -37,4 +37,19 @@ class OnboardingCheckerMissingTest {
                 .contains(OnboardingStep.Notifications),
         )
     }
+
+    @Test
+    fun missingRingStepsIgnoresLocationDeny() {
+        val context = ApplicationProvider.getApplicationContext<Application>()
+        shadowOf(context).denyPermissions(
+            Manifest.permission.ACCESS_FINE_LOCATION,
+            Manifest.permission.ACCESS_COARSE_LOCATION,
+        )
+        shadowOf(context).grantPermissions(Manifest.permission.POST_NOTIFICATIONS)
+        shadowOf(context.getSystemService(NotificationManager::class.java))
+            .setNotificationsEnabled(true)
+        val missing = OnboardingChecker.missingRingSteps(context, sdk = 26)
+        assertFalse(missing.contains(OnboardingStep.Location))
+        assertTrue(OnboardingChecker.missingSteps(context, sdk = 26).contains(OnboardingStep.Location))
+    }
 }

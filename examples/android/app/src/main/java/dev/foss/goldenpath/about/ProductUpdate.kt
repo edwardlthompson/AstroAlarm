@@ -44,9 +44,13 @@ object ProductUpdate {
         return null
     }
 
-    fun shouldNudgeDonate(lastSeenVersion: String?, currentVersion: String): Boolean {
-        if (currentVersion.isBlank()) return false
-        if (lastSeenVersion.isNullOrBlank()) return true
+    fun shouldNudgeDonate(
+        lastSeenVersion: String?,
+        currentVersion: String,
+        hasEnabledAlarm: Boolean = false,
+    ): Boolean {
+        if (currentVersion.isBlank() || !hasEnabledAlarm) return false
+        if (lastSeenVersion.isNullOrBlank()) return false
         return lastSeenVersion.trim() != currentVersion.trim()
     }
 

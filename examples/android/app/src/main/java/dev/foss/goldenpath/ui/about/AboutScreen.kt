@@ -48,15 +48,17 @@ fun AboutScreen(
         Text(text = stringResource(R.string.about_version, version))
         Text(text = stringResource(R.string.about_format, installedFormat))
         Text(text = updateStatus)
-        Text(
-            text = stringResource(
-                R.string.about_debug_navigation_mode,
-                stringResource(navigationModeLabelRes(navMode)),
-                insetDp,
-            ),
-            style = MaterialTheme.typography.bodySmall,
-            color = MaterialTheme.colorScheme.onSurfaceVariant,
-        )
+        if (dev.foss.goldenpath.BuildConfig.DEBUG) {
+            Text(
+                text = stringResource(
+                    R.string.about_debug_navigation_mode,
+                    stringResource(navigationModeLabelRes(navMode)),
+                    insetDp,
+                ),
+                style = MaterialTheme.typography.bodySmall,
+                color = MaterialTheme.colorScheme.onSurfaceVariant,
+            )
+        }
         if (canApplyUpdate) {
             Button(onClick = onApplyUpdate) {
                 Text(stringResource(R.string.about_update_apply))
@@ -75,8 +77,23 @@ fun AboutScreen(
         Button(onClick = onReportBug) {
             Text(stringResource(R.string.feedback_bug_title))
         }
-        Button(onClick = onRequestFeature, modifier = Modifier.bottomInsetPadding()) {
+        Button(onClick = onRequestFeature) {
             Text(stringResource(R.string.feedback_feature_title))
+        }
+        Text(
+            text = stringResource(R.string.openshouter_title),
+            style = MaterialTheme.typography.titleSmall,
+        )
+        Text(
+            text = stringResource(R.string.openshouter_desc),
+            style = MaterialTheme.typography.bodySmall,
+            color = MaterialTheme.colorScheme.onSurfaceVariant,
+        )
+        Button(
+            onClick = { uriHandler.openUri("https://github.com/edwardlthompson/OpenShouter") },
+            modifier = Modifier.bottomInsetPadding(),
+        ) {
+            Text(stringResource(R.string.openshouter_btn))
         }
     }
 }

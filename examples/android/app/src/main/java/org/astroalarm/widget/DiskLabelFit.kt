@@ -8,9 +8,21 @@ object DiskLabelFit {
     const val MAX_SIZE = 28f
     private const val FIT = 0.72f
     private const val EM = 0.62f
+    private val capOverride = ThreadLocal<Float>()
+
+    /** Lift the widget 28px cap so a 2160 export is not postage-stamp type. */
+    fun <T> withExportCap(canvasSize: Int, block: () -> T): T {
+        capOverride.set((canvasSize * 0.048f).coerceAtLeast(MIN_READABLE))
+        return try {
+            block()
+        } finally {
+            capOverride.remove()
+        }
+    }
 
     fun textSize(size: Int, labelR: Float, count: Int, sample: String): Float {
-        val target = (size * 0.048f).coerceIn(MIN_READABLE, MAX_SIZE)
+        val cap = capOverride.get() ?: MAX_SIZE
+        val target = (size * 0.048f).coerceIn(MIN_READABLE, cap)
         if (count <= 1 || labelR <= 1f) return target
         val limit = chord(labelR, count) * FIT
         val width = glyphWidth(target, sample)

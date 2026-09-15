@@ -31,10 +31,13 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import dev.foss.goldenpath.R
+import kotlinx.coroutines.launch
 import org.astroalarm.astro.model.AstroAlarm
 import org.astroalarm.astro.place.AstroPlace
 import org.astroalarm.astro.settings.AstroDisplayPreferences
 import org.astroalarm.astro.zodiac.ZodiacCalculator
+import org.astroalarm.share.SkyShareButton
+import org.astroalarm.share.SkySharePaint
 import org.astroalarm.ui.solarterm.WheelZoomPan
 import org.astroalarm.ui.solarterm.WheelZoomPanMath
 import org.astroalarm.widget.Astro3DClockWidgetProvider
@@ -61,8 +64,12 @@ fun Astro3DClockScreen(
     val viewportLatest = rememberUpdatedState(viewport)
     var tiltX by remember { mutableFloatStateOf(0f) }
     var tiltY by remember { mutableFloatStateOf(0f) }
+    val shareScope = rememberCoroutineScope()
 
     DisposableEffect(Unit) {
+        if (ReduceMotion.enabled(context)) {
+            return@DisposableEffect onDispose { }
+        }
         val sensorManager = context.getSystemService(Context.SENSOR_SERVICE) as? SensorManager
         val accelerometer = sensorManager?.getDefaultSensor(Sensor.TYPE_ACCELEROMETER)
         val listener = object : SensorEventListener {
@@ -106,9 +113,10 @@ fun Astro3DClockScreen(
                 horizontalAlignment = Alignment.CenterHorizontally,
                 verticalArrangement = Arrangement.spacedBy(8.dp)
             ) {
+                Box(Modifier.size(side)) {
                 Canvas(
                     modifier = Modifier
-                        .size(side)
+                        .fillMaxSize()
                         .clipToBounds()
                         .pointerInput(Unit) {
                             detectTransformGestures { centroid, pan, zoom, _ ->
@@ -119,7 +127,36 @@ fun Astro3DClockScreen(
                                 )
                             }
                         }
-                        .semantics { contentDescription = context.getString(R.string.astro_widget_3d_desc) }
+                        .wheelTalkBack(
+                            description = context.getString(R.string.astro_widget_3d_desc),
+                            nextLabel = stringResource(R.string.a11y_next_event),
+                            resetLabel = stringResource(R.string.a11y_reset_zoom),
+                            shareLabel = stringResource(R.string.sky_share_cd),
+                            onNext = { NextEventA11y.announce(context, alarms, place) },
+                            onReset = { viewport = WheelZoomPan(); true },
+                            onShare = {
+                                val v = viewport
+                                val z = showZodiac
+                                val et = showEventTimes
+                                val t = now
+                                val pxPar = tiltX
+                                val pyPar = tiltY
+                                shareScope.launch {
+                                    org.astroalarm.share.sharePaintedSky(
+                                        context,
+                                        { size ->
+                                            SkySharePaint.daily3d(
+                                                size, place, alarms, t, v, z, et, pxPar, pyPar, earth, moon,
+                                            )
+                                        },
+                                        context.getString(R.string.sky_share_chooser),
+                                        context.getString(R.string.sky_share_failed),
+                                        context.getString(R.string.sky_share_oom),
+                                    )
+                                }
+                                true
+                            },
+                        )
                 ) {
                     val px = size.width.toInt().coerceAtLeast(1)
                     drawIntoCanvas { gc ->
@@ -132,15 +169,26 @@ fun Astro3DClockScreen(
                         native.restore()
                     }
                 }
+                SkyShareButton(
+                    modifier = Modifier.align(Alignment.TopEnd),
+                    paint = {
+                        val v = viewport
+                        val z = showZodiac
+                        val et = showEventTimes
+                        val t = now
+                        val pxPar = tiltX
+                        val pyPar = tiltY
+                        { size ->
+                            SkySharePaint.daily3d(
+                                size, place, alarms, t, v, z, et, pxPar, pyPar, earth, moon,
+                            )
+                        }
+                    },
+                )
+                }
                 Button(
                     onClick = {
-                        val mgr = context.getSystemService(AppWidgetManager::class.java)
-                        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O && mgr != null && mgr.isRequestPinAppWidgetSupported) {
-                            mgr.requestPinAppWidget(ComponentName(context, Astro3DClockWidgetProvider::class.java), null, null)
-                            Toast.makeText(context, context.getString(R.string.astro_widget_pinned_success), Toast.LENGTH_SHORT).show()
-                        } else {
-                            Toast.makeText(context, context.getString(R.string.astro_widget_pin_manual_guide), Toast.LENGTH_LONG).show()
-                        }
+                        org.astroalarm.widget.WidgetPin.request(context, Astro3DClockWidgetProvider::class.java)
                     },
                     modifier = Modifier.fillMaxWidth().semantics {
                         contentDescription = context.getString(R.string.astro_add_3d_widget_cd)

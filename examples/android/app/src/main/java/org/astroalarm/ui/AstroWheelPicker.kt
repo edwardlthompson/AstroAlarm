@@ -15,9 +15,11 @@ import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import dev.foss.goldenpath.R
 import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.flow.filter
 import kotlinx.coroutines.launch
@@ -73,9 +75,9 @@ fun AstroNumberWheel(
                 onValueChange(range[nextIdx])
                 scope.launch { listState.animateScrollToItem(nextIdx) }
             },
-            modifier = Modifier.size(32.dp)
+            modifier = Modifier.size(48.dp)
         ) {
-            Icon(Icons.Default.KeyboardArrowUp, contentDescription = "Decrease $label", tint = MaterialTheme.colorScheme.primary)
+            Icon(Icons.Default.KeyboardArrowUp, contentDescription = stringResource(R.string.a11y_decrease, label), tint = MaterialTheme.colorScheme.primary)
         }
         Box(
             modifier = Modifier
@@ -129,9 +131,9 @@ fun AstroNumberWheel(
                 onValueChange(range[nextIdx])
                 scope.launch { listState.animateScrollToItem(nextIdx) }
             },
-            modifier = Modifier.size(32.dp)
+            modifier = Modifier.size(48.dp)
         ) {
-            Icon(Icons.Default.KeyboardArrowDown, contentDescription = "Increase $label", tint = MaterialTheme.colorScheme.primary)
+            Icon(Icons.Default.KeyboardArrowDown, contentDescription = stringResource(R.string.a11y_increase, label), tint = MaterialTheme.colorScheme.primary)
         }
     }
 }

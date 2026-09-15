@@ -9,6 +9,7 @@ import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
@@ -24,6 +25,7 @@ fun SolarEventListDialog(
     onSelect: (SolarEventType) -> Unit,
     onDismiss: () -> Unit
 ) {
+    val res = LocalContext.current.resources
     Dialog(onDismissRequest = onDismiss) {
         Card(
             modifier = Modifier
@@ -59,7 +61,7 @@ fun SolarEventListDialog(
                         ) {
                             Column(modifier = Modifier.padding(12.dp)) {
                                 Text(
-                                    text = AstroEventLabels.solarLabel(event),
+                                    text = AstroEventLabels.solarLabel(res,event),
                                     fontWeight = FontWeight.Bold,
                                     fontSize = 15.sp,
                                     color = if (isSelected) {
@@ -69,7 +71,7 @@ fun SolarEventListDialog(
                                     }
                                 )
                                 Text(
-                                    text = AstroEventLabels.solarDescription(event),
+                                    text = AstroEventLabels.solarDescription(res,event),
                                     fontSize = 12.sp,
                                     color = if (isSelected) {
                                         MaterialTheme.colorScheme.onPrimaryContainer.copy(alpha = 0.8f)
@@ -96,6 +98,7 @@ fun LunarEventListDialog(
     onSelect: (LunarEventType) -> Unit,
     onDismiss: () -> Unit
 ) {
+    val res = LocalContext.current.resources
     Dialog(onDismissRequest = onDismiss) {
         Card(
             modifier = Modifier
@@ -131,7 +134,7 @@ fun LunarEventListDialog(
                         ) {
                             Column(modifier = Modifier.padding(12.dp)) {
                                 Text(
-                                    text = AstroEventLabels.lunarLabel(event),
+                                    text = AstroEventLabels.lunarLabel(res,event),
                                     fontWeight = FontWeight.Bold,
                                     fontSize = 15.sp,
                                     color = if (isSelected) {
@@ -141,7 +144,7 @@ fun LunarEventListDialog(
                                     }
                                 )
                                 Text(
-                                    text = AstroEventLabels.lunarDescription(event),
+                                    text = AstroEventLabels.lunarDescription(res,event),
                                     fontSize = 12.sp,
                                     color = if (isSelected) {
                                         MaterialTheme.colorScheme.onPrimaryContainer.copy(alpha = 0.8f)

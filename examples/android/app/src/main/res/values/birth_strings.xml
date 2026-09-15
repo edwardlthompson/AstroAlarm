@@ -42,7 +42,7 @@
     <string name="astro_natal_compound_scanning">Scanning chart alignments…</string>
     <string name="astro_natal_next_double">Next double · %1$s · %2$s</string>
     <string name="astro_natal_next_triple">Next triple · %1$s · %2$s</string>
-    <string name="astro_natal_no_double">No double in next 2y</string>
+    <string name="astro_natal_no_double">No two-event overlap in the next 2 years</string>
     <string name="astro_natal_no_triple">No triple in next 2y</string>
     <string name="astro_natal_compound_any_double">Any chart double</string>
     <string name="astro_natal_compound_any_triple">Any chart triple</string>
@@ -55,9 +55,9 @@
     <string name="astro_widget_natal_chart_name">Natal chart</string>
     <string name="astro_widget_natal_chart_cd">Natal chart wheel</string>
     <string name="astro_widget_natal_chart_empty">No birth profile</string>
-    <string name="astro_natal_pin_widget">Add Widget to Home Screen</string>
-    <string name="astro_natal_pin_widget_cd">Add chart doubles widget to Home Screen</string>
-    <string name="astro_sol_natal_overlay">Natal ghosts</string>
+    <string name="astro_natal_pin_widget">Add natal chart</string>
+    <string name="astro_natal_pin_widget_cd">Add natal chart widget</string>
+    <string name="astro_sol_natal_overlay">Birth positions</string>
     <string name="astro_field_target_type">Alarm type</string>
     <string name="astro_field_repeat_preset">Repeat</string>
     <string name="astro_field_repeat_days">Days</string>

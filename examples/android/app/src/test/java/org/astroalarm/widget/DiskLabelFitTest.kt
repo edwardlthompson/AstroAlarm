@@ -25,4 +25,14 @@ class DiskLabelFitTest {
         val ts = DiskLabelFit.textSize(400, 180f, 12, "Sep")
         assertTrue(ts >= DiskLabelFit.MIN_READABLE)
     }
+
+    @Test
+    fun exportCapAllowsTypeLargerThanWidgetMax() {
+        val widget = DiskLabelFit.textSize(2160, 900f, 24, "23")
+        assertTrue(widget <= DiskLabelFit.MAX_SIZE)
+        val export = DiskLabelFit.withExportCap(2160) {
+            DiskLabelFit.textSize(2160, 900f, 24, "23")
+        }
+        assertTrue(export > DiskLabelFit.MAX_SIZE)
+    }
 }

@@ -42,7 +42,7 @@
     <string name="astro_natal_compound_scanning">Recherche d’alignements…</string>
     <string name="astro_natal_next_double">Prochain double · %1$s · %2$s</string>
     <string name="astro_natal_next_triple">Prochain triple · %1$s · %2$s</string>
-    <string name="astro_natal_no_double">Pas de double sous 2 ans</string>
+    <string name="astro_natal_no_double">Aucun chevauchement de deux événements sous 2 ans</string>
     <string name="astro_natal_no_triple">Pas de triple sous 2 ans</string>
     <string name="astro_natal_compound_any_double">Tout double de thème</string>
     <string name="astro_natal_compound_any_triple">Tout triple de thème</string>
@@ -55,9 +55,9 @@
     <string name="astro_widget_natal_chart_name">Thème natal</string>
     <string name="astro_widget_natal_chart_cd">Roue du thème natal</string>
     <string name="astro_widget_natal_chart_empty">Aucun profil de naissance</string>
-    <string name="astro_natal_pin_widget">Ajouter le widget à l’écran d’accueil</string>
+    <string name="astro_natal_pin_widget">Ajouter le thème natal</string>
     <string name="astro_natal_pin_widget_cd">Ajouter le widget doubles de thème</string>
-    <string name="astro_sol_natal_overlay">Fantômes natals</string>
+    <string name="astro_sol_natal_overlay">Positions de naissance</string>
     <string name="astro_field_target_type">Type d’alarme</string>
     <string name="astro_field_repeat_preset">Répéter</string>
     <string name="astro_field_repeat_days">Jours</string>

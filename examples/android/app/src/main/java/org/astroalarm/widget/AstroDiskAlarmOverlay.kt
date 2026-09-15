@@ -33,12 +33,14 @@ object AstroDiskAlarmOverlay {
         val upcomingItems = mutableListOf<Pair<Instant, String>>()
         AlarmWidgetScope.dailyMarks(alarms, place, now, horizon).forEach { (alarm, next) ->
             val z = ZonedDateTime.ofInstant(next, zone)
-            val rad = (((z.hour * 60 + z.minute) / 1440f * 360f - nowAngle - 90f)) * (Math.PI / 180.0)
-            canvas.drawCircle(
-                center + dotR * cos(rad).toFloat(),
-                center + dotR * sin(rad).toFloat(),
+            val radAng = (((z.hour * 60 + z.minute) / 1440f * 360f - nowAngle - 90f)) * (Math.PI / 180.0)
+            AlarmDotMark.draw(
+                canvas,
+                center + dotR * cos(radAng).toFloat(),
+                center + dotR * sin(radAng).toFloat(),
                 (size * 0.026f).coerceIn(5f, 12f),
                 dotPaint,
+                AlarmDotMark.shapeOf(alarm.target),
             )
             val icon = AlarmTargetCopy.icon(alarm.target)
             upcomingItems.add(next to (icon + z.format(timeFmt)))

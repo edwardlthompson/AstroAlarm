@@ -31,10 +31,14 @@ fun LocationCard(
     onSearchQueryChange: (String) -> Unit,
     suggestions: List<AstroPlace>,
     isLocating: Boolean,
+    expandEpoch: Int = 0,
     onSelectCity: (AstroPlace) -> Unit,
     onUseGps: () -> Unit
 ) {
     var isExpanded by remember { mutableStateOf(place == null) }
+    LaunchedEffect(expandEpoch) {
+        if (expandEpoch > 0) isExpanded = true
+    }
 
     Card(
         modifier = Modifier.fillMaxWidth(),
@@ -66,7 +70,9 @@ fun LocationCard(
                 IconButton(onClick = { isExpanded = !isExpanded }) {
                     Icon(
                         imageVector = if (isExpanded) Icons.Default.ExpandLess else Icons.Default.ExpandMore,
-                        contentDescription = null
+                        contentDescription = stringResource(
+                            if (isExpanded) R.string.a11y_collapse_place else R.string.a11y_expand_place,
+                        ),
                     )
                 }
             }
@@ -99,18 +105,13 @@ fun LocationCard(
                             onClick = onUseGps,
                             enabled = !isLocating
                         ) {
-                            if (isLocating) {
-                                CircularProgressIndicator(
-                                    modifier = Modifier.size(18.dp),
-                                    strokeWidth = 2.dp,
-                                    color = MaterialTheme.colorScheme.onPrimary
-                                )
-                            } else {
-                                Icon(Icons.Default.LocationOn, contentDescription = null, modifier = Modifier.size(18.dp))
-                                Spacer(modifier = Modifier.width(4.dp))
-                                Text(stringResource(R.string.astro_btn_locate))
-                            }
+                            Icon(Icons.Default.LocationOn, contentDescription = stringResource(R.string.a11y_use_gps), modifier = Modifier.size(18.dp))
+                            Spacer(modifier = Modifier.width(4.dp))
+                            Text(stringResource(R.string.astro_btn_locate))
                         }
+                    }
+                    if (isLocating) {
+                        GpsLocateSkeletonBars()
                     }
                     if (suggestions.isNotEmpty()) {
                         Column(verticalArrangement = Arrangement.spacedBy(4.dp)) {

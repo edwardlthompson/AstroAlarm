@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="sky_share_cd">Partager l\'image carrée</string>
+    <string name="sky_share_chooser">Partager le ciel</string>
+    <string name="sky_share_failed">Impossible de partager cette image.</string>
+    <string name="sky_share_oom">Image plus petite envoyée pour économiser la mémoire.</string>
+    <string name="sky_share_natal_empty">Ajoutez un thème natal avant de partager.</string>
+</resources>

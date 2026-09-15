@@ -32,8 +32,11 @@ object OnboardingChecker {
     fun missingSteps(context: Context, sdk: Int = Build.VERSION.SDK_INT): List<OnboardingStep> =
         OnboardingPolicy.steps(sdk).filterNot { isGranted(context, it, sdk) }
 
+    fun missingRingSteps(context: Context, sdk: Int = Build.VERSION.SDK_INT): List<OnboardingStep> =
+        OnboardingPolicy.ringSteps(sdk).filterNot { isGranted(context, it, sdk) }
+
     fun hasMissing(context: Context, sdk: Int = Build.VERSION.SDK_INT): Boolean =
-        missingSteps(context, sdk).isNotEmpty()
+        missingRingSteps(context, sdk).isNotEmpty()
 
     /** Hide the first-launch gate under Espresso / Compose UI tests. */
     fun skipUiGate(): Boolean = runCatching {

@@ -22,4 +22,8 @@ object OnboardingPolicy {
         if (sdk >= FULL_SCREEN_SDK) add(OnboardingStep.FullScreenIntent)
         if (sdk >= BATTERY_SDK) add(OnboardingStep.Battery)
     }
+
+    /** Permissions that must be granted before Continue (location is optional). */
+    fun ringSteps(sdk: Int): List<OnboardingStep> =
+        steps(sdk).filter { it != OnboardingStep.Location }
 }

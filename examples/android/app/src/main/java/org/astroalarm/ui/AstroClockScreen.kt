@@ -19,8 +19,10 @@ import androidx.compose.ui.draw.clipToBounds
 import androidx.compose.ui.graphics.drawscope.drawIntoCanvas
 import androidx.compose.ui.graphics.nativeCanvas
 import androidx.compose.ui.input.pointer.pointerInput
+import androidx.compose.ui.hapticfeedback.HapticFeedbackType
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalDensity
+import androidx.compose.ui.platform.LocalHapticFeedback
 import androidx.compose.ui.platform.LocalUriHandler
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.semantics.contentDescription
@@ -30,12 +32,16 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import dev.foss.goldenpath.R
 import kotlinx.coroutines.delay
+import kotlinx.coroutines.launch
+import org.astroalarm.astro.sky.SkyBodies
 import org.astroalarm.astro.model.AstroAlarm
 import org.astroalarm.astro.model.SolarEventType
 import org.astroalarm.astro.place.AstroPlace
 import org.astroalarm.astro.settings.AstroDisplayPreferences
 import org.astroalarm.astro.sun.SolarCalculator
 import org.astroalarm.astro.zodiac.ZodiacCalculator
+import org.astroalarm.share.SkyShareButton
+import org.astroalarm.share.SkySharePaint
 import org.astroalarm.ui.solarterm.WheelZoomPan
 import org.astroalarm.ui.solarterm.WheelZoomPanMath
 import org.astroalarm.widget.AstroClockWidgetProvider
@@ -73,6 +79,21 @@ fun AstroClockScreen(
         }
     }
 
+    val haptic = LocalHapticFeedback.current
+    var prevHa by remember { mutableFloatStateOf(Float.NaN) }
+    LaunchedEffect(now, place) {
+        val p = place ?: return@LaunchedEffect
+        val ha = SkyBodies.sun(now, p.latitude, p.longitude)?.haRad ?: return@LaunchedEffect
+        val deg = Math.toDegrees(ha).toFloat()
+        if (!prevHa.isNaN() &&
+            SkyHandTick.crossed(prevHa, deg, 0f) &&
+            !ReduceMotion.enabled(context)
+        ) {
+            haptic.performHapticFeedback(HapticFeedbackType.TextHandleMove)
+        }
+        prevHa = deg
+    }
+
     val zone = place?.zone ?: java.time.ZoneId.systemDefault()
     val nowZdt = ZonedDateTime.ofInstant(now, zone)
     val date = nowZdt.toLocalDate()
@@ -82,6 +103,7 @@ fun AstroClockScreen(
     val middayZodiac = ZodiacCalculator.overheadMiddayZodiac(solarNoon ?: now)
     val midnightZodiac = ZodiacCalculator.overheadMidnightZodiac(solarMidnight ?: now)
     val uriHandler = LocalUriHandler.current
+    val shareScope = rememberCoroutineScope()
 
     Column(
         modifier = modifier.fillMaxSize().padding(horizontal = 16.dp, vertical = 6.dp),
@@ -99,9 +121,10 @@ fun AstroClockScreen(
                 horizontalAlignment = Alignment.CenterHorizontally,
                 verticalArrangement = Arrangement.spacedBy(8.dp)
             ) {
+                Box(Modifier.size(side)) {
                 Canvas(
                     modifier = Modifier
-                        .size(side)
+                        .fillMaxSize()
                         .clipToBounds()
                         .pointerInput(Unit) {
                             detectTransformGestures { centroid, pan, zoom, _ ->
@@ -127,7 +150,36 @@ fun AstroClockScreen(
                                 }
                             }
                         }
-                        .semantics { contentDescription = context.getString(R.string.astro_widget_desc) }
+                        .wheelTalkBack(
+                            description = context.getString(R.string.astro_widget_desc),
+                            nextLabel = stringResource(R.string.a11y_next_event),
+                            resetLabel = stringResource(R.string.a11y_reset_zoom),
+                            shareLabel = stringResource(R.string.sky_share_cd),
+                            onNext = { NextEventA11y.announce(context, alarms, place) },
+                            onReset = { viewport = WheelZoomPan(); true },
+                            onShare = {
+                                val v = viewport
+                                val z = showZodiac
+                                val et = showEventTimes
+                                val mt = showMonthTicks
+                                val hm = showHourMarks
+                                val t = now
+                                shareScope.launch {
+                                    org.astroalarm.share.sharePaintedSky(
+                                        context,
+                                        { px ->
+                                            SkySharePaint.daily2d(
+                                                px, place, alarms, t, v, z, et, mt, hm, earth, moon,
+                                            )
+                                        },
+                                        context.getString(R.string.sky_share_chooser),
+                                        context.getString(R.string.sky_share_failed),
+                                        context.getString(R.string.sky_share_oom),
+                                    )
+                                }
+                                true
+                            },
+                        )
                 ) {
                     val px = size.width.toInt().coerceAtLeast(1)
                     drawIntoCanvas { gc ->
@@ -140,6 +192,23 @@ fun AstroClockScreen(
                         )
                         native.restore()
                     }
+                }
+                SkyShareButton(
+                    modifier = Modifier.align(Alignment.TopEnd),
+                    paint = {
+                        val v = viewport
+                        val z = showZodiac
+                        val et = showEventTimes
+                        val mt = showMonthTicks
+                        val hm = showHourMarks
+                        val t = now
+                        { px ->
+                            SkySharePaint.daily2d(
+                                px, place, alarms, t, v, z, et, mt, hm, earth, moon,
+                            )
+                        }
+                    },
+                )
                 }
                 Button(
                     onClick = { pinClockWidget(context) },
@@ -182,11 +251,5 @@ fun AstroClockScreen(
 }
 
 private fun pinClockWidget(context: android.content.Context) {
-    val mgr = context.getSystemService(AppWidgetManager::class.java)
-    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O && mgr != null && mgr.isRequestPinAppWidgetSupported) {
-        mgr.requestPinAppWidget(ComponentName(context, AstroClockWidgetProvider::class.java), null, null)
-        Toast.makeText(context, context.getString(R.string.astro_widget_pinned_success), Toast.LENGTH_SHORT).show()
-    } else {
-        Toast.makeText(context, context.getString(R.string.astro_widget_pin_manual_guide), Toast.LENGTH_LONG).show()
-    }
+    org.astroalarm.widget.WidgetPin.request(context, AstroClockWidgetProvider::class.java)
 }

@@ -1,11 +1,31 @@
 package org.astroalarm.ui
 
-import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.ExperimentalLayoutApi
+import androidx.compose.foundation.layout.FlowRow
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material3.*
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Delete
+import androidx.compose.material.icons.filled.Edit
+import androidx.compose.material3.Card
+import androidx.compose.material3.CardDefaults
+import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Surface
+import androidx.compose.material3.Switch
+import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.hapticfeedback.HapticFeedbackType
+import androidx.compose.ui.platform.LocalHapticFeedback
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
@@ -17,6 +37,7 @@ import java.time.DayOfWeek
 import java.time.format.TextStyle
 import java.util.Locale
 
+@OptIn(ExperimentalLayoutApi::class)
 @Composable
 fun AstroAlarmRow(
     alarm: AstroAlarm,
@@ -32,7 +53,7 @@ fun AstroAlarmRow(
         shape = RoundedCornerShape(16.dp),
         colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surfaceVariant)
     ) {
-        Column(modifier = Modifier.padding(16.dp)) {
+        Column(modifier = Modifier.padding(horizontal = 16.dp, vertical = 12.dp)) {
             Row(
                 modifier = Modifier.fillMaxWidth(),
                 horizontalArrangement = Arrangement.SpaceBetween,
@@ -75,41 +96,44 @@ fun AstroAlarmRow(
                         }
                     }
                 }
-                Switch(checked = alarm.enabled, onCheckedChange = onToggle)
+                val haptic = LocalHapticFeedback.current
+                Switch(
+                    checked = alarm.enabled,
+                    onCheckedChange = {
+                        haptic.performHapticFeedback(HapticFeedbackType.Confirm)
+                        onToggle(it)
+                    },
+                )
             }
 
-            Spacer(modifier = Modifier.height(10.dp))
-            DaysChipRow(target = alarm.target, selectedDays = alarm.daysOfWeek)
-
-            Spacer(modifier = Modifier.height(10.dp))
+            Spacer(modifier = Modifier.height(8.dp))
             Row(
                 modifier = Modifier.fillMaxWidth(),
-                horizontalArrangement = Arrangement.SpaceBetween,
-                verticalAlignment = Alignment.CenterVertically
+                verticalAlignment = Alignment.CenterVertically,
             ) {
-                Row(horizontalArrangement = Arrangement.spacedBy(6.dp)) {
+                FlowRow(
+                    modifier = Modifier.weight(1f),
+                    horizontalArrangement = Arrangement.spacedBy(6.dp),
+                    verticalArrangement = Arrangement.spacedBy(4.dp),
+                ) {
+                    RepeatChips(target = alarm.target, selectedDays = alarm.daysOfWeek)
                     BadgeText(stringResource(if (alarm.toneEnabled) R.string.astro_badge_tone_on else R.string.astro_badge_tone_off))
                     BadgeText(stringResource(if (alarm.ttsEnabled) R.string.astro_badge_tts_on else R.string.astro_badge_tts_off))
                     if (alarm.vibrateEnabled) BadgeText(stringResource(R.string.astro_badge_vibrate))
                     if (alarm.mathUnlockEnabled) BadgeText(stringResource(R.string.astro_badge_math))
                 }
-                Row(horizontalArrangement = Arrangement.spacedBy(4.dp)) {
-                    FilledTonalButton(
-                        onClick = onEdit,
-                        contentPadding = PaddingValues(horizontal = 12.dp, vertical = 4.dp)
-                    ) {
-                        Text(stringResource(R.string.astro_action_edit), fontSize = 12.sp)
-                    }
-                    TextButton(
-                        onClick = onDelete,
-                        contentPadding = PaddingValues(horizontal = 8.dp, vertical = 4.dp)
-                    ) {
-                        Text(
-                            stringResource(R.string.astro_action_delete),
-                            color = MaterialTheme.colorScheme.error,
-                            fontSize = 12.sp
-                        )
-                    }
+                IconButton(onClick = onEdit) {
+                    Icon(
+                        Icons.Default.Edit,
+                        contentDescription = stringResource(R.string.astro_action_edit),
+                    )
+                }
+                IconButton(onClick = onDelete) {
+                    Icon(
+                        Icons.Default.Delete,
+                        contentDescription = stringResource(R.string.astro_action_delete),
+                        tint = MaterialTheme.colorScheme.error,
+                    )
                 }
             }
         }
@@ -117,35 +141,33 @@ fun AstroAlarmRow(
 }
 
 @Composable
-fun DaysChipRow(target: AlarmTarget, selectedDays: Set<DayOfWeek>) {
+fun RepeatChips(target: AlarmTarget, selectedDays: Set<DayOfWeek>) {
     val isSeasonal = (target is AlarmTarget.Solar && AstroEventLabels.isSeasonal(target.event)) ||
         target is AlarmTarget.Zodiac || target is AlarmTarget.SolarTerm ||
         target is AlarmTarget.PlanetAlign || target is AlarmTarget.AllPlanetsAlign ||
         (target is AlarmTarget.Planet && target.event != org.astroalarm.sol.PlanetEventType.Rise &&
             target.event != org.astroalarm.sol.PlanetEventType.Set)
-    Row(horizontalArrangement = Arrangement.spacedBy(4.dp)) {
-        if (isSeasonal) {
-            BadgeText(stringResource(R.string.astro_repeat_yearly))
-        } else if (target is AlarmTarget.CustomClock && selectedDays.isEmpty()) {
-            BadgeText(stringResource(R.string.astro_repeat_once))
-        } else if (selectedDays.isEmpty() || selectedDays.size == 7) {
-            BadgeText(stringResource(R.string.astro_repeat_daily))
-        } else {
-            DayOfWeek.values().forEach { d ->
-                val isSelected = selectedDays.contains(d)
-                val shortName = d.getDisplayName(TextStyle.NARROW, Locale.getDefault())
-                Surface(
-                    shape = RoundedCornerShape(4.dp),
-                    color = if (isSelected) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.surface
-                ) {
-                    Text(
-                        text = shortName,
-                        modifier = Modifier.padding(horizontal = 6.dp, vertical = 2.dp),
-                        fontSize = 11.sp,
-                        fontWeight = FontWeight.SemiBold,
-                        color = if (isSelected) MaterialTheme.colorScheme.onPrimary else MaterialTheme.colorScheme.onSurface.copy(alpha = 0.5f)
-                    )
-                }
+    if (isSeasonal) {
+        BadgeText(stringResource(R.string.astro_repeat_yearly))
+    } else if (target is AlarmTarget.CustomClock && selectedDays.isEmpty()) {
+        BadgeText(stringResource(R.string.astro_repeat_once))
+    } else if (selectedDays.isEmpty() || selectedDays.size == 7) {
+        BadgeText(stringResource(R.string.astro_repeat_daily))
+    } else {
+        DayOfWeek.values().forEach { d ->
+            val isSelected = selectedDays.contains(d)
+            val shortName = d.getDisplayName(TextStyle.NARROW, Locale.getDefault())
+            Surface(
+                shape = RoundedCornerShape(4.dp),
+                color = if (isSelected) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.surface
+            ) {
+                Text(
+                    text = shortName,
+                    modifier = Modifier.padding(horizontal = 6.dp, vertical = 2.dp),
+                    fontSize = 11.sp,
+                    fontWeight = FontWeight.SemiBold,
+                    color = if (isSelected) MaterialTheme.colorScheme.onPrimary else MaterialTheme.colorScheme.onSurface.copy(alpha = 0.5f)
+                )
             }
         }
     }
@@ -162,7 +184,8 @@ fun BadgeText(text: String) {
             modifier = Modifier.padding(horizontal = 6.dp, vertical = 2.dp),
             fontSize = 11.sp,
             fontWeight = FontWeight.Medium,
-            color = MaterialTheme.colorScheme.onSurfaceVariant
+            color = MaterialTheme.colorScheme.onSurfaceVariant,
+            maxLines = 1,
         )
     }
 }

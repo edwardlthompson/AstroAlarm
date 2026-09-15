@@ -20,6 +20,7 @@ class AppUpdatesTest {
             ),
             prefix = "Golden-Path",
             fallbackUrl = "https://example.com/latest",
+            hasEnabledAlarm = true,
         )
         assertEquals(AppUpdates.LaunchPrompt.Donate, prompt)
     }

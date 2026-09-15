@@ -68,7 +68,11 @@ fun GoldenPathApp(
     }
 
     LaunchedEffect(Unit) {
-        launchPrompt = AppUpdates.onLaunch(context, appVersion)
+        launchPrompt = AppUpdates.onLaunch(
+            context,
+            appVersion,
+            hasEnabledAlarm = org.astroalarm.astro.alarm.AstroAlarmStore(context).getAll().any { it.enabled },
+        )
     }
 
     fun openUrl(url: String) {

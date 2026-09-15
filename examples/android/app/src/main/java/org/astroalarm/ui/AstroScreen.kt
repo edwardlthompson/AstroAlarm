@@ -7,27 +7,22 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
-import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.semantics.contentDescription
-import androidx.compose.ui.semantics.semantics
-import androidx.compose.ui.unit.sp
 import dev.foss.goldenpath.R
 import kotlinx.coroutines.launch
 import org.astroalarm.astro.alarm.AstroAlarmScheduler
 import org.astroalarm.astro.alarm.AstroAlarmStore
+import org.astroalarm.astro.alarm.SunriseOffer
+import org.astroalarm.astro.alarm.SunriseOfferStore
 import org.astroalarm.astro.birth.BirthProfileStore
 import org.astroalarm.astro.model.AlarmTarget
 import org.astroalarm.astro.model.AstroAlarm
 import org.astroalarm.astro.model.SolarEventType
 import org.astroalarm.astro.place.AstroPlaceStore
 import org.astroalarm.astro.settings.AstroDisplayPreferences
-import org.astroalarm.ui.birth.BirthChartScreen
-import org.astroalarm.ui.sol.SolScreen
-import org.astroalarm.ui.solarterm.SolarTermScreen
+import org.astroalarm.astro.settings.AstroNavPreferences
 
 @Composable
 fun AstroScreen(
@@ -38,6 +33,7 @@ fun AstroScreen(
 ) {
     val context = LocalContext.current
     val displayPrefs = remember { AstroDisplayPreferences(context) }
+    val navPrefs = remember { AstroNavPreferences(context) }
     val viewMode by displayPrefs.alarmViewMode.collectAsState()
     val coroutineScope = rememberCoroutineScope()
     val place by placeStore.place.collectAsState()
@@ -46,7 +42,27 @@ fun AstroScreen(
     val activeBirth = birthProfiles.firstOrNull { it.active } ?: birthProfiles.firstOrNull()
     var editingAlarm by remember { mutableStateOf<AstroAlarm?>(null) }
     var showAddDialogWithTarget by remember { mutableStateOf<AlarmTarget?>(null) }
-    val pagerState = rememberPagerState(pageCount = { 6 })
+    val pagerState = rememberPagerState(pageCount = { 3 })
+    val sunriseOfferStore = remember { SunriseOfferStore(context) }
+    var showSunriseOffer by remember { mutableStateOf(false) }
+    var sunriseOfferHm by remember { mutableStateOf("") }
+    val reduceMotion = ReduceMotion.enabled(context)
+    LaunchedEffect(place, alarms) {
+        if (!sunriseOfferStore.consumePending()) return@LaunchedEffect
+        val p = place
+        if (!SunriseOffer.shouldShow(p, alarms, sunriseOfferStore.dismissed(), pending = true)) {
+            if (SunriseOffer.hasSunriseAlarm(alarms) || p == null) sunriseOfferStore.markDone()
+            return@LaunchedEffect
+        }
+        val fire = SunriseOffer.nextFire(p!!) ?: return@LaunchedEffect
+        sunriseOfferHm = SunriseOffer.formatHm(fire, p.zone)
+        showSunriseOffer = true
+    }
+    fun goTo(page: Int) {
+        coroutineScope.launch {
+            if (reduceMotion) pagerState.scrollToPage(page) else pagerState.animateScrollToPage(page)
+        }
+    }
     val hasLocation = place != null && place!!.isValid
     val defaultTarget = if (hasLocation) {
         AlarmTarget.Solar(SolarEventType.Sunrise, 0)
@@ -58,7 +74,11 @@ fun AstroScreen(
         modifier = modifier.fillMaxSize(),
         contentWindowInsets = WindowInsets(0, 0, 0, 0),
         floatingActionButton = {
-            if (pagerState.currentPage == 0) {
+            androidx.compose.animation.AnimatedVisibility(
+                visible = pagerState.currentPage == 0,
+                enter = UxMotion.fabEnter(reduceMotion),
+                exit = UxMotion.fabExit(reduceMotion),
+            ) {
                 FloatingActionButton(
                     onClick = { showAddDialogWithTarget = defaultTarget },
                     containerColor = MaterialTheme.colorScheme.primary,
@@ -74,66 +94,24 @@ fun AstroScreen(
                 .fillMaxSize()
                 .padding(innerPadding),
         ) {
-            val wideTabs = LocalConfiguration.current.screenWidthDp >= 400
             PrimaryTabRow(
                 selectedTabIndex = pagerState.currentPage,
                 modifier = Modifier.fillMaxWidth(),
             ) {
                 Tab(
                     selected = pagerState.currentPage == 0,
-                    onClick = { coroutineScope.launch { pagerState.animateScrollToPage(0) } },
-                    text = { Text(stringResource(R.string.astro_tab_alarms), fontSize = 11.sp) },
+                    onClick = { goTo(0) },
+                    text = { Text(stringResource(R.string.astro_tab_alarms)) },
                 )
                 Tab(
                     selected = pagerState.currentPage == 1,
-                    onClick = { coroutineScope.launch { pagerState.animateScrollToPage(1) } },
-                    modifier = Modifier.semantics {
-                        contentDescription =
-                            "${context.getString(R.string.astro_tab_daily)} ${context.getString(R.string.astro_tab_2d)}"
-                    },
-                    text = {
-                        if (wideTabs) {
-                            Column(horizontalAlignment = Alignment.CenterHorizontally) {
-                                Text(stringResource(R.string.astro_tab_daily), fontSize = 11.sp)
-                                Text(stringResource(R.string.astro_tab_2d), fontSize = 11.sp)
-                            }
-                        } else {
-                            Text(stringResource(R.string.astro_tab_2d), fontSize = 11.sp)
-                        }
-                    },
+                    onClick = { goTo(1) },
+                    text = { Text(stringResource(R.string.astro_tab_daily)) },
                 )
                 Tab(
                     selected = pagerState.currentPage == 2,
-                    onClick = { coroutineScope.launch { pagerState.animateScrollToPage(2) } },
-                    modifier = Modifier.semantics {
-                        contentDescription =
-                            "${context.getString(R.string.astro_tab_daily)} ${context.getString(R.string.astro_tab_3d)}"
-                    },
-                    text = {
-                        if (wideTabs) {
-                            Column(horizontalAlignment = Alignment.CenterHorizontally) {
-                                Text(stringResource(R.string.astro_tab_daily), fontSize = 11.sp)
-                                Text(stringResource(R.string.astro_tab_3d), fontSize = 11.sp)
-                            }
-                        } else {
-                            Text(stringResource(R.string.astro_tab_3d), fontSize = 11.sp)
-                        }
-                    },
-                )
-                Tab(
-                    selected = pagerState.currentPage == 3,
-                    onClick = { coroutineScope.launch { pagerState.animateScrollToPage(3) } },
-                    text = { Text(stringResource(R.string.astro_tab_yearly), fontSize = 11.sp) },
-                )
-                Tab(
-                    selected = pagerState.currentPage == 4,
-                    onClick = { coroutineScope.launch { pagerState.animateScrollToPage(4) } },
-                    text = { Text(stringResource(R.string.astro_tab_sol), fontSize = 11.sp) },
-                )
-                Tab(
-                    selected = pagerState.currentPage == 5,
-                    onClick = { coroutineScope.launch { pagerState.animateScrollToPage(5) } },
-                    text = { Text(stringResource(R.string.astro_tab_chart), fontSize = 11.sp) },
+                    onClick = { goTo(2) },
+                    text = { Text(stringResource(R.string.astro_tab_sky)) },
                 )
             }
             HorizontalPager(
@@ -151,21 +129,15 @@ fun AstroScreen(
                         displayPrefs = displayPrefs,
                         alarmStore = alarmStore,
                         onEdit = { editingAlarm = it },
-                        onSwipeHint = { coroutineScope.launch { pagerState.animateScrollToPage(1) } },
                     )
-                    1 -> AstroClockScreen(place = place, alarms = alarms, modifier = Modifier.fillMaxSize())
-                    2 -> Astro3DClockScreen(place = place, alarms = alarms, modifier = Modifier.fillMaxSize())
-                    3 -> SolarTermScreen(place = place, alarms = alarms, modifier = Modifier.fillMaxSize())
-                    4 -> SolScreen(
+                    1 -> DailyHubPage(place = place, alarms = alarms, navPrefs = navPrefs)
+                    else -> SkyHubPage(
                         place = place,
                         alarms = alarms,
                         natalProfile = activeBirth,
-                        modifier = Modifier.fillMaxSize(),
-                    )
-                    else -> BirthChartScreen(
                         birthStore = birthStore,
                         alarmStore = alarmStore,
-                        modifier = Modifier.fillMaxSize(),
+                        navPrefs = navPrefs,
                     )
                 }
             }
@@ -185,6 +157,22 @@ fun AstroScreen(
                 alarmStore.save(it)
                 AstroAlarmScheduler.rescheduleAll(context)
                 showAddDialogWithTarget = null
+            },
+        )
+    }
+    if (showSunriseOffer) {
+        SunriseOfferDialog(
+            timeHm = sunriseOfferHm,
+            onAdd = {
+                val label = AstroEventLabels.solarLabel(context.resources, SolarEventType.Sunrise)
+                alarmStore.save(SunriseOffer.alarm(label))
+                AstroAlarmScheduler.rescheduleAll(context)
+                sunriseOfferStore.markDone()
+                showSunriseOffer = false
+            },
+            onDismiss = {
+                sunriseOfferStore.markDone()
+                showSunriseOffer = false
             },
         )
     }

@@ -3,6 +3,7 @@ package org.astroalarm.ui
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import dev.foss.goldenpath.R
 import org.astroalarm.astro.alarm.AlarmTargetCopy
@@ -16,6 +17,7 @@ fun AstroEditTargetSection(
     natalProfileId: String? = null,
     timeUnknown: Boolean = false,
 ) {
+    val res = LocalContext.current.resources
     when (target) {
         is AlarmTarget.Solar -> {
             SolarEventPicker(
@@ -24,7 +26,7 @@ fun AstroEditTargetSection(
             )
             OffsetSelector(
                 offsetMinutes = target.offsetMinutes,
-                eventName = AstroEventLabels.solarLabel(target.event),
+                eventName = AstroEventLabels.solarLabel(res,target.event),
                 onOffsetChange = { onTargetChange(target.copy(offsetMinutes = it)) }
             )
         }
@@ -35,7 +37,7 @@ fun AstroEditTargetSection(
             )
             OffsetSelector(
                 offsetMinutes = target.offsetMinutes,
-                eventName = AstroEventLabels.lunarLabel(target.event),
+                eventName = AstroEventLabels.lunarLabel(res,target.event),
                 onOffsetChange = { onTargetChange(target.copy(offsetMinutes = it)) }
             )
         }
@@ -71,7 +73,7 @@ fun AstroEditTargetSection(
         }
         is AlarmTarget.Planet, is AlarmTarget.PlanetAlign, is AlarmTarget.AllPlanetsAlign -> {
             PlanetTargetPicker(target = target, onTargetChange = onTargetChange)
-            val name = AlarmTargetCopy.fallback(target)
+            val name = AlarmTargetCopy.fallback(res, target)
             val offset = when (target) {
                 is AlarmTarget.Planet -> target.offsetMinutes
                 is AlarmTarget.PlanetAlign -> target.offsetMinutes
@@ -111,7 +113,7 @@ fun AstroEditTargetSection(
             }
             OffsetSelector(
                 offsetMinutes = offset,
-                eventName = AlarmTargetCopy.fallback(target),
+                eventName = AlarmTargetCopy.fallback(res, target),
                 onOffsetChange = { m ->
                     onTargetChange(
                         when (target) {
@@ -156,7 +158,7 @@ fun AstroEditTargetSection(
             }
             OffsetSelector(
                 offsetMinutes = offset,
-                eventName = AlarmTargetCopy.fallback(target),
+                eventName = AlarmTargetCopy.fallback(res, target),
                 onOffsetChange = { m ->
                     onTargetChange(
                         when (target) {

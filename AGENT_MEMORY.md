@@ -7,7 +7,7 @@
 
 | Layer | Technology | Version | Notes |
 |-------|-----------|---------|-------|
-| Platform | Android (Kotlin, Jetpack Compose, Material 3) | 1.8.2 | Child of agent-project-bootstrap; GitHub Releases APK `astroalarm-X.Y.Z-foss.apk` |
+| Platform | Android (Kotlin, Jetpack Compose, Material 3) | 1.9.0 | Child of agent-project-bootstrap; GitHub Releases APK `astroalarm-X.Y.Z-foss.apk` |
 | Persistence | JSON SharedPreferences + DataStore | - | Room/Hilt on classpath for later stores |
 | Ephemeris | commons-suncalc 3.11 + NOAA tropical longitude + on-device Kepler | on-device | Sun/moon times; NOAA for seasons/zodiac/jieqi; Kepler for Sol tab and planet alarms |
 | License | MIT | - | Pure FOSS; no Play Services / Firebase |
@@ -34,7 +34,7 @@
 
 ### Project Purpose
 
-FOSS Android astronomical alarm clock: on-device suncalc sun/moon ephemeris, solar/lunar/seasonal/planet/custom alarms, Daily and Yearly Earth+Moon hubs with solar terminator, Sol true-AU map, lockscreen math unlock, rotating day/night widget.
+FOSS Android astronomical alarm clock: on-device suncalc sun/moon ephemeris, solar/lunar/seasonal/planet/custom alarms, Alarms | Daily | Sky hubs (2D/3D chips; Yearly/Sol/Chart chips), lockscreen math unlock, rotating day/night widget, 2160 PNG share. Add-alarm type menu is the full catalog (Sun, Moon, Zodiac, Clock, Seasonal, Planet; Natal when a chart exists). Alarm-row chips wrap on the Daily line; Edit/Delete are icons. Canvas night/gold from tokens; Fastlane/F-Droid copy from product.json.
 
 ### Key Constraints
 
@@ -44,6 +44,8 @@ FOSS Android astronomical alarm clock: on-device suncalc sun/moon ephemeris, sol
 
 ## Session Retrospectives
 
+| 2026-09-15 | /build leftover UX-6…17 | Sunrise offer, ring banner, GPS skeleton, lockscreen polish, empty mark, overlay a11y, chips, motion, sky-hand tick, canvas tokens, progressive add, brand store copy; UX-1…17 archived | ADB screenshots/TalkBack need one `adb` device; Dependabot #21 is behind main (do not admin-merge); canvas colors stay out of M3 `color` |
+| 2026-09-14 | alarms-first UX | Chrome, optional GPS onboard, 2160 PNG share, 3 tabs, TalkBack/reduce-motion; UX-1…5 ✅ | Do not share the Alarms list; DiskLabelFit 28px cap is widgets-only; location still required to save solar/lunar |
 | 2026-09-14 | v1.8.2 /ship | AlarmClock broadcast + FSI lockscreen; skip SDK `tools`; RP #22; versionCode **10107** | Do not apply `vcodeql-bundle-*`; do not force-stop after SET_ALARM; OP12 FSI may need screen off |
 | 2026-09-11 | v1.8.0 /ship | Natal suite + Golden Path catch-up; pruned-child upgrade-sim skip; RP #19 | Do not apply `vcodeql-bundle-*`; attach `mapping.txt` on signed releases; Dependabot #4/#18 still need review merge |
 | 2026-09-11 | /build Golden Path 1–11 | Signing+R8+UP+Settings chrome+deep link+OpenSSF+sanitize; smoke parser keeps ### Sequential rows; Dependabot #4/#18 blocked by branch policy | Do not admin-merge Dependabot; attach `mapping.txt` on signed releases; project 14564 badge is README-linked |

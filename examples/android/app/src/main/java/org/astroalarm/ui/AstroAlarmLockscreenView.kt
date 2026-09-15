@@ -8,8 +8,15 @@ import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.graphicsLayer
+import androidx.compose.ui.hapticfeedback.HapticFeedbackType
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.platform.LocalHapticFeedback
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.semantics.Role
+import androidx.compose.ui.semantics.contentDescription
+import androidx.compose.ui.semantics.role
+import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardType
@@ -21,6 +28,7 @@ import dev.foss.goldenpath.R
 import org.astroalarm.astro.model.AstroAlarm
 import org.astroalarm.math.MathPreferences
 import org.astroalarm.math.MathProblemGenerator
+import kotlinx.coroutines.delay
 import java.time.LocalTime
 import java.time.format.DateTimeFormatter
 
@@ -33,8 +41,24 @@ fun AstroAlarmLockscreenView(
     val currentTime = remember {
         LocalTime.now().format(DateTimeFormatter.ofPattern("HH:mm"))
     }
+    val context = LocalContext.current
+    val haptic = LocalHapticFeedback.current
+    val reduceMotion = ReduceMotion.enabled(context)
     var showMathChallenge by remember { mutableStateOf(false) }
+    var stopping by remember { mutableStateOf(false) }
+    var stopScale by remember { mutableFloatStateOf(1f) }
+    LaunchedEffect(stopping) {
+        if (!stopping) return@LaunchedEffect
+        haptic.performHapticFeedback(HapticFeedbackType.LongPress)
+        if (LockscreenStop.animateScale(reduceMotion)) {
+            stopScale = LockscreenStop.PRESSED_SCALE
+            delay(LockscreenStop.SCALE_MS.toLong())
+        }
+        onStop()
+    }
 
+    val stopCd = stringResource(R.string.a11y_stop_alarm, alarm.label)
+    val snoozeCd = stringResource(R.string.a11y_snooze_alarm, alarm.label)
     Surface(
         modifier = Modifier.fillMaxSize(),
         color = MaterialTheme.colorScheme.background
@@ -50,15 +74,21 @@ fun AstroAlarmLockscreenView(
         ) {
             Button(
                 onClick = {
+                    haptic.performHapticFeedback(HapticFeedbackType.Confirm)
                     if (alarm.mathUnlockEnabled) {
                         showMathChallenge = true
                     } else {
-                        onStop()
+                        stopping = true
                     }
                 },
                 modifier = Modifier
                     .fillMaxWidth()
-                    .height(56.dp),
+                    .height(56.dp)
+                    .graphicsLayer { scaleX = stopScale; scaleY = stopScale }
+                    .semantics {
+                        role = Role.Button
+                        contentDescription = stopCd
+                    },
                 colors = ButtonDefaults.buttonColors(
                     containerColor = MaterialTheme.colorScheme.error,
                     contentColor = MaterialTheme.colorScheme.onError
@@ -90,11 +120,18 @@ fun AstroAlarmLockscreenView(
             }
 
             Button(
-                onClick = onSnooze,
+                onClick = {
+                    haptic.performHapticFeedback(HapticFeedbackType.Confirm)
+                    onSnooze()
+                },
                 modifier = Modifier
                     .fillMaxWidth()
                     .height(56.dp)
-                    .padding(bottom = 8.dp),
+                    .padding(bottom = 8.dp)
+                    .semantics {
+                        role = Role.Button
+                        contentDescription = snoozeCd
+                    },
                 colors = ButtonDefaults.buttonColors(
                     containerColor = MaterialTheme.colorScheme.secondaryContainer,
                     contentColor = MaterialTheme.colorScheme.onSecondaryContainer

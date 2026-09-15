@@ -6,6 +6,7 @@ import org.astroalarm.astro.alarm.AlarmTargetCopy
 import org.astroalarm.astro.alarm.AlarmWidgetScope
 import org.astroalarm.astro.model.AstroAlarm
 import org.astroalarm.astro.place.AstroPlace
+import org.astroalarm.widget.AlarmDotMark
 import org.astroalarm.sol.PlanetKepler
 import java.time.Instant
 import java.time.ZoneId
@@ -44,7 +45,7 @@ object SolAlarmOverlay {
                 val st = PlanetKepler.state(body, next)
                 val x = cx + (st.x * pxPerAu).toFloat()
                 val y = cy - (st.y * pxPerAu).toFloat()
-                canvas.drawCircle(x, y, rad, dot)
+                AlarmDotMark.draw(canvas, x, y, rad, dot, AlarmDotMark.shapeOf(alarm.target))
                 val dist = hypot(st.x, st.y)
                 if (dist < 1e-4) return@forEach
                 val pad = rad + txt.textSize

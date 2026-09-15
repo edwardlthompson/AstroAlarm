@@ -9,6 +9,7 @@ import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
@@ -24,6 +25,7 @@ fun ZodiacEventPicker(
     selectedPoint: ZodiacPoint,
     onSelect: (ZodiacSign, ZodiacPoint) -> Unit
 ) {
+    val res = LocalContext.current.resources
     var showDialog by remember { mutableStateOf(false) }
 
     OutlinedCard(
@@ -51,7 +53,7 @@ fun ZodiacEventPicker(
                     fontWeight = FontWeight.Bold
                 )
                 Text(
-                    text = AstroEventLabels.zodiacDescription(selectedSign, selectedPoint),
+                    text = AstroEventLabels.zodiacDescription(res,selectedSign, selectedPoint),
                     style = MaterialTheme.typography.bodySmall,
                     color = MaterialTheme.colorScheme.onSurfaceVariant
                 )

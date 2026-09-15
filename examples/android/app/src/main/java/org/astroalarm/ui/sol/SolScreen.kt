@@ -29,13 +29,19 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import dev.foss.goldenpath.R
 import kotlinx.coroutines.delay
+import kotlinx.coroutines.launch
+import org.astroalarm.share.SkyShareButton
+import org.astroalarm.share.SkySharePaint
 import org.astroalarm.sol.PlanetBody
 import org.astroalarm.sol.PlanetKepler
 import org.astroalarm.astro.model.AstroAlarm
 import org.astroalarm.astro.place.AstroPlace
 import org.astroalarm.astro.settings.AstroDisplayPreferences
 import org.astroalarm.ui.DiskChrome
+import org.astroalarm.ui.NextEventA11y
 import org.astroalarm.ui.OverlayToggleLine
+import org.astroalarm.ui.wheelTalkBack
+import org.astroalarm.share.sharePaintedSky
 import org.astroalarm.widget.PlanetTextures
 import org.astroalarm.widget.SolWidgetProvider
 import java.time.Instant
@@ -51,6 +57,7 @@ fun SolScreen(
     modifier: Modifier = Modifier,
 ) {
     val context = LocalContext.current
+    val shareScope = rememberCoroutineScope()
     val displayPrefs = remember { AstroDisplayPreferences(context) }
     val showEventTimes by displayPrefs.showEventTimesSol.collectAsState()
     val showNatalGhosts by displayPrefs.showNatalGhostsSol.collectAsState()
@@ -83,9 +90,10 @@ fun SolScreen(
                 horizontalAlignment = Alignment.CenterHorizontally,
                 verticalArrangement = Arrangement.spacedBy(8.dp)
             ) {
+                Box(Modifier.size(side)) {
                 Canvas(
                     modifier = Modifier
-                        .size(side)
+                        .fillMaxSize()
                         .clipToBounds()
                         .pointerInput(layoutPx, zoom, now) {
                             detectTapGestures { tap ->
@@ -99,7 +107,37 @@ fun SolScreen(
                                 zoom = (zoom * z).coerceIn(0.05f, 8f)
                             }
                         }
-                        .semantics { contentDescription = context.getString(R.string.sol_cd) }
+                        .wheelTalkBack(
+                            description = context.getString(R.string.sol_cd),
+                            nextLabel = stringResource(R.string.a11y_next_event),
+                            resetLabel = stringResource(R.string.a11y_reset_zoom),
+                            shareLabel = stringResource(R.string.sky_share_cd),
+                            onNext = { NextEventA11y.announce(context, alarms, place) },
+                            onReset = { zoom = 1f; true },
+                            onShare = {
+                                val t = now
+                                val z = zoom
+                                val d = dark
+                                val et = showEventTimes
+                                val ng = showNatalGhosts
+                                val sl = scaleLabel
+                                shareScope.launch {
+                                    sharePaintedSky(
+                                        context,
+                                        { px ->
+                                            SkySharePaint.sol(
+                                                px, t, z, d, textures, alarms, place, sl, et,
+                                                natalProfile, ng,
+                                            )
+                                        },
+                                        context.getString(R.string.sky_share_chooser),
+                                        context.getString(R.string.sky_share_failed),
+                                        context.getString(R.string.sky_share_oom),
+                                    )
+                                }
+                                true
+                            },
+                        )
                 ) {
                     val px = size.width.toInt().coerceAtLeast(1)
                     drawIntoCanvas { gc ->
@@ -109,6 +147,24 @@ fun SolScreen(
                             natalProfile, showNatalGhosts,
                         )
                     }
+                }
+                SkyShareButton(
+                    modifier = Modifier.align(Alignment.TopEnd),
+                    paint = {
+                        val t = now
+                        val z = zoom
+                        val d = dark
+                        val et = showEventTimes
+                        val ng = showNatalGhosts
+                        val sl = scaleLabel
+                        { size ->
+                            SkySharePaint.sol(
+                                size, t, z, d, textures, alarms, place, sl, et,
+                                natalProfile, ng,
+                            )
+                        }
+                    },
+                )
                 }
                 Button(
                     onClick = { pinWidget(context) },
@@ -166,11 +222,5 @@ private fun tapLine(context: android.content.Context, body: PlanetBody, now: Ins
 }
 
 private fun pinWidget(context: android.content.Context) {
-    val mgr = context.getSystemService(AppWidgetManager::class.java)
-    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O && mgr != null && mgr.isRequestPinAppWidgetSupported) {
-        mgr.requestPinAppWidget(ComponentName(context, SolWidgetProvider::class.java), null, null)
-        Toast.makeText(context, context.getString(R.string.astro_widget_pinned_success), Toast.LENGTH_SHORT).show()
-    } else {
-        Toast.makeText(context, context.getString(R.string.astro_widget_pin_manual_guide), Toast.LENGTH_LONG).show()
-    }
+    org.astroalarm.widget.WidgetPin.request(context, SolWidgetProvider::class.java)
 }

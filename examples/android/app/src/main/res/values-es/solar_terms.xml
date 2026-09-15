@@ -65,6 +65,6 @@
     <string name="solar_term_longitude">Longitud solar %1$.0f°</string>
     <string name="solar_term_phenology">Nota estacional</string>
     <string name="solar_term_timeline">Día del año</string>
-    <string name="solar_term_pin_widget">Añadir widget a la pantalla de inicio</string>
+    <string name="solar_term_pin_widget">Añadir rueda del año</string>
     <string name="solar_term_pin_widget_cd">Añadir widget de términos solares</string>
 </resources>

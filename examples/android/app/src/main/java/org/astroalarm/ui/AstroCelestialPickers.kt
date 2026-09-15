@@ -26,6 +26,8 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.Dialog
 import dev.foss.goldenpath.R
 import org.astroalarm.astro.alarm.AlarmTargetCopy
+import org.astroalarm.astro.alarm.ProgressiveAdd
+import org.astroalarm.astro.alarm.ProgressiveKind
 import org.astroalarm.astro.model.AlarmTarget
 import org.astroalarm.astro.model.LunarEventType
 import org.astroalarm.astro.model.SolarEventType
@@ -36,48 +38,42 @@ import org.astroalarm.sol.PlanetEventType
 import org.astroalarm.solarterm.SolarTerm
 import org.astroalarm.ui.solarterm.SolarTermCopy
 
-private enum class TargetKind { Solar, Lunar, Zodiac, Clock, Seasonal, Planet, Natal }
-
 @Composable
 fun TargetTypeSelector(
     currentTarget: AlarmTarget,
     onTargetChange: (AlarmTarget) -> Unit,
     natalProfileId: String? = null,
     natalAscOk: Boolean = false,
+    hasPlace: Boolean = true,
 ) {
-    val kind = when (currentTarget) {
-        is AlarmTarget.Solar -> TargetKind.Solar
-        is AlarmTarget.Lunar -> TargetKind.Lunar
-        is AlarmTarget.Zodiac -> TargetKind.Zodiac
-        is AlarmTarget.CustomClock -> TargetKind.Clock
-        is AlarmTarget.SolarTerm -> TargetKind.Seasonal
-        is AlarmTarget.Planet, is AlarmTarget.PlanetAlign, is AlarmTarget.AllPlanetsAlign -> TargetKind.Planet
-        else -> TargetKind.Natal
-    }
-    val options = buildList {
-        add(TargetKind.Solar to stringResource(R.string.astro_tab_sun))
-        add(TargetKind.Lunar to stringResource(R.string.astro_tab_moon))
-        add(TargetKind.Zodiac to stringResource(R.string.astro_tab_zodiac))
-        add(TargetKind.Clock to stringResource(R.string.astro_tab_clock))
-        add(TargetKind.Seasonal to stringResource(R.string.astro_tab_seasonal))
-        add(TargetKind.Planet to stringResource(R.string.astro_tab_planet))
-        if (natalProfileId != null) add(TargetKind.Natal to stringResource(R.string.astro_tab_natal))
-    }
+    val kind = ProgressiveAdd.kindOf(currentTarget)
+    val hasNatal = natalProfileId != null
+    val kinds = ProgressiveAdd.kinds(hasNatal)
+    val labels = mapOf(
+        ProgressiveKind.Solar to stringResource(R.string.astro_tab_sun),
+        ProgressiveKind.Lunar to stringResource(R.string.astro_tab_moon),
+        ProgressiveKind.Zodiac to stringResource(R.string.astro_tab_zodiac),
+        ProgressiveKind.Clock to stringResource(R.string.astro_tab_clock),
+        ProgressiveKind.Seasonal to stringResource(R.string.astro_tab_seasonal),
+        ProgressiveKind.Planet to stringResource(R.string.astro_tab_planet),
+        ProgressiveKind.Natal to stringResource(R.string.astro_tab_natal),
+    )
+    val options = kinds.map { it to (labels[it] ?: it.name) }
     AstroMenuDropdown(
         label = stringResource(R.string.astro_field_target_type),
-        selectedText = options.first { it.first == kind }.second,
+        selectedText = labels[kind] ?: kind.name,
         options = options,
         onSelect = { next ->
             if (next == kind) return@AstroMenuDropdown
             onTargetChange(
                 when (next) {
-                    TargetKind.Solar -> AlarmTarget.Solar(SolarEventType.Sunrise, 0)
-                    TargetKind.Lunar -> AlarmTarget.Lunar(LunarEventType.FullMoon, 0)
-                    TargetKind.Zodiac -> AlarmTarget.Zodiac(ZodiacSign.Aries, ZodiacPoint.Beginning, 0)
-                    TargetKind.Clock -> AlarmTarget.CustomClock(7, 0)
-                    TargetKind.Seasonal -> AlarmTarget.SolarTerm(SolarTerm.LICHUN, 0)
-                    TargetKind.Planet -> AlarmTarget.Planet(PlanetBody.MARS, PlanetEventType.Rise, 0)
-                    TargetKind.Natal -> if (natalAscOk && natalProfileId != null) {
+                    ProgressiveKind.Solar -> AlarmTarget.Solar(SolarEventType.Sunrise, 0)
+                    ProgressiveKind.Lunar -> AlarmTarget.Lunar(LunarEventType.FullMoon, 0)
+                    ProgressiveKind.Zodiac -> AlarmTarget.Zodiac(ZodiacSign.Aries, ZodiacPoint.Beginning, 0)
+                    ProgressiveKind.Clock -> AlarmTarget.CustomClock(7, 0)
+                    ProgressiveKind.Seasonal -> AlarmTarget.SolarTerm(SolarTerm.LICHUN, 0)
+                    ProgressiveKind.Planet -> AlarmTarget.Planet(PlanetBody.MARS, PlanetEventType.Rise, 0)
+                    ProgressiveKind.Natal -> if (natalAscOk && natalProfileId != null) {
                         AlarmTarget.NatalAscAspect(
                             org.astroalarm.astro.birth.NatalBody.SUN,
                             org.astroalarm.astro.model.NatalAspect.Conjunction,
@@ -164,7 +160,7 @@ fun PlanetTargetPicker(target: AlarmTarget, onTargetChange: (AlarmTarget) -> Uni
     }
     val modeOptions = buildList {
         eventChips(body).forEach { ev ->
-            add("event:${ev.name}" to AlarmTargetCopy.planetEventLabel(ev))
+            add("event:${ev.name}" to AlarmTargetCopy.planetEventLabel(LocalContext.current.resources, ev))
         }
         add("align" to stringResource(R.string.astro_planet_align_with))
         add("all" to stringResource(R.string.astro_planet_all_align))

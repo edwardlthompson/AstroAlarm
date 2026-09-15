@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="overlay_live_sun">Live Sun</string>
+    <string name="overlay_live_moon">Live Moon</string>
+    <string name="overlay_live_mercury">Live Mercury</string>
+</resources>

@@ -1,1 +1,1 @@
-FOSS Android skeleton for agent-project-bootstrap
+Wake with the sun, the moon, and your own clock.

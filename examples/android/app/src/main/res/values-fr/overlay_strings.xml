@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="overlay_live_sun">Soleil en direct</string>
+    <string name="overlay_live_moon">Lune en direct</string>
+    <string name="overlay_live_mercury">Mercure en direct</string>
+</resources>

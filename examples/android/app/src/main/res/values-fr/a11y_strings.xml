@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="a11y_decrease">Diminuer %1$s</string>
+    <string name="a11y_increase">Augmenter %1$s</string>
+    <string name="a11y_expand_place">Afficher la recherche de ville</string>
+    <string name="a11y_collapse_place">Masquer la recherche de ville</string>
+    <string name="a11y_use_gps">Utiliser la position actuelle</string>
+    <string name="a11y_next_event">Événement suivant</string>
+    <string name="a11y_reset_zoom">Réinitialiser le zoom</string>
+    <string name="a11y_no_next_event">Aucune alarme à venir</string>
+    <string name="a11y_stop_alarm">Arrêter %1$s</string>
+    <string name="a11y_snooze_alarm">Reporter %1$s</string>
+</resources>

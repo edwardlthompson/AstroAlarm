@@ -17,9 +17,17 @@ Sequential `[AGENT]` first, then Parallel. After each AGENT step: `python3 scrip
 
 ### Sprint 2+ — Incremental Features
 
-<!-- parallel_exception: board empty after Golden Path archive; Open PRs AUTO stay synced -->
+<!-- parallel_exception: board empty after leftover UX and device smoke archive -->
 
 > Natal chart disk widget archived in COMPLETED_TASKS.md. Template catch-up from agent-project-bootstrap v1.4.0 on `chore/template-catchup-v1.4.0`.
+
+> **Sprint 2+ alarms-first UX-1…17** archived in COMPLETED_TASKS.md.
+
+> **Sprint 2+ Human & device** archived in COMPLETED_TASKS.md (phoneScreenshots, 60s/90s/TalkBack/share, Dependabot #21).
+
+### Sequential
+
+_(none open)_
 
 ### Parallel
 

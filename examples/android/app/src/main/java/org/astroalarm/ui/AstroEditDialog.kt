@@ -42,6 +42,7 @@ fun AstroEditDialog(
     onSave: (AstroAlarm) -> Unit
 ) {
     val context = LocalContext.current
+    val res = context.resources
     val hasLocation = place != null && place.isValid
     val resolvedDefaultTarget = if (!hasLocation && defaultTarget is AlarmTarget.Solar) {
         AlarmTarget.CustomClock(7, 0)
@@ -115,6 +116,7 @@ fun AstroEditDialog(
                         onTargetChange = { target = it },
                         natalProfileId = natalProfileId,
                         natalAscOk = natalAscOk,
+                        hasPlace = hasLocation,
                     )
 
                     if (isAstroTarget && !hasLocation) {
@@ -137,7 +139,7 @@ fun AstroEditDialog(
                         target, initialAlarm?.id, existingAlarms,
                     )
                     if (peer != null) {
-                        val peerName = peer.label.ifBlank { org.astroalarm.astro.alarm.AlarmTargetCopy.fallback(peer.target) }
+                        val peerName = peer.label.ifBlank { org.astroalarm.astro.alarm.AlarmTargetCopy.fallback(res, peer.target) }
                         Text(
                             text = stringResource(R.string.astro_alarm_duplicate_calendar, peerName),
                             style = MaterialTheme.typography.bodySmall,
@@ -153,10 +155,10 @@ fun AstroEditDialog(
                             Text(
                                 when (val t = target) {
                                     is AlarmTarget.CustomClock -> String.format(Locale.getDefault(), "%02d:%02d", t.hour, t.minute)
-                                    is AlarmTarget.Solar -> AstroEventLabels.offsetSummary(t.offsetMinutes, AstroEventLabels.solarLabel(t.event))
-                                    is AlarmTarget.Lunar -> AstroEventLabels.offsetSummary(t.offsetMinutes, AstroEventLabels.lunarLabel(t.event))
-                                    is AlarmTarget.Zodiac -> AstroEventLabels.offsetSummary(t.offsetMinutes, AstroEventLabels.zodiacLabel(t.sign, t.point))
-                                    else -> org.astroalarm.astro.alarm.AlarmTargetCopy.fallback(t)
+                                    is AlarmTarget.Solar -> AstroEventLabels.offsetSummary(res, t.offsetMinutes, AstroEventLabels.solarLabel(res, t.event))
+                                    is AlarmTarget.Lunar -> AstroEventLabels.offsetSummary(res, t.offsetMinutes, AstroEventLabels.lunarLabel(res, t.event))
+                                    is AlarmTarget.Zodiac -> AstroEventLabels.offsetSummary(res, t.offsetMinutes, AstroEventLabels.zodiacLabel(t.sign, t.point))
+                                    else -> org.astroalarm.astro.alarm.AlarmTargetCopy.fallback(res, t)
                                 }
                             )
                         },
@@ -203,10 +205,10 @@ fun AstroEditDialog(
                             val finalLabel = label.ifBlank {
                                 when (val t = target) {
                                     is AlarmTarget.CustomClock -> String.format(Locale.getDefault(), "%02d:%02d", t.hour, t.minute)
-                                    is AlarmTarget.Solar -> AstroEventLabels.offsetSummary(t.offsetMinutes, AstroEventLabels.solarLabel(t.event))
-                                    is AlarmTarget.Lunar -> AstroEventLabels.offsetSummary(t.offsetMinutes, AstroEventLabels.lunarLabel(t.event))
-                                    is AlarmTarget.Zodiac -> AstroEventLabels.offsetSummary(t.offsetMinutes, AstroEventLabels.zodiacLabel(t.sign, t.point))
-                                    else -> org.astroalarm.astro.alarm.AlarmTargetCopy.fallback(t)
+                                    is AlarmTarget.Solar -> AstroEventLabels.offsetSummary(res, t.offsetMinutes, AstroEventLabels.solarLabel(res, t.event))
+                                    is AlarmTarget.Lunar -> AstroEventLabels.offsetSummary(res, t.offsetMinutes, AstroEventLabels.lunarLabel(res, t.event))
+                                    is AlarmTarget.Zodiac -> AstroEventLabels.offsetSummary(res, t.offsetMinutes, AstroEventLabels.zodiacLabel(t.sign, t.point))
+                                    else -> org.astroalarm.astro.alarm.AlarmTargetCopy.fallback(res, t)
                                 }
                             }
                             val result = AstroAlarm(

@@ -3,12 +3,15 @@ package org.astroalarm.ui
 import androidx.compose.foundation.lazy.LazyListScope
 import androidx.compose.foundation.lazy.items
 import androidx.compose.runtime.Composable
+import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import dev.foss.goldenpath.R
 import org.astroalarm.astro.alarm.AlarmFireIdentity
+import org.astroalarm.astro.alarm.AlarmGroupKind
+import org.astroalarm.astro.alarm.AlarmGroupSections
 import org.astroalarm.astro.alarm.AlarmTargetCopy
 import org.astroalarm.astro.alarm.AstroNextFire
-import org.astroalarm.astro.model.AlarmTarget
 import org.astroalarm.astro.model.AstroAlarm
 import org.astroalarm.astro.place.AstroPlace
 import java.time.Instant
@@ -41,6 +44,7 @@ fun LazyListScope.renderNextDueAlarms(
             onToggle = { onToggle(alarm, it) },
             onEdit = { onEdit(alarm) },
             onDelete = { onDelete(alarm) },
+            modifier = Modifier.animateItem(),
             peerNote = alarmPeerNote(alarm, alarms),
         )
     }
@@ -53,59 +57,14 @@ fun LazyListScope.renderGroupedAlarms(
     onEdit: (AstroAlarm) -> Unit,
     onDelete: (AstroAlarm) -> Unit,
 ) {
-    item {
-        SectionHeader(title = "☀️ " + stringResource(R.string.astro_section_solar))
-    }
-    val solarAlarms = alarms.filter { it.target is AlarmTarget.Solar }
-        .sortedBy { AstroNextFire.nextInstant(it, place)?.toEpochMilli() ?: Long.MAX_VALUE }
-    if (solarAlarms.isEmpty()) {
-        item { EmptySectionNote(stringResource(R.string.astro_empty_solar)) }
-    } else {
-        items(solarAlarms, key = { it.id }) { alarm ->
-            val nextInstant = AstroNextFire.nextInstant(alarm, place, all = alarms)
-            val formatted = nextInstant?.let { formatInstant(it, place) }
-            AstroAlarmRow(
-                alarm = alarm,
-                nextFireFormatted = formatted,
-                onToggle = { onToggle(alarm, it) },
-                onEdit = { onEdit(alarm) },
-                onDelete = { onDelete(alarm) },
-                peerNote = alarmPeerNote(alarm, alarms),
-            )
+    AlarmGroupSections.nonEmpty(alarms).forEach { (kind, rows) ->
+        item(key = "hdr-${kind.name}") {
+            SectionHeader(title = groupedTitle(kind))
         }
-    }
-
-    item {
-        SectionHeader(title = "🌙 " + stringResource(R.string.astro_section_lunar))
-    }
-    val lunarAlarms = alarms.filter { it.target is AlarmTarget.Lunar }
-        .sortedBy { AstroNextFire.nextInstant(it, place)?.toEpochMilli() ?: Long.MAX_VALUE }
-    if (lunarAlarms.isEmpty()) {
-        item { EmptySectionNote(stringResource(R.string.astro_empty_lunar)) }
-    } else {
-        items(lunarAlarms, key = { it.id }) { alarm ->
-            val nextInstant = AstroNextFire.nextInstant(alarm, place, all = alarms)
-            val formatted = nextInstant?.let { formatInstant(it, place) }
-            AstroAlarmRow(
-                alarm = alarm,
-                nextFireFormatted = formatted,
-                onToggle = { onToggle(alarm, it) },
-                onEdit = { onEdit(alarm) },
-                onDelete = { onDelete(alarm) },
-                peerNote = alarmPeerNote(alarm, alarms),
-            )
+        val sorted = rows.sortedBy {
+            AstroNextFire.nextInstant(it, place)?.toEpochMilli() ?: Long.MAX_VALUE
         }
-    }
-
-    item {
-        SectionHeader(title = "♈ " + stringResource(R.string.astro_section_zodiac))
-    }
-    val zodiacAlarms = alarms.filter { it.target is AlarmTarget.Zodiac }
-        .sortedBy { AstroNextFire.nextInstant(it, place)?.toEpochMilli() ?: Long.MAX_VALUE }
-    if (zodiacAlarms.isEmpty()) {
-        item { EmptySectionNote(stringResource(R.string.astro_empty_zodiac)) }
-    } else {
-        items(zodiacAlarms, key = { it.id }) { alarm ->
+        items(sorted, key = { it.id }) { alarm ->
             val nextInstant = AstroNextFire.nextInstant(alarm, place, all = alarms)
             val formatted = nextInstant?.let { formatInstant(it, place) }
             AstroAlarmRow(
@@ -114,103 +73,7 @@ fun LazyListScope.renderGroupedAlarms(
                 onToggle = { onToggle(alarm, it) },
                 onEdit = { onEdit(alarm) },
                 onDelete = { onDelete(alarm) },
-                peerNote = alarmPeerNote(alarm, alarms),
-            )
-        }
-    }
-
-    item {
-        SectionHeader(title = "⏰ " + stringResource(R.string.astro_section_clock))
-    }
-    val clockAlarms = alarms.filter { it.target is AlarmTarget.CustomClock }
-        .sortedBy { AstroNextFire.nextInstant(it, place)?.toEpochMilli() ?: Long.MAX_VALUE }
-    if (clockAlarms.isEmpty()) {
-        item { EmptySectionNote(stringResource(R.string.astro_empty_clock)) }
-    } else {
-        items(clockAlarms, key = { it.id }) { alarm ->
-            val nextInstant = AstroNextFire.nextInstant(alarm, place, all = alarms)
-            val formatted = nextInstant?.let { formatInstant(it, place) }
-            AstroAlarmRow(
-                alarm = alarm,
-                nextFireFormatted = formatted,
-                onToggle = { onToggle(alarm, it) },
-                onEdit = { onEdit(alarm) },
-                onDelete = { onDelete(alarm) },
-                peerNote = alarmPeerNote(alarm, alarms),
-            )
-        }
-    }
-
-    item {
-        SectionHeader(title = "🍃 " + stringResource(R.string.astro_section_seasonal))
-    }
-    val seasonalAlarms = alarms.filter { it.target is AlarmTarget.SolarTerm }
-        .sortedBy { AstroNextFire.nextInstant(it, place)?.toEpochMilli() ?: Long.MAX_VALUE }
-    if (seasonalAlarms.isEmpty()) {
-        item { EmptySectionNote(stringResource(R.string.astro_empty_seasonal)) }
-    } else {
-        items(seasonalAlarms, key = { it.id }) { alarm ->
-            val nextInstant = AstroNextFire.nextInstant(alarm, place, all = alarms)
-            val formatted = nextInstant?.let { formatInstant(it, place) }
-            AstroAlarmRow(
-                alarm = alarm,
-                nextFireFormatted = formatted,
-                onToggle = { onToggle(alarm, it) },
-                onEdit = { onEdit(alarm) },
-                onDelete = { onDelete(alarm) },
-                peerNote = alarmPeerNote(alarm, alarms),
-            )
-        }
-    }
-
-    item {
-        SectionHeader(title = "🪐 " + stringResource(R.string.astro_section_planet))
-    }
-    val planetAlarms = alarms.filter {
-        it.target is AlarmTarget.Planet || it.target is AlarmTarget.PlanetAlign || it.target is AlarmTarget.AllPlanetsAlign
-    }.sortedBy { AstroNextFire.nextInstant(it, place)?.toEpochMilli() ?: Long.MAX_VALUE }
-    if (planetAlarms.isEmpty()) {
-        item { EmptySectionNote(stringResource(R.string.astro_empty_planet)) }
-    } else {
-        items(planetAlarms, key = { it.id }) { alarm ->
-            val nextInstant = AstroNextFire.nextInstant(alarm, place, all = alarms)
-            val formatted = nextInstant?.let { formatInstant(it, place) }
-            AstroAlarmRow(
-                alarm = alarm,
-                nextFireFormatted = formatted,
-                onToggle = { onToggle(alarm, it) },
-                onEdit = { onEdit(alarm) },
-                onDelete = { onDelete(alarm) },
-                peerNote = alarmPeerNote(alarm, alarms),
-            )
-        }
-    }
-
-    item {
-        SectionHeader(title = "✨ " + stringResource(R.string.astro_tab_natal))
-    }
-    val natalAlarms = alarms.filter {
-        it.target is AlarmTarget.NatalAscAspect ||
-            it.target is AlarmTarget.NatalMcAspect ||
-            it.target is AlarmTarget.MoonReturn ||
-            it.target is AlarmTarget.SolarReturn ||
-            it.target is AlarmTarget.MercuryStation ||
-            it.target is AlarmTarget.MoonSignIngress ||
-            it.target is AlarmTarget.NatalCompoundSpecific ||
-            it.target is AlarmTarget.NatalCompoundAny
-    }.sortedBy { AstroNextFire.nextInstant(it, place)?.toEpochMilli() ?: Long.MAX_VALUE }
-    if (natalAlarms.isEmpty()) {
-        item { EmptySectionNote(stringResource(R.string.astro_birth_empty)) }
-    } else {
-        items(natalAlarms, key = { it.id }) { alarm ->
-            val nextInstant = AstroNextFire.nextInstant(alarm, place, all = alarms)
-            val formatted = nextInstant?.let { formatInstant(it, place) }
-            AstroAlarmRow(
-                alarm = alarm,
-                nextFireFormatted = formatted,
-                onToggle = { onToggle(alarm, it) },
-                onEdit = { onEdit(alarm) },
-                onDelete = { onDelete(alarm) },
+                modifier = Modifier.animateItem(),
                 peerNote = alarmPeerNote(alarm, alarms),
             )
         }
@@ -218,8 +81,19 @@ fun LazyListScope.renderGroupedAlarms(
 }
 
 @Composable
+private fun groupedTitle(kind: AlarmGroupKind): String = when (kind) {
+    AlarmGroupKind.Solar -> stringResource(R.string.astro_section_solar)
+    AlarmGroupKind.Lunar -> stringResource(R.string.astro_section_lunar)
+    AlarmGroupKind.Zodiac -> stringResource(R.string.astro_section_zodiac)
+    AlarmGroupKind.Clock -> stringResource(R.string.astro_section_clock)
+    AlarmGroupKind.Seasonal -> stringResource(R.string.astro_section_seasonal)
+    AlarmGroupKind.Planet -> stringResource(R.string.astro_section_planet)
+    AlarmGroupKind.Natal -> stringResource(R.string.astro_tab_natal)
+}
+
+@Composable
 internal fun alarmPeerNote(alarm: AstroAlarm, alarms: List<AstroAlarm>): String? {
     val peer = AlarmFireIdentity.otherPeer(alarm.target, alarm.id, alarms) ?: return null
-    val name = peer.label.ifBlank { AlarmTargetCopy.fallback(peer.target) }
+    val name = peer.label.ifBlank { AlarmTargetCopy.fallback(LocalContext.current.resources, peer.target) }
     return stringResource(R.string.astro_alarm_also_listed, name)
 }

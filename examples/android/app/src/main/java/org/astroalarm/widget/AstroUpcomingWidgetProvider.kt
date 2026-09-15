@@ -34,7 +34,7 @@ class AstroUpcomingWidgetProvider : AppWidgetProvider() {
         val formattedItems: List<String> = AlarmWidgetScope.upcomingLines(alarms, place, now, horizon).map { (alarm, next) ->
             val zdt = ZonedDateTime.ofInstant(next, zone)
             val icon = AlarmTargetCopy.icon(alarm.target)
-            val label = alarm.label.ifBlank { AlarmTargetCopy.fallback(alarm.target) }
+            val label = alarm.label.ifBlank { AlarmTargetCopy.fallback(context.resources, alarm.target) }
             "$icon${zdt.format(timeFmt)} - $label"
         }
 

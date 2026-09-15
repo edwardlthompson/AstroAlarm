@@ -29,12 +29,17 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import dev.foss.goldenpath.R
 import kotlinx.coroutines.delay
+import kotlinx.coroutines.launch
 import org.astroalarm.astro.model.AstroAlarm
 import org.astroalarm.astro.place.AstroPlace
 import org.astroalarm.astro.settings.AstroDisplayPreferences
+import org.astroalarm.share.SkyShareButton
+import org.astroalarm.share.SkySharePaint
 import org.astroalarm.solarterm.SolarTerm
 import org.astroalarm.ui.DiskChrome
+import org.astroalarm.ui.NextEventA11y
 import org.astroalarm.ui.OverlayToggleLine
+import org.astroalarm.ui.wheelTalkBack
 import org.astroalarm.widget.EarthTexture
 import org.astroalarm.widget.MoonTexture
 import org.astroalarm.widget.SolarTermWidgetProvider
@@ -53,7 +58,9 @@ fun SolarTermScreen(
     var now by remember { mutableStateOf(Instant.now()) }
     var viewport by remember { mutableStateOf(WheelZoomPan()) }
     val viewportLatest = rememberUpdatedState(viewport)
+    val shareScope = rememberCoroutineScope()
     var selected by remember { mutableStateOf<SolarTerm?>(null) }
+    var tapHighlight by remember { mutableStateOf<Int?>(null) }
     val dark = isSystemInDarkTheme()
     val earth = remember { EarthTexture.get(context) }
     val moon = remember { MoonTexture.get(context) }
@@ -66,6 +73,13 @@ fun SolarTermScreen(
             delay(60_000L)
             now = Instant.now()
         }
+    }
+
+    LaunchedEffect(selected) {
+        val ord = selected?.ordinal ?: return@LaunchedEffect
+        tapHighlight = ord
+        delay(org.astroalarm.ui.YearlyHighlight.MS.toLong())
+        tapHighlight = null
     }
 
     val (snap, req) = remember(place, now.epochSecond / 60, dark, compact, alarmOrds) {
@@ -87,9 +101,10 @@ fun SolarTermScreen(
                 horizontalAlignment = Alignment.CenterHorizontally,
                 verticalArrangement = Arrangement.spacedBy(8.dp)
             ) {
+                Box(Modifier.size(side)) {
                 Canvas(
                     modifier = Modifier
-                        .size(side)
+                        .fillMaxSize()
                         .clipToBounds()
                         .pointerInput(Unit) {
                             detectTransformGestures { centroid, pan, zoom, _ ->
@@ -113,7 +128,28 @@ fun SolarTermScreen(
                                 if (idx != null) selected = SolarTerm.entries[idx]
                             }
                         }
-                        .semantics { contentDescription = talk }
+                        .wheelTalkBack(
+                            description = talk,
+                            nextLabel = stringResource(R.string.a11y_next_event),
+                            resetLabel = stringResource(R.string.a11y_reset_zoom),
+                            shareLabel = stringResource(R.string.sky_share_cd),
+                            onNext = { NextEventA11y.announce(context, alarms, place) },
+                            onReset = { viewport = WheelZoomPan(); true },
+                            onShare = {
+                                val v = viewport
+                                val r = req
+                                shareScope.launch {
+                                    org.astroalarm.share.sharePaintedSky(
+                                        context,
+                                        { size -> SkySharePaint.yearly(size, r, v, earth, moon) },
+                                        context.getString(R.string.sky_share_chooser),
+                                        context.getString(R.string.sky_share_failed),
+                                        context.getString(R.string.sky_share_oom),
+                                    )
+                                }
+                                true
+                            },
+                        )
                 ) {
                     val px = size.width.toInt().coerceAtLeast(1)
                     drawIntoCanvas { gc ->
@@ -121,9 +157,18 @@ fun SolarTermScreen(
                         native.drawColor(org.astroalarm.solarterm.SolarTermPalette.wheelBg(req.dark))
                         native.save()
                         WheelZoomPanMath.concat(native, viewport, size.width)
-                        SolarTermWheelRenderer.draw(native, req, px, earth, moon)
+                        SolarTermWheelRenderer.draw(native, req.copy(tapHighlight = tapHighlight), px, earth, moon)
                         native.restore()
                     }
+                }
+                SkyShareButton(
+                    modifier = Modifier.align(Alignment.TopEnd),
+                    paint = {
+                        val v = viewport
+                        val r = req
+                        { size -> SkySharePaint.yearly(size, r, v, earth, moon) }
+                    },
+                )
                 }
                 Button(
                     onClick = { pinWidget(context) },
@@ -177,11 +222,5 @@ fun SolarTermScreen(
 }
 
 private fun pinWidget(context: android.content.Context) {
-    val mgr = context.getSystemService(AppWidgetManager::class.java)
-    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O && mgr != null && mgr.isRequestPinAppWidgetSupported) {
-        mgr.requestPinAppWidget(ComponentName(context, SolarTermWidgetProvider::class.java), null, null)
-        Toast.makeText(context, context.getString(R.string.astro_widget_pinned_success), Toast.LENGTH_SHORT).show()
-    } else {
-        Toast.makeText(context, context.getString(R.string.astro_widget_pin_manual_guide), Toast.LENGTH_LONG).show()
-    }
+    org.astroalarm.widget.WidgetPin.request(context, SolarTermWidgetProvider::class.java)
 }

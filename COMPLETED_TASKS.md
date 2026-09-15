@@ -2,6 +2,32 @@
 
 > Archive of finished BUILD_PLAN items.
 
+## Sprint 2+ Human & device (2026-09-15)
+
+- ✅ [ADB] android phoneScreenshots for Fastlane/F-Droid (360dp tabs readable)
+- ✅ [ADB] android 60s clock / 90s sunrise+city / TalkBack add alarm / share sheet
+- ✅ [AUTO] Merge Dependabot [#21](https://github.com/edwardlthompson/AstroAlarm/pull/21) (chore(deps): bump the android-dependencies group across 1 directory with 7 updates)
+
+## Sprint 2+ alarms-first UX-1…17 (2026-09-15)
+
+- ✅ [AGENT] android UX-1 alarms-first-chrome (`docs/features/alarms-first-chrome.md`)
+- ✅ [AGENT] android UX-2 alarms-first-onboard (`docs/features/alarms-first-onboard.md`)
+- ✅ [AGENT] android UX-3 sky-share-2160 (`docs/features/sky-share-2160.md`)
+- ✅ [AGENT] android UX-4 alarms-first-nav (`docs/features/alarms-first-nav.md`)
+- ✅ [AGENT] android UX-5 alarms-first-a11y TalkBack Fastlane (`docs/features/alarms-first-a11y.md`)
+- ✅ [AGENT] android UX-6 first-sunrise-offer after city set (`docs/features/first-sunrise-offer.md`)
+- ✅ [AGENT] android UX-7 ring-will-not-fire banner includes Exact (`docs/features/ring-will-not-fire.md`)
+- ✅ [AGENT] android UX-8 gps-locate skeleton three muted bars (`docs/features/gps-locate-skeleton.md`)
+- ✅ [AGENT] android UX-9 lockscreen Stop/Snooze haptic scale and TalkBack label (`docs/features/lockscreen-stop-polish.md`)
+- ✅ [AGENT] android UX-10 empty-alarms disk-mark illustration (`docs/features/empty-alarms-mark.md`)
+- ✅ [AGENT] android UX-11 overlay-toggles 48dp Live-Sun i18n Sol/natal TalkBack (`docs/features/overlay-toggles-a11y.md`)
+- ✅ [AGENT] android UX-12 daily-sky Nothing-style segmented chips (`docs/features/daily-sky-segmented.md`)
+- ✅ [AGENT] android UX-13 ux-motion FAB row empty permission hand (reduce-motion) (`docs/features/ux-motion.md`)
+- ✅ [AGENT] android UX-14 sky-hand event tick and Yearly 150ms sector highlight (`docs/features/sky-hand-tick.md`)
+- ✅ [AGENT] android UX-15 canvas astro.night/gold tokens no new hex (`docs/features/canvas-astro-tokens.md`)
+- ✅ [AGENT] android UX-16 progressive add Clock+Sunrise then More events (`docs/features/progressive-add.md`)
+- ✅ [AGENT] android docs UX-17 brand-voice and Fastlane/F-Droid copy from product.json (`docs/features/brand-voice.md`)
+
 ## Sprint 2+ Golden Path 1–11 (2026-09-11)
 
 - ✅ [AGENT] `android-signing` — port upload-keystore / rollback patterns into product runbook usage (`docs/features/android-signing.md`)

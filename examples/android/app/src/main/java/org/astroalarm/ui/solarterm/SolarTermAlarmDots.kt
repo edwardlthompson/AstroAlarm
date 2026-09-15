@@ -55,9 +55,20 @@ object SolarTermAlarmDots {
         if (alarmOrds.isEmpty()) return
         val p = Paint(Paint.ANTI_ALIAS_FLAG).apply { color = 0xFFE53935.toInt() }
         val rad = dotRad(size)
+        val seasons = setOf(
+            SolarTerm.CHUNFEN.ordinal,
+            SolarTerm.XIAZHI.ordinal,
+            SolarTerm.QIUFEN.ordinal,
+            SolarTerm.DONGZHI.ordinal,
+        )
         alarmOrds.forEach { ord ->
             val (x, y) = xy(cx, cy, hubFill, rot, ord)
-            canvas.drawCircle(x, y, rad, p)
+            val shape = if (ord in seasons) {
+                org.astroalarm.widget.AlarmDotMark.Shape.Diamond
+            } else {
+                org.astroalarm.widget.AlarmDotMark.Shape.Circle
+            }
+            org.astroalarm.widget.AlarmDotMark.draw(canvas, x, y, rad, p, shape)
         }
     }
 
