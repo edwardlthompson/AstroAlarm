@@ -6,14 +6,14 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [Unreleased]
+
 ## [1.10.0](https://github.com/edwardlthompson/AstroAlarm/compare/v1.9.0...v1.10.0) (2026-09-15)
 
 
 ### Added
 
 * **android:** circular disks and unique widget previews ([31d9c12](https://github.com/edwardlthompson/AstroAlarm/commit/31d9c12a876709ca7a146de41444274c0a7a0ba7))
-
-## [Unreleased]
 
 ## [1.9.0](https://github.com/edwardlthompson/AstroAlarm/compare/v1.8.2...v1.9.0) (2026-09-15)
 
