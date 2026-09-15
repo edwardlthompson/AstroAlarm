@@ -189,3 +189,21 @@
 | **Cause** | `file://` clone of a pruned product has no web/python stacks to reinstate; validate-bootstrap then expects multi-stack template artifacts |
 | **Fix** | `scripts/simulate-template-upgrade.sh` detects `.cursor/stack-selection.json` `"pruned": true` and runs Canon cherry-pick + Sacred AGENTS only |
 | **Prevention** | Do not re-init pruned children as web against self; keep full web path for unpruned template maintainer trees |
+
+### KB-023 — Android 16 BAL blocks AlarmClock Activity starts
+
+| Field | Detail |
+|-------|--------|
+| **Symptom** | AlarmManager fires but lockscreen does not open; logcat `BAL_BLOCK` / `VisualInterruptionDecisionProvider: FSI suppressed` |
+| **Cause** | targetSdk 37: `setAlarmClock` Activity PendingIntent is delivered as uid 1000 with `balAllowedByPiCreator: BSP.NONE`. Creator `pendingIntentBackgroundActivityStartMode` on `getActivity` crashes. `startActivity` from the fire receiver stays `SYSTEM_DEFINED` |
+| **Fix** | AlarmClock operation is `ACTION_ALARM_FIRE` broadcast; `AstroAlarmReceiver` posts full-screen intent notification; SystemUI launches the lockscreen. Split `AlarmLaunchOptions.creatorBundle` vs `senderBundle` |
+| **Prevention** | Do not use an Activity PendingIntent as the AlarmClock operation on API 36+. Do not force-stop after SET_ALARM (cancels the slot) |
+
+### KB-024 — `setup-android@v4` default `tools` package is gone
+
+| Field | Detail |
+|-------|--------|
+| **Symptom** | CodeQL `Analyze (java-kotlin)` fails at Setup Android SDK: `Failed to find package 'tools'` |
+| **Cause** | `android-actions/setup-android@v4` defaults to `tools platform-tools`; current `sdkmanager` no longer ships the legacy `tools` package |
+| **Fix** | Pass `packages: platform-tools` on every `setup-android@v4` step (`ci.yml`, `codeql.yml`, `release.yml`) |
+| **Prevention** | Do not rely on the action default package list; GitHub runner already has cmdline-tools |
