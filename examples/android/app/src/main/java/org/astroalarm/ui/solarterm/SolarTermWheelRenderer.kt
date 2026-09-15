@@ -9,6 +9,7 @@ import org.astroalarm.solarterm.SolarTermLayout
 import org.astroalarm.solarterm.SolarTermPalette
 import org.astroalarm.solarterm.SolarTermSnapshot
 import org.astroalarm.solarterm.wrap360
+import org.astroalarm.ui.WheelDisk
 import java.time.Instant
 import kotlin.math.atan2
 import kotlin.math.cos
@@ -54,7 +55,7 @@ object SolarTermWheelRenderer {
         val outer = size * outerFrac()
         val inner = size * innerFrac(req.compact)
         val hubFill = if (req.compact) inner - size * 0.02f else inner
-        canvas.drawColor(SolarTermPalette.wheelBg(req.dark))
+        WheelDisk.withClip(canvas, size, SolarTermPalette.wheelBg(req.dark), outerFrac()) {
         val rot = 0f
         val oval = RectF(cx - outer, cy - outer, cx + outer, cy + outer)
         val sector = Paint(Paint.ANTI_ALIAS_FLAG).apply { style = Paint.Style.FILL }
@@ -75,6 +76,7 @@ object SolarTermWheelRenderer {
         )
         SolarTermAlarmDots.draw(canvas, cx, cy, hubFill, rot, req.alarmOrds, size)
         needleAt(canvas, cx, cy, inner, outer, req.dark, SolarTermLayout.canvasDeg(req.nowLon))
+        }
     }
 
     fun sectorAt(x: Float, y: Float, size: Int, @Suppress("UNUSED_PARAMETER") nowLon: Double, compact: Boolean = false): Int? {

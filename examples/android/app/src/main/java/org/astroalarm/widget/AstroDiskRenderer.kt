@@ -7,6 +7,7 @@ import org.astroalarm.astro.place.AstroPlace
 import org.astroalarm.astro.sky.SkyBodies
 import org.astroalarm.astro.sun.SolarCalculator
 import org.astroalarm.astro.zodiac.ZodiacCalculator
+import org.astroalarm.ui.WheelDisk
 import java.time.Instant
 import java.time.ZonedDateTime
 import java.time.format.DateTimeFormatter
@@ -47,6 +48,7 @@ object AstroDiskRenderer {
         val rings = DiskRingLayout.of(size, showMonthTicks, showZodiac)
         val radius = rings.innerR
         val zone = place?.zone ?: java.time.ZoneId.systemDefault()
+        WheelDisk.withClip(canvas, size, 0) {
         val nowZdt = ZonedDateTime.ofInstant(now, zone)
         val nowAngle = (nowZdt.hour * 60 + nowZdt.minute + (nowZdt.second / 60f)) / 1440f * 360f
         val date = nowZdt.toLocalDate()
@@ -120,6 +122,7 @@ object AstroDiskRenderer {
         AstroDiskBodies.drawSun(canvas, center, rings.bodyR, size, sunDeg)
         if (eventTimes.alarmMarkers) {
             AstroDiskAlarmOverlay.draw(canvas, alarms, place, now, horizon, zone, center, radius, rings.alarmR, size, nowAngle, timeFmt)
+        }
         }
     }
 }

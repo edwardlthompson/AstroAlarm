@@ -10,7 +10,6 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [1.9.0](https://github.com/edwardlthompson/AstroAlarm/compare/v1.8.2...v1.9.0) (2026-09-15)
 
-
 ### Added
 
 * **android:** ship leftover alarms-first UX ([d10d86e](https://github.com/edwardlthompson/AstroAlarm/commit/d10d86e041f9a53eb9fdb1d4b4a5fddccefe416e))

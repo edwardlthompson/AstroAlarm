@@ -17,6 +17,13 @@
 
 ## Entries
 
+### 2026-09-15 — v1.10.0 /ship
+- **Status:** Accepted
+- **Context:** Yearly/Sol/natal/Daily disks painted a black square plate; natal-align reused the alarms picker art.
+- **Decision:** Inscribe fill + `CircleShape` clip via `WheelDisk`; unique `preview_widget_natal_align`. Empty Unreleased; `feat(android)` so Release Please cuts **1.10.0**. App **1.10.0** / versionCode **10109**. Skip `codeql-action@vcodeql-bundle-*`. Sideload with `adb install -r` (current phones are debug-signed).
+- **Alternatives considered:** Applying `vcodeql-bundle-*` (rejected: known invalid). Uninstalling before sideload (rejected: wipes alarms).
+- **Consequences:** Square bitmap corners stay transparent; all seven widgets have distinct picker previews.
+
 ### 2026-09-15 — v1.9.0 /ship
 - **Status:** Accepted
 - **Context:** Alarms-first leftovers plus catalog/row polish were ready on main. upd offered only `codeql-action@vcodeql-bundle-*`. Remote already had Dependabot #21.

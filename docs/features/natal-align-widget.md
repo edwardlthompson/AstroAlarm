@@ -6,6 +6,7 @@
 
 - ✅ Profile label + next double + next triple lines
 - ✅ Empty state without profile
+- ✅ Distinct picker preview (not the alarms list art)
 - ✅ Refreshes with `AstroAlarmScheduler` widget refresh
 
 ## Smoke scenario
@@ -19,11 +20,11 @@
 | Layer | Path |
 |-------|------|
 | Logic | `NatalAlignWidgetCopy.kt` |
-| View | `NatalAlignWidgetProvider`, `widget_natal_align.xml` |
-
+| View | `NatalAlignWidgetProvider`, `widget_natal_align.xml`, `preview_widget_natal_align.xml` |
+| Tests | `NatalAlignWidgetCopyTest`, `WidgetPreviewCatalogTest` |
 ## Tests
 
-- Automated: yes — copy builder empty profile
+- Automated: yes — copy builder empty profile; unique picker preview per widget info
 - Command: `python3 scripts/agent-run.py feature-gate --stack android`
 
 ## Fallback validation

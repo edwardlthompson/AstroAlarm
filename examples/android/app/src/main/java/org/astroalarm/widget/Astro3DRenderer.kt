@@ -8,6 +8,7 @@ import org.astroalarm.astro.sky.BodySky
 import org.astroalarm.astro.sky.SkyBodies
 import org.astroalarm.astro.zodiac.ZodiacCalculator
 import org.astroalarm.astro.zodiac.ZodiacSign
+import org.astroalarm.ui.WheelDisk
 import java.time.Instant
 import kotlin.math.*
 
@@ -48,7 +49,8 @@ object Astro3DRenderer {
         val lat = place?.latitude ?: 40.0
         val lon = place?.longitude ?: -74.0
 
-        canvas.drawRect(0f, 0f, size.toFloat(), size.toFloat(), Paint().apply {
+        WheelDisk.withClip(canvas, size, 0) {
+        canvas.drawCircle(globeCx, globeCy, size * WheelDisk.INSCRIBE, Paint().apply {
             shader = RadialGradient(globeCx, globeCy, size * 0.75f, intArrayOf(Color.rgb(14, 20, 42), Color.rgb(5, 8, 22), Color.rgb(1, 3, 8)), floatArrayOf(0f, 0.6f, 1f), Shader.TileMode.CLAMP)
         })
         drawStars(canvas, size, parallaxX * 0.4f, parallaxY * 0.4f)
@@ -118,6 +120,7 @@ object Astro3DRenderer {
         Astro3DMoon.draw(canvas, mx, my, size, LunarCalculator.elongationDeg(now), moon)
         if (showEventTimes) {
             Astro3DTransitOverlay.drawAlarms(canvas, alarms, place, now, cx, sunCy, sunRx, sunRy, size)
+        }
         }
     }
 

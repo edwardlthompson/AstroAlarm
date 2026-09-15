@@ -2,14 +2,12 @@ package org.astroalarm.share
 
 import android.graphics.Bitmap
 import android.graphics.Canvas
-import android.graphics.Color
 import org.astroalarm.astro.birth.NatalChart
 import org.astroalarm.astro.birth.NatalSkySnapshot
 import org.astroalarm.astro.birth.NatalWheelRenderer
 import org.astroalarm.astro.model.AstroAlarm
 import org.astroalarm.astro.place.AstroPlace
 import org.astroalarm.sol.PlanetBody
-import org.astroalarm.solarterm.SolarTermPalette
 import org.astroalarm.ui.sol.SolRenderer
 import org.astroalarm.ui.solarterm.SolarTermDrawRequest
 import org.astroalarm.ui.solarterm.SolarTermWheelRenderer
@@ -35,7 +33,6 @@ object SkySharePaint {
     ): Bitmap = DiskLabelFit.withExportCap(size) {
         val bmp = Bitmap.createBitmap(size, size, Bitmap.Config.ARGB_8888)
         val canvas = Canvas(bmp)
-        canvas.drawColor(Color.rgb(14, 22, 38))
         canvas.save()
         SkyShare.applyViewport(canvas, viewport, size)
         AstroDiskRenderer.draw(
@@ -61,7 +58,6 @@ object SkySharePaint {
     ): Bitmap = DiskLabelFit.withExportCap(size) {
         val bmp = Bitmap.createBitmap(size, size, Bitmap.Config.ARGB_8888)
         val canvas = Canvas(bmp)
-        canvas.drawColor(Color.rgb(14, 22, 38))
         canvas.save()
         SkyShare.applyViewport(canvas, viewport, size)
         Astro3DRenderer.draw(
@@ -81,7 +77,6 @@ object SkySharePaint {
     ): Bitmap {
         val bmp = Bitmap.createBitmap(size, size, Bitmap.Config.ARGB_8888)
         val canvas = Canvas(bmp)
-        canvas.drawColor(SolarTermPalette.wheelBg(req.dark))
         canvas.save()
         SkyShare.applyViewport(canvas, viewport, size)
         SolarTermWheelRenderer.draw(canvas, req, size, earth, moon)
@@ -118,7 +113,6 @@ object SkySharePaint {
     ): Bitmap {
         val bmp = Bitmap.createBitmap(size, size, Bitmap.Config.ARGB_8888)
         val canvas = Canvas(bmp)
-        canvas.drawColor(if (dark) 0xFF121212.toInt() else 0xFFF5F5F5.toInt())
         canvas.save()
         SkyShare.applyViewport(canvas, viewport, size)
         NatalWheelRenderer.draw(

@@ -7,7 +7,7 @@
     android:minResizeHeight="70dp"
     android:targetCellWidth="4"
     android:targetCellHeight="2"
-    android:previewImage="@drawable/preview_widget_alarms"
+    android:previewImage="@drawable/preview_widget_natal_align"
     android:description="@string/astro_widget_natal_align_name"
     android:resizeMode="horizontal|vertical"
     android:updatePeriodMillis="1800000"

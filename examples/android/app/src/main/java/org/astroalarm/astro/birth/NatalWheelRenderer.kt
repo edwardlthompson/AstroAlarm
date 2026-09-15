@@ -6,6 +6,7 @@ import android.graphics.Color
 import android.graphics.Paint
 import android.graphics.Typeface
 import org.astroalarm.astro.zodiac.ZodiacSign
+import org.astroalarm.ui.WheelDisk
 
 /** Native Canvas natal wheel (Asc-left). Keep ≤150 lines. */
 object NatalWheelRenderer {
@@ -20,7 +21,6 @@ object NatalWheelRenderer {
     ): Bitmap {
         val bmp = Bitmap.createBitmap(size, size, Bitmap.Config.ARGB_8888)
         val canvas = Canvas(bmp)
-        canvas.drawColor(if (dark) 0xFF121212.toInt() else 0xFFF5F5F5.toInt())
         val links = if (sky != null) {
             eventLinks.ifEmpty { NatalEventLinks.active(chart, sky) }
         } else {
@@ -48,6 +48,8 @@ object NatalWheelRenderer {
         val rHouse = size * 0.38f
         val rPlanet = size * 0.30f
         val rLive = size * 0.24f
+        val fill = if (dark) 0xFF121212.toInt() else 0xFFF5F5F5.toInt()
+        WheelDisk.withClip(canvas, size, fill, 0.46f) {
         val asc = NatalWheelLayout.frameAscLon(chart)
         val ring = Paint(Paint.ANTI_ALIAS_FLAG).apply {
             style = Paint.Style.STROKE
@@ -90,6 +92,7 @@ object NatalWheelRenderer {
                 canvas, sky, eventLinks, showSun, showMoon, showMercury,
                 cx, cy, rLive, rPlanet, asc, size, dark,
             )
+        }
         }
     }
 }

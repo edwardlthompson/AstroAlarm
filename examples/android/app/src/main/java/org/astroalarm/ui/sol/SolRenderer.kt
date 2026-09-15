@@ -8,6 +8,7 @@ import org.astroalarm.astro.place.AstroPlace
 import org.astroalarm.sol.PlanetBody
 import org.astroalarm.sol.PlanetKepler
 import org.astroalarm.ui.AstroCanvas
+import org.astroalarm.ui.WheelDisk
 import org.astroalarm.widget.EarthGlobeRenderer
 import java.time.Instant
 import kotlin.math.hypot
@@ -49,7 +50,7 @@ object SolRenderer {
         natalProfile: org.astroalarm.astro.birth.BirthProfile? = null,
         showNatalGhosts: Boolean = false,
     ) {
-        canvas.drawColor(AstroCanvas.night)
+        WheelDisk.withClip(canvas, size, AstroCanvas.night) {
         val cx = size / 2f
         val cy = size / 2f
         val pxPerAu = (size * 0.22f) * zoom
@@ -67,6 +68,7 @@ object SolRenderer {
         if (showNatalGhosts) SolNatalOverlay.draw(canvas, cx, cy, pxPerAu, natalProfile, size)
         if (showEventTimes) SolAlarmOverlay.draw(canvas, cx, cy, pxPerAu, now, alarms, place, size)
         SolChrome.drawScaleBar(canvas, pxPerAu, size, scaleLabel)
+        }
     }
 
     fun bodyAt(x: Float, y: Float, size: Int, now: Instant, zoom: Float): PlanetBody? {

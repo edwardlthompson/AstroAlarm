@@ -23,7 +23,8 @@ import androidx.compose.runtime.rememberUpdatedState
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.clipToBounds
+import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.drawscope.drawIntoCanvas
 import androidx.compose.ui.graphics.nativeCanvas
 import androidx.compose.ui.input.pointer.pointerInput
@@ -152,7 +153,7 @@ fun NatalWheelSection(
                 Canvas(
                     modifier = Modifier
                         .fillMaxSize()
-                        .clipToBounds()
+                        .clip(CircleShape)
                         .pointerInput(Unit) {
                             detectTransformGestures { centroid, pan, zoom, _ ->
                                 viewport = WheelZoomPanMath.apply(
@@ -198,7 +199,6 @@ fun NatalWheelSection(
                     val px = size.width.toInt().coerceAtLeast(1)
                     drawIntoCanvas { gc ->
                         val native = gc.nativeCanvas
-                        native.drawColor(if (dark) 0xFF121212.toInt() else 0xFFF5F5F5.toInt())
                         if (chart != null) {
                             native.save()
                             WheelZoomPanMath.concat(native, viewport, size.width)
