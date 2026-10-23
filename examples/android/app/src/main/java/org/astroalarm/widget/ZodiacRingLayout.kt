@@ -29,18 +29,24 @@ object ZodiacRingLayout {
         }
     }
 
-    fun diskHits(place: AstroPlace?, now: Instant, size: Int, showMonths: Boolean = false): List<Hit> {
+    fun diskHits(
+        place: AstroPlace?,
+        now: Instant,
+        size: Int,
+        showMonths: Boolean = false,
+        solarNoonUp: Boolean = false,
+    ): List<Hit> {
         val center = size / 2f
         val dist = DiskRingLayout.of(size, showMonths, true).zodiacR
         val zone = place?.zone ?: java.time.ZoneId.systemDefault()
         val nowZdt = now.atZone(zone)
-        val nowAngle = (nowZdt.hour * 60 + nowZdt.minute + nowZdt.second / 60f) / 1440f * 360f
         val noon = place?.let {
             SolarCalculator.calculate(SolarEventType.SolarNoon, nowZdt.toLocalDate(), it.latitude, it.longitude, it.zone)
         }
+        val noonUp = solarNoonUp && noon != null
+        val anchor = DiskAngleAnchor.anchor(now, noon, zone, noonUp)
         val aNoonDeg = noon?.let {
-            val z = it.atZone(zone)
-            ((z.hour * 60 + z.minute + z.second / 60f) / 1440f) * 360f - nowAngle - 90f
+            DiskAngleAnchor.screenDeg(DiskAngleAnchor.civilAngle(it, zone), anchor)
         } ?: -90f
         return positions(center, dist, ZodiacCalculator.sunLongitudeAt(noon ?: now), aNoonDeg, size)
     }

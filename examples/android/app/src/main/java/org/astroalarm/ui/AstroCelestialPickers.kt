@@ -25,9 +25,14 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.Dialog
 import dev.foss.goldenpath.R
+import androidx.compose.foundation.layout.ExperimentalLayoutApi
+import androidx.compose.foundation.layout.FlowRow
+import androidx.compose.material3.FilterChip
 import org.astroalarm.astro.alarm.AlarmTargetCopy
 import org.astroalarm.astro.alarm.ProgressiveAdd
 import org.astroalarm.astro.alarm.ProgressiveKind
+import org.astroalarm.astro.alarm.SkyOccasionCatalog
+import org.astroalarm.astro.alarm.SkyOccasionId
 import org.astroalarm.astro.model.AlarmTarget
 import org.astroalarm.astro.model.LunarEventType
 import org.astroalarm.astro.model.SolarEventType
@@ -56,6 +61,7 @@ fun TargetTypeSelector(
         ProgressiveKind.Clock to stringResource(R.string.astro_tab_clock),
         ProgressiveKind.Seasonal to stringResource(R.string.astro_tab_seasonal),
         ProgressiveKind.Planet to stringResource(R.string.astro_tab_planet),
+        ProgressiveKind.Occasion to stringResource(R.string.astro_tab_occasion),
         ProgressiveKind.Natal to stringResource(R.string.astro_tab_natal),
     )
     val options = kinds.map { it to (labels[it] ?: it.name) }
@@ -73,6 +79,7 @@ fun TargetTypeSelector(
                     ProgressiveKind.Clock -> AlarmTarget.CustomClock(7, 0)
                     ProgressiveKind.Seasonal -> AlarmTarget.SolarTerm(SolarTerm.LICHUN, 0)
                     ProgressiveKind.Planet -> AlarmTarget.Planet(PlanetBody.MARS, PlanetEventType.Rise, 0)
+                    ProgressiveKind.Occasion -> AlarmTarget.Occasion(SkyOccasionId.NAKED_EYE_2040.id)
                     ProgressiveKind.Natal -> if (natalAscOk && natalProfileId != null) {
                         AlarmTarget.NatalAscAspect(
                             org.astroalarm.astro.birth.NatalBody.SUN,
@@ -86,6 +93,28 @@ fun TargetTypeSelector(
             )
         },
     )
+}
+
+@OptIn(ExperimentalLayoutApi::class)
+@Composable
+fun OccasionPicker(selectedId: String, onSelect: (String) -> Unit) {
+    FlowRow(
+        modifier = Modifier.fillMaxWidth(),
+        horizontalArrangement = Arrangement.spacedBy(8.dp),
+        verticalArrangement = Arrangement.spacedBy(8.dp),
+    ) {
+        SkyOccasionCatalog.all.forEach { def ->
+            val title = when (def.id) {
+                SkyOccasionId.NAKED_EYE_2040 -> stringResource(R.string.astro_occasion_2040)
+                SkyOccasionId.ALL_PLANETS_2492 -> stringResource(R.string.astro_occasion_2492)
+            }
+            FilterChip(
+                selected = selectedId == def.id.id,
+                onClick = { onSelect(def.id.id) },
+                label = { Text(title) },
+            )
+        }
+    }
 }
 
 @Composable

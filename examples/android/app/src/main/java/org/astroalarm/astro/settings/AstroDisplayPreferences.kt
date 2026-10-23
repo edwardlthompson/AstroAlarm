@@ -27,25 +27,20 @@ class AstroDisplayPreferences(private val context: Context) {
 
     private val _showMonthTicks2D = MutableStateFlow(prefs.getBoolean(KEY_SHOW_MONTH_TICKS_2D, false))
     val showMonthTicks2D: StateFlow<Boolean> = _showMonthTicks2D.asStateFlow()
-
     private val _showHourMarks2D = MutableStateFlow(prefs.getBoolean(KEY_SHOW_HOUR_MARKS_2D, false))
     val showHourMarks2D: StateFlow<Boolean> = _showHourMarks2D.asStateFlow()
-
+    private val _showSolarNoonUp2D = MutableStateFlow(prefs.getBoolean(KEY_SOLAR_NOON_UP_2D, false))
+    val showSolarNoonUp2D: StateFlow<Boolean> = _showSolarNoonUp2D.asStateFlow()
     private val _showEventTimes3D = MutableStateFlow(prefs.getBoolean(KEY_SHOW_EVENT_TIMES_3D, true))
     val showEventTimes3D: StateFlow<Boolean> = _showEventTimes3D.asStateFlow()
-
     private val _showEventTimesYearly = MutableStateFlow(prefs.getBoolean(KEY_SHOW_EVENT_TIMES_YEARLY, true))
     val showEventTimesYearly: StateFlow<Boolean> = _showEventTimesYearly.asStateFlow()
-
     private val _showEventTimesSol = MutableStateFlow(prefs.getBoolean(KEY_SHOW_EVENT_TIMES_SOL, true))
     val showEventTimesSol: StateFlow<Boolean> = _showEventTimesSol.asStateFlow()
-
     private val _showNatalGhostsSol = MutableStateFlow(prefs.getBoolean(KEY_SHOW_NATAL_GHOSTS_SOL, false))
     val showNatalGhostsSol: StateFlow<Boolean> = _showNatalGhostsSol.asStateFlow()
-
     private val _solarTermCompact = MutableStateFlow(prefs.getBoolean(KEY_SOLAR_TERM_COMPACT, false))
     val solarTermCompact: StateFlow<Boolean> = _solarTermCompact.asStateFlow()
-
     private val _alarmViewMode = MutableStateFlow(
         if (prefs.getString(KEY_ALARM_VIEW_MODE, AlarmViewMode.NextDue.name) == AlarmViewMode.Grouped.name)
             AlarmViewMode.Grouped else AlarmViewMode.NextDue
@@ -106,6 +101,12 @@ class AstroDisplayPreferences(private val context: Context) {
         AstroClockWidgetProvider.updateAll(context)
     }
 
+    fun setShowSolarNoonUp2D(enabled: Boolean) {
+        prefs.edit().putBoolean(KEY_SOLAR_NOON_UP_2D, enabled).apply()
+        _showSolarNoonUp2D.value = enabled
+        AstroClockWidgetProvider.updateAll(context)
+    }
+
     fun setAlarmViewMode(mode: AlarmViewMode) {
         prefs.edit().putString(KEY_ALARM_VIEW_MODE, mode.name).apply()
         _alarmViewMode.value = mode
@@ -126,6 +127,7 @@ class AstroDisplayPreferences(private val context: Context) {
     fun isShowEventTimesSol(): Boolean = _showEventTimesSol.value
     fun isShowMonthTicks2D(): Boolean = _showMonthTicks2D.value
     fun isShowHourMarks2D(): Boolean = _showHourMarks2D.value
+    fun isShowSolarNoonUp2D(): Boolean = _showSolarNoonUp2D.value
     fun isSolarTermCompact(): Boolean = _solarTermCompact.value
     fun getAlarmViewMode(): AlarmViewMode = _alarmViewMode.value
 
@@ -140,6 +142,7 @@ class AstroDisplayPreferences(private val context: Context) {
         private const val KEY_SHOW_NATAL_GHOSTS_SOL = "show_natal_ghosts_sol"
         private const val KEY_SHOW_MONTH_TICKS_2D = "show_month_ticks_2d"
         private const val KEY_SHOW_HOUR_MARKS_2D = "show_hour_marks_2d"
+        private const val KEY_SOLAR_NOON_UP_2D = "solar_noon_up_2d"
         private const val KEY_SOLAR_TERM_COMPACT = "solar_term_compact"
         private const val KEY_ALARM_VIEW_MODE = "alarm_view_mode"
     }

@@ -67,6 +67,7 @@ fun AstroClockScreen(
     val showEventTimes by displayPrefs.showEventTimes2D.collectAsState()
     val showMonthTicks by displayPrefs.showMonthTicks2D.collectAsState()
     val showHourMarks by displayPrefs.showHourMarks2D.collectAsState()
+    val showSolarNoonUp by displayPrefs.showSolarNoonUp2D.collectAsState()
     val earth = remember { EarthTexture.get(context) }
     val moon = remember { MoonTexture.get(context) }
     var now by remember { mutableStateOf(Instant.now()) }
@@ -136,7 +137,7 @@ fun AstroClockScreen(
                                 )
                             }
                         }
-                        .pointerInput(layoutPx, place, now.epochSecond / 10, showZodiac, showMonthTicks) {
+                        .pointerInput(layoutPx, place, now.epochSecond / 10, showZodiac, showMonthTicks, showSolarNoonUp) {
                             detectTapGestures { tap ->
                                 if (!showZodiac) return@detectTapGestures
                                 val (lx, ly) = WheelZoomPanMath.contentPoint(
@@ -145,7 +146,9 @@ fun AstroClockScreen(
                                 )
                                 val bx = lx * layoutPx / size.width
                                 val by = ly * layoutPx / size.height
-                                val hits = ZodiacRingLayout.diskHits(place, now, layoutPx, showMonthTicks)
+                                val hits = ZodiacRingLayout.diskHits(
+                                    place, now, layoutPx, showMonthTicks, showSolarNoonUp,
+                                )
                                 ZodiacRingLayout.at(hits, bx, by)?.let { sign ->
                                     runCatching { uriHandler.openUri(ZodiacRingLayout.wikipediaUrl(sign)) }
                                 }
@@ -189,7 +192,8 @@ fun AstroClockScreen(
                         WheelZoomPanMath.concat(native, viewport, size.width)
                         AstroDiskRenderer.draw(
                             native, place, alarms, now, px,
-                            showZodiac, showEventTimes, showMonthTicks, showHourMarks, earth, moon,
+                            showZodiac, showEventTimes, showMonthTicks, showHourMarks,
+                            showSolarNoonUp, earth, moon,
                         )
                         native.restore()
                     }
@@ -243,10 +247,13 @@ fun AstroClockScreen(
             onShowMonthTicksChange = { displayPrefs.setShowMonthTicks2D(it) },
             showHourMarks = showHourMarks,
             onShowHourMarksChange = { displayPrefs.setShowHourMarks2D(it) },
+            showSolarNoonUp = showSolarNoonUp,
+            onShowSolarNoonUpChange = { displayPrefs.setShowSolarNoonUp2D(it) },
             zodiacTitle = stringResource(R.string.astro_toggle_show_zodiac),
             eventTimesTitle = stringResource(R.string.astro_toggle_show_event_times),
             monthTicksTitle = stringResource(R.string.astro_toggle_show_month_ticks),
             hourMarksTitle = stringResource(R.string.astro_toggle_show_hour_marks),
+            solarNoonUpTitle = stringResource(R.string.astro_toggle_solar_noon_up),
         )
     }
 }

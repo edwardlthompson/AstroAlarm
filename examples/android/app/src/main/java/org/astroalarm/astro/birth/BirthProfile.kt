@@ -20,6 +20,8 @@ data class BirthProfile(
     val zoneId: String = "UTC",
     val zoneIsFallback: Boolean = false,
     val active: Boolean = false,
+    /** Local-only pasted/saved agent interpretation (never uploaded). */
+    val savedInterpretation: String = "",
 ) {
     val hasPlace: Boolean get() = cityName.isNotBlank() && lat in -90.0..90.0 && lon in -180.0..180.0
     val polarWarning: Boolean get() = kotlin.math.abs(lat) > 66.0

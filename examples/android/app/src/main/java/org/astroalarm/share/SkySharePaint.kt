@@ -37,7 +37,8 @@ object SkySharePaint {
         SkyShare.applyViewport(canvas, viewport, size)
         AstroDiskRenderer.draw(
             canvas, place, alarms, now, size,
-            showZodiac, showEventTimes, showMonthTicks, showHourMarks, earth, moon,
+            showZodiac, showEventTimes, showMonthTicks, showHourMarks,
+            earth = earth, moon = moon,
         )
         canvas.restore()
         bmp

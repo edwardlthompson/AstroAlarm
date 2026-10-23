@@ -4,7 +4,8 @@ Toggle on the 2D clock that draws the start of each calendar month on the outer 
 
 ## Acceptance criteria
 
-- ✅ User-visible behavior: 2D clock has a switch that shows 12 short white rim ticks at each calendar month start; 2-letter labels (Ja–De) sit at the ecliptic midpoint of that month, not on the tick
+- ✅ User-visible behavior: 2D clock has a switch that shows 12 short white rim ticks at each calendar month start; 2-letter labels (Ja–De) sit at the ecliptic midpoint of that month, not on the tick; month labels and zodiac bubbles stay inside the circular clip on preview and widget (`DiskRingLayout.EDGE`)
+
 - ✅ Offline/error behavior: preference is local SharedPreferences; default is hidden; missing place still renders using UTC/system zone
 - ✅ Accessibility: switch uses localized title and description; state persists across restarts
 - ✅ i18n: `astro_toggle_show_month_ticks` and `astro_toggle_show_month_ticks_desc` in en/es/fr
@@ -22,9 +23,8 @@ Toggle on the 2D clock that draws the start of each calendar month on the outer 
 | Logic | `examples/android/.../widget/MonthRimTicks.kt` |
 | View | `AstroDiskOverlays.drawMonthRim`, `AstroClockScreen` |
 | Prefs | `AstroDisplayPreferences` |
-| Tests | `MonthRimTicksTest.kt`, `AstroDisplayPreferencesTest.kt` |
+| Tests | `MonthRimTicksTest.kt`, `AstroDisplayPreferencesTest.kt`, `DiskRingLayoutTest` outer-clip cases |
 | Wiring | `AstroClockWidgetProvider` reads the same pref |
-
 ## Tests
 
 - Automated: yes — `MonthRimTicksTest.kt`, `AstroDisplayPreferencesTest.kt`

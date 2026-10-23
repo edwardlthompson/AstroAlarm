@@ -72,6 +72,15 @@ fun BirthChartDetailsDialog(
                 ) {
                     BirthChartSummarySection(profile = profile, chart = chart)
                     BirthChartFormSection(initial = profile, onSave = onSaveProfile)
+                    BirthAgentSection(
+                        profile = profile,
+                        chart = chart,
+                        onSaveInterpretation = { text ->
+                            if (profile != null) {
+                                onSaveProfile(profile.copy(savedInterpretation = text))
+                            }
+                        },
+                    )
                     AstroAlarmTemplatesSection(profile = profile, alarmStore = alarmStore)
                 }
             }

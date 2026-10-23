@@ -8,8 +8,19 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
-## [1.10.0](https://github.com/edwardlthompson/AstroAlarm/compare/v1.9.0...v1.10.0) (2026-09-15)
+### Added
 
+* **android:** alarm tone/TTS lockscreen policy (silent channel, preferred engine, pause tone during speak)
+* **android:** Daily 2D solar-noon-up dial option (`DiskAngleAnchor`)
+* **android:** sky occasions catalog one-shot alarms
+* **android:** Wear OS Daily analog watch face module (`:wear`)
+* **android:** Chart tab copy-agent / paste interpretation / optional local LLM
+
+### Fixed
+
+* **android:** keep Daily 2D month labels and zodiac bubbles inside the circular clip (preview + widget)
+
+## [1.10.0](https://github.com/edwardlthompson/AstroAlarm/compare/v1.9.0...v1.10.0) (2026-09-15)
 
 ### Added
 

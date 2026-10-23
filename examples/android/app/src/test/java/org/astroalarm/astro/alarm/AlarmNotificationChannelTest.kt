@@ -7,6 +7,7 @@ import android.media.AudioAttributes
 import androidx.core.app.NotificationCompat
 import androidx.test.core.app.ApplicationProvider
 import org.junit.Assert.assertEquals
+import org.junit.Assert.assertFalse
 import org.junit.Assert.assertNotNull
 import org.junit.Assert.assertNull
 import org.junit.Assert.assertTrue
@@ -27,6 +28,8 @@ class AlarmNotificationChannelTest {
         nm = context.getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
         nm.deleteNotificationChannel(AlarmNotificationChannel.ID)
         nm.deleteNotificationChannel(AlarmNotificationChannel.LEGACY_ID)
+        nm.deleteNotificationChannel(AlarmNotificationChannel.LEGACY_SOUND_ID)
+        nm.deleteNotificationChannel(AlarmNotificationChannel.LEGACY_V2_ID)
     }
 
     @Test
@@ -38,12 +41,12 @@ class AlarmNotificationChannelTest {
         assertTrue(channel.canBypassDnd())
         assertEquals(Notification.VISIBILITY_PUBLIC, channel.lockscreenVisibility)
         assertEquals(AudioAttributes.USAGE_ALARM, channel.audioAttributes.usage)
-        assertNotNull(channel.sound)
-        assertTrue(channel.shouldVibrate())
+        assertNull(channel.sound)
+        assertFalse(channel.shouldVibrate())
     }
 
     @Test
-    fun deletesLegacyGenericChannel() {
+    fun deletesLegacyGenericAndSoundChannels() {
         nm.createNotificationChannel(
             android.app.NotificationChannel(
                 AlarmNotificationChannel.LEGACY_ID,
@@ -51,9 +54,37 @@ class AlarmNotificationChannelTest {
                 NotificationManager.IMPORTANCE_HIGH,
             ),
         )
+        nm.createNotificationChannel(
+            android.app.NotificationChannel(
+                AlarmNotificationChannel.LEGACY_SOUND_ID,
+                "legacy-sound",
+                NotificationManager.IMPORTANCE_HIGH,
+            ).apply {
+                setSound(
+                    android.media.RingtoneManager.getDefaultUri(android.media.RingtoneManager.TYPE_ALARM),
+                    AlarmNotificationChannel.alarmAudioAttributes(),
+                )
+            },
+        )
+        nm.createNotificationChannel(
+            android.app.NotificationChannel(
+                AlarmNotificationChannel.LEGACY_V2_ID,
+                "legacy-v2",
+                NotificationManager.IMPORTANCE_HIGH,
+            ).apply {
+                setSound(
+                    android.media.RingtoneManager.getDefaultUri(android.media.RingtoneManager.TYPE_ALARM),
+                    AlarmNotificationChannel.alarmAudioAttributes(),
+                )
+            },
+        )
         AlarmNotificationChannel.ensure(context)
         assertNull(nm.getNotificationChannel(AlarmNotificationChannel.LEGACY_ID))
+        assertNull(nm.getNotificationChannel(AlarmNotificationChannel.LEGACY_SOUND_ID))
+        assertNull(nm.getNotificationChannel(AlarmNotificationChannel.LEGACY_V2_ID))
         assertNotNull(nm.getNotificationChannel(AlarmNotificationChannel.ID))
+        assertNull(nm.getNotificationChannel(AlarmNotificationChannel.ID).sound)
+        assertEquals("astroalarm_alarm_v3", AlarmNotificationChannel.ID)
     }
 
     @Test
@@ -75,6 +106,7 @@ class AlarmNotificationChannelTest {
         assertTrue(notif.flags and Notification.FLAG_ONGOING_EVENT != 0)
         assertNotNull(notif.fullScreenIntent)
         assertEquals(AlarmNotificationChannel.ID, notif.channelId)
+        assertNull(notif.sound)
         assertEquals(2, notif.actions.size)
         assertEquals(context.getString(dev.foss.goldenpath.R.string.astro_action_stop), notif.actions[0].title.toString())
         assertEquals(

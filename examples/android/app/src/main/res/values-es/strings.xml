@@ -150,6 +150,9 @@
     <string name="astro_tab_sol">Sol</string>
     <string name="astro_tab_seasonal">Estacional</string>
     <string name="astro_tab_planet">Planeta</string>
+    <string name="astro_tab_occasion">Ocasiones del cielo</string>
+    <string name="astro_occasion_2040">2040-09-08 planetas + Luna</string>
+    <string name="astro_occasion_2492">2492-05-06 todos los planetas</string>
 
     <string name="astro_swipe_hint">Desliza para ver el reloj 24h →</string>
     <string name="astro_add_widget_btn">Añadir reloj de 24 horas</string>
@@ -174,6 +177,7 @@
     <string name="astro_toggle_show_month_ticks_desc">Inicio de cada mes (2 letras) en el borde</string>
     <string name="astro_toggle_show_hour_marks">Mostrar horas</string>
     <string name="astro_toggle_show_hour_marks_desc">Horas civiles en el disco de 24h, no el mediodía solar</string>
+    <string name="astro_toggle_solar_noon_up">Mediodía solar arriba</string>
     <string name="astro_solar_noon">Mediodía solar</string>
     <string name="astro_solar_midnight">Medianoche solar</string>
     <string name="astro_zodiac_overhead_noon">Zodíaco cenital al mediodía</string>
@@ -219,6 +223,7 @@
     <string name="astro_alarm_tap_to_open">Toca para abrir alarma</string>
     <string name="astro_channel_name">Alarma</string>
     <string name="astro_channel_desc">Alarmas a pantalla completa que puedes apagar sin desbloquear</string>
+    <string name="astro_tts_unavailable">Voz no disponible. Revise el motor TTS en Ajustes.</string>
     <string name="astro_action_snooze">Posponer (%d min)</string>
     <string name="astro_action_stop">Detener</string>
     <string name="astro_widget_desc">Reloj astronómico rotativo día/noche</string>

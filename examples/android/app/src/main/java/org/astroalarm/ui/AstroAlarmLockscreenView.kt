@@ -35,6 +35,7 @@ import java.time.format.DateTimeFormatter
 @Composable
 fun AstroAlarmLockscreenView(
     alarm: AstroAlarm,
+    ttsHint: String? = null,
     onSnooze: () -> Unit,
     onStop: () -> Unit
 ) {
@@ -117,6 +118,15 @@ fun AstroAlarmLockscreenView(
                     textAlign = TextAlign.Center,
                     color = MaterialTheme.colorScheme.primary
                 )
+                if (!ttsHint.isNullOrBlank()) {
+                    Spacer(modifier = Modifier.height(12.dp))
+                    Text(
+                        text = ttsHint,
+                        fontSize = 14.sp,
+                        textAlign = TextAlign.Center,
+                        color = MaterialTheme.colorScheme.error,
+                    )
+                }
             }
 
             Button(

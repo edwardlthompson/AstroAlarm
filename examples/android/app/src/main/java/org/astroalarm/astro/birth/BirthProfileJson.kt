@@ -19,6 +19,7 @@ object BirthProfileJson {
         put("zoneId", p.zoneId)
         put("zoneIsFallback", p.zoneIsFallback)
         put("active", p.active)
+        put("savedInterpretation", p.savedInterpretation)
     }
 
     fun fromJson(obj: JSONObject): BirthProfile? {
@@ -43,6 +44,7 @@ object BirthProfileJson {
             zoneId = obj.optString("zoneId", "UTC"),
             zoneIsFallback = obj.optBoolean("zoneIsFallback", false),
             active = obj.optBoolean("active", false),
+            savedInterpretation = obj.optString("savedInterpretation", ""),
         )
     }
 

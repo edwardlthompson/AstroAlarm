@@ -92,6 +92,8 @@ sealed interface AlarmTarget {
         val profileId: String,
         val offsetMinutes: Int = 0,
     ) : AlarmTarget
+    /** Rare catalog sky dates (2040 / 2492); fires once then disables. */
+    data class Occasion(val catalogId: String) : AlarmTarget
 }
 
 data class AstroAlarm(
@@ -108,5 +110,7 @@ data class AstroAlarm(
     val mathUnlockEnabled: Boolean = false,
     val lastFiredEpochMs: Long = 0L
 ) {
-    val isOnce: Boolean get() = target is AlarmTarget.CustomClock && daysOfWeek.isEmpty()
+    val isOnce: Boolean
+        get() = (target is AlarmTarget.CustomClock && daysOfWeek.isEmpty()) ||
+            target is AlarmTarget.Occasion
 }

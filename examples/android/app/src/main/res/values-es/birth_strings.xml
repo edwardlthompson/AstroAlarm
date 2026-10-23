@@ -61,4 +61,23 @@
     <string name="astro_field_target_type">Tipo de alarma</string>
     <string name="astro_field_repeat_preset">Repetir</string>
     <string name="astro_field_repeat_days">Días</string>
+    <string name="natal_agent_title">Perfil del agente</string>
+    <string name="natal_copy_agent">Copiar instrucciones para el agente</string>
+    <string name="natal_copy_agent_cd">Copiar instrucciones del agente con medidas de la carta natal para un perfil de personalidad</string>
+    <string name="natal_copy_ok">Instrucciones del agente copiadas</string>
+    <string name="natal_copy_fail">No se pudo copiar al portapapeles</string>
+    <string name="natal_incomplete">Introduce primero fecha, hora y lugar de nacimiento</string>
+    <string name="natal_paste_profile">Pegar perfil</string>
+    <string name="natal_paste_hint">Pega aquí la respuesta del agente</string>
+    <string name="natal_save_profile">Guardar perfil</string>
+    <string name="natal_saved_profile">Perfil guardado</string>
+    <string name="natal_clear_profile">Borrar perfil</string>
+    <string name="natal_local_llm">Preguntar al modelo local</string>
+    <string name="natal_local_llm_enable">Activar modelo HTTP local (opt-in)</string>
+    <string name="natal_local_llm_url">URL del modelo local</string>
+    <string name="natal_local_llm_busy">Consultando modelo local…</string>
+    <string name="natal_local_llm_timeout">El modelo local agotó el tiempo (10s)</string>
+    <string name="natal_local_llm_fail">Modelo local inaccesible</string>
+    <string name="natal_local_llm_ok">Respuesta del modelo local guardada</string>
+    <string name="natal_privacy_note">Los datos de nacimiento permanecen en este dispositivo. La copia es local hasta que la pegues en otro sitio.</string>
 </resources>

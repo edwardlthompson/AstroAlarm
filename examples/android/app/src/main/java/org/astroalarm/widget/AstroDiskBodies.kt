@@ -9,14 +9,27 @@ import kotlin.math.cos
 import kotlin.math.sin
 
 object AstroDiskBodies {
-    fun drawHand(canvas: Canvas, center: Float, startR: Float, endR: Float, size: Int) {
+    fun drawHand(
+        canvas: Canvas,
+        center: Float,
+        startR: Float,
+        endR: Float,
+        size: Int,
+        angleDeg: Float = -90f,
+    ) {
         if (endR <= startR) return
         val p = Paint(Paint.ANTI_ALIAS_FLAG).apply {
             color = Color.RED
             strokeWidth = (size * 0.012f).coerceIn(2.5f, 5f)
             style = Paint.Style.FILL_AND_STROKE
         }
-        canvas.drawLine(center, center - startR, center, center - endR, p)
+        val rad = Math.toRadians(angleDeg.toDouble())
+        val cosR = cos(rad).toFloat()
+        val sinR = sin(rad).toFloat()
+        canvas.drawLine(
+            center + startR * cosR, center + startR * sinR,
+            center + endR * cosR, center + endR * sinR, p,
+        )
     }
 
     fun drawSun(canvas: Canvas, center: Float, bodyR: Float, size: Int, sunDeg: Float) {

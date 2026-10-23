@@ -61,4 +61,23 @@
     <string name="astro_field_target_type">Alarm type</string>
     <string name="astro_field_repeat_preset">Repeat</string>
     <string name="astro_field_repeat_days">Days</string>
+    <string name="natal_agent_title">Agent profile</string>
+    <string name="natal_copy_agent">Copy agent instructions</string>
+    <string name="natal_copy_agent_cd">Copy agent instructions with natal chart measurements for a personality profile</string>
+    <string name="natal_copy_ok">Agent instructions copied</string>
+    <string name="natal_copy_fail">Could not copy to clipboard</string>
+    <string name="natal_incomplete">Enter birth date, time, and place first</string>
+    <string name="natal_paste_profile">Paste profile</string>
+    <string name="natal_paste_hint">Paste the agent reply here</string>
+    <string name="natal_save_profile">Save profile</string>
+    <string name="natal_saved_profile">Saved profile</string>
+    <string name="natal_clear_profile">Clear profile</string>
+    <string name="natal_local_llm">Ask local model</string>
+    <string name="natal_local_llm_enable">Enable local HTTP model (opt-in)</string>
+    <string name="natal_local_llm_url">Local model URL</string>
+    <string name="natal_local_llm_busy">Asking local model…</string>
+    <string name="natal_local_llm_timeout">Local model timed out (10s)</string>
+    <string name="natal_local_llm_fail">Local model unreachable</string>
+    <string name="natal_local_llm_ok">Local model reply saved</string>
+    <string name="natal_privacy_note">Birth data stays on this device. Copy stays local until you paste elsewhere.</string>
 </resources>

@@ -431,8 +431,13 @@ if should_run rust && [ -f examples/rust/Cargo.toml ]; then
   fi
 fi
 
-if should_run go && [ -f examples/go/go.mod ]; then
-  if ! command -v go >/dev/null 2>&1; then
+if should_run go; then
+  if [ ! -f examples/go/go.mod ]; then
+    # Explicit --stack go on a pruned child should still log a skip (contract test).
+    if [ "$STACK" = "go" ]; then
+      skip_or_block "Skipping go gate (examples/go not present)"
+    fi
+  elif ! command -v go >/dev/null 2>&1; then
     if [ "$STACK" = "go" ] && [ "${FEATURE_GATE_CHILD:-}" != "1" ]; then
       block_env "go not found"
     else

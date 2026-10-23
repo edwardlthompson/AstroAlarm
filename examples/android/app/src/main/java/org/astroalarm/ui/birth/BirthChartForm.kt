@@ -138,6 +138,7 @@ fun BirthChartFormSection(
                         zoneId = place.zoneId,
                         zoneIsFallback = false,
                         active = true,
+                        savedInterpretation = initial?.savedInterpretation.orEmpty(),
                     ),
                 )
             },

@@ -25,6 +25,8 @@ class AlarmTtsSession private constructor(
             handler: Handler,
             text: String,
             voice: TtsVoice,
+            onUtteranceStart: () -> Unit = {},
+            onUtteranceDone: () -> Unit = {},
         ): AlarmTtsSession {
             engine.setAudioAttributes(AlarmNotificationChannel.alarmAudioAttributes())
             engine.setPitch(voice.pitch)
@@ -51,6 +53,7 @@ class AlarmTtsSession private constructor(
                     )
                     if (result == TextToSpeech.SUCCESS) {
                         Log.i(TAG, "speak")
+                        onUtteranceStart()
                     } else {
                         Log.w(TAG, "speak failed: $result")
                     }
@@ -59,16 +62,25 @@ class AlarmTtsSession private constructor(
             engine.setOnUtteranceProgressListener(object : UtteranceProgressListener() {
                 override fun onStart(utteranceId: String?) = Unit
                 override fun onDone(utteranceId: String?) {
-                    if (utteranceId == AlarmTtsRepeater.UTTERANCE_ID) repeater.onUtteranceFinished()
+                    if (utteranceId == AlarmTtsRepeater.UTTERANCE_ID) {
+                        onUtteranceDone()
+                        repeater.onUtteranceFinished()
+                    }
                 }
                 @Deprecated("Deprecated in Java")
                 override fun onError(utteranceId: String?) {
                     Log.w(TAG, "utterance error")
-                    if (utteranceId == AlarmTtsRepeater.UTTERANCE_ID) repeater.onUtteranceFinished()
+                    if (utteranceId == AlarmTtsRepeater.UTTERANCE_ID) {
+                        onUtteranceDone()
+                        repeater.onUtteranceFinished()
+                    }
                 }
                 override fun onError(utteranceId: String?, errorCode: Int) {
                     Log.w(TAG, "utterance error: $errorCode")
-                    if (utteranceId == AlarmTtsRepeater.UTTERANCE_ID) repeater.onUtteranceFinished()
+                    if (utteranceId == AlarmTtsRepeater.UTTERANCE_ID) {
+                        onUtteranceDone()
+                        repeater.onUtteranceFinished()
+                    }
                 }
             })
             repeater.start()

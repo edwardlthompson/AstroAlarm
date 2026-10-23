@@ -62,6 +62,16 @@ class AstroDisplayPreferencesTest {
     }
 
     @Test
+    fun solarNoonUpDefaultOffAndPersist() = runBlocking {
+        val prefs = AstroDisplayPreferences(context)
+        assertFalse(prefs.isShowSolarNoonUp2D())
+        prefs.setShowSolarNoonUp2D(true)
+        val reader = AstroDisplayPreferences(context)
+        assertTrue(reader.isShowSolarNoonUp2D())
+        assertTrue(reader.showSolarNoonUp2D.first())
+    }
+
+    @Test
     fun solarTermCompactPersists() = runBlocking {
         val prefs = AstroDisplayPreferences(context)
         assertFalse(prefs.isSolarTermCompact())

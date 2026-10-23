@@ -7,7 +7,15 @@
 | Data | Purpose | Lawful Basis | Retention |
 |------|---------|--------------|-----------|
 | App settings (theme, save-crashes toggle) | Feature functionality | Legitimate interest | Until the user clears app data |
+| Birth date/time/place and saved agent interpretation | On-device Chart + optional local interpretation | Legitimate interest | Until the user clears app data |
 | Crash / bug / feature report (opt-in, user-reviewed) | Debugging and product planning | Consent | GitHub issue retention; app keeps at most one pending crash |
+## Birth chart (natal data)
+
+- Birth date, time, place, chart measurements, Copy agent instructions text, and saved/pasted profiles are stored **on this device only**
+- They are **never** included in crash or feedback reports
+- **Copy agent instructions** stays local (clipboard) until the user pastes into another app or cloud agent; that paste is the user’s choice
+- Optional “Ask local model” is **off by default** and only talks to a user-set local HTTP URL (default `http://127.0.0.1:11434`); no cloud vendor and no API key in the app
+
 ## App update checks
 
 - Release endpoint: GitHub Releases API (`/repos/OWNER/REPO/releases/latest`), once per 24 hours

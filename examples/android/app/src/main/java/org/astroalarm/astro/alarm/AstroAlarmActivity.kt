@@ -1,65 +1,55 @@
 package org.astroalarm.astro.alarm
 
 import android.content.BroadcastReceiver
-import android.content.Context
-import android.media.Ringtone
-import android.media.RingtoneManager
-import android.net.Uri
 import android.os.Build
 import android.os.Bundle
 import android.os.Handler
 import android.os.Looper
-import android.os.VibrationEffect
-import android.os.Vibrator
-import android.os.VibratorManager
-import android.speech.tts.TextToSpeech
 import android.view.WindowManager
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.setValue
 import dev.foss.goldenpath.R
-import org.astroalarm.astro.model.AlarmTarget
-import org.astroalarm.astro.model.AstroAlarm
 import dev.foss.goldenpath.ui.theme.GoldenPathTheme
 import dev.foss.goldenpath.ui.theme.ThemeMode
 import org.astroalarm.ui.AstroAlarmLockscreenView
-import java.time.LocalTime
 
-class AstroAlarmActivity : ComponentActivity(), TextToSpeech.OnInitListener {
+class AstroAlarmActivity : ComponentActivity() {
     private val ttsHandler = Handler(Looper.getMainLooper())
-    private var ringtone: Ringtone? = null
-    private var vibrator: Vibrator? = null
-    private var tts: TextToSpeech? = null
-    private var ttsSession: AlarmTtsSession? = null
-    private var activeAlarm: AstroAlarm? = null
+    private var activeAlarm = AlarmOutputPolicy.resolveAlarm(null, "unknown", "Alarm")
+    private var ttsHint by mutableStateOf<String?>(null)
     private var uiDismissReceiver: BroadcastReceiver? = null
+    private lateinit var output: AlarmLockscreenOutput
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         turnOnScreenAndShowWhenLocked()
         uiDismissReceiver = AlarmUiDismissBridge.register(this) {
-            stopAlarmOutput()
+            output.stop()
             finish()
         }
 
         val alarmId = intent.getStringExtra(AstroAlarmScheduler.EXTRA_ALARM_ID) ?: ""
         val store = AstroAlarmStore(this)
-        activeAlarm = store.getById(alarmId)
-            ?: store.getAll().firstOrNull { it.enabled }
-            ?: store.getAll().lastOrNull()
-            ?: AstroAlarm("unknown", getString(R.string.astro_custom_alarm_title), target = AlarmTarget.CustomClock(LocalTime.now().hour, LocalTime.now().minute))
-
-        startAlarmOutput(activeAlarm!!)
-        AlarmRingPresenter.postRinging(
-            this,
-            activeAlarm!!.id,
-            activeAlarm!!.snoozeMinutes,
+        activeAlarm = AlarmOutputPolicy.resolveAlarm(
+            store.getById(alarmId),
+            alarmId,
+            getString(R.string.astro_custom_alarm_title),
         )
+        output = AlarmLockscreenOutput(this, ttsHandler) {
+            ttsHint = getString(R.string.astro_tts_unavailable)
+        }
+        output.start(activeAlarm)
+        AlarmRingPresenter.postRinging(this, activeAlarm.id, activeAlarm.snoozeMinutes)
         setContent {
             GoldenPathTheme(themeMode = ThemeMode.Dark) {
                 AstroAlarmLockscreenView(
-                    alarm = activeAlarm!!,
+                    alarm = activeAlarm,
+                    ttsHint = ttsHint,
                     onSnooze = { onSnoozeClicked() },
-                    onStop = { onStopClicked() }
+                    onStop = { onStopClicked() },
                 )
             }
         }
@@ -79,68 +69,24 @@ class AstroAlarmActivity : ComponentActivity(), TextToSpeech.OnInitListener {
         window.addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON)
     }
 
-    private fun startAlarmOutput(alarm: AstroAlarm) {
-        if (alarm.toneEnabled) {
-            val uri = alarm.toneUri?.let { Uri.parse(it) }
-                ?: RingtoneManager.getDefaultUri(RingtoneManager.TYPE_ALARM)
-                ?: RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION)
-            ringtone = RingtoneManager.getRingtone(applicationContext, uri)?.apply {
-                audioAttributes = AlarmNotificationChannel.alarmAudioAttributes()
-                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.P) isLooping = true
-                play()
-            }
-        }
-
-        if (alarm.vibrateEnabled) {
-            vibrator = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
-                (getSystemService(Context.VIBRATOR_MANAGER_SERVICE) as? VibratorManager)?.defaultVibrator
-            } else {
-                @Suppress("DEPRECATION") getSystemService(Context.VIBRATOR_SERVICE) as? Vibrator
-            }
-            val pattern = longArrayOf(0, 800, 400, 800, 400)
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-                vibrator?.vibrate(VibrationEffect.createWaveform(pattern, 0))
-            } else {
-                @Suppress("DEPRECATION") vibrator?.vibrate(pattern, 0)
-            }
-        }
-
-        if (alarm.ttsEnabled) {
-            tts = AlarmTtsBootstrap.createEngine(this, this)
-        }
-    }
-
-    override fun onInit(status: Int) {
-        val text = activeAlarm?.label ?: getString(R.string.astro_custom_alarm_title)
-        ttsSession = AlarmTtsBootstrap.onInit(status, tts, ttsHandler, text, this)
-    }
-
-    private fun stopAlarmOutput() {
-        runCatching { ringtone?.stop() }
-        runCatching { vibrator?.cancel() }
-        tts = null
-        ttsSession?.stop()
-        ttsSession = null
-    }
-
     private fun onSnoozeClicked() {
-        stopAlarmOutput()
+        output.stop()
         AlarmNotificationChannel.cancel(this)
-        activeAlarm?.let { AlarmDismissActions.snooze(this, it) }
+        AlarmDismissActions.snooze(this, activeAlarm)
         finish()
     }
 
     private fun onStopClicked() {
-        stopAlarmOutput()
+        output.stop()
         AlarmNotificationChannel.cancel(this)
-        activeAlarm?.let { AlarmDismissActions.stop(this, it) }
+        AlarmDismissActions.stop(this, activeAlarm)
         finish()
     }
 
     override fun onDestroy() {
         AlarmUiDismissBridge.unregister(this, uiDismissReceiver)
         uiDismissReceiver = null
-        stopAlarmOutput()
+        if (::output.isInitialized) output.stop()
         super.onDestroy()
     }
 }

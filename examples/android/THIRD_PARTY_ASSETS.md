@@ -16,3 +16,8 @@ NASA SVS CGI Moon Kit LROC color map (1024×512, 0° longitude center).
 - Source: https://svs.gsfc.nasa.gov/4720
 - File: `lroc_color_poles_1k.jpg`
 - License: public domain (U.S. government work / NASA imagery)
+
+## Wear OS watch face (`:wear`)
+
+`androidx.wear.watchface:watchface` (Apache-2.0). FOSS-only path — no Play Services,
+GMS wearable data layer, or HMS. See `docs/features/wear-watchface.md`.

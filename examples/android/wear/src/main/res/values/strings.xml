@@ -1,0 +1,5 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="wear_app_name">AstroAlarm Wear</string>
+    <string name="wear_watch_face_name">AstroAlarm Daily</string>
+</resources>

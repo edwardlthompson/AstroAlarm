@@ -23,11 +23,15 @@ object AstroDiskRenderer {
         showEventTimes: Boolean = true,
         showMonthTicks: Boolean = false,
         showHourMarks: Boolean = false,
+        solarNoonUp: Boolean = false,
         earth: Bitmap? = null,
         moon: Bitmap? = null,
     ): Bitmap {
         val bitmap = Bitmap.createBitmap(size, size, Bitmap.Config.ARGB_8888)
-        draw(Canvas(bitmap), place, alarms, now, size, showZodiac, showEventTimes, showMonthTicks, showHourMarks, earth, moon)
+        draw(
+            Canvas(bitmap), place, alarms, now, size, showZodiac, showEventTimes,
+            showMonthTicks, showHourMarks, solarNoonUp, earth, moon,
+        )
         return bitmap
     }
 
@@ -41,6 +45,7 @@ object AstroDiskRenderer {
         showEventTimes: Boolean,
         showMonthTicks: Boolean,
         showHourMarks: Boolean,
+        solarNoonUp: Boolean = false,
         earth: Bitmap? = null,
         moon: Bitmap? = null,
     ) {
@@ -50,7 +55,7 @@ object AstroDiskRenderer {
         val zone = place?.zone ?: java.time.ZoneId.systemDefault()
         WheelDisk.withClip(canvas, size, 0) {
         val nowZdt = ZonedDateTime.ofInstant(now, zone)
-        val nowAngle = (nowZdt.hour * 60 + nowZdt.minute + (nowZdt.second / 60f)) / 1440f * 360f
+        val nowAngle = DiskAngleAnchor.civilAngle(now, zone)
         val date = nowZdt.toLocalDate()
         val horizon = now.plusSeconds(86400L)
         val oval = RectF(center - radius, center - radius, center + radius, center + radius)
@@ -64,9 +69,10 @@ object AstroDiskRenderer {
         val be = place?.let { SolarCalculator.calculate(SolarEventType.BlueHourEvening, date, it.latitude, it.longitude, it.zone) }
         val gm = place?.let { SolarCalculator.calculate(SolarEventType.GoldenHourMorning, date, it.latitude, it.longitude, it.zone) }
         val ge = place?.let { SolarCalculator.calculate(SolarEventType.GoldenHourEvening, date, it.latitude, it.longitude, it.zone) }
+        val noonUp = solarNoonUp && noon != null
+        val anchor = DiskAngleAnchor.anchor(now, noon, zone, noonUp)
         fun ang(i: Instant?): Float? = i?.let {
-            val z = ZonedDateTime.ofInstant(it, zone)
-            ((z.hour * 60 + z.minute + z.second / 60f) / 1440f) * 360f - nowAngle - 90f
+            DiskAngleAnchor.screenDeg(DiskAngleAnchor.civilAngle(it, zone), anchor)
         }
         fun sw(f: Float, t: Float): Float { var d = t - f; while (d < 0) d += 360f; return d }
         val paint = Paint(Paint.ANTI_ALIAS_FLAG).apply { color = Color.rgb(14, 22, 38) }
@@ -108,8 +114,13 @@ object AstroDiskRenderer {
         val aNoonDeg = aNoon ?: -90f
         val sunDeg = sunEq?.let { TransitTicks.diskAngleDeg(it.haRad, aNoonDeg) } ?: -90f
         val sunLon = ZodiacCalculator.sunLongitudeAt(noon ?: now)
-        if (showHourMarks) CivilHourMarks.draw(canvas, center, rings.hourTickR, rings.hourLabelR, size, CivilHourMarks.marks(nowAngle, aRise, aSet))
-        SolarNoonPointer.draw(canvas, center, rings.innerR, SolarNoonPointer.endR(showMonthTicks, showZodiac, rings), aNoonDeg, size)
+        if (showHourMarks) CivilHourMarks.draw(canvas, center, rings.hourTickR, rings.hourLabelR, size, CivilHourMarks.marks(anchor, aRise, aSet))
+        if (!noonUp) {
+            SolarNoonPointer.draw(
+                canvas, center, rings.innerR,
+                SolarNoonPointer.endR(showMonthTicks, showZodiac, rings), aNoonDeg, size,
+            )
+        }
         if (showMonthTicks) {
             AstroDiskOverlays.drawMonthRim(canvas, center, radius, size, MonthRimTicks.marks(date.year, zone, sunLon, aNoonDeg))
         }
@@ -117,11 +128,14 @@ object AstroDiskRenderer {
             AstroDiskOverlays.drawZodiacRing(canvas, center, rings.zodiacR, sunLon, aNoonDeg, size)
             AstroDiskOverlays.drawZodiacCusps(canvas, center, rings.zodiacR, size, sunLon, aNoonDeg)
         }
-        AstroDiskBodies.drawHand(canvas, center, rings.handStartR, rings.handEndR, size)
+        AstroDiskBodies.drawHand(
+            canvas, center, rings.handStartR, rings.handEndR, size,
+            DiskAngleAnchor.handDeg(nowAngle, anchor, noonUp),
+        )
         DailyHubRenderer.draw(canvas, center, rings, now, place, sunDeg, earth, moon)
         AstroDiskBodies.drawSun(canvas, center, rings.bodyR, size, sunDeg)
         if (eventTimes.alarmMarkers) {
-            AstroDiskAlarmOverlay.draw(canvas, alarms, place, now, horizon, zone, center, radius, rings.alarmR, size, nowAngle, timeFmt)
+            AstroDiskAlarmOverlay.draw(canvas, alarms, place, now, horizon, zone, center, radius, rings.alarmR, size, anchor, timeFmt)
         }
         }
     }

@@ -45,10 +45,13 @@ fun ClockOverlayToggles(
     onShowMonthTicksChange: (Boolean) -> Unit,
     showHourMarks: Boolean,
     onShowHourMarksChange: (Boolean) -> Unit,
+    showSolarNoonUp: Boolean,
+    onShowSolarNoonUpChange: (Boolean) -> Unit,
     zodiacTitle: String,
     eventTimesTitle: String,
     monthTicksTitle: String,
     hourMarksTitle: String,
+    solarNoonUpTitle: String,
     modifier: Modifier = Modifier,
 ) {
     Surface(
@@ -59,6 +62,7 @@ fun ClockOverlayToggles(
         Column(modifier = Modifier.padding(horizontal = 12.dp, vertical = 2.dp)) {
             OverlayToggleLine(eventTimesTitle, showEventTimes, onShowEventTimesChange)
             OverlayToggleLine(hourMarksTitle, showHourMarks, onShowHourMarksChange)
+            OverlayToggleLine(solarNoonUpTitle, showSolarNoonUp, onShowSolarNoonUpChange)
             OverlayToggleLine(monthTicksTitle, showMonthTicks, onShowMonthTicksChange)
             OverlayToggleLine(zodiacTitle, showZodiac, onShowZodiacChange)
         }

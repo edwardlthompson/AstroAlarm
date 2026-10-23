@@ -23,7 +23,6 @@
 | View | `ui/birth/` |
 | Tests | `AscendantMathTest`, `BirthTimeZonesTest`, `BirthProfileJsonTest` |
 | Wiring | `AstroScreen` page 6 + `BirthProfileStore` in `GoldenPathScreen` |
-
 ## Tests
 
 - Automated: yes — Ascendant ±2° regression cases; TZDB offsets for 3 eras/locations; polar/unknown guards
@@ -38,3 +37,4 @@
 
 - Alarm-grade longitudes only — not Swiss Ephemeris chart certification
 - Historical UTC via IANA `ZoneId` + TZDB
+- Agent copy / paste / optional local LLM: see [`birth-agent.md`](birth-agent.md) (no second natal calc stack)

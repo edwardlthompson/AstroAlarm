@@ -2,7 +2,7 @@ package org.astroalarm.astro.alarm
 
 import org.astroalarm.astro.model.AlarmTarget
 
-enum class ProgressiveKind { Solar, Lunar, Zodiac, Clock, Seasonal, Planet, Natal }
+enum class ProgressiveKind { Solar, Lunar, Zodiac, Clock, Seasonal, Planet, Occasion, Natal }
 
 /** Full alarm-type catalog for the editor dropdown. */
 object ProgressiveAdd {
@@ -14,6 +14,7 @@ object ProgressiveAdd {
         is AlarmTarget.SolarTerm -> ProgressiveKind.Seasonal
         is AlarmTarget.Planet, is AlarmTarget.PlanetAlign, is AlarmTarget.AllPlanetsAlign ->
             ProgressiveKind.Planet
+        is AlarmTarget.Occasion -> ProgressiveKind.Occasion
         else -> ProgressiveKind.Natal
     }
 
@@ -24,6 +25,7 @@ object ProgressiveAdd {
         add(ProgressiveKind.Clock)
         add(ProgressiveKind.Seasonal)
         add(ProgressiveKind.Planet)
+        add(ProgressiveKind.Occasion)
         if (hasNatal) add(ProgressiveKind.Natal)
     }
 }

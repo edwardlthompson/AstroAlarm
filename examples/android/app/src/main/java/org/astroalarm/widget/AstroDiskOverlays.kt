@@ -103,12 +103,16 @@ object AstroDiskOverlays {
             typeface = Typeface.DEFAULT_BOLD
             textAlign = Paint.Align.CENTER
         }
+        val halfW = marks.maxOfOrNull { tp.measureText(it.label) }?.div(2f)
+            ?: (DiskLabelFit.glyphWidth(tp.textSize, "Sep") / 2f)
+        val clipSafe = size / 2f - DiskRingLayout.EDGE
+        val labelR = (radius + tickLen + tp.textSize * 0.70f).coerceAtMost(clipSafe - halfW)
         marks.forEach { mark ->
             val rad = mark.labelDeg * (Math.PI / 180.0)
             val cosR = cos(rad).toFloat()
             val sinR = sin(rad).toFloat()
-            val lx = center + (radius + tickLen + tp.textSize * 0.70f) * cosR
-            val ly = center + (radius + tickLen + tp.textSize * 0.70f) * sinR - (tp.ascent() + tp.descent()) / 2f
+            val lx = center + labelR * cosR
+            val ly = center + labelR * sinR - (tp.ascent() + tp.descent()) / 2f
             canvas.drawText(mark.label, lx, ly, tp)
         }
     }

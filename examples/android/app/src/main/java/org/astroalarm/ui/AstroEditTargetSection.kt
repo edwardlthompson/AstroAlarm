@@ -93,6 +93,12 @@ fun AstroEditTargetSection(
                 }
             )
         }
+        is AlarmTarget.Occasion -> {
+            OccasionPicker(
+                selectedId = target.catalogId,
+                onSelect = { onTargetChange(AlarmTarget.Occasion(it)) },
+            )
+        }
         is AlarmTarget.NatalCompoundSpecific,
         is AlarmTarget.NatalCompoundAny -> {
             val pid = when (target) {

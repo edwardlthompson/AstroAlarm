@@ -14,13 +14,14 @@ class ProgressiveAddTest {
         assertTrue(kinds.contains(ProgressiveKind.Lunar))
         assertTrue(kinds.contains(ProgressiveKind.Seasonal))
         assertTrue(kinds.contains(ProgressiveKind.Planet))
-        assertEquals(6, kinds.size)
+        assertTrue(kinds.contains(ProgressiveKind.Occasion))
+        assertEquals(7, kinds.size)
     }
 
     @Test
     fun natalOnlyWhenProfile() {
         assertTrue(ProgressiveKind.Natal in ProgressiveAdd.kinds(hasNatal = true))
-        assertEquals(7, ProgressiveAdd.kinds(hasNatal = true).size)
+        assertEquals(8, ProgressiveAdd.kinds(hasNatal = true).size)
     }
 
     @Test

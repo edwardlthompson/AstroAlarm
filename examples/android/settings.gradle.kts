@@ -16,3 +16,4 @@ dependencyResolutionManagement {
 
 rootProject.name = "astroalarm"
 include(":app")
+include(":wear")

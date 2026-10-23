@@ -2,6 +2,17 @@
 
 > Archive of finished BUILD_PLAN items.
 
+## Sprint 2+ Incremental Features — outer crop + WIP restore (2026-10-22)
+
+- ✅ [AGENT] Fix Daily 2D outer crop of month labels and zodiac on preview + widget (DiskRingLayout, AstroDiskOverlays.drawMonthRim, DiskRingLayoutTest; shared AstroDiskRenderer)
+- ✅ [AGENT] Gate-verify restored WIP alarm-tone-tts (docs/features/alarm-tone-tts.md + alarm unit tests)
+- ✅ [AGENT] Gate-verify restored WIP clock-2d-noon-up (docs/features/clock-2d-noon-up.md + DiskAngleAnchorTest)
+- ✅ [AGENT] Gate-verify restored WIP sky-occasions (docs/features/sky-occasions.md + SkyOccasionCatalogTest)
+- ✅ [AGENT] Gate-verify restored WIP wear-watchface (docs/features/wear-watchface.md + :wear unit tests)
+- ✅ [AGENT] Gate-verify restored WIP birth-agent (docs/features/birth-agent.md + NatalAgentPromptTest / LocalLlmClientTest)
+- ✅ [AUTO] Merge Dependabot [#28](https://github.com/edwardlthompson/AstroAlarm/pull/28) (chore(deps): bump the github-actions group across 1 directory with 2 updates)
+- ✅ [AUTO] Merge Dependabot [#26](https://github.com/edwardlthompson/AstroAlarm/pull/26) (chore(deps): bump the android-dependencies group across 1 directory with 4 updates)
+
 ## Sprint 2+ Human & device (2026-09-15)
 
 - ✅ [ADB] android phoneScreenshots for Fastlane/F-Droid (360dp tabs readable)

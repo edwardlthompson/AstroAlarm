@@ -14,6 +14,7 @@ object AlarmTargetCopy {
         is AlarmTarget.CustomClock -> "⏰ "
         is AlarmTarget.SolarTerm -> "🍃 "
         is AlarmTarget.Planet, is AlarmTarget.PlanetAlign, is AlarmTarget.AllPlanetsAlign -> "🪐 "
+        is AlarmTarget.Occasion -> "✨ "
         is AlarmTarget.NatalAscAspect, is AlarmTarget.NatalMcAspect,
         is AlarmTarget.MoonReturn, is AlarmTarget.SolarReturn,
         is AlarmTarget.MercuryStation, is AlarmTarget.MoonSignIngress,
@@ -29,6 +30,11 @@ object AlarmTargetCopy {
         is AlarmTarget.Planet -> "${t.body.name} ${planetEventLabel(res, t.event)}"
         is AlarmTarget.PlanetAlign -> "${t.bodyA.name} + ${t.bodyB.name}"
         is AlarmTarget.AllPlanetsAlign -> res.getString(R.string.event_all_planets)
+        is AlarmTarget.Occasion -> when (SkyOccasionId.fromId(t.catalogId)) {
+            SkyOccasionId.NAKED_EYE_2040 -> res.getString(R.string.astro_occasion_2040)
+            SkyOccasionId.ALL_PLANETS_2492 -> res.getString(R.string.astro_occasion_2492)
+            null -> t.catalogId
+        }
         is AlarmTarget.NatalAscAspect -> "Asc ${t.aspect.name} ${t.body.name}"
         is AlarmTarget.NatalMcAspect -> "MC ${t.aspect.name} ${t.body.name}"
         is AlarmTarget.MoonReturn -> res.getString(R.string.event_moon_return)

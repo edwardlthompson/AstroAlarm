@@ -108,8 +108,9 @@ class ShellContractTests(unittest.TestCase):
         bash = _bash()
         if not bash:
             self.skipTest("bash not available")
-        if shutil.which("go"):
-            self.skipTest("go is installed")
+        # Pruned children (no examples/go) and hosts without `go` both skip.
+        if (ROOT / "examples" / "go" / "go.mod").is_file() and shutil.which("go"):
+            self.skipTest("go stack is active")
         proc = subprocess.run(
             [bash, "scripts/feature-gate.sh", "--skip-preamble", "--stack", "go"],
             cwd=ROOT,

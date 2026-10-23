@@ -42,6 +42,9 @@ internal object AstroAlarmTargetJson {
             is AlarmTarget.AllPlanetsAlign -> {
                 obj.put("kind", "all_planets_align"); obj.put("offset", target.offsetMinutes)
             }
+            is AlarmTarget.Occasion -> {
+                obj.put("kind", "occasion"); obj.put("catalogId", target.catalogId)
+            }
             else -> Unit
         }
         return obj
@@ -86,6 +89,10 @@ internal object AstroAlarmTargetJson {
                 AlarmTarget.PlanetAlign(a, b, obj.optInt("offset", 0))
             }
             "all_planets_align" -> AlarmTarget.AllPlanetsAlign(obj.optInt("offset", 0))
+            "occasion" -> {
+                val id = obj.optString("catalogId")
+                if (SkyOccasionId.fromId(id) == null) null else AlarmTarget.Occasion(id)
+            }
             else -> null
         }
     }

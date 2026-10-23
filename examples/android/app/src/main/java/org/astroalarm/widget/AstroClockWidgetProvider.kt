@@ -30,6 +30,7 @@ class AstroClockWidgetProvider : AppWidgetProvider() {
         val showEventTimes = displayPrefs.isShowEventTimes2D()
         val showMonthTicks = displayPrefs.isShowMonthTicks2D()
         val showHourMarks = displayPrefs.isShowHourMarks2D()
+        val solarNoonUp = displayPrefs.isShowSolarNoonUp2D()
         val now = Instant.now()
         val zone = place?.zone ?: java.time.ZoneId.systemDefault()
         val today = LocalDate.now(zone)
@@ -61,6 +62,7 @@ class AstroClockWidgetProvider : AppWidgetProvider() {
                 showEventTimes = showEventTimes,
                 showMonthTicks = showMonthTicks,
                 showHourMarks = showHourMarks,
+                solarNoonUp = solarNoonUp,
                 earth = EarthTexture.get(context),
                 moon = MoonTexture.get(context),
             )

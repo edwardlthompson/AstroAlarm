@@ -150,6 +150,9 @@
     <string name="astro_tab_sol">Sol</string>
     <string name="astro_tab_seasonal">Seasonal</string>
     <string name="astro_tab_planet">Planet</string>
+    <string name="astro_tab_occasion">Sky occasions</string>
+    <string name="astro_occasion_2040">2040-09-08 planets + Moon</string>
+    <string name="astro_occasion_2492">2492-05-06 all planets</string>
 
     <string name="astro_swipe_hint">Swipe for 24h Clock →</string>
     <string name="astro_add_widget_btn">Add 24-hour clock</string>
@@ -174,6 +177,7 @@
     <string name="astro_toggle_show_month_ticks_desc">Two-letter month starts on the outer rim</string>
     <string name="astro_toggle_show_hour_marks">Show hour marks</string>
     <string name="astro_toggle_show_hour_marks_desc">Civil clock hours on the 24h dial, not solar noon</string>
+    <string name="astro_toggle_solar_noon_up">Solar noon at top</string>
     <string name="astro_solar_noon">Solar Noon</string>
     <string name="astro_solar_midnight">Solar Midnight</string>
     <string name="astro_zodiac_overhead_noon">Midday Overhead Zodiac</string>
@@ -219,6 +223,7 @@
     <string name="astro_alarm_tap_to_open">Tap to open alarm</string>
     <string name="astro_channel_name">Alarm</string>
     <string name="astro_channel_desc">Full-screen lockscreen alarms you can stop without unlocking</string>
+    <string name="astro_tts_unavailable">Voice unavailable. Check TTS engine in Settings.</string>
     <string name="astro_action_snooze">Snooze (%d min)</string>
     <string name="astro_action_stop">Stop</string>
     <string name="astro_widget_desc">Rotating day/night astronomical clock</string>
