@@ -17,6 +17,13 @@
 
 ## Entries
 
+### 2026-10-22 — v1.11.0 /ship
+- **Status:** Accepted
+- **Context:** Post-v1.10.0 WIP (tone/TTS, noon-up, occasions, wear, chart agent) plus Daily 2D outer-clip fix were ready on main after `/build`. `update-deps --apply` rewrote CodeQL pins to invalid `vcodeql-bundle-v2.27.3`.
+- **Decision:** Ship as `feat(android)` + empty Unreleased; Release Please **1.11.0** (PR #29, admin-merge). Restore CodeQL/`upload-sarif` to `@v4` in a follow-up `fix(ci)`. Keep go feature-gate skip when `examples/go` is pruned. Sideload upload-signed release with `adb install -r`.
+- **Alternatives considered:** Leaving `vcodeql-bundle-*` (rejected: CI cannot resolve). Uninstall before sideload (rejected: wipes alarms).
+- **Consequences:** Tag **v1.11.0** with FOSS APK + SBOM/OpenVEX. Future `/ship` must reject CodeQL bundle tags again.
+
 ### 2026-09-15 — v1.10.0 /ship
 - **Status:** Accepted
 - **Context:** Yearly/Sol/natal/Daily disks painted a black square plate; natal-align reused the alarms picker art.
