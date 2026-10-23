@@ -6,6 +6,13 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.11.1](https://github.com/edwardlthompson/AstroAlarm/compare/v1.11.0...v1.11.1) (2026-10-23)
+
+
+### Fixed
+
+* **android:** sync app 1.11.0 / versionCode 10110 after RP tag ([d225d95](https://github.com/edwardlthompson/AstroAlarm/commit/d225d95975ceb8c321f1c1b43d57e6ea04ade7b9))
+
 ## [Unreleased]
 
 ## [1.11.0](https://github.com/edwardlthompson/AstroAlarm/compare/v1.10.0...v1.11.0) (2026-10-23)
