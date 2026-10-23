@@ -6,6 +6,8 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [Unreleased]
+
 ## [1.11.0](https://github.com/edwardlthompson/AstroAlarm/compare/v1.10.0...v1.11.0) (2026-10-23)
 
 
@@ -17,9 +19,6 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Fixed
 
 * **ci:** restore CodeQL action pins to [@v4](https://github.com/v4) ([4e1ac5f](https://github.com/edwardlthompson/AstroAlarm/commit/4e1ac5fdf71c2e675bbaf9bda125f46fa3c4573d))
-
-## [Unreleased]
-
 
 ## [1.10.0](https://github.com/edwardlthompson/AstroAlarm/compare/v1.9.0...v1.10.0) (2026-09-15)
 
