@@ -1,0 +1,116 @@
+# Agent Memory
+
+> Centralized index of tech stack, threat models, persistent context, and retrospectives.
+> Update only at session startups, milestone boundaries, or major architectural pivots.
+
+## Tech Stack
+
+| Layer | Technology | Version | Notes |
+|-------|-----------|---------|-------|
+| Platform | Android (Kotlin, Jetpack Compose, Material 3) | 1.10.0 | Child of agent-project-bootstrap; GitHub Releases APK `astroalarm-X.Y.Z-foss.apk` |
+| Persistence | JSON SharedPreferences + DataStore | - | Room/Hilt on classpath for later stores |
+| Ephemeris | commons-suncalc 3.11 + NOAA tropical longitude + on-device Kepler | on-device | Sun/moon times; NOAA for seasons/zodiac/jieqi; Kepler for Sol tab and planet alarms |
+| License | MIT | - | Pure FOSS; no Play Services / Firebase |
+| Distribution | GitHub Releases | - | F-Droid later |
+## Active Modules
+
+- ✅ Android / F-Droid (`modules/android/MODULE.md`)
+- ❌ Web / PWA (pruned)
+- ❌ Python (pruned)
+- ❌ Node API (pruned)
+- ❌ Lightroom / Rust / Go (pruned)
+
+## Threat Model Checklist
+
+- ✅ `docs/THREAT_MODEL.md` drafted (STRIDE, trust boundaries, top abuse cases, OWASP LLM Top 10 walk)
+- ✅ No proprietary closed-source SDKs in production path
+- ✅ Opt-in only telemetry (GDPR/CCPA compliant); see `docs/PRIVACY.md`
+- ✅ Secrets excluded from VCS (Gitleaks pre-commit)
+- ✅ Dependency vulnerability scanning enabled (local `update-deps --audit` + CodeQL + Trivy + Dependabot backup)
+- ✅ Input validation at all data boundaries
+- ✅ `SECURITY.md` and private vulnerability reporting enabled
+
+## Persistent Context
+
+### Project Purpose
+
+FOSS Android astronomical alarm clock: on-device suncalc sun/moon ephemeris, solar/lunar/seasonal/planet/custom alarms, Alarms | Daily | Sky hubs (2D/3D chips; Yearly/Sol/Chart chips), lockscreen math unlock, rotating day/night widget, 2160 PNG share. Add-alarm type menu is the full catalog (Sun, Moon, Zodiac, Clock, Seasonal, Planet; Natal when a chart exists). Alarm-row chips wrap on the Daily line; Edit/Delete are icons. Canvas night/gold from tokens; Fastlane/F-Droid copy from product.json.
+
+### Key Constraints
+
+- Max 300 lines per static data file (UI + i18n), 150 lines per pure logic file
+- Trunk-based development with Conventional Commits
+- Strict type safety and test coverage budgets
+
+## Session Retrospectives
+
+| 2026-10-22 | v1.11.0 /ship | Tone/TTS policy, noon-up, sky occasions, wear face, chart agent, Daily 2D outer-clip; RP #29; SBOM+APK on release | Never apply `vcodeql-bundle-*` (upd offered it again); go gate skip when `examples/go` pruned |
+| 2026-10-22 | /build outer-crop + WIP | Daily 2D month/zodiac clip fix (`DiskRingLayout.EDGE`); restored WIP (tts, noon-up, occasions, wear, birth-agent); merged Dependabot #26/#28 | Android Parallel scopes are exclusive — keep multi-feature verify Sequential |
+| 2026-09-15 | v1.10.0 /ship | Circular Yearly/Sol/natal/Daily disks; unique natal-align picker preview; RP #24; versionCode **10109** | Do not apply `vcodeql-bundle-*`; sideload with `adb install -r`; phones were debug-signed |
+| 2026-09-15 | v1.9.0 /ship | Leftover alarms-first UX; full add-alarm catalog; icon Edit/Delete; RP #23; versionCode **10108** | Do not apply `vcodeql-bundle-*`; sideload with `adb install -r`; skip More events |
+| 2026-09-15 | /build leftover UX-6…17 | Sunrise offer, ring banner, GPS skeleton, lockscreen polish, empty mark, overlay a11y, chips, motion, sky-hand tick, canvas tokens, progressive add, brand store copy; UX-1…17 archived | ADB screenshots/TalkBack need one `adb` device; Dependabot #21 is behind main (do not admin-merge); canvas colors stay out of M3 `color` |
+| 2026-09-14 | alarms-first UX | Chrome, optional GPS onboard, 2160 PNG share, 3 tabs, TalkBack/reduce-motion; UX-1…5 ✅ | Do not share the Alarms list; DiskLabelFit 28px cap is widgets-only; location still required to save solar/lunar |
+| 2026-09-14 | v1.8.2 /ship | AlarmClock broadcast + FSI lockscreen; skip SDK `tools`; RP #22; versionCode **10107** | Do not apply `vcodeql-bundle-*`; do not force-stop after SET_ALARM; OP12 FSI may need screen off |
+| 2026-09-11 | v1.8.0 /ship | Natal suite + Golden Path catch-up; pruned-child upgrade-sim skip; RP #19 | Do not apply `vcodeql-bundle-*`; attach `mapping.txt` on signed releases; Dependabot #4/#18 still need review merge |
+| 2026-09-11 | /build Golden Path 1–11 | Signing+R8+UP+Settings chrome+deep link+OpenSSF+sanitize; smoke parser keeps ### Sequential rows; Dependabot #4/#18 blocked by branch policy | Do not admin-merge Dependabot; attach `mapping.txt` on signed releases; project 14564 badge is README-linked |
+| 2026-09-09 | v1.7.0 /ship | Daily 2D Earth/Moon hub + terminator; rim hours; NASA Moon globe (no emoji); RP #17 | Do not apply `vcodeql-bundle-*` tags; versionCode stays 10104; rotate leaked `gh` token |
+| 2026-09-08 | v1.6.0 /ship | Canvas Sol/Yearly at screen px; Yearly north-ecliptic-pole frame; RP #16 | Do not apply `vcodeql-bundle-*` tags; versionCode stays 10104; rotate leaked `gh` token |
+| 2026-09-04 | v1.5.0 /ship | One fire for Sun/Yearly peers; Sol Earth-path marks + fire times; RP #15 | Do not apply `vcodeql-bundle-*` tags; versionCode stays 10104; rotate leaked `gh` token |
+| 2026-09-04 | sol-yearly-alarms | Jieqi and solstice/equinox marks on Earth's Sol path with MMM d HH:mm | Related planet is Earth; Show event times still hides dots |
+| 2026-09-04 | alarm-calendar-peers | Keep Sun + Yearly rows; one fire via lon+offset key; consume on Stop/Snooze; widget scope | Do not merge types; snooze-until delay is a later row; versionCode stays 10104 |
+| 2026-09-04 | v1.4.1 /ship | Yearly dots on jieqi rays; Compact widgets; Show event times on 3D/Yearly/Sol; RP #14; ruff 0.16.6 | Do not apply `vcodeql-bundle-*` tags; versionCode stays 10104; sun vs jieqi seasonal alarms still overlap |
+| 2026-09-02 | v1.4.0 /ship | Yearly hub + Sol Kepler + celestial alarms; RP #12; Moon anti-sunward at full; jieqi wrap; sideload PC upload key | Do not apply `vcodeql-bundle-*` tags; Yearly Moon offset is `canvasDeg + 180`; versionCode 10104 is not auto-bumped |
+| 2026-09-01 | Yearly Sol labels | Shared pin copy; Yearly Moon ecliptic; N/S off traces; jieqi inset edges; Sol teaching chrome | Daily 3D tracks stay on Earth; do not un-rotate them onto the sun ring |
+| 2026-09-01 | Yearly Sol align | Shared pin Y; 3D globe nod by sunDec; compact emoji band; N/S on traces; non-scrolling tabs | Do not rotate 3D rings with the globe; green stays north |
+| 2026-09-01 | v1.3.1 /ship | Lockscreen TTS repeats every 2s until dismiss; RP #11; F-Droid changelog 10101; sideload PC upload key | Do not apply `vcodeql-bundle-*` tags; bump F-Droid `changelogs/{versionCode}.txt` with versionCode |
+| 2026-09-01 | v1.3.0 /ship | commons-suncalc sun/moon; RP #9; connected tests needed `skipUiGate`; sideload uses PC upload key | Do not apply `vcodeql-bundle-*` tags; onboarding must skip under instrumentation |
+| 2026-08-31 | v1.2.0 /ship | Smaller 2D callouts; RP #5 cut 1.2.0; `astroalarm-1.2.0-foss.apk` on a stable (not prerelease) GitHub Release | Add `ANDROID_KEYSTORE_*` secrets for a stable upload key; bump README `template-X.Y.Z` in the same RP extra-files |
+| 2026-08-30 | AstroAlarm init | Bootstrapped from agent-project-bootstrap; migrated OpenShouter astro suite; `test assembleRelease` green; `validate-bootstrap --quick` green | HUMAN: create GitHub repo, enable Dependabot/branch protection; do not commit `local.properties` |
+| 2026-08-28 | v1.0.0 /ship | Cloud agent #81 reviewed+merged; RP #82 cut first stable; Unreleased empty; SBOM+OpenVEX on the tag | Do not merge RP while upgrade-sim still fails on pruned stacks; `Release-As: 1.0.0` beats 0.26.0 |
+| 2026-08-28 | /cleanup HUMAN leftovers | Archived 5 script-closed HUMAN rows; CII, Ollama, Android SDK stay 🔲 | Recurring weekly AUTO stays 🔲 |
+| 2026-08-28 | HUMAN leftover automation | Scripts close Scorecard, crash-proxy-off, mcp.json copy, weekly Dependabot, CODEOWNERS | CII login, Ollama install, and Android licenses stay HUMAN/ADB |
+| 2026-08-28 | /cleanup M46 | Archived M46/M45/M44 AGENT rows; HUMAN leftovers (Scorecard, CII) stay on the board | Recurring weekly AUTO stays 🔲; do not archive Child Playbook templates |
+| 2026-08-28 | /build Slack | `--lane auto` on this template; next AGENT is M46-44+ after merge with PC M46 board | Do not run child Sprint 0 init-project on this repo |
+| 2026-08-27 | /build scoped gates | Per-row `--scope auto`; failed-stack `--skip-preamble` retry; `/gates` wrap-up stays full | Do not treat docs-only as a skip of Sprint wrap-up `/gates` |
+| 2026-08-27 | /build M46 P0 | Force-push deny; go/cargo PATH; System32 bash; Sacred upgrade sim; plugin version; GP JSON schemas | Next: Node/Python About+crash; do not treat /push as force-push approval |
+| 2026-08-27 | M46 /allideas board | Uncapped dump command + 75 BUILD_PLAN rows; `/build --lane auto` reads maintainer board | `/ideas` stays the short ranked menu; HUMAN leftovers (Ollama, DPIA, CII) stay off the AGENT queue |
+| 2026-08-27 | M45 /ideas round 2 | Health CI filter; init hooks; gates status script; Gradle pins apply; SBOM wait; plugin pack; Rust/Go About+crash; F-Droid+Lightroom gates | Crash-proxy stays off until DPIA; `--force` still matches `git push` approval |
+| 2026-08-27 | M44 /ideas ship hygiene | docs/chore no RP bump; Unreleased-first; worktree skip; session-state.json ignore; RP Dependency Review check; Gradle pins; /gates canvas; commit-msg hook | Closed leftover 0.25.1 (#80); local `/gates` needs `pre-commit install --hook-type commit-msg` |
+| 2026-08-27 | M43 local resource packing | RAM-capped parallel feature-gate; `/best-of-n` + `/emulator`; Ollama docs no keys | Do not require Ollama/emulator on `/ship`; CI slot cap 2; dummy GUI string never in git |
+| 2026-08-27 | M42 local-first deps | `/update-deps` + `upd-cli==0.6.2`; `/ship` uses `--local` gate; Dependabot weekly backup; RP dry-run preview | Do not wait on Dependabot PRs before push; full GH gate stays on `/regress` |
+| 2026-08-23 | v0.24.0 /ship | Privacy-feedback feat + TEMPLATE_INDEX fix; RP #72 admin-merge; emptied Unreleased before merge | About-without forbids imports of `about/`; never run that gate via WSL1 `bash` |
+| 2026-08-21 | v0.23.0 /ship | Strict pre-release + about-without Windows write retry; RP #71 admin-merge after e2e seed fix | Playwright `addInitScript` re-runs on reload — only seed lastSeen when unset |
+| 2026-08-20 | v0.22.0 /ship | Emptied Unreleased before push; RP #70 admin-merge after onStart display-mode fix | `decorView.display` is null in onCreate on the CI emulator — apply `preferredDisplayModeId` in onStart |
+| 2026-08-18 | v0.21.0 /ship | CI + Windows upgrade-sim green on feat and fix; RP #69 admin-merge; fold comments leftover notes | Fold is local-only — commit empty Unreleased before push or RP leaves leftovers under the version heading |
+| 2026-08-17 | M39 /ideas Windows PATH + ship hygiene | Shared PATH resolver; agent-run drops PYTHONPATH; fold Unreleased onto RP; Q&A GraphQL + HUMAN line | Do not attach Environments to required-check workflows; keep Unreleased empty only after fold+comment |
+| 2026-08-17 | M38 /ideas ship-hardening | Branch protection now includes Windows upgrade-sim; Python TEMPLATE_INDEX; RP wait skip; lib files ≤150 | `gh` is not on Git Bash PATH unless Program Files is exported |
+| 2026-08-17 | v0.20.0 /ship | Three /ideas rounds + Windows upgrade-sim required; RP #68 admin-merge after CI green on 812a2db | Empty Unreleased before RP; jq.exe CRLF breaks template-index; wait for `release` SBOM |
+| 2026-08-17 | /ideas pass 3 | Windows required check; COACH.md; dirty Unreleased notes; weekly AUTO skip; Codespaces verify; citation date; setup-python pin; build_sprint split | Allowlist leftover oversized lib modules; do not pretend they are under 150 |
+| 2026-08-17 | /ideas pass 2 | Health template-vs-child; pwsh skip; Windows upgrade-sim CI; UTF-8 health; hint JSON split; root md links; Q&A category; pre-commit | Recurring 🔲 maintenance rows are the honest template next-row |
+| 2026-08-17 | /ideas implement-all | Eight ranked items: Windows REPL hang, citation sync, glossary, portable stamp, verify hints, welcome hook, docs links, Discussions | Keep welcome/Discussions opt-in or best-effort; do not fail init when `gh` is missing |
+| 2026-08-16 | v0.19.0 /ship | Tour + portable adapters; CI green after push of unpushed feat; RP #67 admin-merge | Hard gate cannot see CI until HEAD is on origin; wait for `release` published SBOM |
+| 2026-08-16 | Portable first-run | AGENTS.md SoT + thin pointers; GEMINI.md pointer-only; /tour twin in docs/help | Do not add `.agents/agents.md` (second SoT) |
+| 2026-08-16 | Coach layer | BEST_PRACTICES + FIRST_30_DAYS + /coach; justfiles optional | Keep just out of CI |
+| 2026-08-16 | M37 gap close | verify.sh + env schema + commit-msg + Dockerfile; post hooks implemented but opt-in | Keep `.agent/` as indexes only |
+| 2026-08-16 | M36 bootstrap standards | Extended init-project instead of a second generator; 11 engine unit tests; validate-bootstrap --quick green | Full simulate-template-upgrade still the heavy init dry-run |
+| 2026-08-16 | v0.18.3 /ship | Autofix + pre-release green; Codex skip; RP #66 admin-merge; Compose BOM 2026.08.00 | Release assets start empty — wait for `release` published SBOM job |
+| 2026-08-16 | v0.18.2 /push | RP #63 admin-merge after maintainer gates; HEAD CI already green; no extra prepare commit | Keep Unreleased empty before RP or notes land under `chore` |
+| 2026-08-15 | M35 HUMAN open items | Job-scoped workflow tokens; dismissed 65 PinnedDependencies; merged Dependabot #58–#61; radar max 6 | Rebase Dependabot before Feature Gate on stale lockfiles; Scorecard VulnerabilitiesID lags patched HEAD |
+| 2026-08-15 | v0.18.1 /push | `resolve-python.sh` now sets a single executable path so `"$PY"` works; RP #62 admin-merge after CI green | Do not set `PY="py -3"` (quoted invoke fails); keep Unreleased empty before RP or notes land under `chore` |
+| 2026-08-15 | M35 /audit | Shared `resolve-python.sh` skips Store stub; About gate restores from HEAD; slim Unreleased; UTF-8 LF rules | Do not run `python3` on Windows PATH; leave Scorecard + Dependabot PRs to HUMAN |
+| 2026-08-15 | v0.18.0 /ship | M34 thin steals + extract-zip High cleared via `@puppeteer/browsers` 3.2.0; lockfile needed `proxy-agent` 8 for `npm ci`; RP #56 admin-merge | Generate lockfile with Node 22 / `npm ci` locally after overrides; Windows Store `python3` hangs autofix |
+| 2026-08-14 | M34 prior-art thin steals | Honesty labels + handoff + Sacred upgrade column without vendoring cousin repos | Keep fail-open hooks labeled; do not claim `/push` blocks `--force` |
+| 2026-08-12 | v0.17.0 /ship | Branding kit + pitch README generator; RP #55 admin-merge; CI green on feat commit | Trigger Release workflow for SBOM if assets empty after tag |
+| 2026-08-10 | v0.16.0 /ship | Codex + multi-stack autofix in `/prerelease`; fixed About-without Biome stubs; undici/ip-address/nanoid overrides cleared High alerts after push; RP #51 admin-merge | Prefer Git Bash via agent-run on Windows (System32 bash = WSL1 breaks npm); push security lockfile before expecting Dependabot zero |
+| 2026-08-01 | v0.15.2 /ship | Cleared High Dependabot mid-ship (js-yaml, brace-expansion, postcss); RP #50 admin-merge after auto-merge wait | Re-check Dependabot after each push before merge-release-please |
+| 2026-07-22 | v0.15.0 /ship | RP #37 merged; fixed duplicate CHANGELOG Unreleased + Node 25 vitest localStorage before CI green | Confirm single Unreleased before push; watch GH Dependabot banner vs triage script |
+| 2026-07-21 | M33 Cursor feature integration | Native worktrees + permissions + 7 skills + plugin pack + CLI example; commercial docs deepened | Keep pack script globs wholesale when adding skills; residual Auto-review classifier drift |
+| 2026-07-12 | v0.14.1 release | /push merged RP #36; fixed Dependabot alert API + FOSS mcp.json gate | Prefer AUTOMERGE_TOKEN over admin merge fallback for RP |
+| 2026-07-12 | M32 audit | Caught GITHUB_TOKEN automerge skipping push CI; Git Bash preference for Windows agent-run | Completed via HUMAN automation; GitHub MCP enabled locally |
+| 2026-06-13 | v0.6.0 design system | Cross-stack tokens + i18n scaffold | Restore optional-stack CI jobs after large merge |
+| 2026-06-30 | Autonomous /build + HUMAN automation | Grouped human section keeps board readable; automation router backlogs failures only | Release Please PR #20 for 0.12.0 needs human merge |
+## Template Provenance
+
+- **Source template:** `edwardlthompson/agent-project-bootstrap` (self-maintained)
+- **Template version:** `1.11.0` (see `.template-version`)
+- **Last update check:** See `.template-update.json`
