@@ -1,5 +1,5 @@
 {
-  "template_version": "1.11.0",
+  "template_version": "1.12.1",
   "entry_points": {
     "bootstrap": "docs/START_HERE.md",
     "reference": "docs/FOR_AGENTS.md",
@@ -825,7 +825,7 @@
       "owner": "maintainer"
     },
     {
-      "path": "AGENT_MEMORY.md",
+      "path": ".agent/AGENT_MEMORY.md",
       "purpose": "Tech stack, threat model, retrospectives index",
       "read_when": "session_start",
       "update_when": "milestone_boundary",
@@ -846,7 +846,7 @@
       "owner": "agent"
     },
     {
-      "path": "DECISION_LOG.md",
+      "path": ".agent/DECISION_LOG.md",
       "purpose": "Append-only decision register",
       "read_when": "architectural_decision",
       "update_when": "architectural_decision",
