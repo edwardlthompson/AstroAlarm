@@ -6,6 +6,19 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [Unreleased]
+
+### Added
+
+* **android:** Tonight's sky card — next sunrise/sunset/moonrise/moonset with one line of context on the Alarms tab
+* **docs:** ephemeris accuracy harness vs NOAA almanac (30 dates) → `docs/ACCURACY.md` (`scripts/check-ephemeris-accuracy.sh`)
+
+### Changed
+
+* **docs:** GitHub About description under 120 characters; topics `android`, `astronomy`, `alarm`, `ephemeris`, `widgets` (dropped `foss`/`mit`)
+* **docs:** “What this is not” clarifies approximate on-device ephemeris is not navigation or observatory-grade
+* **repo:** Linguist attribution block on `.gitattributes`; agent memory/log paths under `.agent/`
+
 ## [1.12.0](https://github.com/edwardlthompson/AstroAlarm/compare/v1.11.0...v1.12.0) (2026-11-06)
 
 
@@ -20,19 +33,6 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 * **android:** sync app 1.11.0 / versionCode 10110 after RP tag ([d225d95](https://github.com/edwardlthompson/AstroAlarm/commit/d225d95975ceb8c321f1c1b43d57e6ea04ade7b9))
 * **release:** point version sync at .agent/AGENT_MEMORY.md ([7bb7039](https://github.com/edwardlthompson/AstroAlarm/commit/7bb7039d80b62986edcb1621840bc7a3b56400ce))
 * **release:** sync template version against .agent/AGENT_MEMORY.md ([1f62f90](https://github.com/edwardlthompson/AstroAlarm/commit/1f62f900ff018b94689aabea5fcd3e5e4f95162d))
-
-## [Unreleased]
-
-### Added
-
-* **android:** Tonight's sky card — next sunrise/sunset/moonrise/moonset with one line of context on the Alarms tab
-* **docs:** ephemeris accuracy harness vs NOAA almanac (30 dates) → `docs/ACCURACY.md` (`scripts/check-ephemeris-accuracy.sh`)
-
-### Changed
-
-* **docs:** GitHub About description under 120 characters; topics `android`, `astronomy`, `alarm`, `ephemeris`, `widgets` (dropped `foss`/`mit`)
-* **docs:** “What this is not” clarifies approximate on-device ephemeris is not navigation or observatory-grade
-* **repo:** Linguist attribution block on `.gitattributes`; agent memory/log paths under `.agent/`
 
 ## [1.11.0](https://github.com/edwardlthompson/AstroAlarm/compare/v1.10.0...v1.11.0) (2026-10-23)
 
