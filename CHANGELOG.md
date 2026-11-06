@@ -8,13 +8,22 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
-## [1.11.0](https://github.com/edwardlthompson/AstroAlarm/compare/v1.10.0...v1.11.0) (2026-10-23)
+### Added
 
+* **android:** Tonight's sky card — next sunrise/sunset/moonrise/moonset with one line of context on the Alarms tab
+* **docs:** ephemeris accuracy harness vs NOAA almanac (30 dates) → `docs/ACCURACY.md` (`scripts/check-ephemeris-accuracy.sh`)
+
+### Changed
+
+* **docs:** GitHub About description under 120 characters; topics `android`, `astronomy`, `alarm`, `ephemeris`, `widgets` (dropped `foss`/`mit`)
+* **docs:** “What this is not” clarifies approximate on-device ephemeris is not navigation or observatory-grade
+* **repo:** Linguist attribution block on `.gitattributes`; agent memory/log paths under `.agent/`
+
+## [1.11.0](https://github.com/edwardlthompson/AstroAlarm/compare/v1.10.0...v1.11.0) (2026-10-23)
 
 ### Added
 
 * **android:** ship tone/TTS, noon-up, occasions, wear, chart agent, outer-clip ([f190a33](https://github.com/edwardlthompson/AstroAlarm/commit/f190a331240530fa5e047d3cdc31d1fad4b1f22e))
-
 
 ### Fixed
 
