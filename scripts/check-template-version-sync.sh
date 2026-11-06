@@ -1,5 +1,7 @@
 #!/usr/bin/env bash
-# Fail when .template-version drifts from .release-please-manifest.json
+# Fail when template stamp files drift. On product children, .template-version
+# tracks the parent template while release-please-manifest + CITATION.cff track
+# product SemVer and may differ.
 set -euo pipefail
 
 ROOT="$(cd "$(dirname "$0")/.." && pwd)"
@@ -10,13 +12,25 @@ if [ ! -f .release-please-manifest.json ] || [ ! -f .template-version ]; then
   exit 1
 fi
 
-MANIFEST="$(python3 -c "import json; print(json.load(open('.release-please-manifest.json'))['.'].strip())")"
 VERSION="$(tr -d '[:space:]' < .template-version)"
+MANIFEST="$(python3 -c "import json; print(json.load(open('.release-please-manifest.json'))['.'].strip())")"
 
-if [ "$MANIFEST" != "$VERSION" ]; then
-  echo "FAIL: .template-version ($VERSION) != manifest ($MANIFEST)"
-  echo "Fix: bash scripts/sync-template-version.sh"
-  exit 1
+PRODUCT_MODE="$(python3 -c "
+import json
+from pathlib import Path
+p = Path('branding/product.json')
+if not p.is_file():
+    print('no')
+else:
+    print('yes' if json.loads(p.read_text(encoding='utf-8')).get('mode') == 'product' else 'no')
+")"
+
+if [ "$PRODUCT_MODE" != "yes" ]; then
+  if [ "$MANIFEST" != "$VERSION" ]; then
+    echo "FAIL: .template-version ($VERSION) != manifest ($MANIFEST)"
+    echo "Fix: bash scripts/sync-template-version.sh"
+    exit 1
+  fi
 fi
 
 IDX="$(python3 -c "import json; print(json.load(open('TEMPLATE_INDEX.json'))['template_version'])")"
@@ -33,9 +47,18 @@ text = Path('CITATION.cff').read_text(encoding='utf-8')
 m = re.search(r'(?m)^version:\\s*([\\d.]+)', text)
 print(m.group(1) if m else '')
 ")"
-if [ -z "$CFF" ] || [ "$CFF" != "$VERSION" ]; then
+if [ -z "$CFF" ]; then
+  echo "FAIL: CITATION.cff missing version"
+  echo "Fix: bash scripts/sync-template-version.sh"
+  exit 1
+fi
+if [ "$PRODUCT_MODE" != "yes" ] && [ "$CFF" != "$VERSION" ]; then
   echo "FAIL: CITATION.cff version ($CFF) != .template-version ($VERSION)"
   echo "Fix: bash scripts/sync-template-version.sh"
+  exit 1
+fi
+if [ "$PRODUCT_MODE" = "yes" ] && [ "$CFF" != "$MANIFEST" ]; then
+  echo "FAIL: product CITATION.cff version ($CFF) != release-please manifest ($MANIFEST)"
   exit 1
 fi
 
@@ -73,4 +96,8 @@ if [ "$RP_PLUGIN" != "ok" ]; then
   exit 1
 fi
 
-echo "Template version sync OK ($VERSION)"
+if [ "$PRODUCT_MODE" = "yes" ]; then
+  echo "Template version sync OK (template=$VERSION, product=$MANIFEST)"
+else
+  echo "Template version sync OK ($VERSION)"
+fi

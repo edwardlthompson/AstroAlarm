@@ -106,6 +106,7 @@ Scaffolded with [agent-project-bootstrap](https://github.com/edwardlthompson/age
 
 ## What this is not
 
+- Approximate on-device ephemeris for alarms and sky clocks — not a navigation or observatory-grade tool
 - A finished commercial product promise
 - A place for secrets or production credentials
 - An unbounded scope — see README goals above

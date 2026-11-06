@@ -61,6 +61,7 @@ fun AstroAlarmsPage(
             verticalArrangement = Arrangement.spacedBy(10.dp),
         ) {
             item { AlarmPermissionBanner(context) }
+            item { TonightSkyCard(place = place) }
             if (alarms.isEmpty()) {
                 item {
                     Column(

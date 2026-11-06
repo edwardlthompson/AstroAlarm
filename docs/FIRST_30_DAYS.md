@@ -34,8 +34,8 @@
 
 ## Week 4 — Operate like a maintained project
 
-- 🔲 Update `AGENT_MEMORY.md` at this milestone only
-- 🔲 Append one `DECISION_LOG.md` entry for the first architecture choice
+- 🔲 Update `.agent/AGENT_MEMORY.md` at this milestone only
+- 🔲 Append one `.agent/DECISION_LOG.md` entry for the first architecture choice
 - 🔲 `/maintain` or `/triage` + `/update-deps` once (local bumps; GitHub Dependabot leftover + Scorecard awareness)
 - ✅ Optional: `just local-compute` + `just ensure-local-model` (`docs/LOCAL_MODELS.md`)
 - 🔲 Optional: `/emulator` if you have an Android SDK

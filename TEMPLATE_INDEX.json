@@ -1,5 +1,5 @@
 {
-  "template_version": "1.11.0",
+  "template_version": "1.12.1",
   "entry_points": {
     "bootstrap": "docs/START_HERE.md",
     "reference": "docs/FOR_AGENTS.md",
@@ -277,6 +277,27 @@
       "read_when": "validation",
       "update_when": "milestone_boundary",
       "owner": "maintainer"
+    },
+    {
+      "path": "scripts/check-ephemeris-accuracy.sh",
+      "purpose": "Compare on-device ephemeris to NOAA almanac table; write docs/ACCURACY.md",
+      "read_when": "validation",
+      "update_when": "milestone_boundary",
+      "owner": "agent"
+    },
+    {
+      "path": "scripts/lib/noaa_almanac.py",
+      "purpose": "NOAA Solar Calculator equations for published almanac reference rows",
+      "read_when": "validation",
+      "update_when": "milestone_boundary",
+      "owner": "agent"
+    },
+    {
+      "path": "docs/ACCURACY.md",
+      "purpose": "Pass/fail table for ephemeris vs published almanac (30 dates)",
+      "read_when": "validation",
+      "update_when": "milestone_boundary",
+      "owner": "agent"
     },
     {
       "path": "scripts/sync-template-version.sh",
@@ -825,7 +846,7 @@
       "owner": "maintainer"
     },
     {
-      "path": "AGENT_MEMORY.md",
+      "path": ".agent/AGENT_MEMORY.md",
       "purpose": "Tech stack, threat model, retrospectives index",
       "read_when": "session_start",
       "update_when": "milestone_boundary",
@@ -846,7 +867,7 @@
       "owner": "agent"
     },
     {
-      "path": "DECISION_LOG.md",
+      "path": ".agent/DECISION_LOG.md",
       "purpose": "Append-only decision register",
       "read_when": "architectural_decision",
       "update_when": "architectural_decision",
@@ -2555,6 +2576,34 @@
     {
       "path": ".github/workflows/sync-open-prs-build-plan.yml",
       "role": "template-catchup-v1.4.0"
+    },
+    {
+      "path": "scripts/check-linguist-attribution.sh",
+      "purpose": "Gate: child .gitattributes Linguist attribution patterns",
+      "read_when": "validation",
+      "update_when": "milestone_boundary",
+      "owner": "maintainer"
+    },
+    {
+      "path": "scripts/lib/check_linguist_attribution.py",
+      "purpose": "Python gate for Linguist attribution patterns",
+      "read_when": "validation",
+      "update_when": "milestone_boundary",
+      "owner": "maintainer"
+    },
+    {
+      "path": "scripts/lib/linguist_attrs.py",
+      "purpose": "Apply child Linguist attribution block onto .gitattributes",
+      "read_when": "validation",
+      "update_when": "milestone_boundary",
+      "owner": "maintainer"
+    },
+    {
+      "path": "templates/linguist/child.gitattributes",
+      "purpose": "Child-repo Linguist attribution block template",
+      "read_when": "validation",
+      "update_when": "milestone_boundary",
+      "owner": "maintainer"
     }
   ],
   "modules": {
