@@ -279,6 +279,27 @@
       "owner": "maintainer"
     },
     {
+      "path": "scripts/check-ephemeris-accuracy.sh",
+      "purpose": "Compare on-device ephemeris to NOAA almanac table; write docs/ACCURACY.md",
+      "read_when": "validation",
+      "update_when": "milestone_boundary",
+      "owner": "agent"
+    },
+    {
+      "path": "scripts/lib/noaa_almanac.py",
+      "purpose": "NOAA Solar Calculator equations for published almanac reference rows",
+      "read_when": "validation",
+      "update_when": "milestone_boundary",
+      "owner": "agent"
+    },
+    {
+      "path": "docs/ACCURACY.md",
+      "purpose": "Pass/fail table for ephemeris vs published almanac (30 dates)",
+      "read_when": "validation",
+      "update_when": "milestone_boundary",
+      "owner": "agent"
+    },
+    {
       "path": "scripts/sync-template-version.sh",
       "purpose": "Sync version files from .release-please-manifest.json",
       "read_when": "release",
