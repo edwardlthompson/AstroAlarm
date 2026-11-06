@@ -61,6 +61,7 @@ fun AstroAlarmsPage(
             verticalArrangement = Arrangement.spacedBy(10.dp),
         ) {
             item { AlarmPermissionBanner(context) }
+            item { TonightSkyCard(place = place) }
             if (alarms.isEmpty()) {
                 item {
                     Column(
@@ -117,6 +118,25 @@ fun AstroAlarmsPage(
                 label = { Text(stringResource(R.string.astro_sort_grouped)) },
             )
         }
+        DataBackupActions(
+            exportLabel = stringResource(R.string.astro_export_alarms),
+            importLabel = stringResource(R.string.astro_import_alarms),
+            confirmBody = stringResource(R.string.astro_backup_import_confirm_alarms),
+            suggestedFileName = "astroalarm-alarms.json",
+            encode = { org.astroalarm.astro.alarm.AstroAlarmBackup.exportDocument(alarmStore.getAll()) },
+            decode = { raw ->
+                when (val r = org.astroalarm.astro.alarm.AstroAlarmBackup.importDocument(raw)) {
+                    is org.astroalarm.astro.alarm.AstroAlarmBackup.Result.Ok -> BackupParse.Ok(r.alarms)
+                    is org.astroalarm.astro.alarm.AstroAlarmBackup.Result.Err ->
+                        BackupParse.Err(format = r.reason == "format")
+                }
+            },
+            onImported = { list ->
+                alarmStore.saveAll(list)
+                AstroAlarmScheduler.rescheduleAll(context)
+            },
+            modifier = Modifier.padding(bottom = 4.dp),
+        )
         TextButton(
             onClick = { WidgetPin.request(context, AstroUpcomingWidgetProvider::class.java) },
             modifier = Modifier
