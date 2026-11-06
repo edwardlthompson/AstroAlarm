@@ -6,6 +6,21 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.12.0](https://github.com/edwardlthompson/AstroAlarm/compare/v1.11.0...v1.12.0) (2026-11-06)
+
+
+### Added
+
+* **android:** add Tonight sky card for next sun/moon event ([cb58abd](https://github.com/edwardlthompson/AstroAlarm/commit/cb58abd80f02a3b691471bd7cd50036547680b8f))
+
+
+### Fixed
+
+* **android:** drop uncommitted backup UI from Alarms page ([8ed99ca](https://github.com/edwardlthompson/AstroAlarm/commit/8ed99cab01eeac285ff227456d66a8790498a7f0))
+* **android:** sync app 1.11.0 / versionCode 10110 after RP tag ([d225d95](https://github.com/edwardlthompson/AstroAlarm/commit/d225d95975ceb8c321f1c1b43d57e6ea04ade7b9))
+* **release:** point version sync at .agent/AGENT_MEMORY.md ([7bb7039](https://github.com/edwardlthompson/AstroAlarm/commit/7bb7039d80b62986edcb1621840bc7a3b56400ce))
+* **release:** sync template version against .agent/AGENT_MEMORY.md ([1f62f90](https://github.com/edwardlthompson/AstroAlarm/commit/1f62f900ff018b94689aabea5fcd3e5e4f95162d))
+
 ## [Unreleased]
 
 ### Added
