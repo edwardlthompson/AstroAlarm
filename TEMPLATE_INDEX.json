@@ -2576,6 +2576,34 @@
     {
       "path": ".github/workflows/sync-open-prs-build-plan.yml",
       "role": "template-catchup-v1.4.0"
+    },
+    {
+      "path": "scripts/check-linguist-attribution.sh",
+      "purpose": "Gate: child .gitattributes Linguist attribution patterns",
+      "read_when": "validation",
+      "update_when": "milestone_boundary",
+      "owner": "maintainer"
+    },
+    {
+      "path": "scripts/lib/check_linguist_attribution.py",
+      "purpose": "Python gate for Linguist attribution patterns",
+      "read_when": "validation",
+      "update_when": "milestone_boundary",
+      "owner": "maintainer"
+    },
+    {
+      "path": "scripts/lib/linguist_attrs.py",
+      "purpose": "Apply child Linguist attribution block onto .gitattributes",
+      "read_when": "validation",
+      "update_when": "milestone_boundary",
+      "owner": "maintainer"
+    },
+    {
+      "path": "templates/linguist/child.gitattributes",
+      "purpose": "Child-repo Linguist attribution block template",
+      "read_when": "validation",
+      "update_when": "milestone_boundary",
+      "owner": "maintainer"
     }
   ],
   "modules": {
