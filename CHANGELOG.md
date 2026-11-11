@@ -6,6 +6,19 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [Unreleased]
+
+### Added
+
+* **android:** Tonight's sky card — next sunrise/sunset/moonrise/moonset with one line of context on the Alarms tab
+* **docs:** ephemeris accuracy harness vs NOAA almanac (30 dates) → `docs/ACCURACY.md` (`scripts/check-ephemeris-accuracy.sh`)
+
+### Changed
+
+* **docs:** GitHub About description under 120 characters; topics `android`, `astronomy`, `alarm`, `ephemeris`, `widgets` (dropped `foss`/`mit`)
+* **docs:** “What this is not” clarifies approximate on-device ephemeris is not navigation or observatory-grade
+* **repo:** Linguist attribution block on `.gitattributes`; agent memory/log paths under `.agent/`
+
 ## [1.14.0](https://github.com/edwardlthompson/AstroAlarm/compare/v1.13.0...v1.14.0) (2026-11-11)
 
 
@@ -69,19 +82,6 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 * skip web About feature-gate after Android prune ([8e0d803](https://github.com/edwardlthompson/AstroAlarm/commit/8e0d80378e57730e70b57f1c2c5057e6e10a542f))
 * tolerate missing About assets in unit tests ([21da1be](https://github.com/edwardlthompson/AstroAlarm/commit/21da1becc1a82bc1d35d3876e6c12a643978dd11))
 * track unit-test donations.json fixture ([95c9d07](https://github.com/edwardlthompson/AstroAlarm/commit/95c9d079b36c66b6e7b656e2b67d328b13da07a2))
-
-## [Unreleased]
-
-### Added
-
-* **android:** Tonight's sky card — next sunrise/sunset/moonrise/moonset with one line of context on the Alarms tab
-* **docs:** ephemeris accuracy harness vs NOAA almanac (30 dates) → `docs/ACCURACY.md` (`scripts/check-ephemeris-accuracy.sh`)
-
-### Changed
-
-* **docs:** GitHub About description under 120 characters; topics `android`, `astronomy`, `alarm`, `ephemeris`, `widgets` (dropped `foss`/`mit`)
-* **docs:** “What this is not” clarifies approximate on-device ephemeris is not navigation or observatory-grade
-* **repo:** Linguist attribution block on `.gitattributes`; agent memory/log paths under `.agent/`
 
 ## [1.12.0](https://github.com/edwardlthompson/AstroAlarm/compare/v1.11.0...v1.12.0) (2026-11-06)
 
