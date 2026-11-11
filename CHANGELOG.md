@@ -6,6 +6,70 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.14.0](https://github.com/edwardlthompson/AstroAlarm/compare/v1.13.0...v1.14.0) (2026-11-11)
+
+
+### Added
+
+* **android:** add 2D clock toggle to hide event times ([f092d59](https://github.com/edwardlthompson/AstroAlarm/commit/f092d5910e594db16dcb63e556ce48479f8bbba2))
+* **android:** add optional 24 Solar Terms year view ([dd5f601](https://github.com/edwardlthompson/AstroAlarm/commit/dd5f601e703ec5f8888e3f9c4e102c630d2724d9))
+* **android:** add Tonight sky card for next sun/moon event ([cb58abd](https://github.com/edwardlthompson/AstroAlarm/commit/cb58abd80f02a3b691471bd7cd50036547680b8f))
+* **android:** add Yearly hub, Sol Kepler map, and celestial alarms ([e735a61](https://github.com/edwardlthompson/AstroAlarm/commit/e735a61de746e05e419535917f141503bb5ee616))
+* **android:** Canvas Sol/Yearly maps and ecliptic Yearly frame ([ee81fbb](https://github.com/edwardlthompson/AstroAlarm/commit/ee81fbbd5770d981b2ad225584137f48213614a8))
+* **android:** circular disks and unique widget previews ([31d9c12](https://github.com/edwardlthompson/AstroAlarm/commit/31d9c12a876709ca7a146de41444274c0a7a0ba7))
+* **android:** compute sun and moon with commons-suncalc ([8f1a5a5](https://github.com/edwardlthompson/AstroAlarm/commit/8f1a5a58e6c993a71e6e7e6a50f0a201edbd30dd))
+* **android:** natal chart suite and Golden Path catch-up ([0b67551](https://github.com/edwardlthompson/AstroAlarm/commit/0b6755114cecae182cdfc4db8512ef5e7cc9ddb4))
+* **android:** one fire for seasonal peers and Sol Earth marks ([80759ea](https://github.com/edwardlthompson/AstroAlarm/commit/80759eafee4741f039e4429d97314b0635ea7d42))
+* **android:** pan and pinch-focal zoom on Yearly wheel ([f18fd85](https://github.com/edwardlthompson/AstroAlarm/commit/f18fd850bb7325daafca1c498febf501594470c1))
+* **android:** shade Earth and Moon on Daily clocks ([274d246](https://github.com/edwardlthompson/AstroAlarm/commit/274d2467e8a579f92952e80b4663a114e47cd657))
+* **android:** ship 1.x clocks, NASA globe, and signed FOSS APKs ([9eb224f](https://github.com/edwardlthompson/AstroAlarm/commit/9eb224f85603b1f3a0b7a7382f008246ad0e2af8))
+* **android:** ship leftover alarms-first UX ([d10d86e](https://github.com/edwardlthompson/AstroAlarm/commit/d10d86e041f9a53eb9fdb1d4b4a5fddccefe416e))
+* **android:** ship tone/TTS, noon-up, occasions, wear, chart agent, outer-clip ([f190a33](https://github.com/edwardlthompson/AstroAlarm/commit/f190a331240530fa5e047d3cdc31d1fad4b1f22e))
+* **android:** use a plain hub at the 2D clock center ([39493ba](https://github.com/edwardlthompson/AstroAlarm/commit/39493ba8d5cc4795da097432a292d2f4d8a2b362))
+* **android:** use a plain hub at the 2D clock center ([e06011d](https://github.com/edwardlthompson/AstroAlarm/commit/e06011dd5ee525a67a560bb94890060540a38ed5))
+* bootstrap AstroAlarm as a FOSS Android astronomical alarm app ([811fdc5](https://github.com/edwardlthompson/AstroAlarm/commit/811fdc58e085e3f49d5b6494eb1c264d9d2f4bf9))
+* **local:** integrate loopback Ollama into workspace and gates ([7b8f168](https://github.com/edwardlthompson/AstroAlarm/commit/7b8f1687d6ad2dbcde4b62c2a2b6412853981764))
+
+
+### Fixed
+
+* **android:** add F-Droid changelog for versionCode 10101 ([6bcbe44](https://github.com/edwardlthompson/AstroAlarm/commit/6bcbe44ca54ea79f9ec375734886a5d1d170fd78))
+* **android:** add Show event times on 3D, Yearly, and Sol ([5502956](https://github.com/edwardlthompson/AstroAlarm/commit/55029566fc114d7493bc5f4f1452531703e35e54))
+* **android:** announce without notifications and block until perms granted ([454e694](https://github.com/edwardlthompson/AstroAlarm/commit/454e69486f96a37fc4c78d15bd7ebca6aff685be))
+* **android:** drop uncommitted backup UI from Alarms page ([8ed99ca](https://github.com/edwardlthompson/AstroAlarm/commit/8ed99cab01eeac285ff227456d66a8790498a7f0))
+* **android:** fall back to debug signing when upload keystore is unset ([29d2edc](https://github.com/edwardlthompson/AstroAlarm/commit/29d2edc637e1c328f2fdcb90281b79c73e766e13))
+* **android:** honor Yearly Compact on home widgets ([c4e0705](https://github.com/edwardlthompson/AstroAlarm/commit/c4e070544cada4523ddf2247c801ef2b22b49ca1))
+* **android:** keep lockscreen TTS repeating until dismissed ([c860eec](https://github.com/edwardlthompson/AstroAlarm/commit/c860eeccf08ce5cd4bb95c171420d602f62b5502))
+* **android:** keep unsigned CI APKs reproducible and repair settings UI tests ([de176ae](https://github.com/edwardlthompson/AstroAlarm/commit/de176aed2530bf84127709fe8a5821dd19090cce))
+* **android:** map solar solstice alarms onto Yearly rays ([4ff8be1](https://github.com/edwardlthompson/AstroAlarm/commit/4ff8be19990fe4b2a1e6a12a6f4ab25519df7840))
+* **android:** pack jieqi palette colors without android.graphics.Color ([f56cfe8](https://github.com/edwardlthompson/AstroAlarm/commit/f56cfe82e806f77e955d44621512fe68434f3e87))
+* **android:** pass STREAM_ALARM to NotificationCompat.setSound ([14e6c4f](https://github.com/edwardlthompson/AstroAlarm/commit/14e6c4f933875f784c7eab05b03256373f963ef3))
+* **android:** place Yearly alarm dots on solstice rays ([b3bb9da](https://github.com/edwardlthompson/AstroAlarm/commit/b3bb9dacea1c21f8469251e948a49c8ad3f1345b))
+* **android:** restore widget import and token color for solar terms ([7de719c](https://github.com/edwardlthompson/AstroAlarm/commit/7de719c3a17da00d0b56cae045395e44ba617465))
+* **android:** ring lockscreen via AlarmClock broadcast and FSI ([8348752](https://github.com/edwardlthompson/AstroAlarm/commit/83487520d3c98f7b0ac92a4b8f2ba25ec89973ba))
+* **android:** silence alarm channel and keep ringing notification ([c2eee39](https://github.com/edwardlthompson/AstroAlarm/commit/c2eee39be51c63e925aa9af75be0ea116fd17d86))
+* **android:** skip onboarding gate during instrumented UI tests ([7c6990d](https://github.com/edwardlthompson/AstroAlarm/commit/7c6990de332af402c6cf45f30131a926d43c5ccc))
+* **android:** sync app 1.11.0 / versionCode 10110 after RP tag ([d225d95](https://github.com/edwardlthompson/AstroAlarm/commit/d225d95975ceb8c321f1c1b43d57e6ea04ade7b9))
+* **android:** use Alarm channel for lockscreen ringing ([8754df3](https://github.com/edwardlthompson/AstroAlarm/commit/8754df3791e243d7d3f2e5028c100d7b9216f4b3))
+* **android:** use Alarm channel for lockscreen ringing ([b80f42c](https://github.com/edwardlthompson/AstroAlarm/commit/b80f42cf49b92346faff392af091f3829a844c7b))
+* **android:** Yearly dots, Compact widgets, and event-times toggles ([2862334](https://github.com/edwardlthompson/AstroAlarm/commit/286233489c23632e966d7f97182314a77272dcc6))
+* **ci:** pin codeql-action to v3 instead of invalid bundle tag ([0642e99](https://github.com/edwardlthompson/AstroAlarm/commit/0642e99ef90a0514dc065698156a0f90eca14136))
+* **ci:** restore CodeQL action pins to [@v4](https://github.com/v4) ([4e1ac5f](https://github.com/edwardlthompson/AstroAlarm/commit/4e1ac5fdf71c2e675bbaf9bda125f46fa3c4573d))
+* **ci:** run cursor-hooks smoke before parallel REUSE lint ([6b7bdf4](https://github.com/edwardlthompson/AstroAlarm/commit/6b7bdf43047f953fb75f95a53181e787da844dc7))
+* **ci:** satisfy actionlint SC2129 and assert settings Back clears the nav bar ([47c1504](https://github.com/edwardlthompson/AstroAlarm/commit/47c15040bba7a569d7ed6b71788ecc65be61a66c))
+* **ci:** skip web re-init in upgrade-sim on pruned children ([16e3329](https://github.com/edwardlthompson/AstroAlarm/commit/16e3329718a839cece417e46284e0bc455f0b56c))
+* **ci:** use source-root instead of paths in CodeQL init action ([a2eca45](https://github.com/edwardlthompson/AstroAlarm/commit/a2eca4591359b67bc3fb0fb6cb3180d1bf644432))
+* copy example Android assets before unit tests ([632fd5d](https://github.com/edwardlthompson/AstroAlarm/commit/632fd5da865d4cba722ae53e5f9186db2522711a))
+* evaluate custom-clock alarms in an explicit zone ([825fb6d](https://github.com/edwardlthompson/AstroAlarm/commit/825fb6d71e590bcd4f8bebb78b222a09167a7015))
+* give Feature Gate Android tests real assets and a fresh Gradle run ([2465ae3](https://github.com/edwardlthompson/AstroAlarm/commit/2465ae39c08331e6a1a318991724f0ffa9a87a6f))
+* **release:** point version sync at .agent/AGENT_MEMORY.md ([7bb7039](https://github.com/edwardlthompson/AstroAlarm/commit/7bb7039d80b62986edcb1621840bc7a3b56400ce))
+* **release:** sync template version against .agent/AGENT_MEMORY.md ([1f62f90](https://github.com/edwardlthompson/AstroAlarm/commit/1f62f900ff018b94689aabea5fcd3e5e4f95162d))
+* ship Android About fixtures as unit-test assets ([985c17f](https://github.com/edwardlthompson/AstroAlarm/commit/985c17f8e8c8411ee185306bc6c3c2ce4a7604b4))
+* skip pruned web and node jobs in CI ([dd76e81](https://github.com/edwardlthompson/AstroAlarm/commit/dd76e811d154eab10ae663937e81ffddb33312b6))
+* skip web About feature-gate after Android prune ([8e0d803](https://github.com/edwardlthompson/AstroAlarm/commit/8e0d80378e57730e70b57f1c2c5057e6e10a542f))
+* tolerate missing About assets in unit tests ([21da1be](https://github.com/edwardlthompson/AstroAlarm/commit/21da1becc1a82bc1d35d3876e6c12a643978dd11))
+* track unit-test donations.json fixture ([95c9d07](https://github.com/edwardlthompson/AstroAlarm/commit/95c9d079b36c66b6e7b656e2b67d328b13da07a2))
+
 ## [Unreleased]
 
 ### Added
