@@ -12,6 +12,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 * **android:** Tonight's sky card — next sunrise/sunset/moonrise/moonset with one line of context on the Alarms tab
 * **docs:** ephemeris accuracy harness vs NOAA almanac (30 dates) → `docs/ACCURACY.md` (`scripts/check-ephemeris-accuracy.sh`)
+* **docs:** Phase 0 multiplatform migration inventory → `docs/migration/INVENTORY.md` (current Android surface + trajectory; Durable vs Fallback for iOS/desktop; no app-code or stack pick)
+* **docs:** Phase 1 design brief → `docs/migration/DESIGN_BRIEF.md` (existing visual/UX contract; Fastlane captures under `docs/migration/design/`; §1.20 Fallback/Omit listed as PROPOSED deviations only)
+* **docs:** Phase 2 tech decision → `docs/migration/TECH_DECISION.md` (KMP + Compose Multiplatform; native WidgetKit/AlarmKit/Windows widgets/Linux fallback)
+* **docs:** Phase 3 migration board + parity checklist → `BUILD_PLAN.md` sprints M0–M13, `docs/migration/PARITY_CHECKLIST.md`
+* **docs:** Edward 2026-11-16 answers on PR #44 — math-before-silence (iOS AlarmKit PENDING), first desktop widget = 24h noon-up dial, watchOS complications, export/import M12, LAN P2P sync M13 (no server; relay/push future-only), desktop-asleep limitation, crisp-widget APPROVED Deviation
+* **docs:** M0 fully resolved — Q2 one next exact Instant on every OS; Q4 F-Droid listing deferred (keep FLOSS-friendly; no listing sprint); inventory counts 55 cities / 17 `AlarmTarget` types
 
 ### Changed
 
