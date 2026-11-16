@@ -89,7 +89,7 @@ Cited: [AlarmKit](https://developer.apple.com/documentation/alarmkit), [AlarmMan
 - Alert **breaks through Silent mode and Focus**. Custom title + app name; Stop and optional Snooze / custom App Intent button.
 - Also surfaces on Dynamic Island, StandBy, and a **paired Apple Watch** (system, not a third-party watch face).
 - **Schedules:** `Alarm.Schedule.fixed` (one absolute date, does not track timezone changes) and `Alarm.Schedule.Relative` (clock-of-day + optional **weekly** recurrence, does track timezone).
-- **Astronomical events cannot be expressed as Relative weekly clocks.** Sunrise/jieqi/natal must use **fixed next Instant**, then reschedule after fire — the same “one OS timer” model as Android `REQUEST_CODE_ALARM = 8801`. This is why INVENTORY Q2’s recommended default is “keep one slot.”
+- **Astronomical events cannot be expressed as Relative weekly clocks.** Sunrise/jieqi/natal must use **fixed next Instant**, then reschedule after fire — the same “one OS timer” model as Android `REQUEST_CODE_ALARM = 8801`. **Q2 answered:** every platform keeps this single-next-exact-time model.
 - Countdown / snooze UI is a **WidgetKit Live Activity** (`ActivityConfiguration(for: AlarmAttributes<…>)`), SwiftUI, not Compose. Custom sound via ActivityKit `AlertSound`.
 - App Intents can run on Stop / secondary. They **cannot** present the DESIGN_BRIEF math dialog on SpringBoard before the alarm is silenced.
 - **iOS 14–25:** AlarmKit is unavailable. Durable Fallback is `UserNotifications` time-sensitive / notification actions + in-app ring UI. Do not require Critical Alerts entitlement as a FOSS default (INVENTORY §1.20).
@@ -150,7 +150,7 @@ Cited: [Inclusion Policy](https://f-droid.org/docs/Inclusion_Policy/), [Reproduc
 - FLOSS source + FLOSS deps; no Play Services / Firebase (already ADR-0003).
 - Kotlin/Java apps are the easiest reproducible F-Droid builds. Flutter/Rust/native engine paths embed build paths more often.
 - F-Droid CI is **Linux**: Kotlin/Native iOS targets must be `ignoreDisabledTargets` so the **Android** module still builds there.
-- Q4 (F-Droid listing) is unresolved. Recommended default: keep the Android APK F-Droid-eligible; do **not** block iOS/desktop on a listing recipe.
+- **Q4 answered:** F-Droid listing is low-priority and deferred (later `fdroiddata` GitLab MR, no hurry). Keep the Android APK F-Droid-eligible; do **not** block iOS/desktop on a listing recipe; **do not plan a listing sprint.**
 
 ---
 
@@ -215,7 +215,7 @@ Cited: [Inclusion Policy](https://f-droid.org/docs/Inclusion_Policy/), [Reproduc
 |----------|-----------------|
 | In-app screens, wheels, lists, sheets | Durable — CMP Stable iOS/Desktop |
 | Ephemeris / JSON | Durable — common Kotlin |
-| Exact fire | Durable scheduler: AlarmKit (iOS 26) / UNNotification / desktop session notifications; **one next Instant** (Q2 default) |
+| Exact fire | Durable scheduler: AlarmKit (iOS 26) / UNNotification / desktop session notifications; **one next Instant** (Q2 answered) |
 | FSI lockscreen Activity | Fallback — shared ring composable inside OS-honest chrome |
 | MAX / bypass DND | Fallback — AlarmKit breaks Focus on iOS 26; otherwise honor Focus |
 | Math on lockscreen | Fallback chrome; **product:** math-before-silence where possible. AlarmKit Stop **PENDING** |
@@ -229,16 +229,16 @@ Cited: [Inclusion Policy](https://f-droid.org/docs/Inclusion_Policy/), [Reproduc
 
 ---
 
-## 7. M0 questions — answers and remaining defaults
+## 7. M0 questions — fully resolved
 
-INVENTORY 1–5. Edward answered Q1, Q3, Q5 on 2026-11-16. Q2 and Q4 remain recommended defaults (not approved). M6/M10 are **unblocked**.
+INVENTORY 1–5. Edward answered all five on 2026-11-16. M6/M10 stay **unblocked**. Implementation of M3+ is paused until Edward reviews PRs #44, #45, and #47.
 
 | # | Question | Status |
 |---|----------|--------|
 | Q1 | Ringing Fallback UX / math-before-silence | ✅ **Answered.** Wherever the platform permits, math **must** be solved before silence, **including notification Stop**. Drop the old “shade Stop skips math” default. **iOS AlarmKit: PENDING** (§3.1). |
-| Q2 | Keep one OS timer? | 🔲 Recommended: **yes.** AlarmKit `fixed` next Instant + reschedule. Relative weekly clocks are only for `CustomClock` if we later opt in. Does not block M6. |
+| Q2 | Keep one OS timer? | ✅ **Answered: YES.** Every platform schedules **just the next alarm as a single exact time** (AlarmKit `fixed` / UNNotification / desktop session). Reschedule after fire. Do not arm a weekly Relative calendar of astronomical events. |
 | Q3 | Notification Stop vs lockscreen Stop | ✅ **Answered.** Do **not** preserve the split. Shade/notification Stop must not silence until math succeeds, on every OS that can enforce it. |
-| Q4 | F-Droid listing still a goal? | 🔲 Recommended: **later**, unchanged from ADR-0003. Keep the Android APK FLOSS-clean and Linux-buildable. Do not block iOS. |
+| Q4 | F-Droid listing still a goal? | ✅ **Answered.** Low priority, deferred, no hurry. Later separate `fdroiddata` GitLab MR. Keep the APK FLOSS-clean and Linux-buildable. **No listing sprint.** |
 | Q5 | Wear on iOS? | ✅ **Answered.** Ship **watchOS complications** (WidgetKit accessory families). Android Wear analog face stays. Not a third-party watch-face clone. |
 
 ---
@@ -249,7 +249,7 @@ INVENTORY 1–5. Edward answered Q1, Q3, Q5 on 2026-11-16. Q2 and Q4 remain reco
 |-------|------------|
 | Null/empty at boundary | Shared JSON codecs validate the same schemas as today; empty alarm list / missing place already have DESIGN_BRIEF empty states. Gate: domain unit tests in the extract sprint. |
 | Network timeout | N/A for ephemeris (on-device). Chart-agent loopback stays Android-optional (INVENTORY Q12, not in the five). |
-| Race (two schedulers) | One OS timer (Q2 default) + `AlarmFireIdentity` in common; platform adapters must not arm a second clock. Test: next-fire + adapter contract tests. |
+| Race (two schedulers) | One OS timer (**Q2 answered**) + `AlarmFireIdentity` in common; platform adapters must not arm a second clock. Test: next-fire + adapter contract tests. |
 | Unhandled AlarmKit denial | `requestAuthorization` failure → UserNotifications Fallback, same ring composable; no crash path. iOS sprint acceptance. |
 | commons-suncalc missing on iOS | common Kotlin ephemeris + accuracy harness **before** iOS UI. Android keeps suncalc until harness matches. |
 | CMP Material3 alpha skew | Tokens from `design-tokens.json` remain source of truth (DESIGN_BRIEF). Visual gate vs brief, not vs a new theme. |
@@ -390,6 +390,6 @@ Until then: no relay binary, no ntfy requirement, no APNs. The existing UnifiedP
 
 ### 11.8 Decisions still open
 
-Sync shape for M13 is **closed** (LAN P2P, pairing codes, all home-network devices including desktop while awake). Still unrelated and unanswered: **Q2** (one OS timer), **Q4** (F-Droid listing). No APNs/relay decision is required to start M13.
+Sync shape for M13 is **closed** (LAN P2P, pairing codes, all home-network devices including desktop while awake). **Q2** and **Q4** are answered (one next Instant; F-Droid listing deferred). No APNs/relay decision is required to start M13. Remaining INVENTORY questions (Huawei face, GPS TZ, Placidus, etc.) are not M0 and do not block M3+.
 
 M13 must not start until M11 parity ✅ unless Edward pulls it forward. Feature spec + protocol tests land with that sprint.

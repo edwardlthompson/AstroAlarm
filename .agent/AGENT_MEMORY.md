@@ -11,7 +11,7 @@
 | Persistence | JSON SharedPreferences + DataStore | - | Room/Hilt on classpath for later stores |
 | Ephemeris | commons-suncalc 3.11 + NOAA tropical longitude + on-device Kepler | on-device | Sun/moon times; NOAA for seasons/zodiac/jieqi; Kepler for Sol tab and planet alarms |
 | License | MIT | - | Pure FOSS; no Play Services / Firebase |
-| Distribution | GitHub Releases | - | F-Droid later |
+| Distribution | GitHub Releases | - | F-Droid listing deferred (Q4); keep FLOSS-friendly |
 ## Active Modules
 
 - ✅ Android / F-Droid (`modules/android/MODULE.md`)
@@ -41,10 +41,11 @@ FOSS Android astronomical alarm clock: on-device suncalc sun/moon ephemeris, sol
 - Max 300 lines per static data file (UI + i18n), 150 lines per pure logic file
 - Trunk-based development with Conventional Commits
 - Strict type safety and test coverage budgets
-- Migration: KMP+CMP (`docs/migration/TECH_DECISION.md`). Math-before-silence including shade Stop; iOS AlarmKit Stop PENDING. First desktop widget = Daily 2D 24h noon-up dial. watchOS complications. Export M12 / LAN P2P sync M13 after parity (no server).
+- Migration: KMP+CMP (`docs/migration/TECH_DECISION.md`). **M0 fully resolved.** Math-before-silence including shade Stop; iOS AlarmKit Stop PENDING. One next exact Instant (Q2). F-Droid listing deferred (Q4). First desktop widget = Daily 2D 24h noon-up dial. watchOS complications. Export M12 / LAN P2P sync M13 after parity (no server). Do not start M3 until Edward reviews #44/#45/#47.
 
 ## Session Retrospectives
 
+| 2026-11-16 | M0 fully resolved | Q2 one next exact Instant; Q4 F-Droid listing deferred (fdroiddata later); 55 cities / 17 AlarmTarget types | Do not start M3 until Edward reviews #44/#45/#47; no F-Droid listing sprint |
 | 2026-11-16 | migration M0 answers | Math-before-silence (iOS AlarmKit PENDING); first desktop widget = 24h noon-up dial; watchOS complications; export M12; sync M13 LAN P2P no server; crisp widgets APPROVED; desktop asleep accepted | Do not hide AlarmKit Stop; locked iPhone cannot take LAN dismiss; relay/APNs are future only |
 | 2026-10-22 | v1.11.0 /ship | Tone/TTS policy, noon-up, sky occasions, wear face, chart agent, Daily 2D outer-clip; RP #29; SBOM+APK on release | Never apply `vcodeql-bundle-*` (upd offered it again); go gate skip when `examples/go` pruned |
 | 2026-10-22 | /build outer-crop + WIP | Daily 2D month/zodiac clip fix (`DiskRingLayout.EDGE`); restored WIP (tts, noon-up, occasions, wear, birth-agent); merged Dependabot #26/#28 | Android Parallel scopes are exclusive — keep multi-feature verify Sequential |

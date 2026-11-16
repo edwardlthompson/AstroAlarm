@@ -1,6 +1,6 @@
 # AstroAlarm parity checklist
 
-Seeded from [`INVENTORY.md`](INVENTORY.md) Appendix B, §§1.2–1.20, and [`DESIGN_BRIEF.md`](DESIGN_BRIEF.md). All items start **unchecked**.
+Seeded from [`INVENTORY.md`](INVENTORY.md) Appendix B, §§1.2–1.20, and [`DESIGN_BRIEF.md`](DESIGN_BRIEF.md). All items start **unchecked**. **M0 is fully resolved** (Q1–Q5). Q2 = one next exact Instant on every OS. Q4 = F-Droid listing deferred (keep FLOSS-friendly; no listing sprint).
 
 **Status:** 🔲 not verified · ✅ verified on that target · ❌ waived only with an **approved** DESIGN_BRIEF Deviation · **PENDING** = no supported OS API (do not fake).
 
@@ -87,7 +87,7 @@ Design-fidelity notes: DESIGN_BRIEF §§5.1–5.11. iOS/desktop dest. 11 is the 
 
 ---
 
-## E. Alarm target families (16)
+## E. Alarm target families (17 sealed subtypes)
 
 | `AlarmTarget` | Editor | Next-fire | Row icon | Android | iOS | Desktop |
 |---------------|:------:|:---------:|:--------:|:-------:|:---:|:-------:|
@@ -106,7 +106,8 @@ Design-fidelity notes: DESIGN_BRIEF §§5.1–5.11. iOS/desktop dest. 11 is the 
 | SolarReturn | 🔲 | 🔲 | ✨ | 🔲 | 🔲 | 🔲 |
 | MercuryStation | 🔲 | 🔲 | ✨ | 🔲 | 🔲 | 🔲 |
 | MoonSignIngress | 🔲 | 🔲 | ✨ | 🔲 | 🔲 | 🔲 |
-| NatalCompoundSpecific / Any | 🔲 | 🔲 | ✨ | 🔲 | 🔲 | 🔲 |
+| NatalCompoundSpecific | 🔲 | 🔲 | ✨ | 🔲 | 🔲 | 🔲 |
+| NatalCompoundAny | 🔲 | 🔲 | ✨ | 🔲 | 🔲 | 🔲 |
 
 ---
 
@@ -162,7 +163,7 @@ Snapshot cadence (not 1 Hz) is required on iOS/desktop. **First face:** Daily 2D
 
 | Item | Android | iOS | Desktop |
 |------|:-------:|:---:|:-------:|
-| One next Instant armed (Q2 default) | 🔲 | 🔲 | 🔲 |
+| One next Instant armed (Q2 answered) | 🔲 | 🔲 | 🔲 |
 | Durable OS scheduler (no hidden agent) | 🔲 | 🔲 | 🔲 |
 | Reboot / login persistence (no fake BOOT_COMPLETED on iOS) | 🔲 | 🔲 | 🔲 |
 | Timezone / time-set recompute | 🔲 | 🔲 | 🔲 |

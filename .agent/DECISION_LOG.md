@@ -17,6 +17,13 @@
 
 ## Entries
 
+### 2026-11-16 — M0 Q2 one timer and Q4 F-Droid listing
+- **Status:** Accepted. **M0 fully resolved.**
+- **Context:** Edward answered the last two M0 questions after LAN P2P was already recorded. Implementation stays paused until he reviews PRs #44, #45, and #47.
+- **Decision:** **Q2 YES** — every platform schedules only the next alarm as a single exact Instant (Android `8801`, AlarmKit `fixed`, UNNotification, desktop session). **Q4** — F-Droid listing is low priority and deferred; later separate `fdroiddata` GitLab MR; keep the Android codebase F-Droid-friendly; **no listing sprint**. Inventory counts match code: **55** cities, **17** sealed `AlarmTarget` types.
+- **Alternatives considered:** Multiple concurrent OS timers (rejected). An F-Droid listing sprint on this board (rejected).
+- **Consequences:** M0 HUMAN rows are all ✅. Remaining HUMAN is optional M11 device smoke. Do not start M3 until Edward reviews.
+
 ### 2026-11-16 — LAN P2P is the primary cross-device sync
 - **Status:** Accepted (supersedes the relay/push-primary wording in the earlier 2026-11-16 sync note)
 - **Context:** Edward: most users are on a home network; design for LAN peer-to-peer with no server (mDNS/DNS-SD + authenticated encrypted pairing). Relay and push are future extensions only.

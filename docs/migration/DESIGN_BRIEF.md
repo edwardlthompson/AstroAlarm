@@ -5,7 +5,7 @@
 
 **The new implementation must match this brief. Any deviation must be documented in the Deviations section with justification and approved by Edward before implementation.**
 
-Deviations: §1.20 Fallback/Omit rows stay **PROPOSED** unless marked **APPROVED** below. Edward 2026-11-16 **approved** the crisp-widget rendering Deviation (same design, native density or vector). Math-before-silence is a **product rule**, not a visual Deviation.
+Deviations: §1.20 Fallback/Omit rows stay **PROPOSED** unless marked **APPROVED** below. Edward 2026-11-16 **approved** the crisp-widget rendering Deviation (same design, native density or vector). Math-before-silence is a **product rule**, not a visual Deviation. **Q2 (product rule):** every platform arms only the next alarm as a **single exact Instant** — no extra schedule chrome. **Q4** is distribution (F-Droid listing deferred); not a visual Deviation.
 
 **Method:** Compose, XML widget layouts, generated theme files, Fastlane screenshots, and `design-tokens/design-tokens.json`. This Cloud Agent environment had **no Android SDK** (`ANDROID_HOME` unset), so Compose previews and an emulator were **not** run. Live lockscreen, Settings, editor, 3D, Sol, Chart, and widget-picker shots are missing; Fastlane frames are cited with staleness notes. See [What could not be captured](#what-could-not-be-captured).
 

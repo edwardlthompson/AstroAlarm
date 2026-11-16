@@ -1,7 +1,7 @@
 # Build Plan
 
 <!-- remaining-tally -->
-**Remaining:** AGENT 13 · AUTO 1 · HUMAN 3 · ADB 0 · **17 open**
+**Remaining:** AGENT 13 · AUTO 1 · HUMAN 1 · ADB 0 · **15 open**
 <!-- /remaining-tally -->
 > Done work: [COMPLETED_TASKS.md](COMPLETED_TASKS.md). Feature protocol: [docs/FEATURE_MODULES.md](docs/FEATURE_MODULES.md).
 
@@ -19,7 +19,7 @@ Sequential [AGENT] first, then Parallel. After each AGENT step: python3 scripts/
 2. [`docs/migration/DESIGN_BRIEF.md`](docs/migration/DESIGN_BRIEF.md) — existing visual/UX contract (binding statement)
 3. [`docs/migration/TECH_DECISION.md`](docs/migration/TECH_DECISION.md) — KMP + CMP; native widgets/alarm chrome
 
-Do not invent design. Do not fake Android lockscreen/FSI/Doze/Wear on iOS or desktop. Tick [`docs/migration/PARITY_CHECKLIST.md`](docs/migration/PARITY_CHECKLIST.md) as chunks land. **M0 answers (Edward 2026-11-16) are recorded.** Implementation of M1+ is other PRs; this docs branch stays planning.
+Do not invent design. Do not fake Android lockscreen/FSI/Doze/Wear on iOS or desktop. Tick [`docs/migration/PARITY_CHECKLIST.md`](docs/migration/PARITY_CHECKLIST.md) as chunks land. **M0 is fully resolved** (Edward 2026-11-16). Implementation of M1+ is other PRs (#45 extract, #47 widget density). **Do not start M3** until Edward reviews #44, #45, and #47. This docs branch stays planning.
 
 ---
 
@@ -27,18 +27,18 @@ Do not invent design. Do not fake Android lockscreen/FSI/Doze/Wear on iOS or des
 
 Stack: **KMP + Compose Multiplatform** for domain + in-app UI; **native** WidgetKit / AlarmKit / Windows `IWidgetProvider` / Linux window-or-applet (`TECH_DECISION.md`). `examples/android` remains the production APK until Sprint M5 cutover criteria pass.
 
-**M0:** Q1, Q3, Q5 answered 2026-11-16 (math-before-silence; watchOS complications). Q2 (one OS timer) and Q4 (F-Droid listing) remain 🔲 and do **not** block M6/M10. Defaults for Q2/Q4 stay in `TECH_DECISION.md` §7 until answered.
+**M0:** fully resolved 2026-11-16. Q1/Q3 math-before-silence; Q2 one next exact Instant on every OS; Q4 F-Droid listing deferred (keep FLOSS-friendly, no listing sprint); Q5 watchOS complications.
 
 Each AGENT/AUTO row: inventory refs · parity AC · design-fidelity AC · gate vs inventory + brief. After the last AGENT/AUTO row in a sprint is ✅, run `python3 scripts/agent-run.py smoke-sprint --require` before the next sprint.
 
 <!-- parallel_exception: sequential extracts; Parallel only after M2 public API of :astro-domain is locked -->
 
-### Sprint M0 — Unresolved questions
+### Sprint M0 — Questions (fully resolved)
 
 1. ✅ [HUMAN] **Q1 Ringing Fallback UX.** **Answered 2026-11-16:** wherever the platform permits, math **must** be solved before the alarm can be silenced, including the notification Stop path. Drop the old “shade Stop skips math” default. **iOS AlarmKit: PENDING** — no supported API gates Stop on a challenge (`TECH_DECISION.md` §3.1). Do not ship a workaround. Inventory: §1.6, §1.16, §1.20.
-2. 🔲 [HUMAN] **Q2 Single OS timer.** Keep one next Instant (`REQUEST_CODE_ALARM = 8801`) on AlarmKit `fixed` / UNNotification / desktop session notifications? Recommended default: **yes** (AlarmKit Relative cannot express sunrise). Does not block M6. Inventory: §1.13, §1.20.
+2. ✅ [HUMAN] **Q2 Single OS timer.** **Answered 2026-11-16: YES.** Every platform schedules **just the next alarm as a single exact time** (Android `REQUEST_CODE_ALARM = 8801`; AlarmKit `fixed` / UNNotification / desktop session equivalent). Do not arm a second clock. Inventory: §1.13, §1.20.
 3. ✅ [HUMAN] **Q3 Notification Stop vs in-app Stop.** **Answered 2026-11-16:** do **not** preserve the split. Notification Stop must not silence until math succeeds, on every OS that can enforce it. Inventory: §1.6, §1.19 item 7.
-4. 🔲 [HUMAN] **Q4 F-Droid listing.** Still later (ADR-0003)? Recommended default: **keep Android FLOSS-clean and Linux-buildable; do not block iOS**. Does not block iOS/watch sprints. Inventory: §1.18, §2.1.
+4. ✅ [HUMAN] **Q4 F-Droid listing.** **Answered 2026-11-16:** low priority, deferred, no hurry. Later separate effort (`fdroiddata` GitLab MR). Keep the Android codebase F-Droid-friendly. **Do not plan a listing sprint.** Inventory: §1.18, §2.1.
 5. ✅ [HUMAN] **Q5 Wear on iOS.** **Answered 2026-11-16:** ship **watchOS complications** (WidgetKit accessory families). Not Android-Wear-only. Inventory: §1.15, §1.20. Sprint M10.
 
 ### Sprint M1 — KMP/CMP skeleton (Android still ships)
@@ -53,13 +53,13 @@ Each AGENT/AUTO row: inventory refs · parity AC · design-fidelity AC · gate v
 
 1. 🔲 [AGENT] Move **whole** alarm/place/birth models, JSON codecs, NOAA `SolarMath`, Kepler, suncalc façade, `AstroNextFire`, `AlarmFireIdentity`, math generator into `commonMain` (JVM `actual` may keep `commons-suncalc` until the Kotlin surface matches). Android app depends on the modules; no screen rewrites.
    - Inventory: §§1.9–1.13, §1.16 math, Appendix A
-   - Parity: all 16 `AlarmTarget` subtypes round-trip; 18 solar + 11 lunar + 24 jieqi next-fire tests; 54-city catalog loads
+   - Parity: all 17 `AlarmTarget` subtypes round-trip; 18 solar + 11 lunar + 24 jieqi next-fire tests; 55-city catalog loads
    - Design: N/A (no pixels)
    - Gate: existing JVM unit tests + `scripts/check-ephemeris-accuracy.sh` / `EphemerisAccuracyTest` (±180 s, 30 NOAA dates, INVENTORY §1.11); `feature-gate --stack android`; checklist §E/§L still 🔲 until iOS runs the same tests
 
 ### Sprint M3 — Shared disk renderers (all clock families)
 
-1. 🔲 [AGENT] Extract **all** Canvas disk/globe/jieqi/Sol/natal painters and palettes (`NatalGlyphPalette`, `SolarTermPalette`, `DiskCenterHub`, `WheelDisk`, overlays) to shared code that can paint Compose Canvas **and** PNG snapshots. Android widgets keep `RemoteViews` + those bitmaps.
+1. 🔲 [AGENT] Extract **all** Canvas disk/globe/jieqi/Sol/natal painters and palettes (`NatalGlyphPalette`, `SolarTermPalette`, `DiskCenterHub`, `WheelDisk`, overlays) to shared code that can paint Compose Canvas **and** PNG snapshots. Android widgets keep `RemoteViews` + those bitmaps. **Paused** until Edward reviews #44, #45, and #47.
    - Inventory: §1.5, §1.7, Appendix A widgets
    - Parity: seven snapshot types exist; 2D hub is plain night disk (not Earth)
    - Design: DESIGN_BRIEF §§2.9, 5.3–5.7, 8 (hex, palettes, transparent square corners). **Crisp AC (APPROVED Deviation):** snapshots at native density or vector; never the old 200–600 px cap look.
@@ -83,7 +83,7 @@ Each AGENT/AUTO row: inventory refs · parity AC · design-fidelity AC · gate v
 
 ### Sprint M6 — iOS app host + AlarmKit / notifications
 
-1. 🔲 [AGENT] iOS target: shared Compose UI in `ComposeUIViewController`; Durable scheduler = AlarmKit `fixed` next Instant on iOS 26+ else UserNotifications. Shared ring composable when the user opens the app. **Math-before-silence is PENDING on iOS** until Apple exposes a supported Stop gate (`TECH_DECISION.md` §3.1). Do not hide Stop, overlay SpringBoard, or intercept `mobiletimerd`. In-app Stop after Open still runs math; `AlarmManager.stop(id:)` only after success. Q2 default: one next Instant.
+1. 🔲 [AGENT] iOS target: shared Compose UI in `ComposeUIViewController`; Durable scheduler = AlarmKit `fixed` next Instant on iOS 26+ else UserNotifications. Shared ring composable when the user opens the app. **Math-before-silence is PENDING on iOS** until Apple exposes a supported Stop gate (`TECH_DECISION.md` §3.1). Do not hide Stop, overlay SpringBoard, or intercept `mobiletimerd`. In-app Stop after Open still runs math; `AlarmManager.stop(id:)` only after success. **Q2:** one next Instant only.
    - Inventory: §1.2 dest. 11, §1.6, §1.14, §1.20 Fallback lockscreen/DND/math
    - Parity: dest. 1–11 present; alarm families schedule; iOS math column **PENDING** not 🔲-faked
    - Design: DESIGN_BRIEF §4.7 inside in-app surface; AlarmKit Live Activity is SwiftUI OS chrome
@@ -125,10 +125,10 @@ Each AGENT/AUTO row: inventory refs · parity AC · design-fidelity AC · gate v
 
 1. 🔲 [AGENT] Walk [`PARITY_CHECKLIST.md`](docs/migration/PARITY_CHECKLIST.md) against INVENTORY Appendix B and DESIGN_BRIEF §§2–9 on every shipped target. No 🔲 on Durable in-app items. Fallback/Omit rows must be named, not faked. File DESIGN_BRIEF Deviation PRs only for Edward-approved gaps.
    - Inventory: Appendix B, §1.19 (do not silently “fix” gaps), §1.20
-   - Parity: screens 11, dialogs 13, sheets 2, widgets 7, families 16
+   - Parity: screens 11, dialogs 13, sheets 2, widgets 7, families 17
    - Design: token hex, lockscreen typography, widget hex, motion, a11y
    - Gate: checklist complete; `python3 scripts/agent-run.py watch-agent-gates --once --autofix --scope auto`; `python3 scripts/agent-run.py smoke-sprint --require`; `feature-gate` for android plus any added iOS/desktop gates; accuracy harness
-2. 🔲 [AUTO] CI: Android feature-gate + hygiene + license; iOS/desktop jobs only where runners exist; F-Droid recipe still stub unless Q4 ✅
+2. 🔲 [AUTO] CI: Android feature-gate + hygiene + license; iOS/desktop jobs only where runners exist; F-Droid recipe stays stub (Q4: listing deferred, no sprint)
    - Inventory: §1.18
    - Parity: FOSS path unchanged
    - Design: N/A

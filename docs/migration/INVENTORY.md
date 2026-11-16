@@ -6,7 +6,7 @@
 >
 > **Porting policy (stated, Edward 2026-11-16):** do not use fragile hacks to force Android-shaped features onto iOS or desktop where they would break. Each Android-specific behavior is tagged **Durable** (first-class public OS API) or **Fallback** (honest platform-native substitute; document the gap). Private APIs, entitlement abuse, hidden keep-alive processes, and background-mode gaming are out of scope.
 
-**Session:** Cursor Agent · `CHANGELOG.md` `[Unreleased]` has list items (Tonight's sky card, accuracy harness, migration docs) · next 🔲 `[AGENT]` row after this docs branch: **M1 KMP skeleton** (implementation is a separate PR). M0 Q1/Q3/Q5 answered 2026-11-16.
+**Session:** Cursor Agent · `CHANGELOG.md` `[Unreleased]` has list items (Tonight's sky card, accuracy harness, migration docs) · next 🔲 `[AGENT]` row after this docs branch: **M1 KMP skeleton** (implementation is a separate PR; **paused** until Edward reviews #44, #45, #47). **M0 fully resolved** 2026-11-16.
 
 ---
 
@@ -24,11 +24,11 @@ AstroAlarm is today a FOSS **Android** astronomical alarm clock (`applicationId`
 | Home/keyguard App Widgets | 7 |
 | Wear OS watch faces | 1 |
 | Notification channels | 1 (`astroalarm_alarm_v3`) |
-| Alarm target families on `AlarmTarget` | 16 sealed subtypes |
+| Alarm target families on `AlarmTarget` | 17 sealed subtypes |
 | Solar event types | 18 |
 | Lunar event types | 11 |
 | Solar terms (jieqi) | 24 |
-| Offline city catalog entries | 54 |
+| Offline city catalog entries | 55 |
 | User-facing locales | en (full), es (full), fr (full), zh (solar terms only) |
 
 **Top iOS / desktop constraints (Durable vs Fallback — no stack pick, no hacks):**
@@ -52,12 +52,12 @@ Full per-behavior table: §1.20.
 
 Answered 2026-11-16 (Edward), first pass: iOS is a **stated high-priority** goal. Desktop **widgets** on Windows, macOS, and Linux are a **stated** goal. Fragile hacks to clone Android lockscreen/FSI/Doze/Wear-face behavior are **rejected**.
 
-Answered 2026-11-16 (Edward), second pass — recorded here and in `TECH_DECISION.md` §10:
+Answered 2026-11-16 (Edward), second and third pass — recorded here and in `TECH_DECISION.md` §7 / §10. **M0 (Q1–Q5) is fully resolved.**
 
 1. ✅ **Ringing fallback UX / math-before-silence.** Wherever the platform permits, the math problem **must** be solved before the alarm can be silenced, **including the notification Stop path**. Drop the old “shade Stop skips math” default. **iOS AlarmKit: PENDING** — no supported API can gate system Stop on a challenge (`TECH_DECISION.md` §3.1). Do not ship a workaround.
-2. 🔲 **Single OS timer.** Only the next fire is armed (`REQUEST_CODE_ALARM = 8801`). Keep this “one OS timer” model on every Durable scheduler? Recommended default still **yes**. Does not block M6.
+2. ✅ **Single OS timer.** **YES.** Every platform keeps scheduling **just the next alarm as a single exact time** (`REQUEST_CODE_ALARM = 8801` today; AlarmKit `fixed` / UNNotification / desktop session equivalent). Do not arm a second clock or a weekly Relative calendar of astronomical events.
 3. ✅ **Notification Stop vs lockscreen Stop.** Do **not** preserve the shade-skips-math split. Notification Stop must not silence until math succeeds, on every OS that can enforce it.
-4. 🔲 **F-Droid.** ADR-0003 still “later”; recipe is the Golden Path stub. Recommended default: keep Android FLOSS-clean; do not block iOS. Does not block M6/M10.
+4. ✅ **F-Droid listing.** **Low priority, deferred, no hurry.** May be attempted later as a **separate** effort (`fdroiddata` merge request on GitLab). Keep the Android codebase F-Droid-friendly (FLOSS, no Play Services, Linux-buildable). **Do not plan a listing sprint.** Golden Path YAML stub stays until that later effort.
 5. ✅ **Wear on iOS.** Ship **watchOS complications** (WidgetKit accessory families). Not Android-Wear-only. Sprint M10.
 6. 🔲 **Huawei LiteOS `.hwt` face.** `[HUMAN]` follow-up in `docs/features/wear-watchface.md`. Still wanted?
 7. 🔲 **In-app APK apply.** `GoldenPathApp` hardcodes `canApplyUpdate = false`. Stay off, or restore the About apply button?
@@ -359,7 +359,7 @@ Strings: `astro_channel_name` / `astro_channel_desc` — “Full-screen lockscre
 
 ### Scheduler — `AstroAlarmScheduler`
 
-- **One** slot: `REQUEST_CODE_ALARM = 8801`.
+- **One** slot: `REQUEST_CODE_ALARM = 8801`. **Q2 answered:** every target OS keeps this “next alarm as a single exact Instant” model.
 - Only `alarmManager.setAlarmClock(AlarmClockInfo(triggerMs, showPending), fireBroadcast)`.
 - No `setExact`, `setExactAndAllowWhileIdle`, `setWindow`, or inexact alarms.
 - `runCatching` — fails closed if exact-alarm permission missing.
@@ -637,7 +637,7 @@ Natal templates: `AstroAlarmTemplatesSection` can add preset natal alarms to the
 |-------|------|
 | Model | `AstroPlace.kt` |
 | Store | `AstroPlaceStore.kt` |
-| Offline gazetteer | `CityCatalog.kt` — **54** cities with lat/lon/**IANA tz** |
+| Offline gazetteer | `CityCatalog.kt` — **55** cities with lat/lon/**IANA tz** |
 | GPS | `AstroPlaceFinder.resolveLocation` — FINE or COARSE; last-known if <30 min else `getCurrentLocation` (API 30+) GPS→NETWORK→PASSIVE |
 | Geocoding | Android `Geocoder` — reverse for GPS label; forward only if catalog miss |
 | UI | Settings `LocationCard`, onboarding Location step (optional) |
@@ -657,7 +657,7 @@ No `ACCESS_BACKGROUND_LOCATION`, no continuous listener, no geofences, no Play F
 Without a place: custom clock / zodiac / solar-term / natal-without-horizon still compute; sun/moon/planet rise-set **do not**.
 
 **iOS:** Core Location + geocoder are **Durable** (when the user grants them).  
-**Desktop:** GPS is **Fallback** to the existing 54-city catalog + typed search (already the product’s offline path). Do not scrape IP-geolocation as a silent hack. IANA DST is **Durable** everywhere.
+**Desktop:** GPS is **Fallback** to the existing 55-city catalog + typed search (already the product’s offline path). Do not scrape IP-geolocation as a silent hack. IANA DST is **Durable** everywhere.
 
 ---
 
@@ -785,7 +785,7 @@ Required checks: `docs/CI_REQUIRED_CHECKS.md`.
 
 **Fastlane:** `examples/android/fastlane/metadata/android/en-US/` — title AstroAlarm, pitch from `product.json`, changelogs through `10110.txt`, phone screenshots.
 
-**F-Droid:** recipe still Golden Path stub (`examples/android/metadata/dev.foss.goldenpath.yml`: AutoName Golden Path, versionName 0.1.0, repo `agent-project-bootstrap`). Product Fastlane and F-Droid YAML **are not in sync**. AGENT_MEMORY: “F-Droid later”.
+**F-Droid:** recipe still Golden Path stub (`examples/android/metadata/dev.foss.goldenpath.yml`: AutoName Golden Path, versionName 0.1.0, repo `agent-project-bootstrap`). Product Fastlane and F-Droid YAML **are not in sync**. **Q4 answered:** listing is low-priority / deferred (possible later `fdroiddata` GitLab MR). Keep the APK F-Droid-friendly; no listing sprint on this board.
 
 **Privacy:** `docs/PRIVACY.md` — no tracking by default; birth data on-device; crash opt-in; GitHub Releases User-Agent product+version only; GlitchTip/Bugsink stub **must stay disabled** without DPIA (`docs/features/crash-inbox.md`).
 
@@ -815,7 +815,7 @@ These are present-day gaps in the Android app, inventoried so they are not silen
 11. GPS timezone = system default, not catalog/geocoded TZ.
 12. `WAKE_LOCK` unused in Kotlin.
 13. Settings export/import strings with no implementation — **Edward 2026-11-16: implement as new stated feature** (M12), not a silent gap preserve.
-14. F-Droid YAML still Golden Path.
+14. F-Droid YAML still Golden Path (Q4: listing deferred; keep FLOSS-friendly).
 15. `clock-2d-plain-center.md` acceptance boxes still 🔲 though v1.11.0 shipped a plain hub (spec lag).
 16. ADR-0004 dropdown Settings vs current theme `FilterChip`s.
 17. Toasts in birth/templates vs DESIGN_GUIDE snackbar rule.
@@ -835,7 +835,7 @@ Policy (stated, Edward 2026-11-16): **no fragile hacks**. If the OS has a public
 | Ephemeris, next-fire, JSON alarms/place/birth, tokens, i18n | Durable | Port/share logic | Port/share logic |
 | Theme / math / TTS settings / overlay prefs | Durable | App settings | App settings |
 | Location permission + one-shot GPS | Durable | Core Location | **Fallback:** city catalog + typed search (already shipped). No silent IP geo |
-| Offline city catalog (54) + IANA TZ | Durable | Same catalog | Same catalog (primary on desktop) |
+| Offline city catalog (55) + IANA TZ | Durable | Same catalog | Same catalog (primary on desktop) |
 | Share 2160 PNG | Durable | Share sheet | Desktop share/save file |
 | TalkBack labels + reduce-motion | Durable | VoiceOver + Reduce Motion | Narrator/Orca + OS reduce-motion |
 | Scheduled exact fire (`setAlarmClock`) | Durable scheduler / Fallback chrome | **Durable:** public notification/alarm scheduler. **Fallback:** no status-bar AlarmClock chip, no FSI | **Durable:** OS notification or task while the session can receive it. **Approved limitation (Q22):** no fire when logged out/asleep — do not keep a hidden agent |
@@ -881,7 +881,7 @@ Label: **stated** = written as a product/template decision; **inferred** = impli
 |------|-------|--------|
 | Stay MIT FOSS; no Play Services / Firebase / proprietary telemetry | stated | ADR-0003, `foss-compliance.mdc`, README |
 | On-device ephemeris only; not navigation/observatory-grade | stated | ADR-0003, README “What this is not”, `docs/ACCURACY.md` |
-| GitHub Releases primary; **F-Droid later** | stated | ADR-0003, `.agent/AGENT_MEMORY.md` “Distribution: F-Droid later” |
+| GitHub Releases primary; **F-Droid listing deferred** (keep FLOSS-friendly; later `fdroiddata` GitLab MR, no sprint now) | stated | ADR-0003; Edward Q4 2026-11-16 |
 | Room/Hilt on classpath **for later stores** | stated | ADR-0001, AGENT_MEMORY |
 | UnifiedPush FOSS path if product wants it; live ntfy/NextPush is `[ADB]` | stated | `docs/features/unifiedpush.md` |
 | Crash proxy / GlitchTip **off** until DPIA | stated | `docs/PRIVACY.md`, `docs/features/crash-inbox.md`, `docs/CRASH_PROXY.md` |
@@ -892,7 +892,7 @@ Label: **stated** = written as a product/template decision; **inferred** = impli
 | Local LLM default `127.0.0.1:11434`, off, no cloud vendor | stated | birth-agent spec, `PRIVACY.md` |
 | Product base = published **v1.10.0+** on `origin/main`; do not continue on `park/wip-1.7.0-features` | stated | `BUILD_PLAN.md` |
 | Duplicate `org.astroalarm.natal` calculator/UI **dropped**; published `astro.birth` Chart is canonical | stated | `BUILD_PLAN.md` |
-| BUILD_PLAN migration sprints M0–M13 | stated | `BUILD_PLAN.md`; M0 Q1/Q3/Q5 answered 2026-11-16 |
+| BUILD_PLAN migration sprints M0–M13 | stated | `BUILD_PLAN.md`; **M0 fully resolved** 2026-11-16 |
 | CII Best Practices login still HUMAN leftover | stated | `HUMAN_BACKLOG.md` (badge now exists on README — backlog may be stale) |
 | Privacy portability: “Export settings where technically feasible” | stated | `docs/PRIVACY.md` User Rights |
 | **Export/import backup file** carrying everything (especially natal calendar); versioned shared format in `commonMain` | stated | Edward, 2026-11-16. **New scope**, not Android parity. Sprint M12 |
@@ -1009,6 +1009,7 @@ Remote branches at inventory time (not merged): Dependabot Android/Python, Relea
 | Code gaps listed in §1.19 | Current incomplete behavior |
 | Edward 2026-11-16 | Stated: iOS high-priority; desktop widgets Win/macOS/Linux; no fragile hacks |
 | Edward 2026-11-16 (second pass) | Math-before-silence including notification Stop; iOS AlarmKit PENDING; first desktop widget = 24h noon-up dial; watchOS complications; export/import new scope; desktop asleep approved; LAN P2P sync (no server); crisp widgets APPROVED |
+| Edward 2026-11-16 (third pass) | Q2: one next exact Instant on every OS. Q4: F-Droid listing deferred / low priority; keep FLOSS-friendly; no listing sprint. Inventory counts: 55 cities, 17 `AlarmTarget` types |
 
 ---
 
@@ -1047,6 +1048,6 @@ Use this as a drop-nothing checklist in later phases.
 
 **Wear (1):** Daily analog face.
 
-**Alarm families (16 `AlarmTarget` subtypes):** CustomClock, Solar, Lunar, Zodiac, SolarTerm, Planet, PlanetAlign, AllPlanetsAlign, NatalAscAspect, NatalMcAspect, MoonReturn, SolarReturn, MercuryStation, MoonSignIngress, NatalCompoundSpecific, NatalCompoundAny, Occasion.
+**Alarm families (17 `AlarmTarget` subtypes):** CustomClock, Solar, Lunar, Zodiac, SolarTerm, Planet, PlanetAlign, AllPlanetsAlign, Occasion, NatalAscAspect, NatalMcAspect, MoonReturn, SolarReturn, MercuryStation, MoonSignIngress, NatalCompoundSpecific, NatalCompoundAny.
 
 **Platform behaviors that must be named on every target OS:** use the §1.20 Durable / Fallback / Omit column — do not treat “degraded Android clone” as the plan. Must still appear in later phases so nothing is dropped: scheduler, reboot persistence, timezone recompute, ring UI, notification actions, widgets (stated on iOS + desktop), location, TTS, haptics, tones, share, updates.
