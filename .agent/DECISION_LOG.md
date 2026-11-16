@@ -17,6 +17,13 @@
 
 ## Entries
 
+### 2026-11-16 — Phase 0 multiplatform inventory
+- **Status:** Accepted
+- **Context:** Locked migration process needs an exhaustive Android inventory before any stack pick or design brief. App code must stay untouched.
+- **Decision:** Document current screens, widgets, alarm fire path, settings/defaults, ephemeris, and Android platform behavior in `docs/migration/INVENTORY.md`, plus stated vs inferred trajectory. No technology choice. Open questions listed for Edward.
+- **Alternatives considered:** Redesigning or simplifying the surface for a port (rejected: drop-nothing inventory). Inferring iOS/desktop as already-stated product goals (rejected: not in-repo).
+- **Consequences:** Later phases trace every item to a path in this file. Parity work must name lockscreen/exact-alarm/widget/Wear constraints even if a platform degrades them.
+
 ### 2026-10-22 — v1.11.0 /ship
 - **Status:** Accepted
 - **Context:** Post-v1.10.0 WIP (tone/TTS, noon-up, occasions, wear, chart agent) plus Daily 2D outer-clip fix were ready on main after `/build`. `update-deps --apply` rewrote CodeQL pins to invalid `vcodeql-bundle-v2.27.3`.
