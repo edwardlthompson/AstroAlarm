@@ -17,6 +17,13 @@
 
 ## Entries
 
+### 2026-11-16 — Edward answers on math, widgets, watch, export, sync
+- **Status:** Accepted (planning on docs branch). Implementation of M1+ and the Android crisp-widget fix are other PRs.
+- **Context:** Edward answered the open migration questions after Phases 0–3. AlarmKit cannot gate system Stop on a math challenge (WWDC25 230; AlarmManager.stop is programmatic, stopIntent is not a veto).
+- **Decision:** Math-before-silence wherever the OS permits, including notification Stop; iOS AlarmKit Stop **PENDING** (no workaround). First desktop widget is Daily 2D 24h dial with solar noon up (`AstroClockWidgetProvider`). watchOS WidgetKit complications (M10). Export/import is new stated `commonMain` scope (M12). Desktop asleep/logged-out is an approved limitation. Cross-device sync is new scope after parity (M13): LAN P2P + optional self-hosted relay; UnifiedPush/ntfy on Android; iOS remote-stop needs APNs if Edward allows it. Crisp widgets APPROVED (same design, native density/vector).
+- **Alternatives considered:** Keep shade-Stop-skips-math (rejected). Android Wear only on watch (rejected). Hide AlarmKit Stop / overlay SpringBoard (rejected as hacks). FCM for dismiss fan-out (rejected, not FOSS path).
+- **Consequences:** M0 Q1/Q3/Q5 ✅; Q2/Q4 still 🔲. M6 and M10 unblocked. BUILD_PLAN adds M12/M13. Android widget density fix ships from `main` in a separate PR, not this docs branch.
+
 ### 2026-11-16 — Phase 2–3 KMP+CMP plan (no implementation)
 - **Status:** Accepted (planning). Implementation waits on BUILD_PLAN AGENT rows.
 - **Context:** Edward asked for a stack pick among KMP+CMP, Flutter, MAUI/Avalonia, Tauri, plus a large-chunk BUILD_PLAN and a seeded parity checklist. Five INVENTORY questions stay unresolved.

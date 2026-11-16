@@ -5,7 +5,7 @@
 
 **The new implementation must match this brief. Any deviation must be documented in the Deviations section with justification and approved by Edward before implementation.**
 
-Deviations listed today are **PROPOSED** only (inventory §1.20 Fallback/Omit items). They are **not** approved.
+Deviations: §1.20 Fallback/Omit rows stay **PROPOSED** unless marked **APPROVED** below. Edward 2026-11-16 **approved** the crisp-widget rendering Deviation (same design, native density or vector). Math-before-silence is a **product rule**, not a visual Deviation.
 
 **Method:** Compose, XML widget layouts, generated theme files, Fastlane screenshots, and `design-tokens/design-tokens.json`. This Cloud Agent environment had **no Android SDK** (`ANDROID_HOME` unset), so Compose previews and an emulator were **not** run. Live lockscreen, Settings, editor, 3D, Sol, Chart, and widget-picker shots are missing; Fastlane frames are cited with staleness notes. See [What could not be captured](#what-could-not-be-captured).
 
@@ -293,7 +293,7 @@ Jieqi enum still carries emoji in `SolarTerm.kt` for term marks on the Yearly wh
 
 ### 3.4 Raster textures (3D / Sol — cite, do not invent)
 
-NASA-style Earth/Moon/planet maps live under `examples/android/app/src/main/res/drawable-nodpi/` (`EarthTexture.kt` samples them). Daily **2D no longer uses Earth** at the hub. 3D globe and Sol bodies still do. Pixel budget for widget bitmaps: `ClockRenderSize.fromMinDp` → `(minSideDp * 2.5).coerceIn(200, 600)` px.
+NASA-style Earth/Moon/planet maps live under `examples/android/app/src/main/res/drawable-nodpi/` (`EarthTexture.kt` samples them). Daily **2D no longer uses Earth** at the hub. 3D globe and Sol bodies still do. **Current Android pixel budget** `ClockRenderSize.fromMinDp` → `(minSideDp * 2.5).coerceIn(200, 600)` px is **chunky** (Edward). **APPROVED Deviation:** render at native widget pixel size × density, or as vector; do not keep the 600 px cap look on any platform.
 
 ### 3.5 Widget picker previews
 
@@ -545,19 +545,21 @@ Canonical visual is the lockscreen Activity (`INVENTORY.md` §1.6, §1.16):
 3. **Snooze** never asks math.
 4. **Stop** with math off: haptic + 80 ms scale-down + stop.
 5. **Stop** with math on: `MathChallengeDialog` — title, optional `n/m` Badge, 32 sp ExtraBold `expression = ?`, numeric field (digits and minus only), Submit / Cancel. Wrong → error copy, field cleared, **new** problem. Complete `problemCount` in a row → Stop.
-6. Notification actions Stop/Snooze **bypass math** (existing behavior, not a visual on this surface).
+6. **Product rule (Edward 2026-11-16):** notification Stop must **not** silence until math succeeds, wherever the OS can enforce it. Today’s Android shade Stop is a gap to close (M5), not the visual to copy. Snooze still skips math. iOS AlarmKit system Stop is **PENDING** (`TECH_DECISION.md` §3.1) — do not invent a second Stop chrome.
 
-Fallback visual if lockscreen takeover is not available is **PROPOSED** in Deviations (not approved). Until Edward approves, the brief’s ringing surface is this full-screen dark Stop/time/Snooze layout.
+Fallback visual if lockscreen takeover is not available: keep this same Stop / time / Snooze / math layout in OS-honest chrome (time-sensitive notification + in-app ring UI). That chrome swap is still the §1.20 Fallback; the **math-before-silence** rule is approved product behavior, not a new look.
 
 ---
 
 ## 8. Widget visual specs (all seven)
 
-Inventory table: `INVENTORY.md` §1.5. Shared disk layout: `res/layout/widget_astro.xml` (transparent `FrameLayout`, 8 dp pad, `ImageView` `fitCenter`). List cards: `bg_widget_upcoming.xml`. Update floor 30 min. Resize horizontal|vertical. Category home_screen|keyguard except as noted. **No** configure activity. Bitmaps 200–600 px.
+Inventory table: `INVENTORY.md` §1.5. Shared disk layout: `res/layout/widget_astro.xml` (transparent `FrameLayout`, 8 dp pad, `ImageView` `fitCenter`). List cards: `bg_widget_upcoming.xml`. Update floor 30 min. Resize horizontal|vertical. Category home_screen|keyguard except as noted. **No** configure activity.
+
+**First desktop / WidgetKit widget:** row 1 — Daily 2D **24-hour clock dial with solar noon pointing up** (`AstroClockWidgetProvider`, `isShowSolarNoonUp2D`). **Crisp AC (APPROVED):** every face is the **same design** as this table, rendered at native pixel size × density or as vector. Do not ship the old 200–600 px cap look. `fitCenter` must not upscale a small bitmap.
 
 | # | Widget | Info XML | Layout | Min / target cells | Preview drawable | In-app look |
 |---|--------|----------|--------|--------------------|------------------|-------------|
-| 1 | 2D clock | `astro_widget_info.xml` | `widget_astro.xml` | 250×250 dp; minResize 140; **4×4** | `preview_widget_clock_wheel` | Same Daily 2D disk (plain hub, night canvas). Snapshot, not 1 Hz. |
+| 1 | 2D clock **(first desktop widget)** | `astro_widget_info.xml` | `widget_astro.xml` | 250×250 dp; minResize 140; **4×4** | `preview_widget_clock_wheel` | Same Daily 2D disk (plain hub, night canvas, solar noon up when that pref is on). Snapshot, not 1 Hz. Native-density/vector. |
 | 2 | 3D clock | `astro_3d_widget_info.xml` | same | 250×250; 140 resize; **4×4** | `preview_widget_3d_clock` | Same 3D globe as Daily 3D, no live parallax in the widget. |
 | 3 | Upcoming alarms | `astro_upcoming_widget_info.xml` | `widget_upcoming.xml` | 250×110; resize 140×70; **4×2** | `preview_widget_alarms` | Dark rounded card 16 dp, 1 dp `#33FFFFFF` stroke, 12 dp pad. Title `#FFD54F` 14 sp Bold + count `#B0BEC5` 12 sp. Up to 3 lines (bold white / `#E0E0E0` / `#CFD8DC`). Empty centered `#90A4AE`. 48 h horizon. |
 | 4 | Solar terms | `astro_solarterm_widget_info.xml` | `widget_astro.xml` | 140×140; resize 110; **2×2** | `preview_widget_solar_terms` | Same Yearly jieqi wheel. |
@@ -594,35 +596,37 @@ Sources: `INVENTORY.md` §1.17, `WheelTalkBack.kt`, lockscreen semantics, overla
 
 ## 10. Deviations
 
-**Status: PROPOSED — not approved.** Only inventory §1.20 **Fallback** and **Omit** items. Durable items are not deviations: they must match this brief.
+**Status:** mix of **PROPOSED** (not approved) and **APPROVED** (Edward 2026-11-16). Durable items are not deviations: they must match this brief.
 
-Each row is the **minimal visual/UX change** that item would force if Edward later approves it. Until then, implement the Android-evidenced look in §2–§9.
+Each PROPOSED row is the **minimal visual/UX change** that item would force. APPROVED rows may be implemented.
 
-| §1.20 item | Path | PROPOSED visual / UX change (minimal) |
-|------------|------|----------------------------------------|
-| Full-screen lockscreen Activity (FSI, `showWhenLocked`) | Fallback | Keep the **same** Stop / time / Snooze / math layout as §4.7, shown when the user opens a time-sensitive notification (or a focused alarm window on desktop). Do not draw over the OS lock UI. No extra chrome. |
-| MAX channel, `bypassDnd`, silent channel + Activity-owned tone | Fallback | Same in-app ring UI. OS Focus / DND may suppress or duck the tone; do not add a fake “bypass DND” banner. |
-| Math unlock **on the lockscreen** | Fallback | Same `MathChallengeDialog` (20 dp card, 32 sp expression) inside the in-app ring UI after the user opens the notification. Do not inject a dialog onto SpringBoard / login screen. |
-| `WAKE_LOCK` / `FLAG_KEEP_SCREEN_ON` while ringing | Fallback | No extra control. Screen stays awake only while the ring UI is visible. |
-| `requestPinAppWidget` | Fallback | Same primary 12 dp-radius “Add … widget” button; action shows **instructions** (existing `astro_widget_pin_manual_guide` snackbar pattern) instead of the Android pin sheet. |
-| Keyguard widget category | Fallback / Omit | iOS: snapshot Lock Screen widgets using the **same disk/list art** as home widgets. Desktop: **omit** keyguard widgets; do not invent a lock-screen widget. |
-| Live analog bitmap every tick | Fallback | Same disk/list art as snapshots, updating on the host timeline (minutes, not a spinning second-hand). No 1 Hz RemoteViews clone. |
-| Exported `SET_ALARM` / `DISMISS_ALARM` | Fallback | No dedicated visual. App Intents / URL “set alarm” may open the existing `AstroEditDialog`. Else no UI. |
-| System `ACTION_RINGTONE_PICKER` | Fallback | Same editor row; opens the **platform** sound picker or a list of bundled tones. Do not restyle as Android’s ringtone UI. |
-| Alarm `USAGE_ALARM` audio stream | Fallback | No visual. Tone still accompanies the ring UI / notification. |
-| TTS while locked | Fallback | Same optional error-colored TTS hint on the ring UI when that UI is shown; may also speak from the notification. No extra caption chrome. |
-| Home-screen widgets on Linux | Fallback | Same seven faces as §8, hosted as a small always-available window or panel applet — **not** a fake `AppWidgetProvider` frame. |
-| Wear OS analog watch face | Fallback / Omit | Do not ship a cloned Wear face on iOS/desktop. Optional watchOS complications would be a **new** design (out of this brief). Android Wear remains as today. |
-| Accelerometer 3D parallax | Omit (desktop) | 3D globe is **static** (same as the 3D widget). No fake gyro. |
-| High-refresh display mode | Omit where unsupported | Same scrolling; no in-app toggle. |
-| Android Auto Backup | Fallback | No new Settings visual unless Edward later ships export/import (strings exist, UI does not — `INVENTORY.md` §1.19). |
-| `SCHEDULE_EXACT_ALARM` / `USE_EXACT_ALARM` onboarding | Omit | Drop those rows from onboarding. Remaining permission rows keep current nag layout. |
-| `USE_FULL_SCREEN_INTENT` onboarding | Omit | Drop that row. Ring UI still matches §4.7 when shown. |
-| `REQUEST_IGNORE_BATTERY_OPTIMIZATIONS` onboarding | Omit | Drop that row. No fake battery-whitelist screen. |
-| `RECEIVE_BOOT_COMPLETED` broadcast | Omit | No visual. OS still delivers pending notifications after reboot / login item. |
-| FileProvider APK apply | Omit on iOS | About screen stays without the apply button (`canApplyUpdate = false` already). Desktop: store/installer, not an in-app APK bar. |
-| UnifiedPush / ntfy stub | Omit | No push-status chrome. Do not add FCM. |
-| Location GPS on desktop | Fallback | Settings Location card keeps city catalog + typed search; **no** GPS spinner on desktop. |
+| Item | Path | Status | Visual / UX change (minimal) |
+|------|------|--------|------------------------------|
+| **Widget render quality** | Product (all platforms) | **APPROVED** | **Same design as §8**, rendered **crisp** at native widget pixel size × density, or as vector. Do **not** carry the current Android `ClockRenderSize` 200–600 px cap / `fitCenter` upscale. Applies to Android AppWidget, WidgetKit, Windows Adaptive Cards, Linux window/applet. |
+| Full-screen lockscreen Activity (FSI, `showWhenLocked`) | Fallback | PROPOSED | Keep the **same** Stop / time / Snooze / math layout as §4.7, shown when the user opens a time-sensitive notification (or a focused alarm window on desktop). Do not draw over the OS lock UI. No extra chrome. |
+| MAX channel, `bypassDnd`, silent channel + Activity-owned tone | Fallback | PROPOSED | Same in-app ring UI. OS Focus / DND may suppress or duck the tone; do not add a fake “bypass DND” banner. |
+| Math unlock **on the lockscreen** (chrome) | Fallback | PROPOSED chrome; **product rule APPROVED** | Same `MathChallengeDialog` (20 dp card, 32 sp expression) in the in-app ring UI. **Stop (including notification Stop) must run math** where the OS can enforce it. iOS AlarmKit system Stop is **PENDING** — do not hide Stop or overlay SpringBoard. Do not inject a dialog onto SpringBoard / login screen. |
+| Desktop alarms while asleep / logged out | Approved limitation | **APPROVED** | No extra visual. Session-only fire (Q22). Do not add a “hidden agent” status row. |
+| `WAKE_LOCK` / `FLAG_KEEP_SCREEN_ON` while ringing | Fallback | PROPOSED | No extra control. Screen stays awake only while the ring UI is visible. |
+| `requestPinAppWidget` | Fallback | PROPOSED | Same primary 12 dp-radius “Add … widget” button; action shows **instructions** (existing `astro_widget_pin_manual_guide` snackbar pattern) instead of the Android pin sheet. |
+| Keyguard widget category | Fallback / Omit | PROPOSED | iOS: snapshot Lock Screen widgets using the **same disk/list art** as home widgets. Desktop: **omit** keyguard widgets; do not invent a lock-screen widget. |
+| Live analog bitmap every tick | Fallback | PROPOSED | Same disk/list art as snapshots, updating on the host timeline (minutes, not a spinning second-hand). No 1 Hz RemoteViews clone. Still **crisp** (APPROVED row above). |
+| Exported `SET_ALARM` / `DISMISS_ALARM` | Fallback | PROPOSED | No dedicated visual. App Intents / URL “set alarm” may open the existing `AstroEditDialog`. Else no UI. |
+| System `ACTION_RINGTONE_PICKER` | Fallback | PROPOSED | Same editor row; opens the **platform** sound picker or a list of bundled tones. Do not restyle as Android’s ringtone UI. |
+| Alarm `USAGE_ALARM` audio stream | Fallback | PROPOSED | No visual. Tone still accompanies the ring UI / notification. |
+| TTS while locked | Fallback | PROPOSED | Same optional error-colored TTS hint on the ring UI when that UI is shown; may also speak from the notification. No extra caption chrome. |
+| Home-screen widgets on Linux | Fallback | PROPOSED | Same seven faces as §8, **first** the 24h noon-up dial, hosted as a small always-available window or panel applet — **not** a fake `AppWidgetProvider` frame. |
+| Wear OS analog watch face | Fallback / Omit | **APPROVED** substitute | Do not clone WearFaceService on watchOS. **Ship WidgetKit complications** (accessory families). Glance art may use night/gold tokens; system complication chrome is OS. Android Wear analog face stays as today. |
+| Accelerometer 3D parallax | Omit (desktop) | PROPOSED | 3D globe is **static** (same as the 3D widget). No fake gyro. |
+| High-refresh display mode | Omit where unsupported | PROPOSED | Same scrolling; no in-app toggle. |
+| Android Auto Backup | Fallback | PROPOSED | Export/import is now a **stated** Settings feature (M12); use existing Settings section chrome, no new visual language. |
+| `SCHEDULE_EXACT_ALARM` / `USE_EXACT_ALARM` onboarding | Omit | PROPOSED | Drop those rows from onboarding. Remaining permission rows keep current nag layout. |
+| `USE_FULL_SCREEN_INTENT` onboarding | Omit | PROPOSED | Drop that row. Ring UI still matches §4.7 when shown. |
+| `REQUEST_IGNORE_BATTERY_OPTIMIZATIONS` onboarding | Omit | PROPOSED | Drop that row. No fake battery-whitelist screen. |
+| `RECEIVE_BOOT_COMPLETED` broadcast | Omit | PROPOSED | No visual. OS still delivers pending notifications after reboot / login item. |
+| FileProvider APK apply | Omit on iOS | PROPOSED | About screen stays without the apply button (`canApplyUpdate = false` already). Desktop: store/installer, not an in-app APK bar. |
+| UnifiedPush / ntfy stub | M13 Android wake | PROPOSED chrome | Opt-in Settings for local-first sync (M13); no FCM; no vendor account chrome. |
+| Location GPS on desktop | Fallback | PROPOSED | Settings Location card keeps city catalog + typed search; **no** GPS spinner on desktop. |
 
 Durable §1.20 rows (in-app screens, tokens, TalkBack, share PNG, catalogs, WidgetKit/Windows snapshot widgets, etc.) are **in scope for pixel/UX match** and are not listed here.
 
@@ -636,7 +640,7 @@ Durable §1.20 rows (in-app screens, tokens, TalkBack, share PNG, catalogs, Widg
 | Fastlane Alarms/Daily staleness | Shots from ~2026-09-15: Earth hub, text Edit/Delete, no Tonight card, overlay list incomplete | Treat **code + this brief** as canonical; replace shots when convenient |
 | Widget picker preview rasters | Previews are XML drawables, not PNG | Render `preview_widget_*` on device |
 | Earth/Moon/planet texture appearance | Large `drawable-nodpi` bitmaps; not duplicated here | Cite those files at paint time |
-| Notification shade Stop/Snooze | OS chrome | Not part of in-app visual match |
+| Notification shade Stop/Snooze | OS chrome; math-before-silence is product, not pixels | Android M5 must present math before Stop silences |
 | Wear face on-wrist photo | No device | `INVENTORY.md` §1.15 |
 | Light-mode full-app screenshots | Fastlane set is dark-only | Theme Light and capture; tokens in §2 still apply |
 | Exact M3 segmented/tab indicator metrics | Defaults from the Compose M3 version on the classpath | Match Material 3 defaults + primary color; do not invent a custom tab underline |
