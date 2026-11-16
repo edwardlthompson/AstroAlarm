@@ -17,6 +17,13 @@
 
 ## Entries
 
+### 2026-11-16 — Phase 1 design brief
+- **Status:** Accepted
+- **Context:** After Phase 0 inventory, Edward asked for a docs-only design brief of the *existing* app so a later stack can reproduce it. No technology pick. No redesign. Deviations may only pre-list INVENTORY §1.20 Fallback/Omit items as PROPOSED.
+- **Decision:** Capture tokens, components, screens, motion, widgets, and a11y in `docs/migration/DESIGN_BRIEF.md` with a binding statement that the new implementation must match unless Edward approves a Deviations row. Copy Fastlane phone screenshots into `docs/migration/design/` and note they are stale vs the plain 2D hub and Tonight card. No emulator in this environment.
+- **Alternatives considered:** Inventing a cross-platform visual language (rejected). Treating README “Material You” as canonical (rejected: no `dynamicColorScheme`). Approving lockscreen Fallback UX in this phase (rejected: PROPOSED only).
+- **Consequences:** Pixel/UX work in later phases traces to this brief. Unapproved Fallback/Omit rows must not change the in-app look. Live lockscreen/Settings/3D/Sol/Chart/widget shots still missing.
+
 ### 2026-11-16 — Phase 0 multiplatform inventory
 - **Status:** Accepted
 - **Context:** Locked migration process needs an exhaustive Android inventory before any stack pick or design brief. App code must stay untouched. Edward added: iOS is a firm high-priority goal (user-requested); desktop widgets on Windows, macOS, and Linux; no fragile hacks on platforms where Android behaviors would break.

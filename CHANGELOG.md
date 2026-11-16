@@ -13,6 +13,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 * **android:** Tonight's sky card — next sunrise/sunset/moonrise/moonset with one line of context on the Alarms tab
 * **docs:** ephemeris accuracy harness vs NOAA almanac (30 dates) → `docs/ACCURACY.md` (`scripts/check-ephemeris-accuracy.sh`)
 * **docs:** Phase 0 multiplatform migration inventory → `docs/migration/INVENTORY.md` (current Android surface + trajectory; Durable vs Fallback for iOS/desktop; no app-code or stack pick)
+* **docs:** Phase 1 design brief → `docs/migration/DESIGN_BRIEF.md` (existing visual/UX contract; Fastlane captures under `docs/migration/design/`; §1.20 Fallback/Omit listed as PROPOSED deviations only)
 
 ### Changed
 
