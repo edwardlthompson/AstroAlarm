@@ -2,7 +2,7 @@
 
 Seeded from [`INVENTORY.md`](INVENTORY.md) Appendix B, §§1.2–1.20, and [`DESIGN_BRIEF.md`](DESIGN_BRIEF.md). Tick rows as BUILD_PLAN chunks land.
 
-**Status:** 🔲 not verified · ✅ verified on that target · ❌ waived only with an **approved** DESIGN_BRIEF Deviation.
+**Status:** 🔲 not verified · ✅ verified on that target · ❌ waived only with an **approved** DESIGN_BRIEF Deviation · **PENDING** = no supported OS API (do not fake).
 
 **How to use:** after each migration BUILD_PLAN chunk, tick the rows that chunk claims. The final parity sprint must leave no 🔲 on Durable in-app items. Fallback/Omit rows tick as “honest Fallback documented” or “Omit confirmed,” never as a fake Android clone.
 
@@ -114,17 +114,17 @@ Next-fire ✅ = JVM `:astro-ephemeris:jvmTest` after the M2 extract (same Kotlin
 
 ## F. Widgets (INVENTORY §1.5, DESIGN_BRIEF §8 — 7)
 
-Snapshot cadence (not 1 Hz) is required on iOS/desktop.
+Snapshot cadence (not 1 Hz) is required on iOS/desktop. **First face:** Daily 2D 24h noon-up dial (`AstroClockWidgetProvider`). **Crisp AC (APPROVED):** native density or vector; never the 200–600 px cap look.
 
-| Widget | Android AppWidget | iOS WidgetKit | macOS WidgetKit | Windows Adaptive Card | Linux window/applet |
-|--------|:-----------------:|:-------------:|:---------------:|:---------------------:|:-------------------:|
-| 2D clock (plain hub, night canvas) | 🔲 | 🔲 | 🔲 | 🔲 | 🔲 |
-| 3D clock (globe snapshot) | 🔲 | 🔲 | 🔲 | 🔲 | 🔲 |
-| Upcoming alarms (hex card) | 🔲 | 🔲 | 🔲 | 🔲 | 🔲 |
-| Yearly jieqi | 🔲 | 🔲 | 🔲 | 🔲 | 🔲 |
-| Sol | 🔲 | 🔲 | 🔲 | 🔲 | 🔲 |
-| Natal chart | 🔲 | 🔲 | 🔲 | 🔲 | 🔲 |
-| Natal align (no in-app pin on Android) | 🔲 | 🔲 | 🔲 | 🔲 | 🔲 |
+| Widget | Android AppWidget | iOS WidgetKit | macOS WidgetKit | Windows Adaptive Card | Linux window/applet | Crisp (native px / vector) |
+|--------|:-----------------:|:-------------:|:---------------:|:---------------------:|:-------------------:|:--------------------------:|
+| 2D clock (plain hub, night canvas, **solar noon up** — first desktop widget) | 🔲 | 🔲 | 🔲 | 🔲 | 🔲 | 🔲 |
+| 3D clock (globe snapshot) | 🔲 | 🔲 | 🔲 | 🔲 | 🔲 | 🔲 |
+| Upcoming alarms (hex card) | 🔲 | 🔲 | 🔲 | 🔲 | 🔲 | 🔲 |
+| Yearly jieqi | 🔲 | 🔲 | 🔲 | 🔲 | 🔲 | 🔲 |
+| Sol | 🔲 | 🔲 | 🔲 | 🔲 | 🔲 | 🔲 |
+| Natal chart | 🔲 | 🔲 | 🔲 | 🔲 | 🔲 | 🔲 |
+| Natal align (no in-app pin on Android) | 🔲 | 🔲 | 🔲 | 🔲 | 🔲 | 🔲 |
 
 ---
 
@@ -168,11 +168,12 @@ Snapshot cadence (not 1 Hz) is required on iOS/desktop.
 | Durable OS scheduler (no hidden agent) | 🔲 | 🔲 | 🔲 |
 | Reboot / login persistence (no fake BOOT_COMPLETED on iOS) | 🔲 | 🔲 | 🔲 |
 | Timezone / time-set recompute | 🔲 | 🔲 | 🔲 |
-| Notification Stop/Snooze skip math (Q3 default) | 🔲 | 🔲 | 🔲 |
-| In-app Stop honors math (Q1 default: math not on shade) | 🔲 | 🔲 | 🔲 |
+| Notification Stop **must run math** before silence (Q1/Q3 answered) | 🔲 | PENDING | 🔲 |
+| In-app Stop honors math | 🔲 | 🔲 | 🔲 |
+| AlarmKit system Stop cannot be math-gated (§3.1) | — | PENDING | — |
 | Tone + TTS + vibrate policy | 🔲 | 🔲 | 🔲 |
 | AlarmKit (iOS 26+) or UserNotifications Fallback | — | 🔲 | — |
-| Session-only fire when logged out (Q22, not in five) | — | — | 🔲 |
+| Session-only fire when logged out (Q22 **approved limitation**) | — | — | ✅ limitation documented |
 
 ---
 
@@ -183,9 +184,9 @@ Snapshot cadence (not 1 Hz) is required on iOS/desktop.
 | No FSI overlay on OS lock UI | 🔲 | 🔲 |
 | No exact-alarm / FSI / battery Settings clones | 🔲 | 🔲 |
 | No 1 Hz widget canvas | 🔲 | 🔲 |
-| No Wear-face clone (Q5 default) | 🔲 | 🔲 |
+| No Wear-face clone on watchOS (complications instead, Q5) | 🔲 | 🔲 |
 | No desktop keyguard widgets | — | 🔲 |
-| No UnifiedPush/FCM | 🔲 | 🔲 |
+| No FCM / no vendor push. M13 is LAN-only; UnifiedPush/APNs are future | 🔲 | 🔲 |
 | Linux widgets = window/applet, not AppWidget | — | 🔲 |
 
 ---
@@ -194,7 +195,12 @@ Snapshot cadence (not 1 Hz) is required on iOS/desktop.
 
 | Item | Android | iOS | Desktop |
 |------|:-------:|:---:|:-------:|
-| Analog day/night face | 🔲 | Omit unless Q5 overturned | Omit |
+| Analog day/night face | 🔲 | Omit (not a FOSS WatchFaceService) | Omit |
+| WidgetKit complications `accessoryCircular` | — | 🔲 | — |
+| `accessoryRectangular` | — | 🔲 | — |
+| `accessoryInline` | — | 🔲 | — |
+| `accessoryCorner` | — | 🔲 | — |
+| Complication vs Wear: glance (now-up / day-night or next-fire), not 1 Hz analog canvas | — | 🔲 | — |
 
 ---
 
@@ -219,7 +225,20 @@ Tick only if Edward explicitly wants the gap closed; otherwise preserve.
 |-----|:--------:|:-------------------:|
 | No NavHost / widget tab extra | 🔲 | 🔲 |
 | `canApplyUpdate = false` | 🔲 | 🔲 |
-| Settings export/import strings only | 🔲 | 🔲 |
-| UnifiedPush payload ignored | 🔲 | 🔲 |
+| Settings export/import strings only | — | ✅ close as **new feature** M12 (not a parity tick) |
+| UnifiedPush payload ignored | 🔲 | — (optional future, not M13 LAN) |
 | NatalAlign no in-app pin | 🔲 | 🔲 |
-| Notification Stop bypasses math | 🔲 | 🔲 |
+| Notification Stop bypasses math | — | ✅ **close** (Q1/Q3); M5 Android. iOS AlarmKit Stop stays PENDING |
+
+---
+
+## N. New stated features (not Android parity)
+
+Do not tick these as “matches today’s APK.” They are extra scope.
+
+| Feature | Sprint | Android | iOS | Desktop |
+|---------|--------|:-------:|:---:|:-------:|
+| Versioned export/import (everything, including natal) | M12 | 🔲 | 🔲 | 🔲 |
+| LAN P2P data sync (mDNS + paired TLS, no server) | M13 | 🔲 | 🔲 | 🔲 |
+| Dismiss fan-out while process can listen | M13 | 🔲 FSI/ring | 🔲 **foreground only** | 🔲 session-awake |
+| Dismiss while iOS locked / AlarmKit system UI / app suspended | M13 | — | ✅ **limitation documented** (`TECH_DECISION.md` §11.6) | — |
