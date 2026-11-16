@@ -1,0 +1,16 @@
+plugins {
+    kotlin("multiplatform")
+}
+
+kotlin {
+    jvm {
+        compilerOptions {
+            jvmTarget.set(org.jetbrains.kotlin.gradle.dsl.JvmTarget.JVM_17)
+        }
+    }
+    iosX64()
+    iosArm64()
+    iosSimulatorArm64()
+}
+
+apply(from = rootProject.file("../../shared/kmp-android-variant.gradle.kts"))

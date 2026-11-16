@@ -8,8 +8,9 @@
 | Layer | Technology | Version | Notes |
 |-------|-----------|---------|-------|
 | Platform | Android (Kotlin, Jetpack Compose, Material 3) | 1.10.0 | Child of agent-project-bootstrap; GitHub Releases APK `astroalarm-X.Y.Z-foss.apk` |
-| Persistence | JSON SharedPreferences + DataStore | - | Room/Hilt on classpath for later stores |
-| Ephemeris | commons-suncalc 3.11 + NOAA tropical longitude + on-device Kepler | on-device | Sun/moon times; NOAA for seasons/zodiac/jieqi; Kepler for Sol tab and planet alarms |
+| Shared KMP | `:astro-domain`, `:astro-ephemeris`, empty `:astro-ui` | Phase 4 M1+M2 | Logic in `jvmMain` (java.time + commons-suncalc); iOS targets are placeholders until M6 |
+| Persistence | JSON SharedPreferences + DataStore | - | Room/Hilt on classpath for later stores; JSON codecs live in `:astro-domain` |
+| Ephemeris | commons-suncalc 3.11 + NOAA tropical longitude + on-device Kepler | on-device | Now `:astro-ephemeris` `jvmMain`; Sun/moon times; NOAA for seasons/zodiac/jieqi; Kepler for Sol tab and planet alarms |
 | License | MIT | - | Pure FOSS; no Play Services / Firebase |
 | Distribution | GitHub Releases | - | F-Droid later |
 ## Active Modules
@@ -44,6 +45,7 @@ FOSS Android astronomical alarm clock: on-device suncalc sun/moon ephemeris, sol
 
 ## Session Retrospectives
 
+| 2026-11-16 | Phase 4 M1+M2 | KMP skeleton + extract models/JSON/ephemeris/`AstroNextFire` to `shared/`; JVM goldens + NOAA 30/30; iOS KN placeholders compile | Do not put suncalc/java.time in `commonMain`; catalog is 55 cities; `AlarmTarget` has 17 sealed types; Android APK compile needs SDK |
 | 2026-10-22 | v1.11.0 /ship | Tone/TTS policy, noon-up, sky occasions, wear face, chart agent, Daily 2D outer-clip; RP #29; SBOM+APK on release | Never apply `vcodeql-bundle-*` (upd offered it again); go gate skip when `examples/go` pruned |
 | 2026-10-22 | /build outer-crop + WIP | Daily 2D month/zodiac clip fix (`DiskRingLayout.EDGE`); restored WIP (tts, noon-up, occasions, wear, birth-agent); merged Dependabot #26/#28 | Android Parallel scopes are exclusive — keep multi-feature verify Sequential |
 | 2026-09-15 | v1.10.0 /ship | Circular Yearly/Sol/natal/Daily disks; unique natal-align picker preview; RP #24; versionCode **10109** | Do not apply `vcodeql-bundle-*`; sideload with `adb install -r`; phones were debug-signed |

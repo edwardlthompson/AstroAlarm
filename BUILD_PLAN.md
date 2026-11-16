@@ -1,7 +1,7 @@
 # Build Plan
 
 <!-- remaining-tally -->
-**Remaining:** AGENT 11 · AUTO 1 · HUMAN 6 · ADB 0 · **18 open**
+**Remaining:** AGENT 9 · AUTO 1 · HUMAN 6 · ADB 0 · **16 open**
 <!-- /remaining-tally -->
 > Done work: [COMPLETED_TASKS.md](COMPLETED_TASKS.md). Feature protocol: [docs/FEATURE_MODULES.md](docs/FEATURE_MODULES.md).
 
@@ -19,7 +19,7 @@ Sequential [AGENT] first, then Parallel. After each AGENT step: python3 scripts/
 2. [`docs/migration/DESIGN_BRIEF.md`](docs/migration/DESIGN_BRIEF.md) — existing visual/UX contract (binding statement)
 3. [`docs/migration/TECH_DECISION.md`](docs/migration/TECH_DECISION.md) — KMP + CMP; native widgets/alarm chrome
 
-Do not invent design. Do not fake Android lockscreen/FSI/Doze/Wear on iOS or desktop. Tick [`docs/migration/PARITY_CHECKLIST.md`](docs/migration/PARITY_CHECKLIST.md) as chunks land. **This file’s migration sprints are planning only until an AGENT row is executed in a later session.**
+Do not invent design. Do not fake Android lockscreen/FSI/Doze/Wear on iOS or desktop. Tick [`docs/migration/PARITY_CHECKLIST.md`](docs/migration/PARITY_CHECKLIST.md) as chunks land. **M1–M2 are implemented** (`shared/astro-domain`, `shared/astro-ephemeris`, empty `shared/astro-ui`). Later sprints stay planning until their AGENT rows run.
 
 ---
 
@@ -43,7 +43,7 @@ Each AGENT/AUTO row: inventory refs · parity AC · design-fidelity AC · gate v
 
 ### Sprint M1 — KMP/CMP skeleton (Android still ships)
 
-1. 🔲 [AGENT] Add KMP modules beside `examples/android` (`:astro-domain`, `:astro-ephemeris`, `:astro-ui` as empty/android-first targets). Do not delete or rename `applicationId org.astroalarm`. iOS/desktop targets may be declared; Linux CI must `kotlin.native.ignoreDisabledTargets`.
+1. ✅ [AGENT] Add KMP modules beside `examples/android` (`:astro-domain`, `:astro-ephemeris`, `:astro-ui` as empty/android-first targets). Do not delete or rename `applicationId org.astroalarm`. iOS/desktop targets may be declared; Linux CI must `kotlin.native.ignoreDisabledTargets`.
    - Inventory: §1.1, §1.18
    - Parity: existing APK still installs; no feature dropped
    - Design: no UI change
@@ -51,11 +51,12 @@ Each AGENT/AUTO row: inventory refs · parity AC · design-fidelity AC · gate v
 
 ### Sprint M2 — Extract common domain (models, persistence contracts, ephemeris, next-fire)
 
-1. 🔲 [AGENT] Move **whole** alarm/place/birth models, JSON codecs, NOAA `SolarMath`, Kepler, suncalc façade, `AstroNextFire`, `AlarmFireIdentity`, math generator into `commonMain` (JVM `actual` may keep `commons-suncalc` until the Kotlin surface matches). Android app depends on the modules; no screen rewrites.
+1. ✅ [AGENT] Move **whole** alarm/place/birth models, JSON codecs, NOAA `SolarMath`, Kepler, suncalc façade, `AstroNextFire`, `AlarmFireIdentity`, math generator into `commonMain` (JVM `actual` may keep `commons-suncalc` until the Kotlin surface matches). Android app depends on the modules; no screen rewrites.
    - Inventory: §§1.9–1.13, §1.16 math, Appendix A
    - Parity: all 16 `AlarmTarget` subtypes round-trip; 18 solar + 11 lunar + 24 jieqi next-fire tests; 54-city catalog loads
    - Design: N/A (no pixels)
    - Gate: existing JVM unit tests + `scripts/check-ephemeris-accuracy.sh` / `EphemerisAccuracyTest` (±180 s, 30 NOAA dates, INVENTORY §1.11); `feature-gate --stack android`; checklist §E/§L still 🔲 until iOS runs the same tests
+   - Landed: logic is `jvmMain` (java.time + commons-suncalc), not expect/actual `commonMain`. iOS targets compile placeholders only. Catalog table is **55** cities (inventory said 54). `AlarmTarget` has **17** sealed subtypes (inventory “16” listed Occasion plus both compounds). JVM §E next-fire / §L ticks; iOS Native ephemeris still 🔲.
 
 ### Sprint M3 — Shared disk renderers (all clock families)
 

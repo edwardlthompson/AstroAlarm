@@ -17,6 +17,13 @@
 
 ## Entries
 
+### 2026-11-16 — Phase 4 M1+M2 KMP domain/ephemeris extract
+- **Status:** Accepted
+- **Context:** Edward asked for M1 (KMP skeleton) and M2 (whole domain extract) together on a new branch so PR #44 stays docs-only. TECH_DECISION keeps commons-suncalc as a JVM library; java.time is not in Kotlin/Native stdlib the same way.
+- **Decision:** Add `:astro-domain`, `:astro-ephemeris`, `:astro-ui` included from `examples/android`. Put extracted Kotlin in **`jvmMain`** (not expect/actual `commonMain`) so behavior stays byte-for-byte with the Android app. Declare empty iOS targets + `kotlin.native.ignoreDisabledTargets=true`. Split only what module cycles required (`NatalBody`/`EclipticPoint`/`NatalChart`/`SkyOccasionId`, `SunriseOffer` vs `SunriseOfferStore`). Android `:app` depends on domain+ephemeris; UI is an empty CMP shell until M3. Golden next-fire CSV locked from the extracted code; NOAA harness moved to `:astro-ephemeris:jvmTest`.
+- **Alternatives considered:** Full `commonMain` rewrite of suncalc/java.time (rejected: behavior change, M6 work). Single combined module (rejected: BUILD_PLAN names two). `androidTarget()` on shared modules (rejected: this environment has no Android SDK).
+- **Consequences:** iOS compile of placeholders succeeded on Linux KN cross-compile; iOS does **not** yet run ephemeris. `examples/android` still cannot be compiled here (`ANDROID_HOME` unset). Catalog has 55 cities (inventory said 54). `AlarmTarget` has 17 sealed subtypes. wrap360/wrap180 in `sol`/`solarterm` are public so UI in `:app` can call them across modules.
+
 ### 2026-11-16 — Phase 2–3 KMP+CMP plan (no implementation)
 - **Status:** Accepted (planning). Implementation waits on BUILD_PLAN AGENT rows.
 - **Context:** Edward asked for a stack pick among KMP+CMP, Flutter, MAUI/Avalonia, Tauri, plus a large-chunk BUILD_PLAN and a seeded parity checklist. Five INVENTORY questions stay unresolved.

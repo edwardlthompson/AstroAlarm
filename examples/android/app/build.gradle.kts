@@ -117,7 +117,8 @@ dependencies {
     implementation("androidx.room:room-runtime:2.8.5")
     implementation("androidx.room:room-ktx:2.8.5")
     ksp("androidx.room:room-compiler:2.8.5")
-    implementation("org.shredzone.commons:commons-suncalc:3.11")
+    implementation(project(":astro-domain"))
+    implementation(project(":astro-ephemeris"))
 
     testImplementation("androidx.test:core:1.7.0")
     testImplementation("junit:junit:4.13.2")
