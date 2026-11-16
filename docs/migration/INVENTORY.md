@@ -1,8 +1,10 @@
 # AstroAlarm Phase 0 inventory
 
 > Documentation only. No app code, no technology pick, no design brief.
-> Scope: locked multiplatform migration process — Android today, eventual Android + iOS + Windows + macOS + Linux with full feature and design parity.
-> Method: exhaustive source, tests, feature specs, ADRs, CHANGELOG, BUILD_PLAN, GitHub issues/PRs, and commit history. This Cloud Agent environment had **no Android SDK** (`ANDROID_HOME` unset), so the APK was **not** assembled or run on a device; behavior is confirmed from Kotlin sources, unit tests, and shipped feature docs.
+> Scope: locked multiplatform migration process — Android today; **stated** targets are iOS (high priority, user-requested) and desktop widgets on Windows, macOS, and Linux, with feature/design parity where a durable OS path exists.
+> Method: exhaustive source, tests, feature specs, ADRs, CHANGELOG, BUILD_PLAN, GitHub issues/PRs, commit history, plus Edward’s 2026-11-16 trajectory notes. This Cloud Agent environment had **no Android SDK** (`ANDROID_HOME` unset), so the APK was **not** assembled or run on a device; behavior is confirmed from Kotlin sources, unit tests, and shipped feature docs.
+>
+> **Porting policy (stated, Edward 2026-11-16):** do not use fragile hacks to force Android-shaped features onto iOS or desktop where they would break. Each Android-specific behavior is tagged **Durable** (first-class public OS API) or **Fallback** (honest platform-native substitute; document the gap). Private APIs, entitlement abuse, hidden keep-alive processes, and background-mode gaming are out of scope.
 
 **Session:** Cursor Agent · `CHANGELOG.md` `[Unreleased]` has list items (Tonight's sky card, accuracy harness, docs/repo notes) · next 🔲 `[AGENT]` row: **none** (BUILD_PLAN remaining tally is 0).
 
@@ -10,7 +12,7 @@
 
 ## Summary
 
-AstroAlarm is a FOSS **Android-only** astronomical alarm clock (`applicationId` `org.astroalarm`, Compose Material 3, minSdk 26 / targetSdk 37). Calculations are on-device (commons-suncalc + NOAA tropical longitude + JPL Kepler). Persistence is JSON in SharedPreferences plus two DataStore files. Exact fire uses a **single** `AlarmManager.setAlarmClock` slot, a MAX-importance silent notification channel, and a lockscreen Activity with full-screen intent.
+AstroAlarm is today a FOSS **Android** astronomical alarm clock (`applicationId` `org.astroalarm`, Compose Material 3, minSdk 26 / targetSdk 37). **Stated next platforms:** iOS (high priority, user-requested) and **desktop widgets** on Windows, macOS, and Linux — with Durable OS APIs or honest Fallbacks, not Android clones. Calculations are on-device (commons-suncalc + NOAA tropical longitude + JPL Kepler). Persistence is JSON in SharedPreferences plus two DataStore files. Exact fire uses a **single** `AlarmManager.setAlarmClock` slot, a MAX-importance silent notification channel, and a lockscreen Activity with full-screen intent.
 
 **Inventoried (current product surface):**
 
@@ -29,42 +31,51 @@ AstroAlarm is a FOSS **Android-only** astronomical alarm clock (`applicationId` 
 | Offline city catalog entries | 54 |
 | User-facing locales | en (full), es (full), fr (full), zh (solar terms only) |
 
-**Top iOS / desktop constraints (flags only — no solutions):**
+**Top iOS / desktop constraints (Durable vs Fallback — no stack pick, no hacks):**
 
-1. **Exact alarm + lockscreen takeover** — `setAlarmClock`, `USE_FULL_SCREEN_INTENT`, `showWhenLocked` / `turnScreenOn`, DND-bypassing `IMPORTANCE_MAX` channel. iOS: **Very hard / Impossible** for true lockscreen Activity parity. Desktop: **Hard** (can show a window; no FSI/keyguard).
-2. **Boot reschedule** — `RECEIVE_BOOT_COMPLETED` → `rescheduleAll`. iOS: **Impossible** (no boot broadcast). Desktop: **Medium** (login item).
-3. **Battery / Doze exemption** — `REQUEST_IGNORE_BATTERY_OPTIMIZATIONS` is a required onboarding ring step. iOS: **Impossible**. Desktop: **N/A**.
-4. **Home + keyguard widgets** as live analog bitmaps (`RemoteViews` + 30 min `updatePeriodMillis` + dead `TIME_TICK`). iOS WidgetKit: **Hard**. Desktop: **Hard** (no common pin API).
-5. **Wear OS analog watch face** (`androidx.wear.watchface`). iOS: **Very hard**. Desktop: **Impossible**.
-6. **System AlarmClock contract** (`SET_ALARM` / `DISMISS_ALARM` on an exported receiver). iOS / desktop: **Impossible**.
-7. **Notification shade Stop bypasses math unlock** — lockscreen-only math is already an Android split; other platforms will inherit this product rule unless Edward changes it.
+Legend used in this file: **Durable** = supported public OS path that can carry the behavior without private APIs. **Fallback** = Android shape cannot be reproduced honestly; ship a platform-native substitute and name the gap. **Omit** = Android-only onboarding/permission with no counterpart; do not fake it.
+
+1. **Lockscreen Activity takeover** (`showWhenLocked`, FSI, DND-bypass MAX channel) — iOS **Fallback** (scheduled notification + in-app ring UI when the user opens it; no third-party lockscreen Activity). Desktop **Fallback** (notification + focused window on an unlocked session). Do not try to draw over the lock screen.
+2. **Exact fire while the app is not in the foreground** — iOS **Durable** via the public notification/alarm scheduler (not `AlarmManager`). Desktop **Durable** via OS task/notification APIs *if* the session is allowed to run them; **Fallback** when the machine is asleep/logged out rather than a hidden keep-alive.
+3. **Home-screen widgets** (stated desktop goal) — iOS **Durable** (WidgetKit). macOS **Durable** (WidgetKit desktop widgets). Windows **Durable** only inside the public Widgets board/gallery. Linux **Fallback** (no single widget host; a small always-available window or panel applet is honest). Live 1 Hz analog bitmaps are **Fallback** on every non-Android host (timeline/snapshot widgets, not a per-second `RemoteViews` canvas).
+4. **Keyguard / lock-screen widgets** — iOS Lock Screen widgets **Durable** as WidgetKit snapshots, **not** as an alarm overlay. Desktop **Omit**.
+5. **Boot receiver** — iOS **Omit** the broadcast; **Durable** is “OS still delivers pending notifications after reboot.” Desktop **Durable** (login item / LaunchAgent / shortcut — not a fake `BOOT_COMPLETED`).
+6. **Battery / Doze exemption onboarding** — iOS and desktop **Omit** (no user toggle to clone). Exactness comes from the OS scheduler, not a battery-whitelist hack.
+7. **Wear OS analog watch face** — iOS/watchOS **Fallback** (complications or skip; third-party full faces are not a durable FOSS path). Desktop **Omit**.
+8. **Android AlarmClock `SET_ALARM` / `DISMISS_ALARM` receiver** — iOS **Durable** substitute is App Intents / Siri, not a broadcast. Desktop **Durable** substitute is a URL/command-line “set alarm” entry if wanted; otherwise **Omit**.
+
+Full per-behavior table: §1.20.
 
 ---
 
 ## Open questions for Edward
 
-1. **Parity bar for ringing.** Is a degraded notification/banner acceptable on iOS/desktop, or must lockscreen-style takeover + math unlock be identical to Android?
-2. **Single AlarmManager slot.** Only the next fire is armed (`REQUEST_CODE_ALARM = 8801`). Keep this “one OS timer” model on every platform?
-3. **Notification Stop vs lockscreen Stop.** Shade Stop/Snooze skip math. Preserve that split, or require math everywhere?
-4. **F-Droid.** ADR-0003 and `.agent/AGENT_MEMORY.md` say “F-Droid later”; the recipe at `examples/android/metadata/dev.foss.goldenpath.yml` is still the Golden Path stub (AutoName Golden Path, version 0.1.0, wrong repo URLs). Is an AstroAlarm F-Droid listing still a goal?
-5. **Wear phone sync.** `docs/features/wear-watchface.md` says lat/lon sync is a later enhancement. Required for cross-platform, or keep the ZoneId-only pie?
-6. **Huawei LiteOS `.hwt` face.** Same feature spec has a `[HUMAN]` follow-up to ship a Harmony watch face without HMS. Still wanted?
-7. **In-app APK apply.** `GoldenPathApp` hardcodes `canApplyUpdate = false`. Stay off, or restore the About apply button?
-8. **Settings export/import.** `settings_export` / `settings_import` strings exist; no Kotlin implementation. Intended, or leftover?
+Answered in this revision (2026-11-16, Edward): iOS is a **stated high-priority** goal (user demand). Desktop **widgets** on Windows, macOS, and Linux are a **stated** goal. Fragile hacks to clone Android lockscreen/FSI/Doze/Wear-face behavior are **rejected** — use Durable paths or honest Fallbacks (§1.20).
+
+Still open:
+
+1. **Ringing fallback UX.** Given lockscreen takeover is Fallback on iOS/desktop: is the honest substitute a time-sensitive notification with Stop/Snooze + math when the user opens the app, or must math also run from the notification action?
+2. **Single OS timer.** Only the next fire is armed (`REQUEST_CODE_ALARM = 8801`). Keep this “one OS timer” model on every Durable scheduler?
+3. **Notification Stop vs lockscreen Stop.** Shade Stop/Snooze skip math. Preserve that split on Fallback notification actions?
+4. **F-Droid.** ADR-0003 and `.agent/AGENT_MEMORY.md` say “F-Droid later”; the recipe at `examples/android/metadata/dev.foss.goldenpath.yml` is still the Golden Path stub. Is an AstroAlarm F-Droid listing still a goal?
+5. **Wear on iOS.** Wear OS face is Fallback/Omit on iOS and desktop. Keep Android Wear as Android-only, or invest in watchOS complications as the honest substitute?
+6. **Huawei LiteOS `.hwt` face.** `[HUMAN]` follow-up in `docs/features/wear-watchface.md`. Still wanted?
+7. **In-app APK apply.** `GoldenPathApp` hardcodes `canApplyUpdate = false`. Stay off, or restore the About apply button (Android-only; iOS/desktop use store or signed installer)?
+8. **Settings export/import.** Strings exist; no Kotlin implementation. More important now that iOS + desktop widgets imply a shared file format?
 9. **GPS timezone.** Catalog cities store IANA ids; GPS/Geocoder writes `ZoneId.systemDefault()`. Intended?
-10. **Observer place vs birth place.** These are independent stores. Keep that split on every platform?
-11. **Placidus houses.** `docs/features/whole-sign-houses.md` says Placidus stays out of scope. Confirm?
-12. **Local LLM Chart agent.** Opt-in `http://127.0.0.1:11434`. Required on iOS/desktop, or Chart copy/paste only?
+10. **Observer place vs birth place.** Independent stores. Keep that split on every platform?
+11. **Placidus houses.** Spec says out of scope. Confirm?
+12. **Local LLM Chart agent.** Opt-in `http://127.0.0.1:11434`. Required on iOS/desktop (ATS/sandbox make loopback a Fallback), or Chart copy/paste only?
 13. **UnifiedPush stub.** Receiver ignores payload. Product intent, or leftover Golden Path wiring?
-14. **Room / Hilt “for later stores”.** ADR-0001 / AGENT_MEMORY. Still planned, or JSON+DataStore is the source of truth?
-15. **Parked 1.7.0 WIP.** `BUILD_PLAN.md` says do not continue feature work on `park/wip-1.7.0-features`. Anything still needed from that branch?
-16. **Product identity.** README/Fastlane pitch solar/lunar/custom clock + 2D/3D widgets. The app also ships natal, Sol Kepler, 24 jieqi, occasions, Wear, Chart agent. Which surface is the parity target?
-17. **README “Material You wheels” vs code.** Compose Material 3 **without** `dynamicColorScheme`. Token palette (`#B3263E` / canvas `#1a1a2e` + gold `#C9A227`). Dynamic wallpaper colors in or out?
-18. **ADR-0004 vs Settings UI.** ADR says exclusive enums are dropdowns and Settings is Appearance → Privacy → Data → About. Current Settings uses `FilterChip` for theme and a flatter list. Which chrome is canonical?
-19. **Locales.** es/fr full; zh is `solar_terms.xml` only; Wear English only. Expand zh / Wear i18n as part of parity?
-20. **Version skew.** App `versionName` **1.11.0** / `versionCode` **10110**; template CHANGELOG **1.12.0**; Release Please open PR #42 titled 1.14.0. Which number is the product baseline for migration?
-21. **Open GitHub issues.** Search `repo:edwardlthompson/AstroAlarm is:issue` returned **0**. Product backlog lives in BUILD_PLAN (empty) and feature specs. Confirm nothing off-repo should be inventoried.
-22. **Desktop always-on ringing.** If the desktop app is not running, must an alarm still fire (OS timer / agent), or is “app must be running” acceptable?
+14. **Room / Hilt “for later stores”.** Still planned, or JSON+DataStore is the source of truth to port?
+15. **Parked 1.7.0 WIP.** Anything still needed from `park/wip-1.7.0-features`?
+16. **In-app surface vs widget surface.** README pitches solar/lunar/custom + 2D/3D. App also ships natal, Sol, jieqi, occasions, Wear, Chart agent. For **desktop**, is the stated widget set all seven Android widgets, or a subset (2D / 3D / upcoming)?
+17. **README “Material You wheels” vs code.** M3 without `dynamicColorScheme`. Dynamic wallpaper colors in or out?
+18. **ADR-0004 vs Settings UI.** Dropdowns vs current theme `FilterChip`s. Which chrome is canonical?
+19. **Locales.** es/fr full; zh solar terms only; Wear English only. Expand as part of iOS parity?
+20. **Version skew.** App **1.11.0** / 10110; template CHANGELOG **1.12.0**; Release Please PR #42 titled 1.14.0. Product baseline for migration?
+21. **Open GitHub issues.** Search returned **0**. Confirm nothing off-repo should be inventoried.
+22. **Desktop alarm when logged out / asleep.** Durable OS tasks can miss a sleeping laptop. Is “fires if the session can receive notifications” the honest Fallback, rather than a background agent?
 
 ---
 
@@ -95,7 +106,7 @@ AstroAlarm is a FOSS **Android-only** astronomical alarm clock (`applicationId` 
 | Distribution | GitHub Releases APK (`astroalarm-X.Y.Z-foss.apk`); not Play Store | `README.md`, `docs/ANDROID_SIGNING.md` |
 | Template lineage | agent-project-bootstrap **1.12.0** | `.agent/AGENT_MEMORY.md`, `.template-version` |
 
-**iOS / desktop:** stack itself is Android/Compose. Sharing ephemeris and JSON models is **Easy**; sharing Compose UI / AlarmManager / widgets is **Hard**. No solution proposed.
+**iOS / desktop:** ephemeris + JSON models are **Durable** to port (pure logic). Compose / AlarmManager / `RemoteViews` are Android hosts — do not force them onto iOS or desktop. UI and widgets use each OS’s Durable toolkit (see §1.20).
 
 ### Notable libraries (`examples/android/app/build.gradle.kts`)
 
@@ -151,7 +162,7 @@ Home tabs (`AstroScreen.kt`): index 0 Alarms (`astro_tab_alarms`), 1 Daily (`ast
 
 Daily chips (`DailyChip` in `AstroNavPreferences`): default **TwoD**. Sky chips (`SkyChip`): default **Yearly**. Persisted in `astro_display_prefs` keys `daily_chip` / `sky_chip`.
 
-**iOS / desktop:** tab + settings chrome is **Easy**. Lockscreen Activity as a separate task affinity is **Very hard** on iOS.
+**iOS / desktop:** tab + settings chrome is **Durable** (ordinary app navigation). Lockscreen Activity + separate `taskAffinity` is **Fallback** — there is no honest third-party lockscreen Activity on iOS or desktop.
 
 ### Deep link
 
@@ -219,7 +230,7 @@ Widgets open `MainActivity` with **no tab extra** (last pager/chip state).
 
 Snackbars via `GoldenPathScaffold` + `AppSnackbar` / `WidgetPinEvents`. Toasts remain in `BirthAgentSection` and `AstroAlarmTemplatesSection` (DESIGN_GUIDE says do not use Toast). Unused Toast imports on clock screens after WidgetPin refactor.
 
-**iOS / desktop:** dialogs/sheets **Easy**. System ringtone picker **Medium** (different catalogs). Non-cancelable permission nag **Medium** (platform permission UX differs).
+**iOS / desktop:** dialogs/sheets **Durable**. System `ACTION_RINGTONE_PICKER` is Android-only — **Fallback** to the platform sound picker or bundled alarm tones (do not scrape another app’s ringtone store). Non-cancelable permission nag: **Durable** as each OS’s permission UI; do not clone Android special-access Settings screens that do not exist (exact alarm, FSI, battery).
 
 ---
 
@@ -279,7 +290,7 @@ Instrumentation skips the gate (`OnboardingChecker.skipUiGate()`).
 2. Shade Snooze: same persist/schedule, then UI dismiss.
 3. Math is not required for snooze.
 
-**iOS:** this entire fire/dismiss path is the hardest product surface (**Very hard / Impossible** for FSI Activity). Desktop: **Hard** if the process is not running.
+**iOS / desktop:** next-fire math is **Durable**. Delivering the ring is **Durable** only through the public notification/alarm scheduler. The Android FSI Activity, `showWhenLocked`, `turnScreenOn`, and shade-vs-lockscreen split are **Fallback**: time-sensitive notification with Stop/Snooze, then the full Stop/math UI when the user opens the app. Do not draw over the lock screen or keep a hidden process.
 
 ---
 
@@ -316,7 +327,8 @@ NatalAlign: next 2×/3× natal compounds (`NatalAlignWidgetCopy.lines`); no `TIM
 
 Renderers live under `examples/android/app/src/main/java/org/astroalarm/widget/` (disk, globe, moon, planets, zodiac, transits, hubs, labels).
 
-**iOS:** WidgetKit timelines exist; live analog bitmaps + `requestPinAppWidget` **Hard**. **Desktop:** **Hard**. Keyguard widgets **Impossible** on desktop; **Hard** on iOS Lock Screen (not an alarm overlay).
+**iOS:** home and Lock Screen **widgets** are **Durable** via WidgetKit timelines/snapshots (stated: iOS is in scope). `requestPinAppWidget` is Android-only — **Fallback** is “Add Widget” copy, not a private pin API. Per-second analog bitmaps are **Fallback** (timeline refresh, not `TIME_TICK`).  
+**Desktop (stated: widgets on Windows, macOS, Linux):** macOS WidgetKit **Durable**. Windows 11 Widgets gallery **Durable** for snapshot widgets. Linux has no single host — **Fallback** to a small always-available window or desktop/panel applet, not a fake `AppWidgetProvider`. Keyguard widgets **Omit** on desktop. Do not ship a 1 Hz screen-scraping “widget” on any of these.
 
 ---
 
@@ -362,7 +374,8 @@ Manifest filter: `ACTION_ALARM_FIRE`, `BOOT_COMPLETED`, `TIMEZONE_CHANGED`, `TIM
 
 **No phone `<service>`**, no `startForeground`, no `FOREGROUND_SERVICE*` permissions. Ringing is FSI Activity + notification.
 
-**iOS:** AlarmKit / Critical Alerts ≠ FSI Activity — **Very hard / Impossible**. AlarmClock interop **Impossible**. Desktop window **Hard**; no DND/FSI flags.
+**iOS:** public local/alarm notifications are **Durable**. Critical Alerts are entitlement-gated and not a FOSS-default path — do not treat them as required. A lockscreen Activity, DND-bypass MAX channel, and exported `SET_ALARM` receiver are **Fallback** (App Intents / Siri for “set alarm”; notification actions for Stop/Snooze).  
+**Desktop:** OS notification + optional focused window is **Durable**. There is no FSI, DND-bypass channel, or AlarmClock broadcast — **Omit** those Android APIs rather than emulate them.
 
 ---
 
@@ -400,7 +413,7 @@ Brand badge in `product.json`: primary `C9A227`, secondary `1A2744`.
 
 **Share:** 2160 PNG via FileProvider `shares/`; 1080 OOM fallback; widget 28px label cap lifted during export (`DiskLabelFit.withExportCap`).
 
-**iOS / desktop:** token palette **Easy**; custom Canvas disks **Medium**; accelerometer parallax **N/A** on desktop; high-refresh display mode **Medium**.
+**iOS / desktop:** token palette and in-app Canvas disks are **Durable** (ordinary app drawing). Accelerometer parallax is **Durable** on iPhone (Core Motion) and **Omit** on desktop. High-refresh display mode is **Durable** where the OS exposes it, **Omit** where it does not.
 
 ---
 
@@ -481,7 +494,7 @@ Display overlays are **on the clock/sol/yearly/chart screens**, not Settings.
 - High-refresh display mode
 - Settings export/import (strings only)
 
-**iOS / desktop:** most prefs **Easy**. Exact-alarm / FSI / battery screens **N/A** (different permission model). Local LLM loopback **Medium** (ATS / sandbox).
+**iOS / desktop:** theme, math, TTS, overlay toggles, place, and crash opt-in are **Durable**. Exact-alarm / FSI / battery Settings rows **Omit**. Local LLM `127.0.0.1` is **Fallback** on iOS (ATS/sandbox) unless the user points at an allowed local URL; Chart copy/paste remains **Durable**.
 
 ---
 
@@ -524,7 +537,7 @@ Path: `astro/birth/BirthProfile.kt`
 
 Birth place is **independent** of Settings observer place.
 
-**iOS / desktop:** JSON models **Easy**. Android Auto Backup **N/A** (use platform equivalent or none). Crash file in app sandbox **Easy**.
+**iOS / desktop:** JSON models are **Durable**. Android Auto Backup is **Fallback** to each OS’s optional backup (iCloud / whatever the desktop host offers) or **Omit** if none — do not silently upload birth data. Crash file in the app sandbox is **Durable**.
 
 ---
 
@@ -588,7 +601,7 @@ Houses: **whole-sign only** (`WholeSignHouses.kt`). No Placidus.
 
 `TonightSky.Kind`: Sunrise, Sunset, Moonrise, Moonset — next after now, 0–2 day search (`astro/sky/TonightSky.kt`). Shown on Alarms tab.
 
-**iOS / desktop:** event catalog is pure logic — **Easy**. UI density (many pickers) is a design-parity load, not a platform restriction.
+**iOS / desktop:** event catalog is **Durable** (pure logic). Picker UI is ordinary app chrome — **Durable**, subject to design parity, not a platform restriction.
 
 ---
 
@@ -612,7 +625,7 @@ Local LLM Chart agent: `NatalAgentPrompt.kt`, `LocalLlmClient.kt` (10s timeout, 
 
 Natal templates: `AstroAlarmTemplatesSection` can add preset natal alarms to the store.
 
-**iOS / desktop:** on-device math **Easy** (port Kotlin or share a library). Keep FOSS/no-network invariant.
+**iOS / desktop:** on-device ephemeris is **Durable** (port or share the library). Keep the FOSS/no-network invariant. No remote almanac as a “workaround.”
 
 ---
 
@@ -641,7 +654,8 @@ No `ACCESS_BACKGROUND_LOCATION`, no continuous listener, no geofences, no Play F
 
 Without a place: custom clock / zodiac / solar-term / natal-without-horizon still compute; sun/moon/planet rise-set **do not**.
 
-**iOS:** Core Location + geocoder **Easy/Medium**. **Desktop:** no GPS — catalog already exists (**Medium**). DST via IANA **Easy**.
+**iOS:** Core Location + geocoder are **Durable** (when the user grants them).  
+**Desktop:** GPS is **Fallback** to the existing 54-city catalog + typed search (already the product’s offline path). Do not scrape IP-geolocation as a silent hack. IANA DST is **Durable** everywhere.
 
 ---
 
@@ -667,7 +681,7 @@ Disabled alarms return `null`. Offset `plusSeconds(offsetMinutes * 60)`.
 
 Snooze replaces the single OS slot until the next fire or `rescheduleAll`.
 
-**iOS / desktop:** next-fire math **Easy**; mapping onto one OS timer **Hard** (see §1.6).
+**iOS / desktop:** next-fire math is **Durable**. Mapping onto one public OS notification/alarm request is **Durable**. Replicating `setAlarmClock` status-bar chrome, FSI, or a second hidden timer is **Fallback/Omit**.
 
 ---
 
@@ -697,7 +711,7 @@ UnifiedPush: `UnifiedPushMessageReceiver` exported; `UnifiedPushConfig.endpointU
 
 No WorkManager / JobScheduler.
 
-**iOS:** no exact-alarm / FSI / battery-exemption screens — **Medium** permission UX, **Impossible** for those three Android specials. Desktop: mostly **Easy / N/A**.
+**iOS / desktop:** Notifications + location are **Durable** permission prompts. `SCHEDULE_EXACT_ALARM`, `USE_FULL_SCREEN_INTENT`, and `REQUEST_IGNORE_BATTERY_OPTIMIZATIONS` **Omit** — do not invent fake Settings deep-links. Boot reschedule **Omit** the broadcast (see §1.20). UnifiedPush **Omit** unless a real Durable distributor exists on that OS.
 
 ---
 
@@ -715,7 +729,7 @@ Module: `examples/android/wear/` · `applicationId` `org.astroalarm.wear` · min
 - i18n: English only; spec says es/fr can follow later.
 - `[HUMAN]` follow-up: Huawei LiteOS/Harmony `.hwt` without HMS (`docs/features/wear-watchface.md`).
 
-**iOS:** third-party watch faces are not a first-class watchOS API — **Very hard**. **Desktop:** **Impossible**.
+**iOS / watchOS:** a full third-party analog watch face is **Fallback** (not a durable FOSS API comparable to `WatchFaceService`). Honest substitutes: skip Wear on iOS, or ship complications if Edward wants watch presence. **Desktop: Omit.** Do not sideload a fake watch face.
 
 ---
 
@@ -731,7 +745,8 @@ Owned by `AlarmLockscreenOutput` while `AstroAlarmActivity` is visible. Channel 
 
 **Math:** lockscreen Stop only. See §1.8.
 
-**iOS:** AVAudioSession / AVSpeechSynthesizer / haptics **Medium**. Desktop: audio/TTS exist; lockscreen-enforced alarm stream does not — **Medium**.
+**iOS:** `AVAudioSession` + `AVSpeechSynthesizer` + haptics are **Durable**. A lockscreen-enforced `USAGE_ALARM` stream is **Fallback** (play when the notification is delivered / the app is opened).  
+**Desktop:** audio + TTS APIs are **Durable** while a session is active. Alarm-stream takeover of the lock/login screen is **Omit**.
 
 ---
 
@@ -754,7 +769,7 @@ UX contract: `docs/UX_LAW.md` (Compose contentDescription, touch targets, no har
 
 `NatalCompoundPicker` hardcodes `"Event ${slot + 1}"` (not i18n).
 
-**iOS / desktop:** string tables **Easy**. TalkBack custom actions → VoiceOver/Narrator **Medium**. Reduce-motion **Easy**.
+**iOS / desktop:** string tables and reduce-motion are **Durable**. TalkBack custom actions map to VoiceOver/Narrator custom actions where the OS supports them (**Durable**); otherwise **Fallback** to named buttons.
 
 ---
 
@@ -776,7 +791,8 @@ Required checks: `docs/CI_REQUIRED_CHECKS.md`.
 
 **Open GitHub issues:** none (search 2026-11-16). Open PRs at inventory time: Dependabot #38 (Android deps), #43 (setup-python), Release Please #42 (1.14.0).
 
-**iOS / desktop:** GitHub Releases **Easy**; F-Droid **N/A**; App Store / TestFlight / notarization / Winget / Flathub are later-phase distribution (template has `docs/WINGET.md` as a **template** runbook, not an AstroAlarm product decision).
+**iOS:** App Store / TestFlight is the **Durable** distribution path (sideload is not the iOS equivalent of GitHub APKs). F-Droid **Omit** on iOS.  
+**Desktop:** GitHub Releases (or later store/Winget/Flathub) is **Durable** for the app; widgets install through each OS’s widget gallery, not a fake pin API. Template `docs/WINGET.md` is still a bootstrap runbook until Edward names a desktop installer.
 
 ---
 
@@ -804,6 +820,52 @@ These are present-day gaps in the Android app, inventoried so they are not silen
 18. Package-replaced / locked-boot / locale receivers absent.
 19. Single OS alarm slot — overlapping enabled alarms share one fire.
 20. Placeholder GitHub repo can yield empty issue URL (`IssueFormUrl.isPlaceholderRepo`).
+
+---
+
+## 1.20 Android-specific behaviors — Durable path vs honest Fallback
+
+Policy (stated, Edward 2026-11-16): **no fragile hacks**. If the OS has a public, supported API that can carry the behavior, that is the path. If it does not, ship an honest substitute and name the gap. Do not use private APIs, entitlement abuse, overlay windows on the lock screen, hidden keep-alive processes, or background-mode gaming.
+
+| Android behavior (current) | Path | iOS | Desktop (Windows / macOS / Linux) |
+|----------------------------|------|-----|-----------------------------------|
+| In-app screens, dialogs, sheets, wheels, Canvas clocks | Durable | Ordinary app UI | Ordinary app UI (desktop **app** is implied by widgets but not separately scoped; widgets are the stated desktop deliverable) |
+| Ephemeris, next-fire, JSON alarms/place/birth, tokens, i18n | Durable | Port/share logic | Port/share logic |
+| Theme / math / TTS settings / overlay prefs | Durable | App settings | App settings |
+| Location permission + one-shot GPS | Durable | Core Location | **Fallback:** city catalog + typed search (already shipped). No silent IP geo |
+| Offline city catalog (54) + IANA TZ | Durable | Same catalog | Same catalog (primary on desktop) |
+| Share 2160 PNG | Durable | Share sheet | Desktop share/save file |
+| TalkBack labels + reduce-motion | Durable | VoiceOver + Reduce Motion | Narrator/Orca + OS reduce-motion |
+| Scheduled exact fire (`setAlarmClock`) | Durable scheduler / Fallback chrome | **Durable:** public notification/alarm scheduler. **Fallback:** no status-bar AlarmClock chip, no FSI | **Durable:** OS notification or task while the session can receive it. **Fallback:** no fire when logged out/asleep — do not keep a hidden agent |
+| Full-screen lockscreen Activity (`showWhenLocked`, `turnScreenOn`, FSI) | Fallback | Time-sensitive notification; full Stop/math UI when opened | Notification + focused window on an unlocked session |
+| MAX channel, `bypassDnd`, silent channel + Activity-owned tone | Fallback | Honor Focus; play tone with the notification/app. Do not require Critical Alerts entitlement | Honor OS do-not-disturb; no DND-bypass channel |
+| Notification Stop/Snooze actions | Durable | Notification actions (where the OS allows them) | Notification actions if the host supports them; else open the app |
+| Math unlock on the lockscreen | Fallback | Math in the in-app ring UI after the user opens the notification. Do not inject UI onto SpringBoard | Math in the alarm window, not on the OS login screen |
+| `RECEIVE_BOOT_COMPLETED` reschedule | Omit broadcast | OS still delivers pending notifications after reboot (**Durable**) | Login item / LaunchAgent / startup shortcut (**Durable**) |
+| `TIMEZONE_CHANGED` / `TIME_SET` | Durable | Significant-time / timezone notifications | OS timezone-change events or recompute on launch |
+| `SCHEDULE_EXACT_ALARM` / `USE_EXACT_ALARM` onboarding | Omit | No clone Settings screen | No clone |
+| `USE_FULL_SCREEN_INTENT` onboarding | Omit | No clone | No clone |
+| `REQUEST_IGNORE_BATTERY_OPTIMIZATIONS` onboarding | Omit | No clone | No clone |
+| `WAKE_LOCK` / `FLAG_KEEP_SCREEN_ON` while ringing | Fallback | Keep the screen on only while the in-app ring UI is visible | Same, while the alarm window is focused |
+| Home-screen widgets (7 providers) | Durable host | **Durable:** WidgetKit (stated iOS goal). Timeline/snapshot, not 1 Hz canvas | **Stated goal.** macOS WidgetKit **Durable**. Windows Widgets board **Durable** for snapshots. Linux **Fallback:** always-available window or panel applet (no unified widget API) |
+| `requestPinAppWidget` | Fallback | “Add Widget” instructions | OS widget gallery / “how to pin” copy |
+| Keyguard widget category | Fallback / Omit | iOS Lock Screen WidgetKit snapshots **Durable**; not an alarm overlay | **Omit** |
+| Live analog bitmap every tick (`TIME_TICK` / 30 min floor) | Fallback | WidgetKit timeline (minutes, not seconds) | Same snapshot cadence as the host |
+| Exported `SET_ALARM` / `DISMISS_ALARM` receiver | Fallback | App Intents / Siri | URL or CLI “set alarm” if wanted; else Omit |
+| System `ACTION_RINGTONE_PICKER` | Fallback | Bundled tones + OS sound picker | Bundled tones + OS sound picker |
+| Alarm `USAGE_ALARM` audio stream | Fallback | Play with notification / in-app session | Play in the alarm window |
+| TTS while locked | Fallback | Speak when the notification fires or the app opens (AVSpeech) | Speak in the alarm window |
+| Vibration waveform | Durable | Haptics API | **Fallback:** omit or desktop notification sound; many Linux desktops have no vibrator |
+| Wear OS analog watch face | Fallback / Omit | Not a durable FOSS watch-face API; complications or skip | **Omit** |
+| Accelerometer 3D parallax | Durable / Omit | Core Motion on iPhone | **Omit** |
+| High-refresh `preferredDisplayModeId` | Durable / Omit | ProMotion where present | Where the OS exposes it |
+| Android Auto Backup of prefs | Fallback | iCloud/device backup if the user enables it; never silent cloud of birth data | Optional desktop backup / export file |
+| FileProvider APK update apply | Omit on iOS | Store updates | Signed installer / GitHub Release |
+| UnifiedPush / ntfy | Omit unless a real host exists | No FCM; do not add proprietary push to satisfy the stub | Same |
+| Deep link `goldenpath://…` | Durable | Custom URL / universal link | Custom URL / protocol handler |
+| Instrumentation skip of onboarding | N/A | Test harness equivalent | Test harness equivalent |
+
+**What “full feature and design parity” means under this policy:** in-app clocks, event catalog, editor, settings, tokens, and (on iOS) WidgetKit faces aim for visual/functional parity. Android lockscreen takeover, Doze exemption, AlarmClock broadcasts, 1 Hz home-screen canvases, Wear faces, and Linux `AppWidgetProvider` clones are **not** parity targets — they are named Fallbacks or Omits.
 
 ---
 
@@ -836,8 +898,11 @@ Label: **stated** = written as a product/template decision; **inferred** = impli
 | File budgets 300 UI / 150 logic | stated | AGENTS.md, ADR-0001 |
 | OpenSSF Best Practices project 14564 | stated | README, `docs/OPENSSF_BEST_PRACTICES.md` |
 | Unreleased (not yet in a tagged app release): Tonight's sky card; NOAA accuracy harness | stated | `CHANGELOG.md` `[Unreleased]` |
+| **iOS support is a firm, high-priority goal** (many users have requested it) | stated | Edward, 2026-11-16 (this Phase 0 follow-up). Not yet in README/`docs/spec.md` |
+| **Desktop widgets** on Windows, macOS, and Linux | stated | Edward, 2026-11-16. Widget surface is the named desktop deliverable |
+| **No fragile hacks** to force Android-only behaviors onto platforms where they would break; use Durable OS paths or honest Fallbacks | stated | Edward, 2026-11-16; applied in §1.20 |
 
-**Not stated anywhere in-repo as an AstroAlarm product goal:** iOS, desktop, Compose Multiplatform, Flutter, KMP, or “true cross-platform.” This Phase 0 process is the first written multiplatform intent. Template docs (`docs/WINGET.md`, initialization desktop About) describe **bootstrap template** capabilities, not AstroAlarm shipping targets.
+**Not stated (do not invent):** a specific UI toolkit (Compose Multiplatform, Flutter, SwiftUI, etc.), a full desktop *app* beyond widgets, App Store vs sideload for iOS, Winget/Flathub, or that lockscreen FSI/Wear faces must be cloned 1:1. Template `docs/WINGET.md` remains a bootstrap runbook, not an AstroAlarm shipping decision.
 
 ## 2.2 Growth areas (stated vs inferred)
 
@@ -850,7 +915,8 @@ Label: **stated** = written as a product/template decision; **inferred** = impli
 ### Charts / visualizations
 
 - **Stated (shipped):** 2D disk, 3D globe, Yearly jieqi, Sol Kepler, natal wheel, 2160 share — feature specs under `docs/features/clock-*`, `sol-*`, `yearly-*`, `natal-*`, `sky-share-2160.md`.
-- **Inferred:** more overlay toggles (clean view already shipped as “Show event times”); remote branch names `cursor/2d-clean-view-toggle-6857` / `cursor/2d-plain-center-6857` suggest polish continued after merge. Canvas-heavy UI is the visual identity to preserve for parity.
+- **Stated (Edward 2026-11-16):** those visualizations should appear as **widgets on iOS and on desktop** (Windows, macOS, Linux), using each OS’s Durable widget API — not a 1 Hz Android `RemoteViews` clone (§1.20). Which of the seven Android widgets are in the first desktop set is Q16.
+- **Inferred:** more overlay toggles (clean view already shipped as “Show event times”); remote branch names `cursor/2d-clean-view-toggle-6857` / `cursor/2d-plain-center-6857` suggest polish continued after merge. Canvas-heavy UI is the in-app visual identity to preserve where a Durable app UI exists.
 - **Stated:** 3D is a transit clock, not a planetarium (ADR-0003). Do not infer a full sky atlas.
 
 ### Data-heavy lists
@@ -861,6 +927,7 @@ Label: **stated** = written as a product/template decision; **inferred** = impli
 ### Hardware / sensors
 
 - **Stated (shipped):** GPS once, accelerometer parallax on 3D in-app clock, Wear face, optional high-refresh display mode.
+- **Stated (Edward 2026-11-16):** Wear-style full faces are not to be forced onto iOS/desktop; §1.20 marks them Fallback/Omit.
 - **Inferred:** compass / gyro / barometer unused. No magnetometer heading. Wear complications unused (hook present). Phone↔watch data layer explicitly avoided (FOSS, no GMS).
 
 ### Offline
@@ -892,13 +959,15 @@ Label: **stated** = written as a product/template decision; **inferred** = impli
 ### Distribution / platforms
 
 - **Stated:** GitHub Releases APK; F-Droid later; no Play Store listing in pitch.
-- **Inferred from template only (not AstroAlarm):** Winget, desktop installers, web PWA (web module **pruned**). Do not treat template Winget/PWA as product roadmap unless Edward says so.
-- **Stated HUMAN:** Huawei watch-face package.
+- **Stated (Edward 2026-11-16):** iOS is high-priority (user-requested). Desktop **widgets** on Windows, macOS, Linux. No hacks; Durable vs Fallback per §1.20.
+- **Inferred:** iOS distribution will need a Durable store path (App Store/TestFlight); GitHub APK sideload is not that path. A full desktop alarm *app* (not only widgets) is implied if widgets need a host app, but Edward named **widgets**, not a windowed editor — Q16.
+- **Inferred from template only (not AstroAlarm):** Winget, Flathub, web PWA (web module **pruned**).
+- **Stated HUMAN:** Huawei watch-face package (Android/Harmony; **Omit** on iOS/desktop).
 
 ### Alarm reliability
 
 - **Stated (shipped, painfully):** AlarmClock broadcast + FSI after targetSdk 37 BAL blocked Activity PendingIntents (DECISION_LOG 2026-09-14 v1.8.2); onboarding blocks until ring perms; Exact in ring banner; TTS repeats 2s; silent channel v3.
-- **Inferred:** OEM FSI quirks (OP12 screen-on, HermesLauncher) will recur on any port. Package-replaced / locked-boot gaps may be future hardening, not currently planned.
+- **Inferred:** OEM FSI quirks stay **Android-only**. iOS/desktop must not chase them with overlays; they use the Fallback ring path in §1.20. Package-replaced / locked-boot gaps may be Android hardening, not a cross-platform item.
 
 ### Settings / data portability
 
@@ -928,6 +997,7 @@ Remote branches at inventory time (not merged): Dependabot Android/Python, Relea
 | `git log` | Tonight sky, accuracy harness, portfolio/docs, template 1.12/1.13 catch-up |
 | Kotlin TODOs | **None** matching TODO/FIXME/XXX/HACK/WIP in `examples/android` |
 | Code gaps listed in §1.19 | Current incomplete behavior |
+| Edward 2026-11-16 | Stated: iOS high-priority; desktop widgets Win/macOS/Linux; no fragile hacks |
 
 ---
 
@@ -968,4 +1038,4 @@ Use this as a drop-nothing checklist in later phases.
 
 **Alarm families (16 `AlarmTarget` subtypes):** CustomClock, Solar, Lunar, Zodiac, SolarTerm, Planet, PlanetAlign, AllPlanetsAlign, NatalAscAspect, NatalMcAspect, MoonReturn, SolarReturn, MercuryStation, MoonSignIngress, NatalCompoundSpecific, NatalCompoundAny, Occasion.
 
-**Platform behaviors that must be named on every target OS even if degraded:** exact/alarm-clock timer, boot reschedule, timezone/time-set reschedule, full-screen/lockscreen UI, notification actions, DND bypass, battery exemption, widget update, pin-to-home, FSI permission, POST_NOTIFICATIONS analogue, location, TTS, vibration, ringtone catalog, share sheet, FileProvider shares/updates.
+**Platform behaviors that must be named on every target OS:** use the §1.20 Durable / Fallback / Omit column — do not treat “degraded Android clone” as the plan. Must still appear in later phases so nothing is dropped: scheduler, reboot persistence, timezone recompute, ring UI, notification actions, widgets (stated on iOS + desktop), location, TTS, haptics, tones, share, updates.

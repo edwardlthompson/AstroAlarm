@@ -19,10 +19,10 @@
 
 ### 2026-11-16 — Phase 0 multiplatform inventory
 - **Status:** Accepted
-- **Context:** Locked migration process needs an exhaustive Android inventory before any stack pick or design brief. App code must stay untouched.
-- **Decision:** Document current screens, widgets, alarm fire path, settings/defaults, ephemeris, and Android platform behavior in `docs/migration/INVENTORY.md`, plus stated vs inferred trajectory. No technology choice. Open questions listed for Edward.
-- **Alternatives considered:** Redesigning or simplifying the surface for a port (rejected: drop-nothing inventory). Inferring iOS/desktop as already-stated product goals (rejected: not in-repo).
-- **Consequences:** Later phases trace every item to a path in this file. Parity work must name lockscreen/exact-alarm/widget/Wear constraints even if a platform degrades them.
+- **Context:** Locked migration process needs an exhaustive Android inventory before any stack pick or design brief. App code must stay untouched. Edward added: iOS is a firm high-priority goal (user-requested); desktop widgets on Windows, macOS, and Linux; no fragile hacks on platforms where Android behaviors would break.
+- **Decision:** Document current screens, widgets, alarm fire path, settings/defaults, ephemeris, and Android platform behavior in `docs/migration/INVENTORY.md`. Label trajectory items stated vs inferred. Tag each Android-specific behavior **Durable** / **Fallback** / **Omit** (§1.20) instead of planning lockscreen/FSI/Doze clones.
+- **Alternatives considered:** Redesigning or simplifying the surface for a port (rejected: drop-nothing inventory). Forcing FSI/Wear/1 Hz widgets onto iOS/desktop with hacks (rejected by Edward). Treating template Winget/PWA as product goals (rejected: not stated).
+- **Consequences:** Later phases trace every item to a path in this file. iOS WidgetKit and desktop widgets are in-scope. Lockscreen takeover, battery exemption, AlarmClock broadcasts, and Wear faces are named Fallbacks or Omits.
 
 ### 2026-10-22 — v1.11.0 /ship
 - **Status:** Accepted
