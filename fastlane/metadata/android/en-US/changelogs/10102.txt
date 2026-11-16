@@ -1,0 +1,1 @@
+Optional 24 Solar Terms year view (Settings, default off) plus lockscreen TTS that repeats until dismissed.
