@@ -17,11 +17,11 @@ if [[ -z "${JAVA_HOME:-}" ]]; then
   done
 fi
 if [[ -f ./gradlew.bat ]] && command -v cmd.exe >/dev/null 2>&1; then
-  cmd.exe /c "gradlew.bat :app:testDebugUnitTest --tests org.astroalarm.astro.EphemerisAccuracyTest"
+  cmd.exe /c "gradlew.bat :astro-ephemeris:jvmTest --tests org.astroalarm.astro.EphemerisAccuracyTest"
 elif [[ -f ./gradlew ]]; then
-  ./gradlew :app:testDebugUnitTest --tests org.astroalarm.astro.EphemerisAccuracyTest
+  ./gradlew :astro-ephemeris:jvmTest --tests org.astroalarm.astro.EphemerisAccuracyTest
 elif [[ -f ./gradlew.bat ]]; then
-  ./gradlew.bat :app:testDebugUnitTest --tests org.astroalarm.astro.EphemerisAccuracyTest
+  ./gradlew.bat :astro-ephemeris:jvmTest --tests org.astroalarm.astro.EphemerisAccuracyTest
 else
   echo "FAIL: gradlew missing under examples/android"
   exit 1

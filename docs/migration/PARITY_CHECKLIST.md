@@ -1,6 +1,6 @@
 # AstroAlarm parity checklist
 
-Seeded from [`INVENTORY.md`](INVENTORY.md) Appendix B, §§1.2–1.20, and [`DESIGN_BRIEF.md`](DESIGN_BRIEF.md). All items start **unchecked**.
+Seeded from [`INVENTORY.md`](INVENTORY.md) Appendix B, §§1.2–1.20, and [`DESIGN_BRIEF.md`](DESIGN_BRIEF.md). Tick rows as BUILD_PLAN chunks land.
 
 **Status:** 🔲 not verified · ✅ verified on that target · ❌ waived only with an **approved** DESIGN_BRIEF Deviation · **PENDING** = no supported OS API (do not fake).
 
@@ -91,22 +91,24 @@ Design-fidelity notes: DESIGN_BRIEF §§5.1–5.11. iOS/desktop dest. 11 is the 
 
 | `AlarmTarget` | Editor | Next-fire | Row icon | Android | iOS | Desktop |
 |---------------|:------:|:---------:|:--------:|:-------:|:---:|:-------:|
-| CustomClock | 🔲 | 🔲 | ⏰ | 🔲 | 🔲 | 🔲 |
-| Solar (18 event types) | 🔲 | 🔲 | ☀️ | 🔲 | 🔲 | 🔲 |
-| Lunar (11) | 🔲 | 🔲 | 🌙 | 🔲 | 🔲 | 🔲 |
-| Zodiac | 🔲 | 🔲 | sign | 🔲 | 🔲 | 🔲 |
-| SolarTerm (24 jieqi) | 🔲 | 🔲 | 🍃 | 🔲 | 🔲 | 🔲 |
-| Planet | 🔲 | 🔲 | 🪐 | 🔲 | 🔲 | 🔲 |
-| PlanetAlign | 🔲 | 🔲 | 🪐 | 🔲 | 🔲 | 🔲 |
+| CustomClock | 🔲 | ✅ | ⏰ | 🔲 | 🔲 | 🔲 |
+| Solar (18 event types) | 🔲 | ✅ | ☀️ | 🔲 | 🔲 | 🔲 |
+| Lunar (11) | 🔲 | ✅ | 🌙 | 🔲 | 🔲 | 🔲 |
+| Zodiac | 🔲 | ✅ | sign | 🔲 | 🔲 | 🔲 |
+| SolarTerm (24 jieqi) | 🔲 | ✅ | 🍃 | 🔲 | 🔲 | 🔲 |
+| Planet | 🔲 | ✅ | 🪐 | 🔲 | 🔲 | 🔲 |
+| PlanetAlign | 🔲 | ✅ | 🪐 | 🔲 | 🔲 | 🔲 |
 | AllPlanetsAlign | 🔲 | 🔲 | 🪐 | 🔲 | 🔲 | 🔲 |
-| Occasion | 🔲 | 🔲 | ✨ | 🔲 | 🔲 | 🔲 |
-| NatalAscAspect | 🔲 | 🔲 | ✨ | 🔲 | 🔲 | 🔲 |
+| Occasion | 🔲 | ✅ | ✨ | 🔲 | 🔲 | 🔲 |
+| NatalAscAspect | 🔲 | ✅ | ✨ | 🔲 | 🔲 | 🔲 |
 | NatalMcAspect | 🔲 | 🔲 | ✨ | 🔲 | 🔲 | 🔲 |
-| MoonReturn | 🔲 | 🔲 | ✨ | 🔲 | 🔲 | 🔲 |
-| SolarReturn | 🔲 | 🔲 | ✨ | 🔲 | 🔲 | 🔲 |
+| MoonReturn | 🔲 | ✅ | ✨ | 🔲 | 🔲 | 🔲 |
+| SolarReturn | 🔲 | ✅ | ✨ | 🔲 | 🔲 | 🔲 |
 | MercuryStation | 🔲 | 🔲 | ✨ | 🔲 | 🔲 | 🔲 |
 | MoonSignIngress | 🔲 | 🔲 | ✨ | 🔲 | 🔲 | 🔲 |
 | NatalCompoundSpecific / Any | 🔲 | 🔲 | ✨ | 🔲 | 🔲 | 🔲 |
+
+Next-fire ✅ = JVM `:astro-ephemeris:jvmTest` after the M2 extract (same Kotlin as the current Android app). iOS/desktop columns stay 🔲 until those hosts run the harness. JSON round-trip of all 17 sealed `AlarmTarget` types is in `:astro-domain:jvmTest`. AllPlanetsAlign / NatalMc / MercuryStation / MoonSignIngress / NatalCompound next-fire paths are extracted but not golden-locked yet.
 
 ---
 
@@ -206,10 +208,12 @@ Snapshot cadence (not 1 Hz) is required on iOS/desktop. **First face:** Daily 2D
 
 | Item | Shared tests |
 |------|:------------:|
-| NOAA 30-date ±180 s harness | 🔲 |
-| Polar null rise/set | 🔲 |
-| Southern jieqi season alias | 🔲 |
-| Whole-sign houses only | 🔲 |
+| NOAA 30-date ±180 s harness | ✅ |
+| Polar null rise/set | ✅ |
+| Southern jieqi season alias | ✅ |
+| Whole-sign houses only | ✅ |
+
+§L ticks are **JVM** (`:astro-ephemeris:jvmTest` / `:astro-domain:jvmTest`). iOS Native still 🔲 for ephemeris: `commons-suncalc` and `java.time` live in `jvmMain` (BUILD_PLAN M6).
 
 ---
 

@@ -117,6 +117,10 @@ dependencies {
     implementation("androidx.room:room-runtime:2.8.5")
     implementation("androidx.room:room-ktx:2.8.5")
     ksp("androidx.room:room-compiler:2.8.5")
+    implementation(project(":astro-domain"))
+    implementation(project(":astro-ephemeris"))
+    // Belt: AGP consumes androidRuntimeElements. Keep suncalc on the APK even if
+    // a variant mapping misses api() edges from :astro-ephemeris.
     implementation("org.shredzone.commons:commons-suncalc:3.11")
 
     testImplementation("androidx.test:core:1.7.0")
