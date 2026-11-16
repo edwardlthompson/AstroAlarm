@@ -184,7 +184,7 @@ Snapshot cadence (not 1 Hz) is required on iOS/desktop. **First face:** Daily 2D
 | No 1 Hz widget canvas | 🔲 | 🔲 |
 | No Wear-face clone on watchOS (complications instead, Q5) | 🔲 | 🔲 |
 | No desktop keyguard widgets | — | 🔲 |
-| No FCM / no vendor push. UnifiedPush is Android-only (M13); iOS remote-stop needs APNs if Edward allows it | 🔲 | 🔲 |
+| No FCM / no vendor push. M13 is LAN-only; UnifiedPush/APNs are future | 🔲 | 🔲 |
 | Linux widgets = window/applet, not AppWidget | — | 🔲 |
 
 ---
@@ -222,7 +222,7 @@ Tick only if Edward explicitly wants the gap closed; otherwise preserve.
 | No NavHost / widget tab extra | 🔲 | 🔲 |
 | `canApplyUpdate = false` | 🔲 | 🔲 |
 | Settings export/import strings only | — | ✅ close as **new feature** M12 (not a parity tick) |
-| UnifiedPush payload ignored | — | ✅ product for M13 Android wake (`TECH_DECISION.md` §11) |
+| UnifiedPush payload ignored | 🔲 | — (optional future, not M13 LAN) |
 | NatalAlign no in-app pin | 🔲 | 🔲 |
 | Notification Stop bypasses math | — | ✅ **close** (Q1/Q3); M5 Android. iOS AlarmKit Stop stays PENDING |
 
@@ -235,5 +235,6 @@ Do not tick these as “matches today’s APK.” They are extra scope.
 | Feature | Sprint | Android | iOS | Desktop |
 |---------|--------|:-------:|:---:|:-------:|
 | Versioned export/import (everything, including natal) | M12 | 🔲 | 🔲 | 🔲 |
-| LAN P2P + optional self-hosted relay data sync | M13 | 🔲 | 🔲 | 🔲 |
-| Cross-device dismiss fan-out | M13 | 🔲 UnifiedPush/ntfy | PENDING without APNs | 🔲 session-awake |
+| LAN P2P data sync (mDNS + paired TLS, no server) | M13 | 🔲 | 🔲 | 🔲 |
+| Dismiss fan-out while process can listen | M13 | 🔲 FSI/ring | 🔲 **foreground only** | 🔲 session-awake |
+| Dismiss while iOS locked / AlarmKit system UI / app suspended | M13 | — | ✅ **limitation documented** (`TECH_DECISION.md` §11.6) | — |

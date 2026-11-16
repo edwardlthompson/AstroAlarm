@@ -625,7 +625,7 @@ Each PROPOSED row is the **minimal visual/UX change** that item would force. APP
 | `REQUEST_IGNORE_BATTERY_OPTIMIZATIONS` onboarding | Omit | PROPOSED | Drop that row. No fake battery-whitelist screen. |
 | `RECEIVE_BOOT_COMPLETED` broadcast | Omit | PROPOSED | No visual. OS still delivers pending notifications after reboot / login item. |
 | FileProvider APK apply | Omit on iOS | PROPOSED | About screen stays without the apply button (`canApplyUpdate = false` already). Desktop: store/installer, not an in-app APK bar. |
-| UnifiedPush / ntfy stub | M13 Android wake | PROPOSED chrome | Opt-in Settings for local-first sync (M13); no FCM; no vendor account chrome. |
+| Home-network sync | New stated (M13) | PROPOSED chrome | Settings opt-in + pairing-code dialog; no account, no FCM, no ntfy status row in M13. |
 | Location GPS on desktop | Fallback | PROPOSED | Settings Location card keeps city catalog + typed search; **no** GPS spinner on desktop. |
 
 Durable §1.20 rows (in-app screens, tokens, TalkBack, share PNG, catalogs, WidgetKit/Windows snapshot widgets, etc.) are **in scope for pixel/UX match** and are not listed here.

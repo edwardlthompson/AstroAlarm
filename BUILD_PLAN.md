@@ -143,13 +143,13 @@ Each AGENT/AUTO row: inventory refs · parity AC · design-fidelity AC · gate v
    - Design: Settings rows that already have copy; no new visual language
    - Gate: JVM/common tests round-trip a fixture with natal + jieqi + custom clock; `feature-gate --stack android`
 
-### Sprint M13 — Cross-device dismiss + data sync (after parity)
+### Sprint M13 — LAN peer-to-peer dismiss + data sync (after parity)
 
-1. 🔲 [AGENT] Optional local-first sync: dismissing/silencing on one device stops ringing on the others, plus general data sync. Follow `TECH_DECISION.md` §11 (LAN peer-to-peer + optional self-hosted relay; UnifiedPush/ntfy on Android; APNs required to wake iOS). Do not add FCM. Do not start until M11 parity ✅ unless Edward pulls it forward.
-   - Inventory: §2.1 / §2.2 sync (stated 2026-11-16)
-   - Parity: N/A (new scope). Honest per-platform limits in the feature spec
-   - Design: Settings: opt-in, no account vendor lock-in
-   - Gate: documented protocol + tests for dismiss fan-out; iOS path cannot claim APNs-free remote silence
+1. 🔲 [AGENT] **Home-network P2P, no server.** mDNS/DNS-SD (`_astroalarm._tcp`) + TLS 1.3 with pairing-code PAKE. Dismiss fan-out and M12-document sync among paired devices on the LAN. Follow `TECH_DECISION.md` §11 in full (discovery, pairing, latency, LWW conflicts, iOS Local Network + locked-iPhone limit). Do **not** ship relay, UnifiedPush/ntfy, or APNs in this sprint (optional future only). Do not add FCM. Do not start until M11 parity ✅ unless Edward pulls it forward.
+   - Inventory: §2.1 / §2.2 sync (stated 2026-11-16; LAN-primary follow-up)
+   - Parity: N/A (new scope). iOS locked/background ring-stop is a **named limitation**, not a fake
+   - Design: Settings opt-in + pairing code UI; no account chrome
+   - Gate: protocol tests (pair, pin, LWW natal, dismiss JSON); Android FSI-ringing can receive; iOS tests document suspend = no inbound LAN; `feature-gate --stack android`
 
 ---
 

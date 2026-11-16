@@ -17,6 +17,13 @@
 
 ## Entries
 
+### 2026-11-16 — LAN P2P is the primary cross-device sync
+- **Status:** Accepted (supersedes the relay/push-primary wording in the earlier 2026-11-16 sync note)
+- **Context:** Edward: most users are on a home network; design for LAN peer-to-peer with no server (mDNS/DNS-SD + authenticated encrypted pairing). Relay and push are future extensions only.
+- **Decision:** M13 = Bonjour `_astroalarm._tcp`, TLS 1.3 + pairing-code PAKE, LWW per record (whole natal profile), dismiss fan-out to listening peers. Document iOS Local Network keys (`NSLocalNetworkUsageDescription`, `NSBonjourServices`) and the honest limit: a ringing/backgrounded/locked iPhone cannot accept inbound LAN, and VoIP-push/silent-audio workarounds are forbidden. Android FSI-ringing and awake desktop can receive. Details: `TECH_DECISION.md` §11.
+- **Alternatives considered:** UnifiedPush/ntfy as M13 Android path (deferred). APNs to stop AlarmKit while suspended (deferred; needs a server). Trust-the-subnet without pairing (rejected).
+- **Consequences:** No APNs decision is required to start M13. iOS locked ring-stop stays a named limitation, not PENDING-for-a-hack.
+
 ### 2026-11-16 — Edward answers on math, widgets, watch, export, sync
 - **Status:** Accepted (planning on docs branch). Implementation of M1+ and the Android crisp-widget fix are other PRs.
 - **Context:** Edward answered the open migration questions after Phases 0–3. AlarmKit cannot gate system Stop on a math challenge (WWDC25 230; AlarmManager.stop is programmatic, stopIntent is not a veto).

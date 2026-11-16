@@ -66,7 +66,7 @@ Answered 2026-11-16 (Edward), second pass — recorded here and in `TECH_DECISIO
 10. 🔲 **Observer place vs birth place.** Independent stores. Keep that split on every platform?
 11. 🔲 **Placidus houses.** Spec says out of scope. Confirm?
 12. 🔲 **Local LLM Chart agent.** Opt-in `http://127.0.0.1:11434`. Required on iOS/desktop, or Chart copy/paste only?
-13. ✅ **UnifiedPush stub.** Product intent for **M13** cross-device dismiss on Android (UnifiedPush/ntfy). Not leftover Golden Path. iOS cannot use UnifiedPush as a distributor (`TECH_DECISION.md` §11).
+13. ✅ **UnifiedPush stub.** **Not M13.** Primary sync is LAN P2P with no server (`TECH_DECISION.md` §11). UnifiedPush/ntfy and APNs are optional **future** extensions only. Payload stays ignored until that future sprint.
 14. 🔲 **Room / Hilt “for later stores”.** Still planned, or JSON+DataStore is the source of truth to port?
 15. 🔲 **Parked 1.7.0 WIP.** Anything still needed from `park/wip-1.7.0-features`?
 16. ✅ **First desktop widget.** The **24-hour clock dial with solar noon pointing up** — Android `AstroClockWidgetProvider` (Daily 2D, `isShowSolarNoonUp2D` / `solar_noon_up_2d`). First face in M7 and M9; remaining six follow. Not a subset that drops the dial.
@@ -863,7 +863,7 @@ Policy (stated, Edward 2026-11-16): **no fragile hacks**. If the OS has a public
 | High-refresh `preferredDisplayModeId` | Durable / Omit | ProMotion where present | Where the OS exposes it |
 | Android Auto Backup of prefs | Fallback | iCloud/device backup if the user enables it; never silent cloud of birth data | Optional desktop backup / export file |
 | FileProvider APK update apply | Omit on iOS | Store updates | Signed installer / GitHub Release |
-| UnifiedPush / ntfy | Android FOSS wake path for **M13** | **No UnifiedPush distributor.** Remote stop of a ringing AlarmKit alarm needs **APNs** (and a server) — `TECH_DECISION.md` §11. No FCM | LAN P2P while the session is awake; same asleep limitation as Q22 |
+| UnifiedPush / ntfy | Optional **future** Android wake, not M13 | No UnifiedPush distributor. Locked/background iPhone **cannot** take a LAN dismiss (`TECH_DECISION.md` §11.6). APNs only if a later sprint adds a server | LAN P2P while the session is awake; same asleep limitation as Q22 |
 | Deep link `goldenpath://…` | Durable | Custom URL / universal link | Custom URL / protocol handler |
 | Instrumentation skip of onboarding | N/A | Test harness equivalent | Test harness equivalent |
 
@@ -896,7 +896,7 @@ Label: **stated** = written as a product/template decision; **inferred** = impli
 | CII Best Practices login still HUMAN leftover | stated | `HUMAN_BACKLOG.md` (badge now exists on README — backlog may be stale) |
 | Privacy portability: “Export settings where technically feasible” | stated | `docs/PRIVACY.md` User Rights |
 | **Export/import backup file** carrying everything (especially natal calendar); versioned shared format in `commonMain` | stated | Edward, 2026-11-16. **New scope**, not Android parity. Sprint M12 |
-| **Cross-device dismiss + data sync** (stop ringing on all devices; general data) | stated | Edward, 2026-11-16. **New scope** after parity. Sprint M13; options in `TECH_DECISION.md` §11 |
+| **Cross-device dismiss + data sync** on the **home LAN**, no server (mDNS + paired TLS); relay/push are future only | stated | Edward, 2026-11-16. Sprint M13; `TECH_DECISION.md` §11 |
 | **Math before silence** wherever the OS permits, including notification Stop | stated | Edward, 2026-11-16. iOS AlarmKit Stop **PENDING** |
 | **First desktop widget** = 24h clock dial, solar noon up (`AstroClockWidgetProvider`) | stated | Edward, 2026-11-16 |
 | **watchOS complications** (WidgetKit accessory families) | stated | Edward, 2026-11-16. Sprint M10 |
@@ -911,7 +911,7 @@ Label: **stated** = written as a product/template decision; **inferred** = impli
 | **Desktop widgets** on Windows, macOS, and Linux | stated | Edward, 2026-11-16. Widget surface is the named desktop deliverable |
 | **No fragile hacks** to force Android-only behaviors onto platforms where they would break; use Durable OS paths or honest Fallbacks | stated | Edward, 2026-11-16; applied in §1.20 |
 
-**Not stated (do not invent):** App Store vs sideload for iOS, Winget/Flathub, accounts/vendored cloud, FCM, or that lockscreen FSI must be cloned 1:1. Stack pick is in `TECH_DECISION.md` (KMP+CMP). Template `docs/WINGET.md` remains a bootstrap runbook, not an AstroAlarm shipping decision. APNs for iOS remote-stop is **open** (M13).
+**Not stated (do not invent):** App Store vs sideload for iOS, Winget/Flathub, accounts/vendored cloud, FCM, or that lockscreen FSI must be cloned 1:1. Stack pick is in `TECH_DECISION.md` (KMP+CMP). Template `docs/WINGET.md` remains a bootstrap runbook, not an AstroAlarm shipping decision. APNs/relay are **future optional**, not M13.
 
 ## 2.2 Growth areas (stated vs inferred)
 
@@ -946,7 +946,7 @@ Label: **stated** = written as a product/template decision; **inferred** = impli
 
 ### Sync / accounts / cloud
 
-- **Stated (Edward 2026-11-16):** users want dismissing an alarm on one device to stop it ringing on the others, plus general data sync. **New scope** (M13), not Android parity. Local-first FOSS options and recommendation: `TECH_DECISION.md` §11. No FCM. No vendor account required.
+- **Stated (Edward 2026-11-16):** users want dismissing an alarm on one device to stop it ringing on the others, plus general data sync. **New scope** (M13), not Android parity. **Primary: LAN P2P, no server** (mDNS/DNS-SD + pairing). Relay and push are future extensions. iOS locked/background ring-stop via LAN is a named limitation (`TECH_DECISION.md` §11.6). No FCM. No vendor account.
 - **Stated (unchanged):** privacy is local-first; no install UUID; birth data never in crash reports.
 - **Inferred:** Auto Backup of alarm JSON is an Android-only accidental sync path, not a substitute for M13.
 
@@ -1008,7 +1008,7 @@ Remote branches at inventory time (not merged): Dependabot Android/Python, Relea
 | Kotlin TODOs | **None** matching TODO/FIXME/XXX/HACK/WIP in `examples/android` |
 | Code gaps listed in §1.19 | Current incomplete behavior |
 | Edward 2026-11-16 | Stated: iOS high-priority; desktop widgets Win/macOS/Linux; no fragile hacks |
-| Edward 2026-11-16 (second pass) | Math-before-silence including notification Stop; iOS AlarmKit PENDING; first desktop widget = 24h noon-up dial; watchOS complications; export/import new scope; desktop asleep approved; cross-device sync new scope; crisp widgets APPROVED |
+| Edward 2026-11-16 (second pass) | Math-before-silence including notification Stop; iOS AlarmKit PENDING; first desktop widget = 24h noon-up dial; watchOS complications; export/import new scope; desktop asleep approved; LAN P2P sync (no server); crisp widgets APPROVED |
 
 ---
 

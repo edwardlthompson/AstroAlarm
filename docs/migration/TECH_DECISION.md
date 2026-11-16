@@ -225,7 +225,7 @@ Cited: [Inclusion Policy](https://f-droid.org/docs/Inclusion_Policy/), [Reproduc
 | 1 Hz widget canvas | Fallback — timeline/snapshot |
 | Wear face | Android Wear stays; **watchOS complications** (Q5 answered) |
 | GPS | Durable on iOS; Fallback catalog on desktop |
-| UnifiedPush / ntfy | Android wake path for M13; **not** an iOS distributor; no FCM |
+| UnifiedPush / ntfy | **Not M13.** Optional future Android wake. Primary sync is LAN P2P (§11) |
 
 ---
 
@@ -274,38 +274,122 @@ INVENTORY 1–5. Edward answered Q1, Q3, Q5 on 2026-11-16. Q2 and Q4 remain reco
 | Widget quality | Same design, **crisp** native density or vector on every platform | Every widget sprint AC; Android fix is a **separate PR from `main`** |
 | Export/import | **New stated feature** (not parity). Versioned documented file in `commonMain`; must include natal calendar; round-trip tests | M12 |
 | Desktop asleep / logged out | **Approved limitation** — alarms may be missed; no hidden agent | M8 |
-| Cross-device dismiss + data sync | **New stated scope** after parity | M13; see §11 |
+| Cross-device dismiss + data sync | **New stated scope** after parity. **LAN P2P, no server** (Edward 2026-11-16 follow-up) | M13; see §11 |
 
-## 11. Cross-device sync — research and recommendation
+## 11. Cross-device sync — LAN peer-to-peer (recommended)
 
-**Wanted:** dismissing/silencing an alarm on one device stops it ringing on the others, plus general data sync (alarms, natal, prefs). FOSS, local-first, no Play Services / FCM.
+**Wanted:** most users are on a home network. Dismissing an alarm on one device should stop it on the others; alarms, natal calendar, and prefs should stay in sync. **No server in the primary design.** FOSS, local-first, no accounts, no FCM / Play Services.
 
-### Options
+**Chosen (Edward 2026-11-16):** **LAN peer-to-peer between every device on the network** — mDNS/DNS-SD discovery plus an authenticated, encrypted local protocol with device pairing. Relay and push (UnifiedPush/ntfy, APNs, self-hosted inbox) are **optional future extensions only**, not M13.
 
-| Path | Data sync | Stop a ringing alarm remotely | FOSS / local-first |
-|------|-----------|-------------------------------|--------------------|
-| **LAN peer-to-peer** (mDNS + TLS, pairing code, no account) | Yes, when both devices are on the same network and awake | Yes if the peer can receive the packet (app listening / already ringing) | Strong. No vendor. NAT/cellular fails. |
-| **Optional self-hosted relay** (same protocol over the user’s VPS; e.g. a small HTTPS/WebSocket inbox) | Yes off-LAN | Android: can deliver a “stop id” if the device can reach the relay. iOS: background fetch is **not** reliable enough to stop AlarmKit in time | Strong if the user hosts it. Project must not run a required cloud. |
-| **UnifiedPush / ntfy (Android)** | Wake + small payload | **Durable on Android** if a distributor (ntfy, NextPush, ntfy self-host) is configured. App then cancels notification + `AlarmManager` slot | FOSS. [UnifiedPush](https://unifiedpush.org/) is **Android**. ntfy is AGPLv3 self-hostable. |
-| **APNs (iOS)** | Wake + payload | **Required to stop a ringing AlarmKit alarm when the app is suspended.** `AlarmManager.stop(id:)` only runs in process. There is no UnifiedPush distributor on iOS. Silent/background push still goes through Apple | Needs an Apple Developer push cert **and a server** that talks APNs. Can be a tiny self-hosted relay (ntfy can speak APNs with a cert; a dedicated FOSS relay is the same). **Not** FCM. |
+### 11.1 Discovery
 
-**iOS remote silence — honest limit:** AlarmKit alerts are system-owned. Apple documents `AlarmManager.stop(id:)` as the programmatic stop ([docs](https://developer.apple.com/documentation/alarmkit/alarmmanager/stop(id:))). Getting that call to run while the phone is locked and the app is suspended is a **remote-notification** problem. Apple’s supported remote path is **APNs**. LAN-only stop works only if the iOS app is already running (or the user opens it). Do not use private VoIP hacks or Critical Alerts as a stand-in.
+Use **DNS-SD over mDNS (Bonjour)**, not raw multicast sockets.
 
-### Recommendation (one approach)
+| Piece | Choice |
+|-------|--------|
+| Service type | `_astroalarm._tcp` (declare in iOS `NSBonjourServices`; register the same type on Android/desktop) |
+| Advertise | Device display name, `deviceId` (random UUID, local), protocol version in TXT |
+| Browse | Continuous while the app (or ringing Android Activity / awake desktop session) can run networking |
+| Resolve | Hostname + port → one TLS connection per paired peer |
+| APIs | iOS/macOS: Network framework `NWListener` / `NWBrowser` ([Network](https://developer.apple.com/documentation/network), [TN3179](https://developer.apple.com/documentation/technotes/tn3179-understanding-local-network-privacy)). Android: AOSP `NsdManager` (no GMS). Desktop JVM: jmDNS or OS Avahi. Do **not** require the Apple multicast entitlement; Bonjour is the supported path ([How to use multicast networking](https://developer.apple.com/news/?id=0oi77447)). |
 
-1. **Data plane (all platforms):** local-first document sync using the **M12 backup format** as the payload. Default transport = **LAN P2P** (TLS + pairing code). Optional **user-hosted relay** when devices are not on the same LAN. Last-write-wins per alarm/profile with a monotonic revision; natal included. No accounts.
-2. **Dismiss fan-out:** same document + a `stop_ringing(alarmId, occurrence)` message.
-   - **Android:** apply locally; also send UnifiedPush/ntfy so a sleeping phone can cancel the ring. FOSS, self-hostable.
-   - **Desktop:** apply only while the session is awake (Q22).
-   - **iOS:** apply when the app is running / on LAN. **Remote silence of a ringing AlarmKit alarm is PENDING unless Edward accepts APNs** via a small self-hosted relay that holds the Apple push certificate. Do not ship an APNs-free “workaround.”
-3. **Do not** add Firebase Cloud Messaging, Play Services, or a vendor account.
+First discovery on a quiet home LAN is typically **1–3 s**. Re-resolve on network change (`NWPathMonitor` / `CONNECTIVITY_CHANGE` / desktop network listener). Cellular / guest-Wi-Fi isolation / AP client isolation: **no peers** — that is expected, not a bug.
 
-### Decisions still open for Edward
+### 11.2 Pairing and trust
 
-1. **APNs for iOS remote-stop?** Yes (self-hosted relay + Apple push cert, FOSS client) vs keep iOS remote-stop **PENDING** (LAN/foreground only).
-2. **Who hosts the optional relay?** User-only (recommended) vs a project-run public instance (privacy/ops cost).
-3. **Does desktop participate in dismiss fan-out?** Recommended: yes, when the session is awake.
-4. **Pairing:** pairing codes (recommended) vs accounts.
-5. Q2 (one OS timer) and Q4 (F-Droid listing) are still unanswered and are **not** sync decisions.
+No accounts. Trust is **per device**, established once on the LAN.
 
-M13 must not start until M11 parity ✅ unless Edward pulls it forward. Feature spec + protocol doc land with that sprint.
+1. User enables “Home network sync” in Settings (opt-in). iOS must do this **in the foreground** so the Local Network prompt can appear (§11.6).
+2. App advertises and browses. Unpaired peers show as “Nearby: Kitchen Pixel / Edward’s Mac”.
+3. User picks a peer. **Both** devices show a short numeric pairing code (6–8 digits, ~60 s TTL) and a “Confirm” that is enabled only after the user types the **other** device’s code (or scans a QR of the same payload).
+4. Codes seed a PAKE (SPAKE2+ or SRP) that wraps **TLS 1.3** with per-device self-signed certs. After success, each side stores: peer `deviceId`, cert fingerprint, display name, paired-at.
+5. Later connections: TLS with **pinned fingerprint**. Unknown cert → drop and re-pair. No TOFU without the code step.
+6. Unpair is local (delete the pin). The other side drops on the next handshake failure.
+
+Do not ship a “trust the whole subnet” mode. Do not use open HTTP on the LAN.
+
+### 11.3 Dismiss-event propagation and latency
+
+Payload (versioned JSON, same family as the M12 backup envelope):
+
+```
+stop_ringing { schema, alarmId, occurrenceEpochMs, fromDeviceId, sentAtMs }
+```
+
+On local Stop (after math succeeds, or snooze): persist locally, then **fan-out** the message to every currently resolved paired peer. Receiver: if that occurrence is ringing or still the armed next fire, run the platform stop (`AlarmDismissActions` / `AlarmManager.stop(id:)` / cancel desktop notification) and persist so it does not re-ring.
+
+| Target | When it works | Latency (home LAN, both listening) |
+|--------|---------------|-------------------------------------|
+| Android, lockscreen / FSI Activity up | **Yes** — process is foreground; keep `NsdManager` + TLS listener for the ring | Typically **< 500 ms** after Stop on the sender |
+| Android, app background, not ringing | Best-effort; Doze may delay until the next maintenance window | Seconds to minutes; not a ring-stop guarantee |
+| Desktop, session awake | **Yes** | Typically **< 500 ms** |
+| Desktop, asleep / logged out | **No** (Q22 approved limitation) | n/a |
+| iOS, AstroAlarm **foreground** (in-app ring UI or Settings) | **Yes**, after Local Network allowed | Typically **< 500 ms** |
+| iOS, AlarmKit ringing, app **backgrounded or locked** | **No** — documented limitation §11.6 | n/a until the user opens the app |
+| iOS, app suspended, not ringing | **No** until next foreground | Data sync on next open |
+
+Retries: 3 attempts over ~2 s to currently resolved peers; no store-and-forward (that would be a server). If the iPhone was locked, the next foreground sync still applies `stop_ringing` so a stale occurrence does not fire again.
+
+### 11.4 Data sync and conflicts
+
+Transport is the same TLS session. Payload is the **M12 versioned backup document** (or a delta of named records). Must include natal profiles/calendar, alarms, place, math/TTS/display prefs.
+
+**Conflict rule (simple, testable):** last-write-wins **per record**, not whole-file merge.
+
+| Record | Key | Winner |
+|--------|-----|--------|
+| Alarm | `alarmId` | higher `rev`; tie → later `updatedAtMs`; still tie → lexicographically larger `deviceId` |
+| Birth profile / natal calendar | `profileId` | same; **whole profile document** (do not merge houses/glyphs field-wise) |
+| Place | singleton | same |
+| Prefs bags (theme, math, TTS, overlays) | bag name | same |
+
+`rev` is a per-device monotonic integer; receivers take `max(local.rev, incoming.rev)` when applying. Deleted alarms are tombstones with `rev` so they do not resurrect. Sync on: pairing success, app foreground, local write, and periodic (e.g. 15 min) while browsing.
+
+Natal is the data Edward called out — round-trip tests must include a profile with houses, glyphs, and compounds.
+
+### 11.5 Per-platform limits (primary LAN design)
+
+| Platform | Discovery | Pairing prompt | Receive dismiss while **ringing** | Receive dismiss **background / locked / asleep** |
+|----------|-----------|----------------|-----------------------------------|--------------------------------------------------|
+| Android | `NsdManager` + Wi-Fi multicast lock | Ordinary notification/Settings | **Durable** while FSI lockscreen Activity or a ringing foreground service is up | Doze: not guaranteed. Screen off, not ringing: not a hard real-time path |
+| iOS | `NWBrowser` / `NWListener` Bonjour | **Foreground only** (Local Network alert) | **Only if the app process is executing** (user opened the ring UI). AlarmKit Live Activity / system Stop UI does **not** run our listener | **No.** Suspended apps do not accept LAN connections. See §11.6 |
+| iPadOS | same as iOS | same | same | same |
+| macOS (CMP + WidgetKit host) | Bonjour; **macOS 15+** also has Local Network privacy ([TN3179](https://developer.apple.com/documentation/technotes/tn3179-understanding-local-network-privacy)) | Foreground first time | While the app session is awake | Sleep / logout: **no** (Q22) |
+| Windows / Linux | jmDNS / Avahi | App window | Session awake | Sleep / logout: **no** |
+| watchOS | **Omit** LAN (watchOS is not a local-network privacy platform in TN3179; no durable P2P listener) | — | Phone/desktop only | — |
+
+### 11.6 iOS: Local Network permission, and why a locked ringing iPhone cannot take a LAN dismiss
+
+**Permission (supported, required):**
+
+- `NSLocalNetworkUsageDescription` — purpose string (WWDC20 [10110](https://developer.apple.com/videos/play/wwdc2020/10110/), [TN3179](https://developer.apple.com/documentation/technotes/tn3179-understanding-local-network-privacy)).
+- `NSBonjourServices` — list `_astroalarm._tcp`. Without it, browse/advertise is denied.
+- The system prompt appears on the **first foreground** local-network operation. If the app tries Bonjour **while backgrounded** and privilege is still undetermined, iOS **denies without a prompt** and does not record the decision (TN3179 “iOS considerations”). M13 must trigger browse/advertise from Settings while foreground.
+- App extensions (WidgetKit / AlarmKit Live Activity) inherit the container app’s privilege but are treated as background: they must not be the place we start pairing.
+
+**Receiving a LAN dismiss without push:**
+
+AlarmKit’s alert is **system UI** (Dynamic Island / Lock Screen / Watch). Programmatic silence is [`AlarmManager.stop(id:)`](https://developer.apple.com/documentation/alarmkit/alarmmanager/stop(id:)), which runs **in our process**. A suspended iOS app does not handle inbound TCP; `NWListener` does not wake it. Apple deprecated keep-alive “VoIP sockets”; iOS 16+ kills that pattern. Using PushKit `voip` for alarm dismiss would be entitlement misuse (not a VoIP app) — a **hack**, out of scope.
+
+AlarmKit Live Activity is WidgetKit, not a long-running network listener. `stopIntent` runs when the user taps **Stop**, which is the opposite of “another device silenced us.”
+
+**Honest limitation (not PENDING-for-a-hack):** a ringing, backgrounded, or locked iPhone **cannot** receive a LAN dismiss until AstroAlarm is in the foreground (user opened the alert into the in-app ring UI, or later opened the app). Then `stop(id:)` can run and data sync can catch up. **Do not** overlay SpringBoard, abuse VoIP push, or keep a silent audio session to dodge suspend.
+
+Foreground iPhone on the home Wi-Fi **can** both send and receive LAN dismiss. That is the supported iOS path for M13.
+
+### 11.7 Optional future extensions (not M13)
+
+Only if Edward later wants off-LAN or locked-iPhone ring-stop:
+
+- User-hosted relay (same TLS records over the user’s VPS).
+- Android UnifiedPush/ntfy wake.
+- iOS APNs to call `AlarmManager.stop(id:)` while suspended (**requires a server and Apple push cert**).
+
+Until then: no relay binary, no ntfy requirement, no APNs. The existing UnifiedPush stub stays ignored.
+
+### 11.8 Decisions still open
+
+Sync shape for M13 is **closed** (LAN P2P, pairing codes, all home-network devices including desktop while awake). Still unrelated and unanswered: **Q2** (one OS timer), **Q4** (F-Droid listing). No APNs/relay decision is required to start M13.
+
+M13 must not start until M11 parity ✅ unless Edward pulls it forward. Feature spec + protocol tests land with that sprint.
