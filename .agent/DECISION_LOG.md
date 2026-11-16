@@ -17,6 +17,13 @@
 
 ## Entries
 
+### 2026-11-16 — Crisp Android widget bitmaps
+- **Status:** Accepted
+- **Context:** Edward: current AppWidget disks look low-resolution/chunky (`ClockRenderSize` = minDp×2.5 capped at 600, then `fitCenter` upscales). Visual design must stay identical.
+- **Decision:** Size bitmaps as (min(maxWidth,maxHeight) − 16 dp pad) × display density, coerce 200–1024. Set `Bitmap.DENSITY_NONE` so ImageView does not apply a second mdpi→screen scale.
+- **Alternatives considered:** Vector RemoteViews (not available for Canvas disks). Cap 2048 (binder risk). Keep 600 px (rejected).
+- **Consequences:** Same painters/tokens; sharper on xxhdpi+. Separate PR from `main`, not the migration docs branch.
+
 ### 2026-10-22 — v1.11.0 /ship
 - **Status:** Accepted
 - **Context:** Post-v1.10.0 WIP (tone/TTS, noon-up, occasions, wear, chart agent) plus Daily 2D outer-clip fix were ready on main after `/build`. `update-deps --apply` rewrote CodeQL pins to invalid `vcodeql-bundle-v2.27.3`.

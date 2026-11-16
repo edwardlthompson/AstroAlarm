@@ -35,9 +35,7 @@ class Astro3DClockWidgetProvider : AppWidgetProvider() {
 
         for (id in appWidgetIds) {
             val options = appWidgetManager.getAppWidgetOptions(id)
-            val minWidthDp = options?.getInt(AppWidgetManager.OPTION_APPWIDGET_MIN_WIDTH, 250) ?: 250
-            val minHeightDp = options?.getInt(AppWidgetManager.OPTION_APPWIDGET_MIN_HEIGHT, 250) ?: 250
-            val sizePx = ClockRenderSize.fromMinDp(minOf(minWidthDp, minHeightDp))
+            val sizePx = ClockRenderSize.fromOptions(context, options, fallbackDp = 250)
             val bitmap = Astro3DRenderer.render3D(
                 place, alarms, now, sizePx,
                 showZodiac = showZodiac,
@@ -47,7 +45,7 @@ class Astro3DClockWidgetProvider : AppWidgetProvider() {
             )
 
             val views = RemoteViews(context.packageName, R.layout.widget_astro).apply {
-                setImageViewBitmap(R.id.widget_astro_disk, bitmap)
+                setImageViewBitmap(R.id.widget_astro_disk, ClockRenderSize.atDevicePixels(bitmap))
                 setContentDescription(R.id.widget_astro_disk, context.getString(R.string.astro_widget_3d_desc))
                 setOnClickPendingIntent(R.id.widget_astro_root, pendingIntent)
             }

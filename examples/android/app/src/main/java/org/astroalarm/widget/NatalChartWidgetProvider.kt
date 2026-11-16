@@ -31,9 +31,7 @@ class NatalChartWidgetProvider : AppWidgetProvider() {
         val desc = context.getString(R.string.astro_widget_natal_chart_cd)
         for (id in appWidgetIds) {
             val options = appWidgetManager.getAppWidgetOptions(id)
-            val minW = options?.getInt(AppWidgetManager.OPTION_APPWIDGET_MIN_WIDTH, 140) ?: 140
-            val minH = options?.getInt(AppWidgetManager.OPTION_APPWIDGET_MIN_HEIGHT, 140) ?: 140
-            val sizePx = ClockRenderSize.fromMinDp(minOf(minW, minH))
+            val sizePx = ClockRenderSize.fromOptions(context, options, fallbackDp = 140)
             val bitmap = if (chart != null) {
                 val sky = NatalSkySnapshot.now()
                 NatalWheelRenderer.renderBitmap(
@@ -43,7 +41,7 @@ class NatalChartWidgetProvider : AppWidgetProvider() {
                 NatalChartWidgetEmpty.bitmap(sizePx, dark, context.getString(R.string.astro_widget_natal_chart_empty))
             }
             val views = RemoteViews(context.packageName, R.layout.widget_astro).apply {
-                setImageViewBitmap(R.id.widget_astro_disk, bitmap)
+                setImageViewBitmap(R.id.widget_astro_disk, ClockRenderSize.atDevicePixels(bitmap))
                 setContentDescription(R.id.widget_astro_disk, desc)
                 setOnClickPendingIntent(R.id.widget_astro_root, launch)
             }
