@@ -17,6 +17,13 @@
 
 ## Entries
 
+### 2026-11-16 — Phase 2–3 KMP+CMP plan (no implementation)
+- **Status:** Accepted (planning). Implementation waits on BUILD_PLAN AGENT rows.
+- **Context:** Edward asked for a stack pick among KMP+CMP, Flutter, MAUI/Avalonia, Tauri, plus a large-chunk BUILD_PLAN and a seeded parity checklist. Five INVENTORY questions stay unresolved.
+- **Decision:** Choose **Kotlin Multiplatform + Compose Multiplatform** for domain + in-app UI; keep widgets and AlarmKit/Windows/Linux hosts native. Document in `docs/migration/TECH_DECISION.md`. Add BUILD_PLAN sprints M0–M11 and `PARITY_CHECKLIST.md`. Recommended defaults: Q1 math in-app only; Q2 one OS timer; Q3 shade Stop skips math; Q4 F-Droid later; Q5 Wear Android-only.
+- **Alternatives considered:** Flutter (rewrite Kotlin/Canvas). MAUI (Windows widgets easy, rest rewrite). Avalonia (desktop-strong). Tauri (WebView clocks). Triple native UIs.
+- **Consequences:** Android APK stays `examples/android` through extract sprints. iOS host sprint is ❌ until Q1–Q3. watchOS face sprint is ❌ until Q5. Official cites: CMP iOS/Desktop Stable; AlarmKit iOS 26 fixed/relative schedules; WidgetKit macOS desktop; Windows IWidgetProvider Adaptive Cards.
+
 ### 2026-11-16 — Phase 1 design brief
 - **Status:** Accepted
 - **Context:** After Phase 0 inventory, Edward asked for a docs-only design brief of the *existing* app so a later stack can reproduce it. No technology pick. No redesign. Deviations may only pre-list INVENTORY §1.20 Fallback/Omit items as PROPOSED.

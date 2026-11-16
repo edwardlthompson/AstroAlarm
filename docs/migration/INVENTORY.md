@@ -1,6 +1,6 @@
 # AstroAlarm Phase 0 inventory
 
-> Documentation only. No app code, no technology pick. Phase 1 visual contract: [`DESIGN_BRIEF.md`](DESIGN_BRIEF.md).
+> Documentation only. Phase 1 visual contract: [`DESIGN_BRIEF.md`](DESIGN_BRIEF.md). Phase 2 stack pick: [`TECH_DECISION.md`](TECH_DECISION.md) (KMP + CMP). Phase 3 board: `BUILD_PLAN.md` migration sprints + [`PARITY_CHECKLIST.md`](PARITY_CHECKLIST.md).
 > Scope: locked multiplatform migration process — Android today; **stated** targets are iOS (high priority, user-requested) and desktop widgets on Windows, macOS, and Linux, with feature/design parity where a durable OS path exists.
 > Method: exhaustive source, tests, feature specs, ADRs, CHANGELOG, BUILD_PLAN, GitHub issues/PRs, commit history, plus Edward’s 2026-11-16 trajectory notes. This Cloud Agent environment had **no Android SDK** (`ANDROID_HOME` unset), so the APK was **not** assembled or run on a device; behavior is confirmed from Kotlin sources, unit tests, and shipped feature docs.
 >
