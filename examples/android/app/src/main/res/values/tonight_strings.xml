@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="astro_tonight_sky_title">Tonight\'s sky</string>
+    <string name="astro_tonight_sky_need_place">Set a city to see the next sunrise, sunset, or moon event.</string>
+    <string name="astro_tonight_sky_sunrise">Sunrise at %1$s</string>
+    <string name="astro_tonight_sky_sunset">Sunset at %1$s</string>
+    <string name="astro_tonight_sky_moonrise">Moonrise at %1$s</string>
+    <string name="astro_tonight_sky_moonset">Moonset at %1$s</string>
+    <string name="astro_tonight_ctx_sunrise_today">First light is still ahead today.</string>
+    <string name="astro_tonight_ctx_sunrise_tomorrow">Tomorrow\'s first light.</string>
+    <string name="astro_tonight_ctx_sunrise_later">Next sunrise on the calendar.</string>
+    <string name="astro_tonight_ctx_sunset_today">Daylight is winding down.</string>
+    <string name="astro_tonight_ctx_sunset_tomorrow">Tomorrow\'s dusk.</string>
+    <string name="astro_tonight_ctx_sunset_later">Next sunset on the calendar.</string>
+    <string name="astro_tonight_ctx_moonrise_today">The moon clears the horizon today.</string>
+    <string name="astro_tonight_ctx_moonrise_tomorrow">Tomorrow\'s moonrise.</string>
+    <string name="astro_tonight_ctx_moonrise_later">Next moonrise on the calendar.</string>
+    <string name="astro_tonight_ctx_moonset_today">The moon is setting soon.</string>
+    <string name="astro_tonight_ctx_moonset_tomorrow">Tomorrow\'s moonset.</string>
+    <string name="astro_tonight_ctx_moonset_later">Next moonset on the calendar.</string>
+</resources>

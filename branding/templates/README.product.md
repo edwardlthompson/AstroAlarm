@@ -9,7 +9,7 @@
 <p align="center"><strong>{{tagline}}</strong></p>
 
 <p align="center">
-  <img src="https://img.shields.io/badge/template-1.11.0?style=flat-square" alt="Template" /> <!-- x-release-please-version -->
+  <img src="https://img.shields.io/badge/template-1.12.0?style=flat-square" alt="Template" /> <!-- x-release-please-version -->
   <img src="https://img.shields.io/badge/license-MIT-{{badge_license}}?style=flat-square" alt="MIT" />
   <img src="https://img.shields.io/badge/FOSS-no_tracking-{{badge_foss}}?style=flat-square" alt="FOSS" />
   <img src="https://img.shields.io/badge/status-active-{{badge_primary}}?style=flat-square" alt="status" />
@@ -90,3 +90,10 @@ See [`{{url_security}}`]({{url_security}}). Enable Dependabot alerts and follow 
 ## Acknowledgments
 
 Scaffolded with [agent-project-bootstrap](https://github.com/edwardlthompson/agent-project-bootstrap). Brand assets: [`{{url_branding}}`]({{url_branding}}). Design system: [`{{url_design}}`]({{url_design}}).
+
+## What this is not
+
+- Approximate on-device ephemeris for alarms and sky clocks — not a navigation or observatory-grade tool
+- A finished commercial product promise
+- A place for secrets or production credentials
+- An unbounded scope — see README goals above

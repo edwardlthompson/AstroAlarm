@@ -45,7 +45,7 @@ If uncertain, default to **Plan** and note "uncertain trivial" for human correct
 |------|-----|---------|
 | Ask | Plan | User says "implement" or "build" |
 | Ask | Agent | Trivial fix confirmed by rubric |
-| Plan | Agent | Plan approved ("execute the plan"). After Sequential lock, compact or reset `scratchpad.md` (do not replace `AGENT_MEMORY.md`) |
+| Plan | Agent | Plan approved ("execute the plan"). After Sequential lock, compact or reset `scratchpad.md` (do not replace `.agent/AGENT_MEMORY.md`) |
 | Agent | Debug | Gate exit 1 after autofix; CI red; flaky repro |
 | Agent | Plan | Schema change; scope expanded; file outside feature container |
 | Debug | Agent | Root cause confirmed; fix approach agreed |
@@ -102,7 +102,7 @@ Product **Design Mode** (Agents Window browser: click/draw/voice on live UI) app
 |------|--------|-----------------|
 | **Cloud Agents** | Paid remote VMs (formerly “Background Agents”) | Local Agent Mode |
 | **Grok Bots** | Optional xAI/Cursor always-on teammates ([`GROK_BOTS.md`](GROK_BOTS.md)) | Cloud Agents, Automations, Cline first-run |
-| **Automations Memories** | Cloud Automations persistence (`MEMORIES.md`-style) | [`AGENT_MEMORY.md`](../AGENT_MEMORY.md) or `.cursor-session-state` |
+| **Automations Memories** | Cloud Automations persistence (`MEMORIES.md`-style) | [`AGENT_MEMORY.md`](../.agent/AGENT_MEMORY.md) or `.cursor-session-state` |
 | Built-in **`/plan`** | Product Plan Mode toggle / CLI plan | Batch [`.cursor/commands/plan.md`](../.cursor/commands/plan.md) orchestrator |
 | **`/plan` batch command** | Repo BUILD_PLAN planning recipe | Cursor Plan Mode UI |
 CLI mode parity: [`CURSOR_CLI.md`](CURSOR_CLI.md).

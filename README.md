@@ -9,7 +9,7 @@
 <p align="center"><strong>Wake with the sun, the moon, and your own clock.</strong></p>
 
 <p align="center">
-  <img src="https://img.shields.io/badge/template-1.11.0?style=flat-square" alt="Template" /> <!-- x-release-please-version -->
+  <img src="https://img.shields.io/badge/template-1.12.0?style=flat-square" alt="Template" /> <!-- x-release-please-version -->
   <img src="https://img.shields.io/badge/license-MIT-2ea043?style=flat-square" alt="MIT" />
   <img src="https://img.shields.io/badge/FOSS-no_tracking-656d76?style=flat-square" alt="FOSS" />
   <img src="https://img.shields.io/badge/status-active-C9A227?style=flat-square" alt="status" />
@@ -103,3 +103,11 @@ See [`SECURITY.md`](SECURITY.md). Enable Dependabot alerts and follow [`docs/SEC
 ## Acknowledgments
 
 Scaffolded with [agent-project-bootstrap](https://github.com/edwardlthompson/agent-project-bootstrap). Brand assets: [`branding/BRANDING.md`](branding/BRANDING.md). Design system: [`docs/DESIGN_GUIDE.md`](docs/DESIGN_GUIDE.md).
+
+## What this is not
+
+- Approximate on-device ephemeris for alarms and sky clocks — not a navigation or observatory-grade tool
+- A finished commercial product promise
+- A place for secrets or production credentials
+- An unbounded scope — see README goals above
+

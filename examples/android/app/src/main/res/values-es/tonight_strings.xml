@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="astro_tonight_sky_title">Cielo de esta noche</string>
+    <string name="astro_tonight_sky_need_place">Elige una ciudad para ver el próximo orto, ocaso o evento lunar.</string>
+    <string name="astro_tonight_sky_sunrise">Amanecer a las %1$s</string>
+    <string name="astro_tonight_sky_sunset">Atardecer a las %1$s</string>
+    <string name="astro_tonight_sky_moonrise">Salida de la luna a las %1$s</string>
+    <string name="astro_tonight_sky_moonset">Puesta de la luna a las %1$s</string>
+    <string name="astro_tonight_ctx_sunrise_today">Aún queda la primera luz de hoy.</string>
+    <string name="astro_tonight_ctx_sunrise_tomorrow">La primera luz de mañana.</string>
+    <string name="astro_tonight_ctx_sunrise_later">Próximo amanecer en el calendario.</string>
+    <string name="astro_tonight_ctx_sunset_today">La luz del día se acaba.</string>
+    <string name="astro_tonight_ctx_sunset_tomorrow">El crepúsculo de mañana.</string>
+    <string name="astro_tonight_ctx_sunset_later">Próximo atardecer en el calendario.</string>
+    <string name="astro_tonight_ctx_moonrise_today">La luna sale hoy del horizonte.</string>
+    <string name="astro_tonight_ctx_moonrise_tomorrow">La salida de la luna de mañana.</string>
+    <string name="astro_tonight_ctx_moonrise_later">Próxima salida de la luna.</string>
+    <string name="astro_tonight_ctx_moonset_today">La luna se pone pronto.</string>
+    <string name="astro_tonight_ctx_moonset_tomorrow">La puesta de la luna de mañana.</string>
+    <string name="astro_tonight_ctx_moonset_later">Próxima puesta de la luna.</string>
+</resources>
