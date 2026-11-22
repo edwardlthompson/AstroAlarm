@@ -1,15 +1,13 @@
 # F-Droid / Fastlane images
 
-Add store listing assets before F-Droid submission:
+Canonical listing F-Droid scrapes: `fastlane/metadata/android/en-US/` at the **repository root**. This Triple-T-style tree is a Golden Path mirror.
 
 | File | Size (typical) |
 |------|----------------|
-| `icon.png` | 512×512 |
-| `featureGraphic.png` | 1024×500 |
-| `phoneScreenshots/*.png` | 16:9 or device frames |
+| `icon.png` | 512×512 — exported from `branding/assets/app-icon-512.svg` |
+| `featureGraphic.png` | 1024×500 (optional; not shipped yet) |
+| `phoneScreenshots/*.png` | real device captures |
 
-Paths are referenced from `metadata/en-US/` (manual) or `fastlane/metadata/android/en-US/` (Fastlane).
+`01-alarms.png`, `02-daily.png`, and `03-sky.png` are real screenshots. They are **somewhat outdated** versus current UI. Do not block F-Droid on recapturing them.
 
-`[ADB]` capture screenshots on a physical device or emulator before release.
-
-Dummy, placeholder, sample, or tiny (≤8px) PNGs fail `scripts/check-fdroid-screenshots.sh`. Leave the folder empty until real captures exist.
+Dummy, placeholder, sample, or tiny (≤8px) PNGs fail `scripts/check-fdroid-screenshots.sh`.

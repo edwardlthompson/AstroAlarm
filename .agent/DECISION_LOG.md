@@ -17,47 +17,12 @@
 
 ## Entries
 
-### 2026-11-16 — Phase 4 M1+M2 KMP domain/ephemeris extract
+### 2026-11-16 — Crisp Android widget bitmaps
 - **Status:** Accepted
-- **Context:** Edward asked for M1 (KMP skeleton) and M2 (whole domain extract) together on a new branch so PR #44 stays docs-only. TECH_DECISION keeps commons-suncalc as a JVM library; java.time is not in Kotlin/Native stdlib the same way.
-- **Decision:** Add `:astro-domain`, `:astro-ephemeris`, `:astro-ui` included from `examples/android`. Put extracted Kotlin in **`jvmMain`** (not expect/actual `commonMain`) so behavior stays byte-for-byte with the Android app. Declare empty iOS targets + `kotlin.native.ignoreDisabledTargets=true`. Split only what module cycles required (`NatalBody`/`EclipticPoint`/`NatalChart`/`SkyOccasionId`, `SunriseOffer` vs `SunriseOfferStore`). Android `:app` depends on domain+ephemeris; UI is an empty CMP shell until M3. Golden next-fire CSV locked from the extracted code; NOAA harness moved to `:astro-ephemeris:jvmTest`.
-- **Alternatives considered:** Full `commonMain` rewrite of suncalc/java.time (rejected: behavior change, M6 work). Single combined module (rejected: BUILD_PLAN names two). `androidTarget()` on shared modules (rejected: this environment has no Android SDK).
-- **Consequences:** iOS compile of placeholders succeeded on Linux KN cross-compile; iOS does **not** yet run ephemeris. `examples/android` still cannot be compiled here (`ANDROID_HOME` unset). Catalog has 55 cities (inventory said 54). `AlarmTarget` has 17 sealed subtypes. wrap360/wrap180 in `sol`/`solarterm` are public so UI in `:app` can call them across modules. Android variants must `extendsFrom` `jvmMainApi`/`jvmMainImplementation` or suncalc never reaches the APK.
-
-### 2026-11-16 — LAN P2P is the primary cross-device sync
-- **Status:** Accepted (supersedes the relay/push-primary wording in the earlier 2026-11-16 sync note)
-- **Context:** Edward: most users are on a home network; design for LAN peer-to-peer with no server (mDNS/DNS-SD + authenticated encrypted pairing). Relay and push are future extensions only.
-- **Decision:** M13 = Bonjour `_astroalarm._tcp`, TLS 1.3 + pairing-code PAKE, LWW per record (whole natal profile), dismiss fan-out to listening peers. Document iOS Local Network keys (`NSLocalNetworkUsageDescription`, `NSBonjourServices`) and the honest limit: a ringing/backgrounded/locked iPhone cannot accept inbound LAN, and VoIP-push/silent-audio workarounds are forbidden. Android FSI-ringing and awake desktop can receive. Details: `TECH_DECISION.md` §11.
-- **Alternatives considered:** UnifiedPush/ntfy as M13 Android path (deferred). APNs to stop AlarmKit while suspended (deferred; needs a server). Trust-the-subnet without pairing (rejected).
-- **Consequences:** No APNs decision is required to start M13. iOS locked ring-stop stays a named limitation, not PENDING-for-a-hack.
-
-### 2026-11-16 — Edward answers on math, widgets, watch, export, sync
-- **Status:** Accepted (planning on docs branch). Implementation of M1+ and the Android crisp-widget fix are other PRs.
-- **Context:** Edward answered the open migration questions after Phases 0–3. AlarmKit cannot gate system Stop on a math challenge (WWDC25 230; AlarmManager.stop is programmatic, stopIntent is not a veto).
-- **Decision:** Math-before-silence wherever the OS permits, including notification Stop; iOS AlarmKit Stop **PENDING** (no workaround). First desktop widget is Daily 2D 24h dial with solar noon up (`AstroClockWidgetProvider`). watchOS WidgetKit complications (M10). Export/import is new stated `commonMain` scope (M12). Desktop asleep/logged-out is an approved limitation. Cross-device sync is new scope after parity (M13): LAN P2P + optional self-hosted relay; UnifiedPush/ntfy on Android; iOS remote-stop needs APNs if Edward allows it. Crisp widgets APPROVED (same design, native density/vector).
-- **Alternatives considered:** Keep shade-Stop-skips-math (rejected). Android Wear only on watch (rejected). Hide AlarmKit Stop / overlay SpringBoard (rejected as hacks). FCM for dismiss fan-out (rejected, not FOSS path).
-- **Consequences:** M0 Q1/Q3/Q5 ✅; Q2/Q4 still 🔲. M6 and M10 unblocked. BUILD_PLAN adds M12/M13. Android widget density fix ships from `main` in a separate PR, not this docs branch.
-
-### 2026-11-16 — Phase 2–3 KMP+CMP plan (no implementation)
-- **Status:** Accepted (planning). Implementation waits on BUILD_PLAN AGENT rows.
-- **Context:** Edward asked for a stack pick among KMP+CMP, Flutter, MAUI/Avalonia, Tauri, plus a large-chunk BUILD_PLAN and a seeded parity checklist. Five INVENTORY questions stay unresolved.
-- **Decision:** Choose **Kotlin Multiplatform + Compose Multiplatform** for domain + in-app UI; keep widgets and AlarmKit/Windows/Linux hosts native. Document in `docs/migration/TECH_DECISION.md`. Add BUILD_PLAN sprints M0–M11 and `PARITY_CHECKLIST.md`. Recommended defaults: Q1 math in-app only; Q2 one OS timer; Q3 shade Stop skips math; Q4 F-Droid later; Q5 Wear Android-only.
-- **Alternatives considered:** Flutter (rewrite Kotlin/Canvas). MAUI (Windows widgets easy, rest rewrite). Avalonia (desktop-strong). Tauri (WebView clocks). Triple native UIs.
-- **Consequences:** Android APK stays `examples/android` through extract sprints. iOS host sprint is ❌ until Q1–Q3. watchOS face sprint is ❌ until Q5. Official cites: CMP iOS/Desktop Stable; AlarmKit iOS 26 fixed/relative schedules; WidgetKit macOS desktop; Windows IWidgetProvider Adaptive Cards.
-
-### 2026-11-16 — Phase 1 design brief
-- **Status:** Accepted
-- **Context:** After Phase 0 inventory, Edward asked for a docs-only design brief of the *existing* app so a later stack can reproduce it. No technology pick. No redesign. Deviations may only pre-list INVENTORY §1.20 Fallback/Omit items as PROPOSED.
-- **Decision:** Capture tokens, components, screens, motion, widgets, and a11y in `docs/migration/DESIGN_BRIEF.md` with a binding statement that the new implementation must match unless Edward approves a Deviations row. Copy Fastlane phone screenshots into `docs/migration/design/` and note they are stale vs the plain 2D hub and Tonight card. No emulator in this environment.
-- **Alternatives considered:** Inventing a cross-platform visual language (rejected). Treating README “Material You” as canonical (rejected: no `dynamicColorScheme`). Approving lockscreen Fallback UX in this phase (rejected: PROPOSED only).
-- **Consequences:** Pixel/UX work in later phases traces to this brief. Unapproved Fallback/Omit rows must not change the in-app look. Live lockscreen/Settings/3D/Sol/Chart/widget shots still missing.
-
-### 2026-11-16 — Phase 0 multiplatform inventory
-- **Status:** Accepted
-- **Context:** Locked migration process needs an exhaustive Android inventory before any stack pick or design brief. App code must stay untouched. Edward added: iOS is a firm high-priority goal (user-requested); desktop widgets on Windows, macOS, and Linux; no fragile hacks on platforms where Android behaviors would break.
-- **Decision:** Document current screens, widgets, alarm fire path, settings/defaults, ephemeris, and Android platform behavior in `docs/migration/INVENTORY.md`. Label trajectory items stated vs inferred. Tag each Android-specific behavior **Durable** / **Fallback** / **Omit** (§1.20) instead of planning lockscreen/FSI/Doze clones.
-- **Alternatives considered:** Redesigning or simplifying the surface for a port (rejected: drop-nothing inventory). Forcing FSI/Wear/1 Hz widgets onto iOS/desktop with hacks (rejected by Edward). Treating template Winget/PWA as product goals (rejected: not stated).
-- **Consequences:** Later phases trace every item to a path in this file. iOS WidgetKit and desktop widgets are in-scope. Lockscreen takeover, battery exemption, AlarmClock broadcasts, and Wear faces are named Fallbacks or Omits.
+- **Context:** Edward: current AppWidget disks look low-resolution/chunky (`ClockRenderSize` = minDp×2.5 capped at 600, then `fitCenter` upscales). Visual design must stay identical.
+- **Decision:** Size bitmaps as (min(maxWidth,maxHeight) − 16 dp pad) × display density, coerce 200–1024. Set `Bitmap.DENSITY_NONE` so ImageView does not apply a second mdpi→screen scale.
+- **Alternatives considered:** Vector RemoteViews (not available for Canvas disks). Cap 2048 (binder risk). Keep 600 px (rejected).
+- **Consequences:** Same painters/tokens; sharper on xxhdpi+. Separate PR from `main`, not the migration docs branch.
 
 ### 2026-10-22 — v1.11.0 /ship
 - **Status:** Accepted

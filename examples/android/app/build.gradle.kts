@@ -11,11 +11,20 @@ kotlin {
     }
 }
 
+fun goldenPathAppVersionFile() = rootProject.file("../../schemas/golden-path/app-version.json")
+
 fun readGoldenPathAppVersion(): String {
-    val file = rootProject.file("../../schemas/golden-path/app-version.json")
-    val version = Regex("\"version\"\\s*:\\s*\"([^\"]+)\"").find(file.readText())?.groupValues?.get(1).orEmpty()
+    val version = Regex("\"version\"\\s*:\\s*\"([^\"]+)\"")
+        .find(goldenPathAppVersionFile().readText())?.groupValues?.get(1).orEmpty()
     check(version.isNotEmpty()) { "schemas/golden-path/app-version.json missing version" }
     return version
+}
+
+fun readGoldenPathAppVersionCode(): Int {
+    val code = Regex("\"versionCode\"\\s*:\\s*(\\d+)")
+        .find(goldenPathAppVersionFile().readText())?.groupValues?.get(1)
+    check(!code.isNullOrEmpty()) { "schemas/golden-path/app-version.json missing versionCode" }
+    return code.toInt()
 }
 
 android {
@@ -26,8 +35,8 @@ android {
         applicationId = "org.astroalarm"
         minSdk = 26
         targetSdk = 37
-        versionCode = 10110
-        versionName = readGoldenPathAppVersion() // synced via schemas/golden-path/app-version.json
+        versionCode = readGoldenPathAppVersionCode()
+        versionName = readGoldenPathAppVersion()
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
     }
 
@@ -37,7 +46,8 @@ android {
     }
 
     signingConfigs {
-        create("release") {
+        // maybeCreate: F-Droid strips this block; leftover getByName("release") would fail the build.
+        maybeCreate("release").apply {
             val ksPath = System.getenv("GOLDENPATH_UPLOAD_STORE_FILE")
                 ?: System.getenv("ANDROID_KEYSTORE_FILE")
             if (!ksPath.isNullOrBlank()) {
@@ -63,8 +73,9 @@ android {
                 getDefaultProguardFile("proguard-android-optimize.txt"),
                 "proguard-rules.pro",
             )
-            val rel = signingConfigs.getByName("release")
-            if (rel.storeFile != null && rel.storeFile!!.exists()) {
+            val rel = signingConfigs.findByName("release") ?: signingConfigs.maybeCreate("release")
+            val store = rel.storeFile
+            if (store != null && store.exists()) {
                 signingConfig = rel
             }
         }
@@ -107,7 +118,7 @@ dependencies {
     implementation("androidx.compose.ui:ui")
     implementation("androidx.compose.ui:ui-tooling-preview")
     implementation("androidx.compose.material:material-icons-extended")
-    implementation("androidx.datastore:datastore-preferences:1.2.1")
+    implementation("androidx.datastore:datastore-preferences:1.3.0")
     implementation("androidx.lifecycle:lifecycle-runtime-compose:2.11.0")
     implementation("org.jetbrains.kotlinx:kotlinx-coroutines-android:1.11.0")
     implementation("androidx.navigation:navigation-compose:2.10.2")

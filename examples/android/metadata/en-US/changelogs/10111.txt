@@ -1,0 +1,3 @@
+• Version 1.13.0 matches the git tag used by F-Droid
+• Store listing lives at the repository root Fastlane path
+• Phone screenshots are real device captures (layout may lag the current UI)

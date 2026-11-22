@@ -33,17 +33,19 @@ for f in title.txt short_description.txt full_description.txt; do
   fi
 done
 
+VERSION_JSON="$ROOT/schemas/golden-path/app-version.json"
+VERSION_CODE=""
+if [ -f "$VERSION_JSON" ]; then
+  VERSION_CODE="$(python3 -c 'import json,sys; print(json.load(open(sys.argv[1]))["versionCode"])' "$VERSION_JSON")"
+fi
 if [ ! -f "$GRADLE" ]; then
   fail "missing $GRADLE"
+elif [ -z "${VERSION_CODE:-}" ]; then
+  fail "could not parse versionCode from schemas/golden-path/app-version.json"
+elif [ ! -s "$META/changelogs/${VERSION_CODE}.txt" ]; then
+  fail "missing changelog $META/changelogs/${VERSION_CODE}.txt"
 else
-  VERSION_CODE="$(grep -E 'versionCode\s*=' "$GRADLE" | head -1 | sed -E 's/.*=\s*([0-9]+).*/\1/')"
-  if [ -z "${VERSION_CODE:-}" ]; then
-    fail "could not parse versionCode from build.gradle.kts"
-  elif [ ! -s "$META/changelogs/${VERSION_CODE}.txt" ]; then
-    fail "missing changelog $META/changelogs/${VERSION_CODE}.txt"
-  else
-    ok "changelog for versionCode ${VERSION_CODE}"
-  fi
+  ok "changelog for versionCode ${VERSION_CODE}"
 fi
 
 if [ ! -d "$META/images" ]; then
@@ -56,6 +58,35 @@ if [ -f "$ROOT/LICENSE" ]; then
   ok "root LICENSE present (MIT for template)"
 else
   fail "missing root LICENSE"
+fi
+
+ROOT_FASTLANE="$ROOT/fastlane/metadata/android/en-US"
+if [ ! -d "$ROOT_FASTLANE" ]; then
+  fail "missing $ROOT_FASTLANE (F-Droid scrapes repo-root Fastlane)"
+else
+  ok "repo-root fastlane metadata present"
+  for f in title.txt short_description.txt full_description.txt; do
+    if [ ! -s "$ROOT_FASTLANE/$f" ]; then
+      fail "missing or empty $ROOT_FASTLANE/$f"
+    else
+      ok "root fastlane $f present"
+    fi
+  done
+  if [ -n "${VERSION_CODE:-}" ] && [ ! -s "$ROOT_FASTLANE/changelogs/${VERSION_CODE}.txt" ]; then
+    fail "missing changelog $ROOT_FASTLANE/changelogs/${VERSION_CODE}.txt"
+  else
+    ok "root fastlane changelog for versionCode ${VERSION_CODE}"
+  fi
+  if [ ! -s "$ROOT/fastlane/Fastfile" ]; then
+    fail "missing fastlane/Fastfile"
+  else
+    ok "root Fastfile present"
+  fi
+  if [ ! -s "$ROOT/fastlane/Appfile" ]; then
+    fail "missing fastlane/Appfile"
+  else
+    ok "root Appfile present"
+  fi
 fi
 
 FASTLANE="$ROOT/examples/android/fastlane/metadata/android/en-US"

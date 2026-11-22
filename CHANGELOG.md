@@ -10,21 +10,16 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 
-* **kmp:** `:astro-domain` / `:astro-ephemeris` / `:astro-ui` beside `examples/android` (M1 skeleton + M2 extract of models, JSON, NOAA/Kepler/suncalc, `AstroNextFire`; JVM golden next-fire + NOAA ±180 s tests)
 * **android:** Tonight's sky card — next sunrise/sunset/moonrise/moonset with one line of context on the Alarms tab
 * **docs:** ephemeris accuracy harness vs NOAA almanac (30 dates) → `docs/ACCURACY.md` (`scripts/check-ephemeris-accuracy.sh`)
-* **docs:** Phase 0 multiplatform migration inventory → `docs/migration/INVENTORY.md` (current Android surface + trajectory; Durable vs Fallback for iOS/desktop; no app-code or stack pick)
-* **docs:** Phase 1 design brief → `docs/migration/DESIGN_BRIEF.md` (existing visual/UX contract; Fastlane captures under `docs/migration/design/`; §1.20 Fallback/Omit listed as PROPOSED deviations only)
-* **docs:** Phase 2 tech decision → `docs/migration/TECH_DECISION.md` (KMP + Compose Multiplatform; native WidgetKit/AlarmKit/Windows widgets/Linux fallback)
-* **docs:** Phase 3 migration board + parity checklist → `BUILD_PLAN.md` sprints M0–M13, `docs/migration/PARITY_CHECKLIST.md`
-* **docs:** Edward 2026-11-16 answers on PR #44 — math-before-silence (iOS AlarmKit PENDING), first desktop widget = 24h noon-up dial, watchOS complications, export/import M12, LAN P2P sync M13 (no server; relay/push future-only), desktop-asleep limitation, crisp-widget APPROVED Deviation
 
 ### Changed
 
-* **kmp:** Android variants of `:astro-ephemeris` inherit JVM `api` deps so `commons-suncalc` reaches the APK (R8 no longer drops sun/moon classes)
+* **android:** home-screen disk widgets render at native density (inner dp × density, cap 1024) instead of `minDp × 2.5` capped at 600, so they stay crisp
 * **docs:** GitHub About description under 120 characters; topics `android`, `astronomy`, `alarm`, `ephemeris`, `widgets` (dropped `foss`/`mit`)
 * **docs:** “What this is not” clarifies approximate on-device ephemeris is not navigation or observatory-grade
 * **repo:** Linguist attribution block on `.gitattributes`; agent memory/log paths under `.agent/`
+* **android:** F-Droid Fastlane at repo root; strip-safe release signingConfig; APK 1.13.0 / versionCode 10111 matches git tags
 
 ## [1.12.0](https://github.com/edwardlthompson/AstroAlarm/compare/v1.11.0...v1.12.0) (2026-11-06)
 
