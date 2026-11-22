@@ -15,6 +15,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Changed
 
+* **android:** home-screen disk widgets render at native density (inner dp × density, cap 1024) instead of `minDp × 2.5` capped at 600, so they stay crisp
 * **docs:** GitHub About description under 120 characters; topics `android`, `astronomy`, `alarm`, `ephemeris`, `widgets` (dropped `foss`/`mit`)
 * **docs:** “What this is not” clarifies approximate on-device ephemeris is not navigation or observatory-grade
 * **repo:** Linguist attribution block on `.gitattributes`; agent memory/log paths under `.agent/`
