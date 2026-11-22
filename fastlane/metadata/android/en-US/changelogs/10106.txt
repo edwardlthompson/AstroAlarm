@@ -1,0 +1,1 @@
+Alarm fire opens lockscreen and TTS even when notifications are off; blocking permission dialog until grants complete.

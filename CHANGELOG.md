@@ -18,6 +18,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 * **docs:** GitHub About description under 120 characters; topics `android`, `astronomy`, `alarm`, `ephemeris`, `widgets` (dropped `foss`/`mit`)
 * **docs:** “What this is not” clarifies approximate on-device ephemeris is not navigation or observatory-grade
 * **repo:** Linguist attribution block on `.gitattributes`; agent memory/log paths under `.agent/`
+* **android:** F-Droid Fastlane at repo root; strip-safe release signingConfig; APK 1.13.0 / versionCode 10111 matches git tags
 
 ## [1.12.0](https://github.com/edwardlthompson/AstroAlarm/compare/v1.11.0...v1.12.0) (2026-11-06)
 

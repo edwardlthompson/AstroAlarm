@@ -1,0 +1,3 @@
+• Alarm tone/TTS lockscreen policy (No Tone stays silent)
+• Daily 2D solar-noon-up option; month/zodiac stay inside the clip
+• Sky occasions catalog; Wear OS Daily watch face; Chart local agent
