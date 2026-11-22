@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="astro_tonight_sky_title">Ciel de ce soir</string>
+    <string name="astro_tonight_sky_need_place">Choisissez une ville pour voir le prochain lever, coucher ou événement lunaire.</string>
+    <string name="astro_tonight_sky_sunrise">Lever du soleil à %1$s</string>
+    <string name="astro_tonight_sky_sunset">Coucher du soleil à %1$s</string>
+    <string name="astro_tonight_sky_moonrise">Lever de la Lune à %1$s</string>
+    <string name="astro_tonight_sky_moonset">Coucher de la Lune à %1$s</string>
+    <string name="astro_tonight_ctx_sunrise_today">La première lumière est encore devant vous.</string>
+    <string name="astro_tonight_ctx_sunrise_tomorrow">Première lumière de demain.</string>
+    <string name="astro_tonight_ctx_sunrise_later">Prochain lever du soleil au calendrier.</string>
+    <string name="astro_tonight_ctx_sunset_today">Le jour tire à sa fin.</string>
+    <string name="astro_tonight_ctx_sunset_tomorrow">Crépuscule de demain.</string>
+    <string name="astro_tonight_ctx_sunset_later">Prochain coucher du soleil au calendrier.</string>
+    <string name="astro_tonight_ctx_moonrise_today">La Lune franchit l’horizon aujourd’hui.</string>
+    <string name="astro_tonight_ctx_moonrise_tomorrow">Lever de Lune de demain.</string>
+    <string name="astro_tonight_ctx_moonrise_later">Prochain lever de Lune au calendrier.</string>
+    <string name="astro_tonight_ctx_moonset_today">La Lune se couche bientôt.</string>
+    <string name="astro_tonight_ctx_moonset_tomorrow">Coucher de Lune de demain.</string>
+    <string name="astro_tonight_ctx_moonset_later">Prochain coucher de Lune au calendrier.</string>
+</resources>

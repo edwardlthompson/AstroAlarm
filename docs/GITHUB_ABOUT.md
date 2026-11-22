@@ -1,11 +1,11 @@
 # GitHub About Block
 
-## Draft Description (edit to <=350 chars)
+## Draft Description (edit to <=120 chars)
 
-FOSS Android astronomical alarm clock. On-device suncalc sun/moon ephemeris, solar and lunar events, custom clock wheels, lockscreen math unlock, and a rotating day/night widget. MIT. No Play Services or trackers.
+Android astronomical alarm clock with on-device sun/moon ephemeris, solar and lunar events, and lockscreen math unlock.
 
 ## Topics
 
-android, foss, astronomy, alarm, fdroid
+android, astronomy, alarm, ephemeris, widgets
 
-Suggested for GitHub discoverability (Settings → About).
+Suggested for GitHub discoverability (Settings → About). Licence: MIT (see `LICENSE` and repository metadata).
