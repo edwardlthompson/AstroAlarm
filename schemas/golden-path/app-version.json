@@ -1,4 +1,5 @@
 {
-  "version": "1.11.0",
-  "note": "AstroAlarm app version (About / versionName). Distinct from TEMPLATE_INDEX template_version; bump with Release Please."
+  "version": "1.13.0",
+  "versionCode": 10111,
+  "note": "AstroAlarm APK versionName and versionCode. Keep in lockstep with git tag v$version so F-Droid AutoUpdateMode: Version works. Do not let Release Please template tags drift ahead of this file."
 }

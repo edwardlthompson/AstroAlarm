@@ -7,6 +7,7 @@ from pathlib import Path
 DUMMY_NAME = ("dummy", "placeholder", "sample", "lorem")
 SCREEN_DIRS = ("phoneScreenshots", "sevenInchScreenshots", "tenInchScreenshots")
 ROOTS = (
+    Path("fastlane") / "metadata" / "android",
     Path("examples") / "android" / "metadata",
     Path("examples") / "android" / "fastlane" / "metadata" / "android",
 )
@@ -70,9 +71,11 @@ def check_completeness(root: Path, *, submit_ready: bool = False) -> list[str]:
     if not submit_ready:
         return []
     errors: list[str] = []
-    meta = root / "examples" / "android" / "metadata" / "en-US" / "images"
+    meta = root / "fastlane" / "metadata" / "android" / "en-US" / "images"
     if not meta.is_dir():
-        return ["missing examples/android/metadata/en-US/images for submit-ready"]
+        meta = root / "examples" / "android" / "metadata" / "en-US" / "images"
+    if not meta.is_dir():
+        return ["missing fastlane/metadata/android/en-US/images for submit-ready"]
     icon = meta / "icon.png"
     if not icon.is_file() or _png_size(icon) is None:
         errors.append("submit-ready requires images/icon.png")

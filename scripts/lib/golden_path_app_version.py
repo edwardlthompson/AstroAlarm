@@ -16,10 +16,14 @@ def check(root: Path | None = None) -> list[str]:
     errors: list[str] = []
     if not sot_path.is_file():
         return ["MISSING: schemas/golden-path/app-version.json"]
-    expected_raw = json.loads(sot_path.read_text(encoding="utf-8")).get("version")
+    payload = json.loads(sot_path.read_text(encoding="utf-8"))
+    expected_raw = payload.get("version")
     if not isinstance(expected_raw, str) or not expected_raw.strip():
         return ["app-version.json version must be a non-empty string"]
     expected = expected_raw.strip()
+    code_raw = payload.get("versionCode")
+    if not isinstance(code_raw, int) or code_raw < 1:
+        errors.append("app-version.json versionCode must be a positive int")
 
     web = base / "examples/web/package.json"
     if web.is_file():
@@ -57,6 +61,21 @@ def check(root: Path | None = None) -> list[str]:
                 "examples/android/app/build.gradle.kts must read versionName via "
                 "readGoldenPathAppVersion() from schemas/golden-path/app-version.json"
             )
+        if "readGoldenPathAppVersionCode" not in text:
+            errors.append(
+                "examples/android/app/build.gradle.kts must read versionCode via "
+                "readGoldenPathAppVersionCode() from schemas/golden-path/app-version.json"
+            )
+        if 'signingConfigs.getByName("release")' in text:
+            errors.append(
+                'examples/android/app/build.gradle.kts must not call '
+                'signingConfigs.getByName("release") (F-Droid strips that block)'
+            )
+        if "findByName(" not in text or "maybeCreate(" not in text:
+            errors.append(
+                "examples/android/app/build.gradle.kts must use findByName/maybeCreate "
+                "for the release signingConfig"
+            )
 
     return errors
 
@@ -66,10 +85,11 @@ def main() -> int:
     if errors:
         print("\n".join(errors))
         return 1
-    version = json.loads((ROOT / "schemas/golden-path/app-version.json").read_text(encoding="utf-8"))[
-        "version"
-    ]
-    print(f"Golden Path app version sync OK ({version})")
+    payload = json.loads((ROOT / "schemas/golden-path/app-version.json").read_text(encoding="utf-8"))
+    print(
+        "Golden Path app version sync OK "
+        f"({payload['version']} / {payload['versionCode']})"
+    )
     return 0
 
 

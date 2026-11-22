@@ -18,7 +18,7 @@ Copy `.env.example` → `.env` (gitignored). For a local signed release, prefer 
 | `GOLDENPATH_UPLOAD_STORE_PASSWORD` | `ANDROID_KEYSTORE_PASSWORD` | Keystore password |
 | `GOLDENPATH_UPLOAD_KEY_ALIAS` | `ANDROID_KEY_ALIAS` | Key alias (default `upload` in Gradle) |
 | `GOLDENPATH_UPLOAD_KEY_PASSWORD` | `ANDROID_KEY_PASSWORD` | Key password |
-`examples/android/app/build.gradle.kts` applies the release signing config only when a store path env is set and the file exists. Empty or missing → release stays debug-signed (CI hash compare).
+`examples/android/app/build.gradle.kts` applies the release signing config only when a store path env is set and the file exists. Empty or missing → release stays debug-signed (CI hash compare). The `release` config is created with `maybeCreate` and looked up with `findByName` so F-Droid can strip `signingConfigs` without a `prebuild` sed.
 
 **AstroAlarm maintainer path:** keep secrets outside git in `~/.config/astroalarm/signing.env` (source before Gradle), never under the repo tree.
 

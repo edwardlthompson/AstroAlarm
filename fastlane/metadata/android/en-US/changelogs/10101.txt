@@ -1,0 +1,1 @@
+Lockscreen TTS now repeats the alarm label every 2 seconds until you snooze or stop.
