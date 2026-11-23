@@ -15,11 +15,11 @@ kotlin {
     sourceSets {
         jvmMain.dependencies {
             // Android provides org.json at runtime; JVM tests need the artifact.
-            compileOnly("org.json:json:20250517")
+            compileOnly("org.json:json:20260814")
         }
         jvmTest.dependencies {
             implementation("junit:junit:4.13.2")
-            implementation("org.json:json:20250517")
+            implementation("org.json:json:20260814")
         }
     }
 }
