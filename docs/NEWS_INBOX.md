@@ -49,3 +49,13 @@ A Cursor planning agent should review these items and fold the useful ones into 
 **Tasks for the planning agent**
 
 - [ ] Golden-test the Dec 1 last-quarter alarm time against skyfield (06:09 UTC / 02:09 AST) — A cheap check that commons-suncalc phase times stay within a minute of a reference ephemeris across a quarter phase; if sky occasions ship, Venus greatest brilliancy and outer-planet oppositions are good seeds. Label: `[AGENT]` · Priority: P3 · https://earthsky.org/astronomy-essentials/visible-planets-tonight-mars-jupiter-venus-saturn-mercury/
+
+## 2026-11-27
+
+**News and updates**
+
+- Sky events after the logged week: the waning crescent Moon passes Venus and Spica on the mornings of Dec 4–5 and sits low beside Venus, Mercury and Spica before sunrise Dec 7 ([EarthSky](https://earthsky.org/astronomy-essentials/visible-planets-tonight-mars-jupiter-venus-saturn-mercury/)). New Moon is 2026-12-09 00:51:51Z = 8:51 PM AST on Dec 8, a UTC-vs-local date flip. The Geminids are active Dec 4–20 and peak Dec 14 ~14h UT (10 AM AST; best local nights Dec 13–14 and 14–15), ZHR 150, with only a waxing crescent up ([IMO 2026 calendar](https://www.imo.net/files/meteor-shower/cal2026.pdf)). Further out, the Dec 24 01:28Z full moon (9:28 PM AST Dec 23) is a supermoon (skyfield 1.55 + de440s).
+
+**Tasks for the planning agent**
+
+- [ ] When the open meteor-shower alarm P3 is picked up, use the 2026 Geminids (active Dec 4–20, max Dec 14 14h UT, ZHR 150, moon-free) as the first preset, and add the Dec 8/9 new-moon date-boundary case (00:52Z = 20:52 AST) to NextFireGoldenTest — SkyOccasionCatalog has only the 2040/2492 entries, and a UTC-vs-local date flip is the classic bug in day-of alarm labels; extends the open 11-14 and 11-26 P3s rather than adding new work. Label: `[AGENT]` · Priority: P3 · https://www.imo.net/files/meteor-shower/cal2026.pdf
